@@ -1,0 +1,14 @@
+target
+bin
+build
+dist
+core
+bak
+*.jpx
+*.jpx.local
+.settings
+.project
+.classpath
+*.cld
+*.DS_Store
+META-INF

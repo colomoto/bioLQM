@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project Description -->
+  <groupId>org.colomoto</groupId>
+  <artifactId>LogicalModel</artifactId>
+  <name>Core LogicalModel toolbox</name>
+  <version>0.2</version>
+  <description>simple toolbox for logicalmodel manipulation (not edition)</description>
+  <inceptionYear>2012</inceptionYear>
+  <packaging>bundle</packaging>
+  <url>TODO</url>
+
+
+<!--  Shared parameters are defined in the parent POM -->
+<!--
+  <parent>
+    <groupId>org.colomoto</groupId>
+    <artifactId>colomoto-project</artifactId>
+    <version>1.0</version>
+  </parent>
+-->
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
+        <groupId>org.colomoto</groupId>
+        <artifactId>MDDlib</artifactId>
+        <version>0.2</version>
+    </dependency>
+  </dependencies>
+
+
+
+	<!-- for packaging as an OSGi bundle, we use the maven-bundle-plugin -->
+	<!-- see http://felix.apache.org/site/maven-bundle-plugin-bnd.html for more info -->
+	<build>
+		<resources>
+			<!-- get resources from the root folder -->
+			<resource>
+				<directory>.</directory>
+				<includes>
+					<include>plugin.xml</include>
+					<include>META-INF/*</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+		   <plugin>
+	          <groupId>org.apache.maven.plugins</groupId>
+    	      <artifactId>maven-compiler-plugin</artifactId>
+        	  <!-- best lock down version of the plugin too -->
+	          <configuration>
+    	        <source>1.6</source>
+        	    <target>1.6</target>
+	          </configuration>
+    	    </plugin>
+		
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>1.4.0</version>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Export-Package>org.colomoto.logicalmodel*</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.7</version>
+        <configuration>
+
+              <filters>
+                <filter>
+                  <artifact>org.colomoto:MDDlib</artifact>
+                </filter>
+              </filters>
+
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <configuration>
+<links>
+  <link>http://aurelien-naldi.github.com/mddlib-doc/api/</link>
+</links>
+      </configuration>
+    </plugin>
+
+
+
+		</plugins>
+	</build>
+
+</project>
+
