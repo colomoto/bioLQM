@@ -110,7 +110,7 @@
       <artifactId>maven-javadoc-plugin</artifactId>
       <configuration>
 <links>
-  <link>http://aurelien-naldi.github.com/mddlib-doc/api/</link>
+  <link>http://aurelien-naldi.github.com/gh-documentation/api/mddlib</link>
 </links>
       </configuration>
     </plugin>
