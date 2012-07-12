@@ -12,3 +12,4 @@ bak
 *.cld
 *.DS_Store
 META-INF
+*.log

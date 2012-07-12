@@ -30,9 +30,10 @@ As the MDD toolkit is not distributed through a maven repository yet, you will h
 * run "mvn package" to build a big jar (it will contain mddlib as well)
 
 
-We plan to rely on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export. While JSBML itself is available from 
+We rely on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual export (import will follow). While JSBML itself is available from 
 [cytocape's maven repository](http://code.cytoscape.org/nexus/content/repositories/public/cytoscape-temp/jsbml/),
-this does not include the qual and layout extensions which do not have any maven build script yet.
+this does not include the qual and layout extensions which do not have any maven build script yet. For now, one has to
+build a JSBML jar and put it in maven manually.
 
 
 This is integrated into GINsim and an adaptation as cytoscape plugin is ongoing.
