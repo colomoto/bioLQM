@@ -31,15 +31,19 @@ import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.jsbml.ext.qual.TemporisationType;
 import org.sbml.jsbml.ext.qual.Transition;
 
+/**
+ * SBML export using JSBML and the "qual" extension.
+ * 
+ * 
+ * @author Aurelien Naldi
+ */
 public class SBMLqualExport {
 
 	private final LogicalModel model;
 	private final ConnectivityMatrix matrix;
 	private final MDDManager ddmanager;
 	
-	private final SBMLDocument sdoc;
-	private final Model smodel;
-	private final QualitativeModel qmodel;
+	private final SBMLQualBundle qualBundle;
 
 	private final List<NodeInfo> coreNodes;
 	private final PathSearcher searcher;
@@ -53,18 +57,9 @@ public class SBMLqualExport {
 		this.ddmanager = model.getMDDManager();
 		this.searcher = new PathSearcher(ddmanager);
 		this.matrix = new ConnectivityMatrix(model);
+		this.coreNodes = model.getNodeOrder();
 
-		// init SBML document
-		sdoc = new SBMLDocument(3,1);
-		sdoc.addNamespace(QualConstant.shortLabel, "xmlns", QualConstant.namespaceURI);
-		sdoc.addNamespace(LayoutConstants.shortLabel, "xmlns", LayoutConstants.namespaceURI);
-
-		// create SBML and qual models
-		smodel = sdoc.createModel("model_id");
-		qmodel = new QualitativeModel(smodel);
-		smodel.addExtension(QualConstant.namespaceURI, qmodel);
-		
-		coreNodes = model.getNodeOrder();
+		this.qualBundle = SBMLqualHelper.newBundle();
 	}
 
 	public void export(OutputStream out) throws IOException, XMLStreamException {
@@ -77,7 +72,7 @@ public class SBMLqualExport {
 	public SBMLDocument getSBMLDocument() {
 		if (needFilled) {
 			// add a compartment
-			Compartment comp1 = smodel.createCompartment("comp1");
+			Compartment comp1 = qualBundle.model.createCompartment("comp1");
 	
 			// add qualitative species
 			List<NodeInfo> nodes = coreNodes;
@@ -91,7 +86,7 @@ public class SBMLqualExport {
 				
 				// TODO: set boundary condition for inputs
 				// TODO: set value for constant components
-				QualitativeSpecies sp = qmodel.createQualitativeSpecies(curID, false, comp1.getId(), isConstant);
+				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, false, comp1.getId(), isConstant);
 				node2species.put(ni, sp);
 			}
 			
@@ -112,7 +107,7 @@ public class SBMLqualExport {
 				// TODO: set boundary condition for inputs (should not happen here?)
 				// TODO: set value for constant components
 				String curID = "s_"+ni.getNodeID();
-				QualitativeSpecies sp = qmodel.createQualitativeSpecies(curID, false, comp1.getId(), isConstant);
+				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, false, comp1.getId(), isConstant);
 				node2species.put(ni, sp);
 				
 				// add its transition
@@ -121,7 +116,7 @@ public class SBMLqualExport {
 			}
 		}
 
-		return sdoc;
+		return qualBundle.document;
 	}
 	
 	private void addTransition(NodeInfo ni, int function, int[] regulators) {
@@ -131,7 +126,7 @@ public class SBMLqualExport {
 		}
 		
 		String trID = "tr_"+ni.getNodeID();
-		Transition tr = qmodel.createTransition(trID);
+		Transition tr = qualBundle.qmodel.createTransition(trID);
 		tr.setTemporisationType(TemporisationType.priority);  // FIXME: really??
 		Output out = tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
 		
@@ -163,9 +158,14 @@ public class SBMLqualExport {
 			ASTNode andNode = new ASTNode(ASTNode.Type.LOGICAL_AND);
 			for (int i=0 ; i<path.length ; i++) {
 				int cst = path[i];
-				if (cst >= 0) {
-					andNode.addChild( new ASTNode(coreIDS[i]));
+				if (cst < 0) {
+					continue;
 				}
+				// TODO: support intervals with GEQ and LT
+				ASTNode constraintNode = new ASTNode(ASTNode.Type.RELATIONAL_EQ);
+				constraintNode.addChild( new ASTNode(coreIDS[i]) );
+				constraintNode.addChild( new ASTNode(cst) );
+				andNode.addChild(constraintNode);
 			}
 			
 			fterm = fTerms[leaf];

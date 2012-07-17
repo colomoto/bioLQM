@@ -23,7 +23,7 @@ abstract public class AbstractGINMLWriter {
 		xw.openTag("gxl");
 		xw.openTag("graph");
 		xw.addAttr("id", "defaultID");
-		xw.addAttr("type", "regulatory");
+		xw.addAttr("class", "regulatory");
 
 		StringBuffer nodeOrder = new StringBuffer();
 		List<String> nodes = getNodes();

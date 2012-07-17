@@ -1,19 +1,11 @@
 package org.colomoto.logicalmodel.inferinteraction;
 
-import static org.junit.Assert.fail;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
-import org.colomoto.logicalmodel.export.ginsim.LogicalModel2GINML;
-import org.colomoto.logicalmodel.export.sbml.SBMLqualExport;
 import org.colomoto.logicalmodel.tool.inferinteraction.InteractionSearcher;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -31,37 +23,6 @@ public class TestInteractionSearch {
 		isearch.run();
 	}
 
-	@Test
-	public void testGINMLExport() {
-
-		LogicalModel model = getSimpleModel();
-		LogicalModel2GINML writer = new LogicalModel2GINML(model);
-		try {
-			FileOutputStream out = new FileOutputStream("target/testExport.ginml");
-			writer.export(out);
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		
-	}
-
-	@Test
-	public void testSBMLExport() {
-
-		LogicalModel model = TestInteractionSearch.getSimpleModel();
-		SBMLqualExport export = new SBMLqualExport(model);
-		try {
-			FileOutputStream out = new FileOutputStream("target/testExport.sbml");
-			export.export(out);
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (XMLStreamException e) {
-			fail(e.getMessage());
-		}
-		
-	}
-
-	
 	public static LogicalModel getSimpleModel() {
 		List<NodeInfo> variables = new ArrayList<NodeInfo>();
 		byte max = 1;
