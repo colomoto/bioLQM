@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.export.sbml;
+package org.colomoto.logicalmodel.io.sbml;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;

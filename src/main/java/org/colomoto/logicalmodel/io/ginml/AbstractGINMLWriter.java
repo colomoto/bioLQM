@@ -1,16 +1,10 @@
-package org.colomoto.logicalmodel.export.ginsim;
+package org.colomoto.logicalmodel.io.ginml;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.common.xml.XMLWriter;
-import org.colomoto.logicalmodel.ConnectivityMatrix;
-import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.NodeInfo;
-import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.PathSearcher;
 
 abstract public class AbstractGINMLWriter {
 

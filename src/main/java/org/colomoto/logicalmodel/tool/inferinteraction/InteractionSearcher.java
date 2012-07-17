@@ -6,14 +6,9 @@ import java.util.List;
 
 import org.colomoto.logicalmodel.ConnectivityMatrix;
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.LogicalModelImpl;
-import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDManagerFactory;
-import org.colomoto.mddlib.MDDOperator;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
-import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 /**
  * Extract detailed interactions from a logical model.

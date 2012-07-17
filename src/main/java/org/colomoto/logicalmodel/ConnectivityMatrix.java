@@ -1,7 +1,5 @@
 package org.colomoto.logicalmodel;
 
-import java.util.List;
-
 import org.colomoto.mddlib.MDDManager;
 
 /**

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
-import org.colomoto.logicalmodel.NodeInfoHolder;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 

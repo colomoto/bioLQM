@@ -1,16 +1,12 @@
-package org.colomoto.logicalmodel.export.sbml;
+package org.colomoto.logicalmodel.io.sbml;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
 import javax.xml.stream.XMLStreamException;
 
 import org.colomoto.logicalmodel.LogicalModel;
@@ -20,22 +16,14 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDOperator;
 import org.colomoto.mddlib.MDDVariable;
-import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.ext.SBasePlugin;
 import org.sbml.jsbml.ext.qual.FunctionTerm;
 import org.sbml.jsbml.ext.qual.Output;
-import org.sbml.jsbml.ext.qual.QualConstant;
-import org.sbml.jsbml.ext.qual.QualitativeModel;
 import org.sbml.jsbml.ext.qual.QualitativeSpecies;
 import org.sbml.jsbml.ext.qual.Transition;
-import org.sbml.jsbml.xml.parsers.QualParser;
-import org.sbml.jsbml.xml.stax.SBMLReader;
 
 /**
  * Crude SBML import using JSBML and the qual extension.

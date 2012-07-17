@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.export.ginsim;
+package org.colomoto.logicalmodel.io.ginml;
 
 import java.io.IOException;
 import java.util.ArrayList;

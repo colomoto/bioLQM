@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.export.sbml;
+package org.colomoto.logicalmodel.io.sbml;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,17 +15,13 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.qual.FunctionTerm;
 import org.sbml.jsbml.ext.qual.Input;
 import org.sbml.jsbml.ext.qual.InputTransitionEffect;
 import org.sbml.jsbml.ext.qual.Output;
 import org.sbml.jsbml.ext.qual.OutputTransitionEffect;
-import org.sbml.jsbml.ext.qual.QualConstant;
-import org.sbml.jsbml.ext.qual.QualitativeModel;
 import org.sbml.jsbml.ext.qual.QualitativeSpecies;
 import org.sbml.jsbml.ext.qual.Sign;
 import org.sbml.jsbml.ext.qual.TemporisationType;

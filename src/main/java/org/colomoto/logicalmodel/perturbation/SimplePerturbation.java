@@ -1,7 +1,5 @@
 package org.colomoto.logicalmodel.perturbation;
 
-import javax.management.RuntimeErrorException;
-
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 

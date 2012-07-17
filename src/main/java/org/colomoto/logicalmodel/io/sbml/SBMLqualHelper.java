@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.export.sbml;
+package org.colomoto.logicalmodel.io.sbml;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,10 +20,8 @@ public class SBMLqualHelper {
 	}
 	
 	public static SBMLDocument parseFile(File f) throws IOException, XMLStreamException {
-		SBMLReader sreader = new SBMLReader();
-		sreader.initializePackageParserNamespaces();  // TODO: is this needed?
 		
-		return sreader.readSBML(f);
+		return new SBMLReader().readSBML(f);
 	}
 	
 	public static SBMLQualBundle newBundle() {
