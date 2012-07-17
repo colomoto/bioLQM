@@ -13,6 +13,13 @@ import org.sbml.jsbml.ext.qual.QualConstant;
 import org.sbml.jsbml.ext.qual.QualitativeModel;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 
+/**
+ * Helper to create new SBML documents from scratch or from files using JSBML.
+ * It will create a bundle with a convenient access to the document,
+ * its enclosed model and the qualitative part of the model.
+ * 
+ * @author Aurelien Naldi
+ */
 public class SBMLqualHelper {
 
 	public static SBMLQualBundle loadFile(File f) throws IOException, XMLStreamException {
@@ -24,6 +31,11 @@ public class SBMLqualHelper {
 		return new SBMLReader().readSBML(f);
 	}
 	
+	/**
+	 * Create a new Bundle, with an empty qualitative model
+	 * 
+	 * @return a new SBML document
+	 */
 	public static SBMLQualBundle newBundle() {
 		// init SBML document
 		SBMLDocument sdoc = new SBMLDocument(3,1);
@@ -39,7 +51,7 @@ public class SBMLqualHelper {
 	}
 	
 	
-	public static SBMLQualBundle getQualitativeModel(SBMLDocument sdoc) {
+	private static SBMLQualBundle getQualitativeModel(SBMLDocument sdoc) {
 		Model smodel = sdoc.getModel();
 		
 		// Warning: how will we deal with multiple namespace versions?

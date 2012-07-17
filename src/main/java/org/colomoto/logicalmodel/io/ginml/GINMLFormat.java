@@ -6,6 +6,12 @@ import java.io.OutputStream;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.AbstractFormat;
 
+/**
+ * Format description for GINML files.
+ * These files are used by the GINsim tool.
+ * 
+ * @author Aurelien Naldi
+ */
 public class GINMLFormat extends AbstractFormat {
 
 	public GINMLFormat() {

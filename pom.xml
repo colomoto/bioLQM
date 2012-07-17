@@ -14,24 +14,15 @@
   <url>TODO</url>
 
 
-<!--  Shared parameters are defined in the parent POM -->
-<!--
-  <parent>
-    <groupId>org.colomoto</groupId>
-    <artifactId>colomoto-project</artifactId>
-    <version>1.0</version>
-  </parent>
--->
-
-    <repositories>
-        <repository>
-           <id>cytoscape_temp</id>
-           <snapshots><enabled>false</enabled></snapshots>
-           <releases><enabled>true</enabled></releases>
-           <name>Cytoscape ThirdParties</name>
-           <url>http://code.cytoscape.org/nexus/content/repositories/public/cytoscape-temp</url>
-       </repository>
-    </repositories>
+  <repositories>
+    <repository>
+       <id>cytoscape_temp</id>
+       <snapshots><enabled>false</enabled></snapshots>
+       <releases><enabled>true</enabled></releases>
+       <name>Cytoscape ThirdParties</name>
+       <url>http://code.cytoscape.org/nexus/content/repositories/public/cytoscape-temp</url>
+    </repository>
+  </repositories>
 
 
   <dependencies>
@@ -42,15 +33,13 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
         <groupId>org.colomoto</groupId>
         <artifactId>MDDlib</artifactId>
         <version>0.2</version>
     </dependency>
 
-
-     <!-- JSBML coming soon but I have some problem with the repository for now  -->
+     <!-- JSBML is not yet fully working: need to copy the file manually anyway  -->
     <dependency>
         <groupId>org.sbml</groupId>
         <artifactId>jsbml</artifactId>
@@ -80,59 +69,66 @@
   </dependencies>
 
 
+  <build>
+    <resources>
+    	<!-- get resources from the root folder -->
+    	<resource>
+    		<directory>.</directory>
+    		<includes>
+    			<include>plugin.xml</include>
+    			<include>META-INF/*</include>
+    		</includes>
+    	</resource>
+    </resources>
 
-	<!-- for packaging as an OSGi bundle, we use the maven-bundle-plugin -->
-	<!-- see http://felix.apache.org/site/maven-bundle-plugin-bnd.html for more info -->
-	<build>
-		<resources>
-			<!-- get resources from the root folder -->
-			<resource>
-				<directory>.</directory>
-				<includes>
-					<include>plugin.xml</include>
-					<include>META-INF/*</include>
-				</includes>
-			</resource>
-		</resources>
 
-		<plugins>
-		   <plugin>
-		   <groupId>org.apache.maven.plugins</groupId>
-		   <artifactId>maven-compiler-plugin</artifactId>
-		   <version>2.5.1</version>
-        	  <!-- best lock down version of the plugin too -->
-	          <configuration>
-    	        <source>1.6</source>
-        	    <target>1.6</target>
-	          </configuration>
-    	    </plugin>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+           <source>1.6</source>
+           <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+        	<archive>
+        		<manifest>
+        			<mainClass>org.colomoto.logicalmodel.services.Colomoto</mainClass>
+        		</manifest>
+        	</archive>
+        </configuration>
+       </plugin>
+
 		
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<version>1.4.0</version>
-				<configuration>
-					<manifestLocation>META-INF</manifestLocation>
-					<instructions>
-						<Export-Package>org.colomoto.logicalmodel*</Export-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <version>1.4.0</version>
+        <configuration>
+          <manifestLocation>META-INF</manifestLocation>
+            <instructions>
+        	  <Export-Package>org.colomoto*</Export-Package>
+            </instructions>
+        </configuration>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>1.7</version>
         <configuration>
-
-              <filters>
-                <filter>
-                  <artifact>org.colomoto:MDDlib</artifact>
-                </filter>
-              </filters>
-
+          <filters>
+            <filter>
+              <artifact>org.colomoto:MDDlib</artifact>
+            </filter>
+          </filters>
         </configuration>
         <executions>
           <execution>
@@ -144,23 +140,19 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <links>
+            <link>http://aurelien-naldi.github.com/gh-documentation/api/mddlib</link>
+          </links>
+        </configuration>
+      </plugin>
 
+    </plugins>
 
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-javadoc-plugin</artifactId>
-      <version>2.8.1</version>
-      <configuration>
-<links>
-  <link>http://aurelien-naldi.github.com/gh-documentation/api/mddlib</link>
-</links>
-      </configuration>
-    </plugin>
-
-
-
-		</plugins>
-	</build>
+  </build>
 
 </project>
-

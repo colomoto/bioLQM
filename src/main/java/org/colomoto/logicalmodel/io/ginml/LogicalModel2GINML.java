@@ -11,6 +11,11 @@ import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 
+/**
+ * Encoder to transform a LogicalModel into a GINML file.
+ *  
+ * @author Aurelien Naldi
+ */
 public class LogicalModel2GINML extends AbstractGINMLWriter {
 
 	private final LogicalModel model;

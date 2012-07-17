@@ -9,6 +9,11 @@ import javax.xml.stream.XMLStreamException;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.AbstractFormat;
 
+/**
+ * Format description for SBML files, using the qual extension.
+ * 
+ * @author Aurelien Naldi
+ */
 public class SBMLFormat extends AbstractFormat {
 
 	public SBMLFormat() {
