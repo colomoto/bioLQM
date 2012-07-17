@@ -62,7 +62,7 @@ public interface LogicalModel {
 	/**
 	 * Compute the target value of a core component for a given state.
 	 * 
-	 * @param nodeIdx index of the component in the core node order
+	 * @param componentIdx index of the component in the core node order
 	 * @param state value of components
 	 * @return the target value reached for this state
 	 */
@@ -71,7 +71,7 @@ public interface LogicalModel {
 	/**
 	 * Compute the value of an extra component for a given state.
 	 * 
-	 * @param nodeIdx index of the component in the extra node order
+	 * @param componentIdx index of the component in the extra node order
 	 * @param state value of components
 	 * @return the computed value for this state
 	 */

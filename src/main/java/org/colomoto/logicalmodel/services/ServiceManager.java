@@ -9,10 +9,21 @@ import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.ginml.GINMLFormat;
 import org.colomoto.logicalmodel.io.sbml.SBMLFormat;
 
+/**
+ * List available "services".
+ * For now it only manages formats, to be further extended...
+ * 
+ * @author Aurelien Naldi
+ */
 public class ServiceManager {
 
 	private static ServiceManager MANAGER = null;
 	
+	/**
+	 * Retrieve the single-instance service manager.
+	 * 
+	 * @return the service manager
+	 */
 	public static ServiceManager getManager() {
 		if (MANAGER == null) {
 			MANAGER = new ServiceManager();
@@ -49,7 +60,7 @@ public class ServiceManager {
 	/**
 	 * Get the available formats.
 	 * 
-	 * @return
+	 * @return all available formats
 	 */
 	public Iterable<LogicalModelFormat> getFormats() {
 		return formats;
