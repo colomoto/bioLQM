@@ -10,7 +10,7 @@
   <version>0.2</version>
   <description>simple toolbox for logicalmodel manipulation (not edition)</description>
   <inceptionYear>2012</inceptionYear>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <url>TODO</url>
 
 
@@ -26,6 +26,7 @@
 
 
   <dependencies>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -70,19 +71,8 @@
 
 
   <build>
-    <resources>
-    	<!-- get resources from the root folder -->
-    	<resource>
-    		<directory>.</directory>
-    		<includes>
-    			<include>plugin.xml</include>
-    			<include>META-INF/*</include>
-    		</includes>
-    	</resource>
-    </resources>
-
-
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -94,51 +84,35 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-        	<archive>
-        		<manifest>
-        			<mainClass>org.colomoto.logicalmodel.services.Colomoto</mainClass>
-        		</manifest>
-        	</archive>
-        </configuration>
-       </plugin>
-
-		
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <version>1.4.0</version>
-        <configuration>
-          <manifestLocation>META-INF</manifestLocation>
-            <instructions>
-        	  <Export-Package>org.colomoto*</Export-Package>
-            </instructions>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.7</version>
-        <configuration>
-          <filters>
-            <filter>
-              <artifact>org.colomoto:MDDlib</artifact>
-            </filter>
-          </filters>
-        </configuration>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
             <phase>package</phase>
             <goals>
-              <goal>shade</goal>
+              <goal>copy-dependencies</goal>
             </goals>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <excludeScope>provided</excludeScope>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+  	      <mainClass>org.colomoto.logicalmodel.services.Colomoto</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -152,7 +126,6 @@
       </plugin>
 
     </plugins>
-
   </build>
 
 </project>
