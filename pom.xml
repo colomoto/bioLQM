@@ -15,12 +15,13 @@
 
 
   <repositories>
+    <!-- GINsim repository provides ready-to-use jars for MDDlib, JSBML and mangosdk.spi  -->
     <repository>
-       <id>cytoscape_temp</id>
+       <id>ginsim_temp</id>
        <snapshots><enabled>false</enabled></snapshots>
        <releases><enabled>true</enabled></releases>
-       <name>Cytoscape ThirdParties</name>
-       <url>http://code.cytoscape.org/nexus/content/repositories/public/cytoscape-temp</url>
+       <name>GINsim temporary repo</name>
+       <url>http://crfb.univ-mrs.fr/~naldi/maven</url>
     </repository>
   </repositories>
 
@@ -35,12 +36,19 @@
     </dependency>
 
     <dependency>
+      <groupId>org.mangosdk.spi</groupId>
+      <artifactId>spi</artifactId>
+      <version>0.2.4</version>
+      <!-- only needed to compile: this allows to exclude it from copy-dependencies goal -->
+      <scope>provided</scope>  
+    </dependency>
+
+    <dependency>
         <groupId>org.colomoto</groupId>
         <artifactId>MDDlib</artifactId>
         <version>0.2</version>
     </dependency>
 
-     <!-- JSBML is not yet fully working: need to copy the file manually anyway  -->
     <dependency>
         <groupId>org.sbml</groupId>
         <artifactId>jsbml</artifactId>

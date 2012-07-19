@@ -2,12 +2,13 @@ package org.colomoto.logicalmodel.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
-import org.colomoto.logicalmodel.io.ginml.GINMLFormat;
-import org.colomoto.logicalmodel.io.sbml.SBMLFormat;
 
 /**
  * List available "services".
@@ -37,9 +38,19 @@ public class ServiceManager {
 	private ServiceManager() {
 		formats = new ArrayList<LogicalModelFormat>();
 		
-		// hardcoded formats for now, use mangosdk.spi.ProviderFor in the future ?
-		formats.add(new GINMLFormat());
-		formats.add(new SBMLFormat());
+        Iterator<LogicalModelFormat> service_list = ServiceLoader.load( LogicalModelFormat.class).iterator(); 
+        while (service_list.hasNext()) {
+            try {
+            	LogicalModelFormat format = service_list.next();
+            	if( format != null){
+            		formats.add(format);
+        			id2format.put( format.getID(), format);
+            	}
+            }
+            catch (ServiceConfigurationError e){
+
+            }
+        }
 		
 		for (LogicalModelFormat format: formats) {
 			id2format.put( format.getID(), format);

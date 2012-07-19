@@ -5,6 +5,8 @@ import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.AbstractFormat;
+import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.mangosdk.spi.ProviderFor;
 
 /**
  * Format description for GINML files.
@@ -12,6 +14,7 @@ import org.colomoto.logicalmodel.io.AbstractFormat;
  * 
  * @author Aurelien Naldi
  */
+@ProviderFor(LogicalModelFormat.class)
 public class GINMLFormat extends AbstractFormat {
 
 	public GINMLFormat() {
