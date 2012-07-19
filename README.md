@@ -21,19 +21,22 @@ How to use it?
 
 As this is still work in progress, we do not have real releases yet,
 so you will have to compile it, but it is fairly easy!
-To compile it you will need [maven](http://maven.apache.org/) and a small ad hoc [MDD toolkit](https://github.com/aurelien-naldi/mddlib)
-As the MDD toolkit is not distributed through a maven repository yet, you will have to compile it as well!
+To compile it you will need is java6 JDK and [maven](http://maven.apache.org/).
 
-* grab [MDD toolkit](https://github.com/aurelien-naldi/mddlib) from github
-* run "mvn install" to make it available to maven locally
-* grab [Logical modle](https://github.com/aurelien-naldi/logicalmodel) from github
-* run "mvn package" to build a big jar (it will contain mddlib as well)
+* grab the source from github
+* run "mvn package" to compile and package it
+* you can use the jar in the "target" subdirectory. It needs the "lib" folder that maven filled for you.
 
+For now, the included command-line tool only does model conversion as follow:
 
-We rely on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual export (import will follow). While JSBML itself is available from 
-[cytocape's maven repository](http://code.cytoscape.org/nexus/content/repositories/public/cytoscape-temp/jsbml/),
-this does not include the qual and layout extensions which do not have any maven build script yet. For now, one has to
-build a JSBML jar and put it in maven manually.
+    java -jar LogicalModel-0.2.jar <your_input_file.sbml>  <your_output_file.ginml>
+
+It will guess the desired formats based on file extensions.
+For now it supports SBML import/export and GINML export, but more formats can be added.
+Adding new filters is easy as writing the code and a simple format declaration file to integrate it.
+
+It relies on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export, 
+and on a small [MDD manipulation toolkit](https://github.com/aurelien-naldi/mddlib).
 
 
 This is integrated into GINsim and an adaptation as cytoscape plugin is ongoing.
