@@ -20,8 +20,8 @@ public class LogicalModelImpl implements LogicalModel {
 	private final List<NodeInfo> extraNodes;
 	private final int[] extraFunctions;
 	
-	public LogicalModelImpl(MDDManager factory, List<NodeInfo> coreNodes, int[] coreFunctions, List<NodeInfo> extraNodes, int[] extraFunctions) {
-		this.ddmanager = factory.getManager(coreNodes);
+	public LogicalModelImpl(MDDManager ddmanager, List<NodeInfo> coreNodes, int[] coreFunctions, List<NodeInfo> extraNodes, int[] extraFunctions) {
+		this.ddmanager = ddmanager.getManager(coreNodes);
 		this.coreNodes = coreNodes;
 		this.coreFunctions = coreFunctions;
 		
@@ -34,15 +34,15 @@ public class LogicalModelImpl implements LogicalModel {
 		}
 		
 		for (int f: this.coreFunctions) {
-			factory.use(f);
+			this.ddmanager.use(f);
 		}
 		for (int f: this.extraFunctions) {
-			factory.use(f);
+			this.ddmanager.use(f);
 		}
 	}
 	
-	public LogicalModelImpl(List<NodeInfo> nodeOrder, MDDManager factory, int[] functions) {
-		this(factory, nodeOrder, functions, null, null);
+	public LogicalModelImpl(List<NodeInfo> nodeOrder, MDDManager ddmanager, int[] functions) {
+		this(ddmanager, nodeOrder, functions, null, null);
 	}
 
 	@Override
