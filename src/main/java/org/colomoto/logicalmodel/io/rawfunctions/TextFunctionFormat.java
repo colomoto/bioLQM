@@ -2,6 +2,7 @@ package org.colomoto.logicalmodel.io.rawfunctions;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.AbstractFormat;
@@ -14,7 +15,7 @@ public class TextFunctionFormat extends AbstractFormat {
 	public static final String ID = "rawfunctions";
 	
 	public TextFunctionFormat() {
-		super(ID, "import raw functions", false, true);
+		super(ID, "import raw functions", true, true);
 	}
 
 	
@@ -24,6 +25,13 @@ public class TextFunctionFormat extends AbstractFormat {
 		importer.parse(f);
 		
 		return importer.getModel();
+	}
+
+
+	@Override
+	public void export(LogicalModel model, OutputStream out) throws IOException {
+		RawFunctionExport exporter = new RawFunctionExport();
+		exporter.export(model, out);
 	}
 
 }
