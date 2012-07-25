@@ -1,7 +1,5 @@
 package org.colomoto.logicalmodel.export;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,19 +8,25 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import junit.framework.TestCase;
+
+import org.colomoto.TestHelper;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
+import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.ginml.LogicalModel2GINML;
+import org.colomoto.logicalmodel.io.rawfunctions.TextFunctionFormat;
 import org.colomoto.logicalmodel.io.sbml.SBMLqualExport;
 import org.colomoto.logicalmodel.io.sbml.SBMLqualImport;
+import org.colomoto.logicalmodel.services.ServiceManager;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.junit.Test;
 
-public class TestImportExport {
+public class TestImportExport extends TestCase {
 
 	@Test
 	public void testGINMLExport() {
@@ -99,4 +103,16 @@ public class TestImportExport {
 		return new LogicalModelImpl(ddmanager, variables, functions, new ArrayList<NodeInfo>(), new int[0]);
 	}
 
+	@Test
+	public void testRawFunctionImport() throws IOException {
+		File f = TestHelper.getTestResource("simpleFunctions.txt");
+		LogicalModelFormat format = ServiceManager.getManager().getFormat(TextFunctionFormat.ID);
+		LogicalModel model = format.importFile(f);
+
+		List<NodeInfo> coreComponents = model.getNodeOrder();
+		
+		assertEquals(5, coreComponents.size());
+		
+		// TODO: test model content
+	}
 }
