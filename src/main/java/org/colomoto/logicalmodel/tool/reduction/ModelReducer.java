@@ -56,6 +56,60 @@ public class ModelReducer {
 		}
 	}
 
+	/**
+	 * Find outputs and pseudo-outputs in the model and remove them all.
+	 * @return the number of removed elements (outputs and pseudo-outputs)
+	 */
+	public int removePseudoOutputs() {
+		// count targets of every component and build lists of regulators
+		int[] targetCount = new int[allFunctions.length];
+		Set<Integer>[] regulators = new Set[allFunctions.length];
+		for (int i=0 ; i<targetCount.length ; i++) {
+			MDDVariable curVar = variables[i];
+			Set<Integer> curTargets = targets.get(curVar);
+			if (curTargets == null) {
+				targetCount[i] = 0;
+			} else {
+				targetCount[i] = curTargets.size();
+				Integer I = i;
+				for (int tgt: curTargets) {
+					Set<Integer> curRegs = regulators[tgt];
+					if (curRegs == null) {
+						curRegs = new HashSet<Integer>();
+						regulators[tgt] = curRegs;
+					}
+					curRegs.add(I);
+				}
+			}
+		}
+		
+		// actual pseudo-output detection
+		Set<Integer> outputs = new HashSet<Integer>();
+		for (int i=0 ; i<targetCount.length ; i++) {
+			if (targetCount[i] == 0) {
+				outputs.add(i);
+			}
+		}
+		
+		// expand to pseudo-outputs
+		Set<Integer> pseudoOutputs = new HashSet<Integer>();
+		for (int idx: outputs) {
+			// decrease target count for all of its regulators and detect pseudo-outputs among them
+			for (int regIdx: regulators[idx]) {
+				targetCount[regIdx]--;
+				if (targetCount[regIdx] == 0) {
+					pseudoOutputs.add(regIdx);
+				}
+			}
+		}
+		
+		// actual removal
+		for (int idx: pseudoOutputs) {
+			remove(idx);
+		}
+		
+		return pseudoOutputs.size();
+	}
 	
 	/**
 	 * Remove a selected variable.
@@ -136,11 +190,11 @@ public class ModelReducer {
 			int function = allFunctions[i];
 			if (inCore[i]) {
 				newVariables.add(variables[i]);
-				coreNodes.add(ni);
 				coreFunctions[coreNodes.size()] = function;
+				coreNodes.add(ni);
 			} else {
-				extraNodes.add(ni);
 				extraFunctions[extraNodes.size()] = function;
+				extraNodes.add(ni);
 			}
 		}
 
