@@ -1,6 +1,8 @@
 package org.colomoto.logicalmodel;
 
 import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDVariable;
+import org.colomoto.mddlib.VariableEffect;
 
 /**
  * Build and consult regulatory relations between variables in a Logical Model.
@@ -14,16 +16,31 @@ public class ConnectivityMatrix {
 	private final int[][] coreRegulators, extraRegulators;
 	private final int[][] coreTargets, extraTargets;
 
+	private final VariableEffect[][] coreRegulatorEffects, extraRegulatorEffects;
+	
+	private final MDDManager ddmanager;
+	private final MDDVariable[] variables;
+	
+	private int[] coreFunctions, extraFunctions;
+	
 	public ConnectivityMatrix(LogicalModel model) {
-		MDDManager ddmanager = model.getMDDManager();
+		this.ddmanager = model.getMDDManager();
+		this.variables = ddmanager.getAllVariables();
+		
+		this.coreFunctions = model.getLogicalFunctions();
+		this.extraFunctions = model.getExtraLogicalFunctions();
 		
 		// fill in regulators lists
-		coreRegulators = fillRegulators(ddmanager, model.getLogicalFunctions());
-		extraRegulators = fillRegulators(ddmanager, model.getExtraLogicalFunctions());
+		coreRegulators = fillRegulators(ddmanager, coreFunctions);
+		extraRegulators = fillRegulators(ddmanager, extraFunctions);
 		
 		// fill target lists
 		coreTargets = fillTargets(coreRegulators.length, coreRegulators);
 		extraTargets = fillTargets(coreRegulators.length, extraRegulators);
+		
+		coreRegulatorEffects = new VariableEffect[coreRegulators.length][]; 
+		extraRegulatorEffects = new VariableEffect[extraRegulators.length][];
+		
 	}
 	
 	/**
@@ -127,4 +144,44 @@ public class ConnectivityMatrix {
 		return coreTargets[idx];
 	}
 
+	
+	/**
+	 * Get sign information about the regulators of a node.
+	 * All regulators are extracted from the MDD, thus all should have an effect.
+	 * Each position in the returned array denotes the sign of the regulator
+	 * at the same position in the list of regulators returned by getRegulators(int, boolean).
+	 * 
+	 * @param idx
+	 * @param extra
+	 * @return a list of regulation signs.
+	 */
+	public VariableEffect[] getRegulatorEffects(int idx, boolean extra) {
+		VariableEffect[] ret = null;
+		if (extra) {
+			ret = extraRegulatorEffects[idx];
+		} else {
+			ret = coreRegulatorEffects[idx];
+		}
+		
+		if (ret == null) {
+			int function;
+			int[] regulators = getRegulators(idx, extra);
+			ret = new VariableEffect[regulators.length];
+			
+			if (extra) {
+				extraRegulatorEffects[idx] = ret;
+				function = extraFunctions[idx];
+			} else {
+				function = coreFunctions[idx];
+				coreRegulatorEffects[idx] = ret;
+			}
+			
+			for (int i=0 ; i<regulators.length ; i++) {
+				MDDVariable var = variables[regulators[i]];
+				ret[i] = ddmanager.getVariableEffect(var, function);
+			}
+		}
+		
+		return ret;
+	}
 }
