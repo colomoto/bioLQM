@@ -18,7 +18,7 @@
     <!-- GINsim repository provides ready-to-use jars for MDDlib, JSBML and mangosdk.spi  -->
     <repository>
        <id>ginsim_temp</id>
-       <snapshots><enabled>false</enabled></snapshots>
+       <snapshots><enabled>true</enabled></snapshots>
        <releases><enabled>true</enabled></releases>
        <name>GINsim temporary repo</name>
        <url>http://crfb.univ-mrs.fr/~naldi/maven</url>
@@ -72,7 +72,9 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -91,6 +93,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifest>
