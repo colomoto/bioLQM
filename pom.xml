@@ -7,11 +7,11 @@
   <groupId>org.colomoto</groupId>
   <artifactId>LogicalModel</artifactId>
   <name>Core LogicalModel toolbox</name>
-  <version>0.2</version>
+  <version>0.2-SNAPSHOT</version>
   <description>simple toolbox for logicalmodel manipulation (not edition)</description>
   <inceptionYear>2012</inceptionYear>
   <packaging>jar</packaging>
-  <url>TODO</url>
+  <url>https://github.com/colomoto/logicalmodel</url>
 
 
   <repositories>
@@ -46,7 +46,7 @@
     <dependency>
         <groupId>org.colomoto</groupId>
         <artifactId>MDDlib</artifactId>
-        <version>0.2</version>
+        <version>0.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -115,5 +115,16 @@
 
     </plugins>
   </build>
+
+  <!--
+   deploy to a local repository using:
+     mvn deploy -Dlocal.repository.url=file:///path/to/your/repository -DperformRelease
+  -->
+  <distributionManagement>
+    <repository>
+      <id>local.repository</id>
+      <url>${local.repository.url}</url>
+    </repository>
+  </distributionManagement>
 
 </project>

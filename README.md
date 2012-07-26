@@ -36,14 +36,14 @@ For now it supports SBML import/export and GINML export, but more formats can be
 Adding new filters is easy as writing the code and a simple format declaration file to integrate it.
 
 It relies on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export, 
-and on a small [MDD manipulation toolkit](https://github.com/aurelien-naldi/mddlib).
+and on a small [MDD manipulation toolkit](https://github.com/colomoto/mddlib).
 
 
 This is integrated into GINsim and an adaptation as cytoscape plugin is ongoing.
 In both cases, the external tool will provide a model editor, some specific tools and thin wrapper around
 these common tools and exports. Further work will be needed to share some pieces of the graphical interface.
 
-[Javadoc snapshots](http://aurelien-naldi.github.com/gh-documentation/) are also available.
+[Javadoc snapshots](http://colomoto.github.com/gh-documentation/) are also available.
 
 
 Where does it come from?
