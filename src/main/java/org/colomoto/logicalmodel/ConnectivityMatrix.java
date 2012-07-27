@@ -16,7 +16,7 @@ public class ConnectivityMatrix {
 	private final int[][] coreRegulators, extraRegulators;
 	private final int[][] coreTargets, extraTargets;
 
-	private final VariableEffect[][] coreRegulatorEffects, extraRegulatorEffects;
+	private final VariableEffect[][][] coreRegulatorEffects, extraRegulatorEffects;
 	
 	private final MDDManager ddmanager;
 	private final MDDVariable[] variables;
@@ -38,8 +38,8 @@ public class ConnectivityMatrix {
 		coreTargets = fillTargets(coreRegulators.length, coreRegulators);
 		extraTargets = fillTargets(coreRegulators.length, extraRegulators);
 		
-		coreRegulatorEffects = new VariableEffect[coreRegulators.length][]; 
-		extraRegulatorEffects = new VariableEffect[extraRegulators.length][];
+		coreRegulatorEffects = new VariableEffect[coreRegulators.length][][]; 
+		extraRegulatorEffects = new VariableEffect[extraRegulators.length][][];
 		
 	}
 	
@@ -155,8 +155,8 @@ public class ConnectivityMatrix {
 	 * @param extra
 	 * @return a list of regulation signs.
 	 */
-	public VariableEffect[] getRegulatorEffects(int idx, boolean extra) {
-		VariableEffect[] ret = null;
+	public VariableEffect[][] getRegulatorEffects(int idx, boolean extra) {
+		VariableEffect[][] ret = null;
 		if (extra) {
 			ret = extraRegulatorEffects[idx];
 		} else {
@@ -166,7 +166,7 @@ public class ConnectivityMatrix {
 		if (ret == null) {
 			int function;
 			int[] regulators = getRegulators(idx, extra);
-			ret = new VariableEffect[regulators.length];
+			ret = new VariableEffect[regulators.length][];
 			
 			if (extra) {
 				extraRegulatorEffects[idx] = ret;
@@ -178,7 +178,7 @@ public class ConnectivityMatrix {
 			
 			for (int i=0 ; i<regulators.length ; i++) {
 				MDDVariable var = variables[regulators[i]];
-				ret[i] = ddmanager.getVariableEffect(var, function);
+				ret[i] = ddmanager.getMultivaluedVariableEffect(var, function);
 			}
 		}
 		
