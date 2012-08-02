@@ -95,10 +95,13 @@ public class ModelReducer {
 		Set<Integer> pseudoOutputs = new HashSet<Integer>();
 		for (int idx: outputs) {
 			// decrease target count for all of its regulators and detect pseudo-outputs among them
-			for (int regIdx: regulators[idx]) {
-				targetCount[regIdx]--;
-				if (targetCount[regIdx] == 0) {
-					pseudoOutputs.add(regIdx);
+			Set<Integer> regs = regulators[idx];
+			if (regs != null) {
+				for (int regIdx: regulators[idx]) {
+					targetCount[regIdx]--;
+					if (targetCount[regIdx] == 0) {
+						pseudoOutputs.add(regIdx);
+					}
 				}
 			}
 		}
