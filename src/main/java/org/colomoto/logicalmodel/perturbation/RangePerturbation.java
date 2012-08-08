@@ -8,7 +8,7 @@ import org.colomoto.logicalmodel.NodeInfo;
  * 
  * @author Aurelien Naldi
  */
-public class SimplePerturbation extends AbstractPerturbation {
+public class RangePerturbation extends AbstractPerturbation {
 
 	private final int min, max;
 	private final NodeInfo component;
@@ -18,7 +18,7 @@ public class SimplePerturbation extends AbstractPerturbation {
 	 * 
 	 * @param target the blocked component.
 	 */
-	public SimplePerturbation(NodeInfo target) {
+	public RangePerturbation(NodeInfo target) {
 		this(target, 0, 0);
 	}
 	
@@ -28,7 +28,7 @@ public class SimplePerturbation extends AbstractPerturbation {
 	 * @param target the blocked component
 	 * @param value the fixed value
 	 */
-	public SimplePerturbation(NodeInfo target, int value) {
+	public RangePerturbation(NodeInfo target, int value) {
 		this(target, value, value);
 	}
 	
@@ -44,7 +44,7 @@ public class SimplePerturbation extends AbstractPerturbation {
 	 * @param min
 	 * @param max
 	 */
-	private SimplePerturbation(NodeInfo target, int min, int max) {
+	private RangePerturbation(NodeInfo target, int min, int max) {
 		if (min < 0 || max < min || max > target.getMax()) {
 			throw new RuntimeException("Invalid perturbation settings for "+target+": "+min+","+max);
 		}
