@@ -10,8 +10,8 @@ import org.colomoto.logicalmodel.NodeInfo;
  */
 public class FixedValuePerturbation extends AbstractPerturbation {
 
-	private final int value;
-	private final NodeInfo component;
+	public final int value;
+	public final NodeInfo component;
 
 	/**
 	 * Create a simple KO perturbation.
@@ -59,5 +59,22 @@ public class FixedValuePerturbation extends AbstractPerturbation {
 		functions[idx] = value;
 		
 		model.getMDDManager().free(oldValue);
+	}
+	
+	public String toString() {
+		if (value == 0) {
+			return component.getNodeID() + " KO";
+		}
+		
+		return component.getNodeID() + " E" +value;
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof FixedValuePerturbation) {
+			FixedValuePerturbation p = (FixedValuePerturbation)o;
+			
+			return p.value == this.value && p.component.equals(this.component); 
+		}
+		return false;
 	}
 }

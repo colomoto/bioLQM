@@ -9,16 +9,16 @@ import org.colomoto.logicalmodel.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-public class MultiplePerturbation extends AbstractPerturbation {
+public class MultiplePerturbation<P extends LogicalModelPerturbation> extends AbstractPerturbation {
 
-	private final List<LogicalModelPerturbation> perturbations;
+	public final List<P> perturbations;
 
 	/**
 	 * Create a multiple perturbation
 	 * 
 	 * @param perturbations list of perturbations to apply.
 	 */
-	public MultiplePerturbation(List<LogicalModelPerturbation> perturbations) {
+	public MultiplePerturbation(List<P> perturbations) {
 		this.perturbations = perturbations;
 	}
 	
@@ -27,5 +27,14 @@ public class MultiplePerturbation extends AbstractPerturbation {
 		for (LogicalModelPerturbation perturbation: perturbations) {
 			perturbation.update(model);
 		}
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (LogicalModelPerturbation p: perturbations) {
+			sb.append(" ");
+			sb.append(p.toString());
+		}
+		return sb.toString();
 	}
 }

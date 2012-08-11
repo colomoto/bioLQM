@@ -10,28 +10,9 @@ import org.colomoto.logicalmodel.NodeInfo;
  */
 public class RangePerturbation extends AbstractPerturbation {
 
-	private final int min, max;
-	private final NodeInfo component;
+	public final int min, max;
+	public final NodeInfo component;
 
-	/**
-	 * Create a simple KO perturbation.
-	 * 
-	 * @param target the blocked component.
-	 */
-	public RangePerturbation(NodeInfo target) {
-		this(target, 0, 0);
-	}
-	
-	/**
-	 * Create a simple perturbation to fix the value of a component.
-	 * 
-	 * @param target the blocked component
-	 * @param value the fixed value
-	 */
-	public RangePerturbation(NodeInfo target, int value) {
-		this(target, value, value);
-	}
-	
 	/**
 	 * Create a range restriction.
 	 * Note that the values should verify 0 <= min <= max < nbval.
@@ -44,9 +25,9 @@ public class RangePerturbation extends AbstractPerturbation {
 	 * @param min
 	 * @param max
 	 */
-	private RangePerturbation(NodeInfo target, int min, int max) {
+	public RangePerturbation(NodeInfo target, int min, int max) {
 		if (min < 0 || max < min || max > target.getMax()) {
-			throw new RuntimeException("Invalid perturbation settings for "+target+": "+min+","+max);
+			throw new RuntimeException("Invalid perturbation range for "+target+": "+min+","+max);
 		}
 		this.component = target;
 		this.min = min;
@@ -87,4 +68,17 @@ public class RangePerturbation extends AbstractPerturbation {
 		
 		model.getMDDManager().free(oldValue);
 	}
+	
+	public String toString() {
+		return component.getNodeID() + " ["+min+","+max+"]";
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof RangePerturbation) {
+			RangePerturbation p = (RangePerturbation)o;
+			return p.min == this.min && p.max == this.max && p.component.equals(this.component); 
+		}
+		return false;
+	}
+
 }
