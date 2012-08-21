@@ -24,12 +24,10 @@ import org.sbml.jsbml.ext.qual.Output;
 import org.sbml.jsbml.ext.qual.OutputTransitionEffect;
 import org.sbml.jsbml.ext.qual.QualitativeSpecies;
 import org.sbml.jsbml.ext.qual.Sign;
-import org.sbml.jsbml.ext.qual.TemporisationType;
 import org.sbml.jsbml.ext.qual.Transition;
 
 /**
  * SBML export using JSBML and the "qual" extension.
- * 
  * 
  * @author Aurelien Naldi
  */
@@ -82,7 +80,7 @@ public class SBMLqualExport {
 				
 				// TODO: set boundary condition for inputs
 				// TODO: set value for constant components
-				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, false, comp1.getId(), isConstant);
+				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1.getId(), isConstant);
 				node2species.put(ni, sp);
 			}
 			
@@ -103,7 +101,7 @@ public class SBMLqualExport {
 				// TODO: set boundary condition for inputs (should not happen here?)
 				// TODO: set value for constant components
 				String curID = "s_"+ni.getNodeID();
-				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, false, comp1.getId(), isConstant);
+				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1.getId(), isConstant);
 				node2species.put(ni, sp);
 				
 				// add its transition
@@ -123,7 +121,6 @@ public class SBMLqualExport {
 		
 		String trID = "tr_"+ni.getNodeID();
 		Transition tr = qualBundle.qmodel.createTransition(trID);
-		tr.setTemporisationType(TemporisationType.priority);  // FIXME: really??
 		Output out = tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
 		
 		for (int idx: regulators) {
