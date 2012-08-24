@@ -85,4 +85,20 @@ public class LogicalModelImpl implements LogicalModel {
 		return ddmanager.reach(extraFunctions[nodeIdx], state);
 	}
 
+	@Override
+	public LogicalModel getView(List<NodeInfo> neworder) {
+		
+		MDDManager newmanager = ddmanager.getManager(neworder);
+
+		int[] newcorefunctions = new int[coreFunctions.length];
+		for (int i=0 ; i<coreFunctions.length ; i++) {
+			NodeInfo ni = coreNodes.get(i);
+			int newidx = neworder.indexOf(ni);
+			
+			newcorefunctions[newidx] = coreFunctions[i];
+		}
+		
+		return new LogicalModelImpl(newmanager, neworder, newcorefunctions, extraNodes, extraFunctions);
+	}
+
 }

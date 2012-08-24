@@ -84,5 +84,13 @@ public interface LogicalModel {
 	 * @return a copy of this model.
 	 */
 	LogicalModel clone();
+
 	
+	/**
+	 * Get a logical model with the same nodes but a different order for the core components.
+	 * 
+	 * @param neworder
+	 * @return
+	 */
+	LogicalModel getView(List<NodeInfo> neworder);
 }
