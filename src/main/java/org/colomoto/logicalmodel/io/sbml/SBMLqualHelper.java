@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.SBasePlugin;
+import org.sbml.jsbml.ext.layout.ExtendedLayoutModel;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.qual.QualConstant;
 import org.sbml.jsbml.ext.qual.QualitativeModel;
@@ -42,12 +43,16 @@ public class SBMLqualHelper {
 		sdoc.addNamespace(QualConstant.shortLabel, "xmlns", QualConstant.namespaceURI);
 		sdoc.addNamespace(LayoutConstants.shortLabel, "xmlns", LayoutConstants.namespaceURI);
 
-		// create SBML and qual models
+		// create the main SBML model
 		Model smodel = sdoc.createModel("model_id");
+		
+		// add qual and layout extensions
 		QualitativeModel qmodel = new QualitativeModel(smodel);
 		smodel.addExtension(QualConstant.namespaceURI, qmodel);
+		ExtendedLayoutModel lmodel = new ExtendedLayoutModel(smodel);
+		smodel.addExtension(LayoutConstants.namespaceURI, lmodel);
 
-		return new SBMLQualBundle(sdoc, smodel, qmodel);
+		return new SBMLQualBundle(sdoc, smodel, qmodel, lmodel);
 	}
 	
 	
@@ -61,7 +66,12 @@ public class SBMLqualHelper {
 			qmodel = (QualitativeModel)plugin;
 		}
 
-		
-		return new SBMLQualBundle(sdoc, smodel, qmodel);
+		ExtendedLayoutModel lmodel = null;
+		plugin = smodel.getExtension(LayoutConstants.namespaceURI);
+		if (plugin instanceof ExtendedLayoutModel) {
+			lmodel = (ExtendedLayoutModel)plugin;
+		}
+
+		return new SBMLQualBundle(sdoc, smodel, qmodel, lmodel);
 	}
 }

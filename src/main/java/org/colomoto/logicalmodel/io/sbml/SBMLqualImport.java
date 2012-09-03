@@ -42,6 +42,9 @@ public class SBMLqualImport {
 		this.qualBundle = SBMLqualHelper.loadFile(f);
 	}
 	
+	public SBMLQualBundle getQualBundle() {
+		return qualBundle;
+	}
 	
 	public LogicalModel getModel() {
 		
@@ -125,7 +128,12 @@ public class SBMLqualImport {
 		return model;
 	}
 	
-	private int getIndexForName(String name) {
+	/**
+	 * Retrieve the model component corresponding to a SBML ID.
+	 * @param name a SBML ID for a species
+	 * @return the index of the corresponding component in the LogicalModel
+	 */
+	public int getIndexForName(String name) {
 		
 		Integer index = identifier2index.get(name);
 		if (index == null) {
@@ -162,9 +170,6 @@ public class SBMLqualImport {
 		case RELATIONAL_LEQ:
 		case RELATIONAL_LT:
 		case RELATIONAL_NEQ:
-			// TODO: support more relations
-			throw new RuntimeException("non-equal relations not yet supported: "+math);
-			
 		case RELATIONAL_EQ:
 			if (math.getChildCount() != 2) {
 				throw new RuntimeException("Invalid relation: "+math);
@@ -200,16 +205,34 @@ public class SBMLqualImport {
 			if (0 > relValue || var.nbval <= relValue) {
 				throw new RuntimeException("Relation value out of [0.."+var.nbval+"[ range: "+valueNode);
 			}
+
 			
-			if (var.nbval == 2) {
-				if (relValue == 0) {
-					return var.getNode(1, 0);
+			switch (type) {
+			
+			case RELATIONAL_GEQ:
+			case RELATIONAL_GT:
+			case RELATIONAL_LEQ:
+			case RELATIONAL_LT:
+			case RELATIONAL_NEQ:
+				// TODO: support more relations
+				throw new RuntimeException("non-equal relations not yet supported: "+math);
+				
+			case RELATIONAL_EQ:
+				if (var.nbval == 2) {
+					if (relValue == 0) {
+						return var.getNode(1, 0);
+					}
+					return var.getNode(0, 1);
 				}
-				return var.getNode(0, 1);
+				
+				// TODO: more complex constraints
+				int[] values = new int[var.nbval];
+				break;
+
+			default:
+				throw new RuntimeException("unknown relation type: "+math);
 			}
 			
-			int[] values = new int[var.nbval];
-			// TODO: more complex constraints
 			break;
 
 		case CONSTANT_FALSE:

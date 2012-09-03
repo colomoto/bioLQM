@@ -62,9 +62,18 @@ public class SBMLqualExport {
 		writer.write(getSBMLDocument(), out);
 	}
 
-	
 	public SBMLDocument getSBMLDocument() {
+		return getSBMLBundle().document;
+	}
+	
+	public SBMLQualBundle getSBMLBundle() {
+		ensureFilled();
+		return qualBundle;
+	}
+
+	public synchronized void ensureFilled() {
 		if (needFilled) {
+			needFilled = false;
 			// add a compartment
 			Compartment comp1 = qualBundle.model.createCompartment("comp1");
 	
@@ -109,8 +118,10 @@ public class SBMLqualExport {
 				i++;
 			}
 		}
-
-		return qualBundle.document;
+	}
+	
+	public QualitativeSpecies getSpecies(NodeInfo ni) {
+			return node2species.get(ni);
 	}
 	
 	private void addTransition(NodeInfo ni, int function, int[] regulators) {
