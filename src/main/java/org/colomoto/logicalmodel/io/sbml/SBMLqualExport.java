@@ -143,7 +143,6 @@ public class SBMLqualExport {
 		
 		// real stuff: logical functions
 		FunctionTerm[] fTerms = new FunctionTerm[ni.getMax()+1];
-		System.out.println(fTerms.length);
 		
 		// start with a default to 0
 		FunctionTerm fterm = new FunctionTerm();
@@ -152,6 +151,7 @@ public class SBMLqualExport {
 		fTerms[0] = fterm;
 		
 		// extract others from the actual functions
+		ASTNode orNode = new ASTNode(ASTNode.Type.LOGICAL_OR);
 		int[] path = searcher.setNode(function);
 		for (int leaf: searcher) {
 			if (leaf == 0) {
@@ -179,18 +179,18 @@ public class SBMLqualExport {
 				fTerms[leaf] = fterm;
 			}
 			
-			// add this condition and create parent if needed
-			ASTNode math = fterm.getMath();
-			if (math == null) {
-				fterm.setMath(andNode);
-			} else if (math.getType() == ASTNode.Type.LOGICAL_OR) {
-				math.addChild(andNode);
-			} else {
-				ASTNode or = new ASTNode(ASTNode.Type.LOGICAL_OR);
-				or.addChild(math);
-				or.addChild(andNode);
+			// remove the and if only one constraint is defined
+			if (andNode.getChildCount() == 1) {
+				andNode = andNode.getChild(0);
 			}
+			
+			orNode.addChild(andNode);
 		}
+		// remove the "or" layer if not needed
+		if (orNode.getChildCount() == 1) {
+			orNode = orNode.getChild(0);
+		}
+		fterm.setMath(orNode);
 		
 		// add all function terms
 		for (FunctionTerm ft: fTerms) {
