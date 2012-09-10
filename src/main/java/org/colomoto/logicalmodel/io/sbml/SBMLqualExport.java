@@ -14,6 +14,7 @@ import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
@@ -90,6 +91,7 @@ public class SBMLqualExport {
 				// TODO: set boundary condition for inputs
 				// TODO: set value for constant components
 				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1.getId(), isConstant);
+				sp.setMaxLevel( ni.getMax());
 				node2species.put(ni, sp);
 			}
 			
@@ -132,7 +134,7 @@ public class SBMLqualExport {
 		
 		String trID = "tr_"+ni.getNodeID();
 		Transition tr = qualBundle.qmodel.createTransition(trID);
-		Output out = tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
+		tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
 		
 		for (int idx: regulators) {
 			NodeInfo ni_reg = coreNodes.get(idx);
@@ -141,17 +143,14 @@ public class SBMLqualExport {
 		}
 		
 		
-		// real stuff: logical functions
-		FunctionTerm[] fTerms = new FunctionTerm[ni.getMax()+1];
-		
 		// start with a default to 0
 		FunctionTerm fterm = new FunctionTerm();
 		fterm.setDefaultTerm(true);
 		fterm.setResultLevel(0);
-		fTerms[0] = fterm;
+		tr.addFunctionTerm(fterm);
 		
 		// extract others from the actual functions
-		ASTNode orNode = new ASTNode(ASTNode.Type.LOGICAL_OR);
+		ASTNode[] orNodes = new ASTNode[ni.getMax()+1];
 		int[] path = searcher.setNode(function);
 		for (int leaf: searcher) {
 			if (leaf == 0) {
@@ -172,31 +171,37 @@ public class SBMLqualExport {
 				andNode.addChild(constraintNode);
 			}
 			
-			fterm = fTerms[leaf];
-			if (fterm == null) {
-				fterm = new FunctionTerm();
-				fterm.setResultLevel(leaf);
-				fTerms[leaf] = fterm;
-			}
-			
 			// remove the and if only one constraint is defined
 			if (andNode.getChildCount() == 1) {
 				andNode = andNode.getChild(0);
 			}
+
 			
-			orNode.addChild(andNode);
+			ASTNode orNode = orNodes[leaf];
+			if (orNode == null) {
+				orNodes[leaf] = andNode;
+			} else {
+				if (orNode.getType() != Type.LOGICAL_OR) {
+					ASTNode oldOrNode = orNode;
+					orNode = new ASTNode(Type.LOGICAL_OR);
+					orNode.addChild(oldOrNode);
+					orNodes[leaf] = orNode;
+				}
+				orNode.addChild(andNode);
+			}
+			
 		}
-		// remove the "or" layer if not needed
-		if (orNode.getChildCount() == 1) {
-			orNode = orNode.getChild(0);
-		}
-		fterm.setMath(orNode);
 		
 		// add all function terms
-		for (FunctionTerm ft: fTerms) {
-			if (ft != null) {
-				tr.addFunctionTerm(ft);
+		for (int level=1 ; level<orNodes.length ; level++) {
+			ASTNode math = orNodes[level];
+			if (math == null) {
+				continue;
 			}
+			FunctionTerm ft = new FunctionTerm();
+			ft.setResultLevel(level);
+			ft.setMath(math);
+			tr.addFunctionTerm(ft);
 		}
 	}
 }

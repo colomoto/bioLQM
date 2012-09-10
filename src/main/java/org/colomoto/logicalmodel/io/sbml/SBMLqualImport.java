@@ -16,6 +16,7 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDOperator;
 import org.colomoto.mddlib.MDDVariable;
+import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
@@ -55,8 +56,8 @@ public class SBMLqualImport {
 		ListOf<QualitativeSpecies> species = qualBundle.qmodel.getListOfQualitativeSpecies();
 		identifier2index = new HashMap<String, Integer>();
 		
-		
 		List<NodeInfo> variables = new ArrayList<NodeInfo>();
+		boolean isMultivalued = false;
 		int curIndex = 0;
 		for (QualitativeSpecies sp: species) {
 			String name = sp.getName();
@@ -67,16 +68,27 @@ public class SBMLqualImport {
 					name = name.substring(2);
 				}
 			}
-			byte max = 1; // FIXME: (byte)sp.getMaxLevel()+1;
 			
+			byte max = (byte)sp.getMaxLevel();
 			NodeInfo ni = new NodeInfo(name, max);
 			variables.add(ni);
+			if (max > 2) {
+				isMultivalued = true;
+			}
 			identifier2index.put(sp.getId(), curIndex);
 			curIndex++;
 		}
 
-		// FIXME: this does not support multivalued cases for now
-		MDDManager ddmanager = MDDManagerFactory.getManager(variables, 10);
+		MDDManager ddmanager;
+		if (isMultivalued) {
+			MDDVariableFactory mvf = new MDDVariableFactory();
+			for (NodeInfo ni: variables) {
+				mvf.add(ni, (byte)(ni.getMax()+1));
+			}
+			ddmanager = MDDManagerFactory.getManager(mvf, 10);
+		} else {
+			ddmanager = MDDManagerFactory.getManager(variables, 10);
+		}
 		ddvariables = ddmanager.getAllVariables();
 		int[] functions = new int[variables.size()];
 		
@@ -102,6 +114,9 @@ public class SBMLqualImport {
 				}
 				
 				ASTNode math = ft.getMath();
+				if (math == null) {
+					continue;
+				}
 				int f = getMDDForMathML(ddmanager, ft.getMath(), value);
 
 				// FIXME: rough workaround for now, needs more subtle solution
@@ -220,21 +235,19 @@ public class SBMLqualImport {
 			case RELATIONAL_EQ:
 				if (var.nbval == 2) {
 					if (relValue == 0) {
-						return var.getNode(1, 0);
+						return var.getNode(value, 0);
 					}
-					return var.getNode(0, 1);
+					return var.getNode(0, value);
 				}
 				
-				// TODO: more complex constraints
 				int[] values = new int[var.nbval];
-				break;
+				values[relValue] = value;
+				return var.getNode(values);
 
 			default:
 				throw new RuntimeException("unknown relation type: "+math);
 			}
 			
-			break;
-
 		case CONSTANT_FALSE:
 			return 0;
 		case CONSTANT_TRUE:
