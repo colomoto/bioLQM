@@ -120,10 +120,7 @@ public class SBMLqualImport {
 				int f = getMDDForMathML(ddmanager, ft.getMath(), value);
 
 				// FIXME: rough workaround for now, needs more subtle solution
-				int oldmdd = mdd;
 				mdd = MDDBaseOperators.OR.combine(ddmanager, mdd, f);
-				
-				System.out.println("func: "+math+" --> "+f + ".  "+ oldmdd +"  becomes  " + mdd);
 			}
 			
 			
