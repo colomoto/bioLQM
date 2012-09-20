@@ -69,7 +69,10 @@ public class SBMLqualImport {
 				}
 			}
 			
-			byte max = (byte)sp.getMaxLevel();
+			byte max = (byte)1;
+			try {
+				max = (byte)sp.getMaxLevel();
+			} catch (Exception e) {}
 			NodeInfo ni = new NodeInfo(name, max);
 			variables.add(ni);
 			if (max > 2) {

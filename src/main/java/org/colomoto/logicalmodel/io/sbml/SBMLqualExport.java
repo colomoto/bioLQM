@@ -12,7 +12,9 @@ import org.colomoto.logicalmodel.ConnectivityMatrix;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
+import org.colomoto.mddlib.VariableEffect;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Compartment;
@@ -50,7 +52,7 @@ public class SBMLqualExport {
 	public SBMLqualExport(LogicalModel model) {
 		this.model = model;
 		this.ddmanager = model.getMDDManager();
-		this.searcher = new PathSearcher(ddmanager);
+		this.searcher = new PathSearcher(ddmanager, true);
 		this.matrix = new ConnectivityMatrix(model);
 		this.coreNodes = model.getNodeOrder();
 
@@ -139,7 +141,22 @@ public class SBMLqualExport {
 		for (int idx: regulators) {
 			NodeInfo ni_reg = coreNodes.get(idx);
 			Input in = tr.createInput(trID+"_in_"+idx, node2species.get(ni_reg), InputTransitionEffect.none);
-			in.setSign(Sign.unknown);  // TODO: add proper sign
+			
+			// determine the sign of the regulation
+			Sign sign = Sign.unknown;
+			MDDVariable regVar = ddmanager.getVariableForKey(ni_reg);
+			switch (ddmanager.getVariableEffect(regVar, function)) {
+			case DUAL:
+				sign = Sign.dual;
+				break;
+			case POSITIVE:
+				sign = Sign.positive;
+				break;
+			case NEGATIVE:
+				sign = Sign.negative;
+				break;
+			}
+			in.setSign(sign);
 		}
 		
 		
@@ -152,6 +169,7 @@ public class SBMLqualExport {
 		// extract others from the actual functions
 		ASTNode[] orNodes = new ASTNode[ni.getMax()+1];
 		int[] path = searcher.setNode(function);
+		int[] tmax = searcher.getMax();
 		for (int leaf: searcher) {
 			if (leaf == 0) {
 				continue;
@@ -164,11 +182,35 @@ public class SBMLqualExport {
 				if (cst < 0) {
 					continue;
 				}
-				// TODO: support intervals with GEQ and LT
-				ASTNode constraintNode = new ASTNode(ASTNode.Type.RELATIONAL_EQ);
-				constraintNode.addChild( new ASTNode(coreIDS[i]) );
-				constraintNode.addChild( new ASTNode(cst) );
-				andNode.addChild(constraintNode);
+				
+				int max = tmax[i];
+				if (max >= 0 && max < cst) {
+					System.err.println("############## wrong max?");
+					continue;
+				}
+				
+				if (max == cst) {
+					// constrain to a single value
+					ASTNode constraintNode = new ASTNode(ASTNode.Type.RELATIONAL_EQ);
+					constraintNode.addChild( new ASTNode(coreIDS[i]) );
+					constraintNode.addChild( new ASTNode(cst) );
+					andNode.addChild(constraintNode);
+				} else {
+					// constrain to a range
+					if (cst > 0) {
+						ASTNode constraintNode = new ASTNode(ASTNode.Type.RELATIONAL_GEQ);
+						constraintNode.addChild( new ASTNode(coreIDS[i]) );
+						constraintNode.addChild( new ASTNode(cst) );
+						andNode.addChild(constraintNode);
+					}
+					
+					if (max > 0) {
+						ASTNode constraintNode = new ASTNode(ASTNode.Type.RELATIONAL_LEQ);
+						constraintNode.addChild( new ASTNode(coreIDS[i]) );
+						constraintNode.addChild( new ASTNode(max) );
+						andNode.addChild(constraintNode);
+					}
+				}
 			}
 			
 			// remove the and if only one constraint is defined
