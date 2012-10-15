@@ -16,74 +16,66 @@ import org.colomoto.logicalmodel.io.LogicalModelFormat;
  */
 public class Colomoto {
 
-	private static final ServiceManager manager = ServiceManager.getManager();
+	private static final String FORMAT_SEPARATOR = ":";
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		Colomoto cli = new Colomoto();
-		
-		if (args.length == 2) {
+		if (args.length < 2) {
+			help();
+		} else if (args.length == 2) {
+			CLIConverter cli = new CLIConverter(args[0], args[1]);
 			cli.convert(args[0], args[1]);
+			
 		} else {
-			cli.help();
+			String s_convert = args[0];
+			String[] formats = s_convert.split(FORMAT_SEPARATOR);
+			if (formats == null || formats.length != 2) {
+				throw new RuntimeException("Invalid format conversion flag: "+s_convert);
+			}
+			
+			File outDir = new File(args[args.length-1]);
+			if (!outDir.isDirectory()) {
+				outDir = null;
+				
+				if (args.length > 3) {
+					throw new RuntimeException("Multiple conversion require an existing output directory");
+				}
+				
+				CLIConverter cli = new CLIConverter(formats[0], formats[1]);
+				cli.convert(args[1], args[2]);
+			} else {			
+				CLIConverter cli = new CLIConverter(formats[0], formats[1], outDir);
+				for (int i=1 ; i<args.length-1 ; i++) {
+					cli.convert(args[i]);
+				}
+			}
 		}
 	}
 
-	private void convert(String inputFile, String outputFile) {
-		
-		// guess formats from filenames
-		LogicalModelFormat inputFormat = guessFormat(inputFile);
-		LogicalModelFormat outputFormat = guessFormat(outputFile);
-		
-		if (inputFormat == null || outputFormat == null) {
-			help();
-			return;
-		}
-		
-		if (!inputFormat.canImport()) {
-			error("Input format does not support import: "+inputFormat);
-			return;
-		}
-		if (!outputFormat.canExport()) {
-			error("Output format does not support export: "+outputFormat);
-			return;
-		}
-		
-		// actual conversion
-		try {
-			LogicalModel model = inputFormat.importFile(new File(inputFile));
-			OutputStream out = new FileOutputStream(outputFile);
-			outputFormat.export(model, out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private LogicalModelFormat guessFormat(String filename) {
-		
-		String extension = filename.substring(filename.lastIndexOf('.')+1);
-		
-		System.out.println(extension);
-		
-		return manager.getFormat(extension);
-	}
-	
-	public void error(String message) {
+	public static void error(String message) {
 		System.err.println(message);
 		help();
 	}
 	
-	public void help() {
+	public static void help() {
+		System.out.println("Format conversion");
+		System.out.println("===================");
+		System.out.println("  <file.in> <file.out>: import file.in and export it to file.out (guess formats from file extensions)");
+		System.out.println("  in"+FORMAT_SEPARATOR+"out <file.in> <file.out>: import file.in and export it to file.out (provide formats explicitely)");
+		System.out.println("  in"+FORMAT_SEPARATOR+"out <file_1.in> [ <file_[2..n].in> ] <folder.out>: import a list of files and export them to the output folder folder.out (provide formats explicitely)");
+		System.out.println();
 		System.out.println("Supported formats");
 		System.out.println("-----------------");
-		for (LogicalModelFormat format: manager.getFormats()) {
+		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
 			System.out.println(format);
 		}
 		System.out.println();
-
+		System.out.println("Examples");
+		System.out.println("-----------------");
+		System.out.println("TODO");
 	}
 
 }
