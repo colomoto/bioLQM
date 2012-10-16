@@ -1,0 +1,37 @@
+package org.colomoto.logicalmodel.io.boolsim;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.io.AbstractFormat;
+import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.mangosdk.spi.ProviderFor;
+
+@ProviderFor(LogicalModelFormat.class)
+public class BoolSimFormat extends AbstractFormat {
+
+	public static final String ID = "boolsim";
+	
+	public BoolSimFormat() {
+		super(ID, "boolsim format", true, true);
+	}
+
+	
+	@Override
+	public LogicalModel importFile(File f) throws IOException {
+		BoolSimImport importer = new BoolSimImport();
+		importer.parse(f);
+		
+		return importer.getModel();
+	}
+
+
+	@Override
+	public void export(LogicalModel model, OutputStream out) throws IOException {
+		BoolSimExport exporter = new BoolSimExport();
+		exporter.export(model, out);
+	}
+
+}

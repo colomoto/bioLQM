@@ -67,6 +67,7 @@ Authors
 
 Aurelien Naldi   
 Duncan Berenguier  
+Julien Dorier
 Add your name here ;)   
 
 The rest of the GINsim crew provided insight:   
