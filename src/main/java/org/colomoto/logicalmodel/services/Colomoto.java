@@ -112,8 +112,8 @@ public class Colomoto {
 		sb.append("\n");
 		sb.append("Examples:\n");
 		sb.append("  ").append(command).append(" infile.sbml outfile.ginml\n");
-		sb.append("  ").append(command).append(" ginml").append(FORMAT_SEPARATOR);
-		sb.append("PN@PNML infile.sbml file.txt\n");
+		sb.append("  ").append(command).append(" sbml").append(FORMAT_SEPARATOR);
+		sb.append("PN@INA infile.xml file.txt\n");
 		sb.append("  ").append(command).append(" sbml").append(FORMAT_SEPARATOR);
 		sb.append("ginml file1.in...filen.in /path/to/outfolder/");
 		System.out.println(sb);
