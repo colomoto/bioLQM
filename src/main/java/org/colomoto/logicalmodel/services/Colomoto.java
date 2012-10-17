@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 
 /**
@@ -62,20 +63,63 @@ public class Colomoto {
 	
 	public static void help() {
 		System.out.println("Format conversion");
-		System.out.println("===================");
-		System.out.println("  <file.in> <file.out>: import file.in and export it to file.out (guess formats from file extensions)");
-		System.out.println("  in"+FORMAT_SEPARATOR+"out <file.in> <file.out>: import file.in and export it to file.out (provide formats explicitely)");
-		System.out.println("  in"+FORMAT_SEPARATOR+"out <file_1.in> [ <file_[2..n].in> ] <folder.out>: import a list of files and export them to the output folder folder.out (provide formats explicitely)");
+		System.out.println("================================================");
+		System.out.println("Simple conversion (guess formats from file extensions)");
+		System.out.println("  <file.in> <file.out>");
+		System.out.println("");
+		System.out.println("Provide formats explicitly as first argument: \"in"+FORMAT_SEPARATOR+"out\"");
+		System.out.println("  in"+FORMAT_SEPARATOR+"out <file.in> <file.out>: import file.in and export it to file.out");
+		System.out.println("");
+		System.out.println("Convert a collection of files by providing into the output folder  \"outfolder\"");
+		System.out.println("  in"+FORMAT_SEPARATOR+"out <file_1.in> [ <file_[2..n].in> ] <outfolder>");
+		System.out.println();
 		System.out.println();
 		System.out.println("Supported formats");
-		System.out.println("-----------------");
+		System.out.println("  '<' and'>' indicate import and export capabilities");
+		System.out.println("  '@' indicate available subformats");
+		System.out.println("------------------------------------------------");
 		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
-			System.out.println(format);
+			
+			String cap;
+			if (format.canImport()) {
+				if (format.canExport()) {
+					cap = "<>";
+				} else {
+					cap = "< ";
+				}
+			} else {
+				if (format.canExport()) {
+					cap = " >";
+				} else {
+					cap = "--";
+				}
+			}
+
+			String extra = "";
+			if (format instanceof FormatMultiplexer) {
+				Enum[] subformats = ((FormatMultiplexer)format).getSubformats();
+				StringBuffer sb = new StringBuffer("@[");
+				boolean first = true;
+				for (Enum e: subformats) {
+					if (first) {
+						first = false;
+					} else  {
+						sb.append(",");
+					}
+					sb.append(e);
+				}
+				sb.append("]");
+				extra = sb.toString();
+				
+			}
+			System.out.println(cap +" "+format.getID() +" "+extra+" \t"+format.getName());
 		}
 		System.out.println();
+		System.out.println();
 		System.out.println("Examples");
-		System.out.println("-----------------");
+		System.out.println("------------------------------------------------");
 		System.out.println("TODO");
+		System.out.println();
 	}
 
 }
