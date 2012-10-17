@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.io.AbstractFormat;
 import org.colomoto.logicalmodel.io.AbstractFormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.mangosdk.spi.ProviderFor;
@@ -15,7 +14,7 @@ public class PetriNetFormat extends AbstractFormatMultiplexer<PetriNetSubformats
 	public static final String ID = "PN";
 
 	public PetriNetFormat() {
-		super(ID, "", true, false, PetriNetSubformats.values());
+		super(ID, "Petri Net subformats", true, false, PetriNetSubformats.values());
 	}
 
 	@Override

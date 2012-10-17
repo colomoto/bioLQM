@@ -1,11 +1,7 @@
 package org.colomoto.logicalmodel.services;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
-import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 
@@ -62,64 +58,65 @@ public class Colomoto {
 	}
 	
 	public static void help() {
-		System.out.println("Format conversion");
-		System.out.println("================================================");
-		System.out.println("Simple conversion (guess formats from file extensions)");
-		System.out.println("  <file.in> <file.out>");
-		System.out.println("");
-		System.out.println("Provide formats explicitly as first argument: \"in"+FORMAT_SEPARATOR+"out\"");
-		System.out.println("  in"+FORMAT_SEPARATOR+"out <file.in> <file.out>: import file.in and export it to file.out");
-		System.out.println("");
-		System.out.println("Convert a collection of files by providing into the output folder  \"outfolder\"");
-		System.out.println("  in"+FORMAT_SEPARATOR+"out <file_1.in> [ <file_[2..n].in> ] <outfolder>");
-		System.out.println();
-		System.out.println();
-		System.out.println("Supported formats");
-		System.out.println("  '<' and'>' indicate import and export capabilities");
-		System.out.println("  '@' indicate available subformats");
-		System.out.println("------------------------------------------------");
+		String command = "java -jar LogicalModel.jar";
+		StringBuffer sb = new StringBuffer();
+		sb.append("Usage: ").append(command).append(" [informat");
+		sb.append(FORMAT_SEPARATOR).append("outformat] infile outfile\n");
+		sb.append("  for single file format conversion, where the ");
+		sb.append("import/export file formats \n  are inferred from ");
+		sb.append("file extensions, if not explicitly specified.\n");
+		sb.append("\n");
+		sb.append("Usage: ").append(command).append(" informat");
+		sb.append(FORMAT_SEPARATOR).append("outformat infile1...infilen outfolder\n");
+		sb.append("  for batch file format conversion, where the ");
+		sb.append("import/export file formats are mandatory.\n");
+		sb.append("\n");
+		sb.append("List of supported formats:\n");
 		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
-			
 			String cap;
 			if (format.canImport()) {
 				if (format.canExport()) {
-					cap = "<>";
+					cap = "  <>";
 				} else {
-					cap = "< ";
+					cap = "  < ";
 				}
 			} else {
 				if (format.canExport()) {
-					cap = " >";
+					cap = "   >";
 				} else {
-					cap = "--";
+					cap = "  --";
 				}
 			}
 
 			String extra = "";
 			if (format instanceof FormatMultiplexer) {
 				Enum[] subformats = ((FormatMultiplexer)format).getSubformats();
-				StringBuffer sb = new StringBuffer("@[");
+				extra += "@[";
 				boolean first = true;
 				for (Enum e: subformats) {
 					if (first) {
 						first = false;
 					} else  {
-						sb.append(",");
+						extra += ",";
 					}
-					sb.append(e);
+					extra += e;
 				}
-				sb.append("]");
-				extra = sb.toString();
-				
+				extra += "]";
 			}
-			System.out.println(cap +" "+format.getID() +" "+extra+" \t"+format.getName());
+			sb.append(cap).append(" ").append(format.getID()).append(extra);
+			sb.append("\t").append(format.getName()).append("\n");
 		}
-		System.out.println();
-		System.out.println();
-		System.out.println("Examples");
-		System.out.println("------------------------------------------------");
-		System.out.println("TODO");
-		System.out.println();
+		sb.append("where:\n");
+		sb.append("  '<' and '>' indicate import and export support capabilities\n");
+		sb.append("  '@' indicates the available subformats\n");
+		sb.append("\n");
+		sb.append("Examples:\n");
+		sb.append("  ").append(command).append(" infile.sbml outfile.ginml\n");
+		sb.append("  ").append(command).append(" ginml").append(FORMAT_SEPARATOR);
+		sb.append("PN@PNML infile.sbml file.txt\n");
+		sb.append("  ").append(command).append(" sbml").append(FORMAT_SEPARATOR);
+		sb.append("ginml file1.in...filen.in /path/to/outfolder/");
+		System.out.println(sb);
 	}
 
 }
