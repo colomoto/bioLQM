@@ -17,7 +17,7 @@ import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
 
 /**
- * Exports a logical model into the old (non xml) GNA format.
+ * Exports a logical model into the non-xml GNA format.
  * 
  * @author Pedro T. Monteiro
  */

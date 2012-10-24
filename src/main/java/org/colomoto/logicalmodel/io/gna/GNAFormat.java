@@ -9,7 +9,7 @@ import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.mangosdk.spi.ProviderFor;
 
 /**
- * Format description for GNA files.
+ * Format description for GNA (non-xml) files.
  * These files are used by the Genetic Network Analyzer (GNA) tool.
  * 
  * @author Pedro T. Monteiro
@@ -18,7 +18,7 @@ import org.mangosdk.spi.ProviderFor;
 public class GNAFormat extends AbstractFormat {
 
 	public GNAFormat() {
-		super("gna", "GNA format", true, false);
+		super("gna", "GNA (non-xml) format", true, false);
 	}
 	
 	@Override
