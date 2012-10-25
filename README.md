@@ -34,12 +34,12 @@ For now, the included command-line tool only does model conversion as follow:
 It will guess the desired formats based on file extensions.
 Launch it without arguments to see the available formats and extra options.
 For now it supports the following formats (< and > denote import/export capabilities):
-  <> sbml  
-  <> rawfunctions  
-  <> boolsim  
-   > ginml  
-   > gna  
-   > Petri net  
+  * <> [SBML-qual](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
+  * <> raw logical functions
+  * <> boolsim
+  *  > [GINML](http://gin.univ-mrs.fr/GINsim/ginml.html)
+  *  > [GNA](http://ibis.inrialpes.fr/article122.html)
+  *  > Petri net (INA, PNML, APNN)
 
 The integration of a filter only requires a simple format declaration class.
 These classes are automatically detected using some java annotations.
