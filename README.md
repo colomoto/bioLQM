@@ -32,8 +32,19 @@ For now, the included command-line tool only does model conversion as follow:
     java -jar LogicalModel-0.2.jar <your_input_file.sbml>  <your_output_file.ginml>
 
 It will guess the desired formats based on file extensions.
-For now it supports SBML import/export and GINML export, but more formats can be added.
-Adding new filters is easy as writing the code and a simple format declaration file to integrate it.
+Launch it without arguments to see the available formats and extra options.
+For now it supports the following formats (< and > denote import/export capabilities):
+  <> sbml  
+  <> rawfunctions  
+  <> boolsim  
+   > ginml  
+   > gna  
+   > Petri net  
+
+The integration of a filter only requires a simple format declaration class.
+These classes are automatically detected using some java annotations.
+(see subpackages of org.colomoto.logicalmodel.io)
+
 
 It relies on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export, 
 and on a small [MDD manipulation toolkit](https://github.com/colomoto/mddlib).
@@ -66,11 +77,11 @@ Authors
 -------
 
 Aurelien Naldi   
+Pedro Monteiro  
 Duncan Berenguier  
-Julien Dorier
+Julien Dorier  
 Add your name here ;)   
 
 The rest of the GINsim crew provided insight:   
-Pedro Monteiro  
 Claudine Chaouiya  
 Denis Thieffry  
