@@ -17,9 +17,7 @@ public class NodeInfo {
 	private boolean isInput = false;
 
 	public NodeInfo(String name) {
-		super();
-		this.nodeID = name;
-		this.max = UNDEFINED_MAX;
+		this(name, (byte)1);
 	}
 	
 	public NodeInfo(String name, byte max) {
