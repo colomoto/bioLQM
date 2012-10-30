@@ -83,7 +83,7 @@ public class ModelReducer {
 			}
 		}
 		
-		// actual pseudo-output detection
+		// detect pure outputs
 		Set<Integer> outputs = new HashSet<Integer>();
 		for (int i=0 ; i<targetCount.length ; i++) {
 			if (targetCount[i] == 0) {
@@ -91,16 +91,23 @@ public class ModelReducer {
 			}
 		}
 		
-		// expand to pseudo-outputs
+		
+		// expand to pseudo-outputs, as long as we found new ones
 		Set<Integer> pseudoOutputs = new HashSet<Integer>();
-		for (int idx: outputs) {
-			// decrease target count for all of its regulators and detect pseudo-outputs among them
-			Set<Integer> regs = regulators[idx];
-			if (regs != null) {
-				for (int regIdx: regulators[idx]) {
-					targetCount[regIdx]--;
-					if (targetCount[regIdx] == 0) {
-						pseudoOutputs.add(regIdx);
+		Set<Integer> newOutputs = outputs;
+		while (newOutputs.size() > 0) {
+			Set<Integer> curOutputs = newOutputs;
+			newOutputs = new HashSet<Integer>();
+			for (int idx: curOutputs) {
+				// decrease target count for all of its regulators to detect new pseudo-outputs
+				Set<Integer> regs = regulators[idx];
+				if (regs != null) {
+					for (int regIdx: regulators[idx]) {
+						targetCount[regIdx]--;
+						if (targetCount[regIdx] == 0) {
+							pseudoOutputs.add(regIdx);
+							newOutputs.add(regIdx);
+						}
 					}
 				}
 			}
