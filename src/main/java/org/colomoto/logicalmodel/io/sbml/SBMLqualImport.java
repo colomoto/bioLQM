@@ -22,6 +22,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ext.qual.FunctionTerm;
+import org.sbml.jsbml.ext.qual.Input;
 import org.sbml.jsbml.ext.qual.Output;
 import org.sbml.jsbml.ext.qual.QualitativeSpecies;
 import org.sbml.jsbml.ext.qual.Transition;
@@ -37,6 +38,8 @@ public class SBMLqualImport {
 	
 	private Map<String, Integer> identifier2index;
 	private MDDVariable[] ddvariables;
+	
+	private Map<String, Input> m_curInputs = new HashMap<String, Input>();
 
 	
 	public SBMLqualImport(File f) throws IOException, XMLStreamException {
@@ -97,6 +100,17 @@ public class SBMLqualImport {
 		
 		
 		for (Transition tr: qualBundle.qmodel.getListOfTransitions()) {
+			
+			// get available inputs
+			m_curInputs.clear();
+			ListOf<Input> inputs = tr.getListOfInputs();
+			for (Input input: inputs) {
+				String inputID = input.getId();
+				if (inputID != null) {
+					m_curInputs.put(inputID, input);
+				}
+			}
+
 			
 			// look for default value
 			int defaultValue = 0;
@@ -266,18 +280,54 @@ public class SBMLqualImport {
 		
 		// a relation should always have two children
 		if (relation.getChildCount() != 2) {
-			throw new RuntimeException("Invalid relation: "+relation);
+			throw new RuntimeException("Invalid number of children in relation: "+relation);
 		}
 		ASTNode varNode = relation.getChild(0);
 		ASTNode valueNode = relation.getChild(1);
-
 		
-		// try to detect reversed relations ( "1 == g2" instead of "g2 == 1" )
-		if (valueNode.getType() == Type.NAME && varNode.getType() == Type.INTEGER) {
-			varNode = valueNode;
-			valueNode = relation.getChild(0);
+		String varName = varNode.getName().trim();
+		Integer relValue = null;
+		boolean reversed = false;
 
-			// reverse inequalities as well
+		// extract content from children (NAME and INTEGER only)
+		if (varNode.getType() == Type.NAME && valueNode.getType() == Type.INTEGER) {
+			relValue = valueNode.getInteger();
+		} else if (varNode.getType() == Type.INTEGER && valueNode.getType() == type.NAME) {
+			reversed = true;
+			varName = valueNode.getName().trim();
+			relValue = varNode.getInteger();
+		} else if (varNode.getType() == Type.NAME && valueNode.getType() == Type.NAME) {
+			String valueName = valueNode.getName().trim();
+			Input input = m_curInputs.get(valueName);
+			if (input == null) {
+				// try reversing the relation
+				input = m_curInputs.get(varName);
+				if (input != null) {
+					reversed = true;
+					String stmp = varName;
+					varName = valueName;
+					valueName = stmp;
+				}
+			}
+			 
+			if (input != null) {
+				if (!varName.equals(input.getQualitativeSpecies().trim())) {
+					throw new RuntimeException("Constraint and variable do not match in: "+relation);
+				}
+				try {
+					relValue = input.getThresholdLevel();
+				} catch (Exception e) {
+					relValue = 1;
+				}
+			}
+		}
+
+		if (relValue == null) {
+			throw new RuntimeException("Could not find a value in: "+relation);
+		}
+		
+		// handle inequalities in reversed relations ( "1 > g2" becomes "g2 < 1" )
+		if (reversed) {
 			switch (type) {
 			case RELATIONAL_GEQ:
 				type = Type.RELATIONAL_LEQ;
@@ -294,24 +344,15 @@ public class SBMLqualImport {
 			}
 		}
 
-		
-		// extract the variable and value from the children 
-		// TODO: support named values
-		if (varNode.getType() != Type.NAME || valueNode.getType() != Type.INTEGER) {
-			throw new RuntimeException("Missing name or unsupported value in relation: "+relation);
-		}
-		
-		String name = varNode.getName();
-		int index = getIndexForName(name);
+		int index = getIndexForName(varName);
 		if (index < 0) {
 			throw new RuntimeException("Unrecognized name in relation: "+relation);
 		}
 
 		MDDVariable var = ddvariables[index];
-		int relValue = valueNode.getInteger();
 		
 		
-		// handle border cases, that are always true or false
+		// normalise inequalities and handle border cases (always true or false)
 		switch (type) {
 		
 		case RELATIONAL_GT:
@@ -422,20 +463,5 @@ public class SBMLqualImport {
 		}
 		
 		throw new RuntimeException("Could not handle relation: "+relation);
-	}
-	
-	
-	public static void main(String[] args) {
-		try {
-			new SBMLqualImport( new File("target/testExport.sbml")).getModel();
-			
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
