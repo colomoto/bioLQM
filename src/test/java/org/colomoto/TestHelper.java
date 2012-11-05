@@ -49,6 +49,9 @@ public class TestHelper {
 		
 		if (group != null && group.length() > 0) {
 			dir = new File(outputFolder, group);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
 			if (!dir.isDirectory()) {
 				throw new RuntimeException("output group not found: "+dir.getAbsolutePath());
 			}
