@@ -75,7 +75,7 @@ public final class TruthTableImport {
 		List<NodeInfo> nodeOrder = new ArrayList<NodeInfo>();
 		byte max = 0;
 		for (int i = 0; i < bMax.length; i++) {
-			nodeOrder.add(new NodeInfo("g" + i, bMax[i]));
+			nodeOrder.add(new NodeInfo("G" + i, bMax[i]));
 			if (bMax[i] > max)
 				max = bMax[i];
 		}
