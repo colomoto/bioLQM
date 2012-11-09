@@ -124,7 +124,9 @@ abstract public class AbstractGINMLWriter {
 	protected void writeLogicalParameter(XMLWriter xw, int targetValue, String activeInteractions) throws IOException {
 		xw.openTag("parameter");
 		xw.addAttr("val", ""+targetValue);
-		xw.addAttr("idActiveInteractions", activeInteractions);
+		if (!activeInteractions.isEmpty()) {
+			xw.addAttr("idActiveInteractions", activeInteractions);
+		}
 		xw.closeTag();
 	}
 }
