@@ -87,6 +87,8 @@ public class Colomoto {
 					cap = "  --";
 				}
 			}
+			
+			String level = format.supportsMultivalued() ? "M " : "B ";
 
 			String extra = "";
 			if (format instanceof FormatMultiplexer) {
@@ -103,7 +105,7 @@ public class Colomoto {
 				}
 				extra += "]";
 			}
-			sb.append(cap).append(" ").append(format.getID()).append(extra);
+			sb.append(level).append(cap).append(" ").append(format.getID()).append(extra);
 			sb.append("\t").append(format.getName()).append("\n");
 		}
 		sb.append("where:\n");

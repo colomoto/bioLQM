@@ -11,7 +11,11 @@ public class AbstractFormatMultiplexer<T extends Enum> extends AbstractFormat im
 	private final T[] subformats;
 	
 	protected AbstractFormatMultiplexer(String id, String name, boolean canExport, boolean canImport, T[] subformats) {
-		super(id, name, canExport, canImport);
+		this(id, name, false, canExport, canImport, subformats);
+	}
+	
+	protected AbstractFormatMultiplexer(String id, String name, boolean supportsMultivalued, boolean canExport, boolean canImport, T[] subformats) {
+		super(id, name, supportsMultivalued, canExport, canImport);
 		this.subformats = subformats;
 	}
 

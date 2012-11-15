@@ -40,6 +40,13 @@ public interface LogicalModelFormat {
 	boolean canImport();
 
 	/**
+	 * Does this format handle multivalued models?
+	 * 
+	 * @return true if it supports multivalued models, false for Boolean formats
+	 */
+	boolean supportsMultivalued();
+	
+	/**
 	 * Export a logical model to this format.
 	 * 
 	 * @param model the model to export
