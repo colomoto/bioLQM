@@ -10,6 +10,7 @@ import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
+import org.colomoto.mddlib.VariableEffect;
 
 /**
  * Encoder to transform a LogicalModel into a GINML file.
@@ -67,12 +68,13 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 		int i=0;
 		for (NodeInfo ni: nodes) {
 			int[] regulators = matrix.getRegulators(i, extra);
-			writeNode(out, ni, functions[i], regulators);
+			VariableEffect[][] effects = matrix.getRegulatorEffects(i, extra);
+			writeNode(out, ni, functions[i], regulators, effects);
 			i++;
 		}
 	}		
 
-	private void writeNode(XMLWriter xw, NodeInfo ni, int function, int[] regulators) throws IOException {
+	private void writeNode(XMLWriter xw, NodeInfo ni, int function, int[] regulators, VariableEffect[][] effects) throws IOException {
 
 		String nodeID = ni.getNodeID();
 		writeNodeDecl(xw, nodeID, ni.getMax());
@@ -86,7 +88,7 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 				continue;
 			}
 			
-			writeLogicalParameters(xw, v, nodeID, path, regulators, 0, values);
+			writeLogicalParameters(xw, v, nodeID, path, regulators, effects, 0, values);
 			for (int r:regulators) {
 				int value = path[r];
 			}
@@ -95,7 +97,7 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 		xw.closeTag();
 	}
 	
-	private void writeLogicalParameters(XMLWriter xw, int targetValue, String nodeID, int[] path, int[] regulators, int curIdx, int[] values) throws IOException {
+	private void writeLogicalParameters(XMLWriter xw, int targetValue, String nodeID, int[] path, int[] regulators, VariableEffect[][] effects, int curIdx, int[] values) throws IOException {
 		
 		while (curIdx < regulators.length) {
 			int regIdx = regulators[curIdx];
@@ -104,7 +106,7 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 				int max = nodes.get(regIdx).getMax();
 				for (int v=0 ; v<=max ; v++) {
 					values[curIdx] = v;
-					writeLogicalParameters(xw, targetValue, nodeID, path, regulators, curIdx+1, values);
+					writeLogicalParameters(xw, targetValue, nodeID, path, regulators, effects, curIdx+1, values);
 				}
 				
 				return;
@@ -120,6 +122,9 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 		for (int i=0 ; i<regulators.length ; i++) {
 			int curValue = values[i];
 			if (curValue != 0) {
+				if (effects[i][curValue-1] == VariableEffect.NONE) {
+					return;
+				}
 				if (first) {
 					first = false;
 				} else {
@@ -153,16 +158,37 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 		for (int idx=0 ; idx < functions.length ; idx++) {
 			String id = nodes.get(idx).getNodeID();
 			int[] regulators = matrix.getRegulators(idx, extra);
+			VariableEffect[][] effects = matrix.getRegulatorEffects(idx, extra);
 			if (regulators != null && regulators.length > 0) {
-				writeEdges(xw, id, regulators);
+				writeEdges(xw, id, regulators, effects);
 			}
 		}
 	}
 	
-	private void writeEdges(XMLWriter xw, String id, int[] regulators) throws IOException {
-		for (int reg: regulators) {
-			// FIXME: real threshold and sign
-			writeEdge(xw, nodes.get(reg).getNodeID(), id, 1, "positive");
+	private void writeEdges(XMLWriter xw, String id, int[] regulators, VariableEffect[][] effects) throws IOException {
+		
+		for (int i=0 ; i<regulators.length ; i++) {
+			int reg = regulators[i];
+			VariableEffect[] curEffects = effects[i];
+			for (int v=0 ; v < curEffects.length ; v++) {
+				VariableEffect veffect = curEffects[v];
+				if (veffect == VariableEffect.NONE) {
+					continue;
+				}
+				String seffect = null;
+				switch (veffect) {
+				case POSITIVE:
+					seffect = "positive";
+					break;
+				case NEGATIVE:
+					seffect = "negative";
+					break;
+				case DUAL:
+					seffect = "unknown";
+					break;
+				}
+				writeEdge(xw, nodes.get(reg).getNodeID(), id, v+1, seffect);
+			}
 		}
 	}
 
