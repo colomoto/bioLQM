@@ -62,8 +62,8 @@ public class RangePerturbation extends AbstractPerturbation {
 		if (min == max) {
 			functions[idx] = min;
 		} else {
-			// FIXME: implement range restriction
-			throw new RuntimeException("Perturbation.update(): Range restriction not yet implemented");
+			RangeRestrictionOperation op = new RangeRestrictionOperation(model.getMDDManager(), min, max);
+			functions[idx] = op.restrict(oldValue);
 		}
 		
 		model.getMDDManager().free(oldValue);
