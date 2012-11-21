@@ -188,11 +188,34 @@ public class SBMLqualImport {
 		switch (type) {
 		
 		case NAME:
-			String name = math.getName();
+			String name = math.getName().trim();
+			int threshold = 1;
+
+			Input input = m_curInputs.get(name);
+			if (input != null) {
+				name = input.getQualitativeSpecies().trim();
+				threshold = input.getThresholdLevel();
+			}
+			
+			if (threshold < 1) {
+				// not really a constraint!
+				return value;
+			}
+			
 			int index = getIndexForName(name);
 			MDDVariable var = ddvariables[index];
-			
-			return var.getNode(0, value);
+			if (threshold >= var.nbval) {
+				throw new RuntimeException("Invalid threshold in "+input);
+			}
+				
+			if (var.nbval == 2 ) {
+				return var.getNode(0, value);
+			}
+			int[] children = new int[var.nbval];
+			for (int i=threshold ; i< var.nbval ; i++) {
+				children[i] = value;
+			}
+			return var.getNode(children);
 
 		case RELATIONAL_GEQ:
 		case RELATIONAL_GT:
