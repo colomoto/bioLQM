@@ -312,7 +312,7 @@ public class SBMLqualImport {
 			 
 			if (input != null) {
 				if (!varName.equals(input.getQualitativeSpecies().trim())) {
-					throw new RuntimeException("Constraint and variable do not match in: "+relation);
+					throw new RuntimeException("Constraint '"+input.getQualitativeSpecies().trim()+"' and variable '"+varName+"' do not match in: "+relation);
 				}
 				try {
 					relValue = input.getThresholdLevel();
