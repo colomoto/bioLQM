@@ -17,4 +17,16 @@ public enum PetriNetSubformats {
 		
 		throw new RuntimeException("Unrecognized subformat for Petri net export");
 	}
+	
+	public String getExtension() {
+		switch (this) {
+		case INA:
+			return "pnt";
+		
+		case APNN:
+		case PNML:
+		default:
+			return name().toLowerCase();
+		}
+	}
 }
