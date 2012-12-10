@@ -24,6 +24,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ext.qual.FunctionTerm;
 import org.sbml.jsbml.ext.qual.Input;
 import org.sbml.jsbml.ext.qual.Output;
+import org.sbml.jsbml.ext.qual.OutputTransitionEffect;
 import org.sbml.jsbml.ext.qual.QualitativeSpecies;
 import org.sbml.jsbml.ext.qual.Transition;
 
@@ -56,45 +57,16 @@ public class SBMLqualImport {
 			return null;
 		}
 		
-		ListOf<QualitativeSpecies> species = qualBundle.qmodel.getListOfQualitativeSpecies();
 		identifier2index = new HashMap<String, Integer>();
 		
-		List<NodeInfo> variables = new ArrayList<NodeInfo>();
-		boolean isMultivalued = false;
-		int curIndex = 0;
-		for (QualitativeSpecies sp: species) {
-			String name = sp.getName();
-			if (name == null || name.length() == 0) {
-				name = sp.getId();
-				if (name.startsWith("s_")) {
-					// remove prefix from ID if possible
-					name = name.substring(2);
-				}
-			}
-			
-			byte max = (byte)1;
-			try {
-				max = (byte)sp.getMaxLevel();
-			} catch (Exception e) {}
-			NodeInfo ni = new NodeInfo(name, max);
-			variables.add(ni);
-			if (max > 2) {
-				isMultivalued = true;
-			}
-			identifier2index.put(sp.getId(), curIndex);
-			curIndex++;
-		}
 
+		List<NodeInfo> variables = getVariables();
 		MDDManager ddmanager;
-		if (isMultivalued) {
-			MDDVariableFactory mvf = new MDDVariableFactory();
-			for (NodeInfo ni: variables) {
-				mvf.add(ni, (byte)(ni.getMax()+1));
-			}
-			ddmanager = MDDManagerFactory.getManager(mvf, 10);
-		} else {
-			ddmanager = MDDManagerFactory.getManager(variables, 10);
+		MDDVariableFactory mvf = new MDDVariableFactory();
+		for (NodeInfo ni: variables) {
+			mvf.add(ni, (byte)(ni.getMax()+1));
 		}
+		ddmanager = MDDManagerFactory.getManager(mvf, 10);
 		ddvariables = ddmanager.getAllVariables();
 		int[] functions = new int[variables.size()];
 		
@@ -144,7 +116,10 @@ public class SBMLqualImport {
 			// apply it to outputs
 			ListOf<Output> outputs = tr.getListOfOutputs();
 			for (Output output: outputs) {
-				output.getTransitionEffect();  // TODO: check the type of effect
+				OutputTransitionEffect effect = output.getTransitionEffect();
+				if (effect != OutputTransitionEffect.assignmentLevel) {
+					throw new RuntimeException("Only handles assignement functions");
+				}
 				
 				String name = output.getQualitativeSpecies();
 				int idx = getIndexForName(name);
@@ -155,6 +130,100 @@ public class SBMLqualImport {
 		
 		LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
 		return model;
+	}
+	
+	private List<NodeInfo> getVariables() {
+		List<NodeInfo> variables = new ArrayList<NodeInfo>();
+		int curIndex = 0;
+		for (QualitativeSpecies sp: qualBundle.qmodel.getListOfQualitativeSpecies()) {
+			String name = sp.getName();
+			if (name == null || name.length() == 0) {
+				name = sp.getId();
+				if (name.startsWith("s_")) {
+					// remove prefix from ID if possible
+					name = name.substring(2);
+				}
+			}
+			
+			byte max = (byte)-1;
+			try {
+				max = (byte)sp.getMaxLevel();
+			} catch (Exception e) {}
+			NodeInfo ni = new NodeInfo(name, max);
+			variables.add(ni);
+			identifier2index.put(sp.getId(), curIndex);
+			curIndex++;
+		}
+		
+		// fill missing max values
+		guessMaxs(variables);
+		
+		return variables;
+	}
+	
+	/**
+	 * If needed, guess the max level for species which did not specify it.
+	 * 
+	 * @param variables
+	 */
+	private void guessMaxs(List<NodeInfo> variables) {
+
+		boolean needMax[] = new boolean[variables.size()];
+		byte[] maxs = new byte[needMax.length];
+		boolean allDefined = true;
+		int i=0;
+		for (NodeInfo ni: variables) {
+			byte max = ni.getMax();
+			maxs[i] = max;
+			if (max < 0) {
+				needMax[i] = true;
+				maxs[i] = 1;
+				allDefined = false;
+			} else {
+				needMax[i] = false;
+			}
+			i++;
+		}
+		
+		if (allDefined) {
+			return;
+		}
+		
+		for (Transition tr: qualBundle.qmodel.getListOfTransitions()) {
+			for (Output output: tr.getListOfOutputs()) {
+				String name = output.getQualitativeSpecies();
+				int idx = getIndexForName(name);
+				if (!needMax[idx]) {
+					continue;
+				}
+				
+				OutputTransitionEffect effect = output.getTransitionEffect();
+				if (effect != OutputTransitionEffect.assignmentLevel) {
+					continue;
+				}
+				
+				// parse terms for new max value
+				int max = maxs[idx];
+				for (FunctionTerm ft: tr.getListOfFunctionTerms()) {
+					int value = ft.getResultLevel();
+					if (value > max) {
+						max = value;
+					}
+				}
+				maxs[idx] = (byte)max;
+
+			}
+
+		}
+		
+		i=0;
+		for (NodeInfo ni: variables) {
+			if (needMax[i]) {
+				ni.setMax(maxs[i]);
+			}
+			i++;
+		}
+
 	}
 	
 	/**
