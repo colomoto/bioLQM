@@ -8,24 +8,16 @@ import org.colomoto.logicalmodel.LogicalModel;
 
 public class PNConfig {
 
-	int[][] t_priorities = null;
-//	public PNFormat format;
-//	Map m_init = new HashMap();
-//	Map m_input = new HashMap();
-//
-//	public PNConfig( ) {
-//		// FIXME: change default when the format choice is restored
-//		format = new PetriNetExportINA();
-//	}
-//	
-//	public Map getInitialState() {
-//		return m_init;
-//	}
-//
-//    public Map getInputState() {
-//        return m_input;
-//    }
+	private int[][] t_priorities = null;
+	private byte[] initialstate = null;
 
+	public void setInitialState(byte[] init) {
+		this.initialstate = init;
+	}
+
+	public byte[] getInitialstate() {
+		return initialstate;
+	}
 	
 	// old code to prepare the priority metadata
 	/*		

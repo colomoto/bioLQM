@@ -168,11 +168,10 @@ public abstract class AbstractPNEncoder {
 	 */
     private byte[][] prepareExport( PNConfig config, List[] t_transition) {
 		// get the selected initial state
-//		Iterator it_state = new InitialStatesIterator(nodeOrder, config);
-//		byte[] t_state = (byte[])it_state.next();
-
-    	byte[] t_state = new byte[len];
-
+    	byte[] t_state = config.getInitialstate();
+    	if (t_state == null) {
+    		t_state = new byte[len];
+    	}
 
 		// keep that for later use of priority classes
 		int[][] t_priorities = null;
