@@ -300,7 +300,12 @@ public class SBMLqualImport {
 			return value;
 
 		case LOGICAL_NOT:
-			throw new RuntimeException("NOT not yet supported: "+math);
+			if (math.getChildCount() != 1) {
+				throw new RuntimeException("Invalid number of children in relation: "+math);
+			}
+			ASTNode child = math.getChild(0);
+			int mdd = getMDDForMathML(ddmanager, child, value);
+			return ddmanager.not(mdd);
 		}
 
 		
