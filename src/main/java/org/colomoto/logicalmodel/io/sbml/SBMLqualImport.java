@@ -138,7 +138,7 @@ public class SBMLqualImport {
 			if (ni.isInput()) {
 				MDDVariable var = ddmanager.getVariableForKey(ni);
 				int max = ni.getMax();
-				if (max == 2) {
+				if (max == 1) {
 					functions[idx] = var.getNode(0, 1);
 				} else {
 					int[] values = new int[max+1];
