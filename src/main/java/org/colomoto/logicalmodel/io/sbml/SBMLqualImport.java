@@ -123,11 +123,34 @@ public class SBMLqualImport {
 				
 				String name = output.getQualitativeSpecies();
 				int idx = getIndexForName(name);
+				NodeInfo ni = variables.get(idx);
+				if (ni.isInput()) {
+					throw new RuntimeException("Constants can not be used as transition output");
+				}
 				functions[idx] = mdd;
 			}
 
 		}
 		
+		// add default functions for inputs
+		int idx = 0;
+		for (NodeInfo ni: variables) {
+			if (ni.isInput()) {
+				MDDVariable var = ddmanager.getVariableForKey(ni);
+				int max = ni.getMax();
+				if (max == 2) {
+					functions[idx] = var.getNode(0, 1);
+				} else {
+					int[] values = new int[max+1];
+					for (int i=0 ; i<values.length ; i++) {
+						values[i] = i;
+					}
+					functions[idx] = var.getNode(values);
+					
+				}
+			}
+			idx++;
+		}
 		LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
 		return model;
 	}
@@ -150,6 +173,9 @@ public class SBMLqualImport {
 				max = (byte)sp.getMaxLevel();
 			} catch (Exception e) {}
 			NodeInfo ni = new NodeInfo(name, max);
+			if (sp.isSetConstant()) {
+				ni.setInput(true);
+			}
 			variables.add(ni);
 			identifier2index.put(sp.getId(), curIndex);
 			curIndex++;

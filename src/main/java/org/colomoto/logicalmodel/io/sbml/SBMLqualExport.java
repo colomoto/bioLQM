@@ -88,20 +88,24 @@ public class SBMLqualExport {
 				NodeInfo ni = nodes.get(i);
 				String curID = "s_"+ni.getNodeID();
 				coreIDS[i] = curID;
-				boolean isConstant = ddmanager.isleaf(functions[i]);
 				
-				// TODO: set boundary condition for inputs
-				// TODO: set value for constant components
-				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1.getId(), isConstant);
+				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
 				sp.setMaxLevel( ni.getMax());
 				node2species.put(ni, sp);
+				
+				if (ni.isInput()) {
+					sp.setConstant(true);
+					// TODO: check consistency between function and input role?
+				}
 			}
 			
 			// add transitions
 			for (int i=0 ; i<functions.length ; i++) {
-				addTransition(nodes.get(i), functions[i], matrix.getRegulators(i, false));
+				NodeInfo ni = nodes.get(i);
+				if (!ni.isInput()) {
+					addTransition(nodes.get(i), functions[i], matrix.getRegulators(i, false));
+				}
 			}
-	
 			
 			// add species and transitions for extra nodes as well
 			nodes = model.getExtraComponents();
@@ -109,13 +113,13 @@ public class SBMLqualExport {
 			for (int i=0 ; i<functions.length ; i++) {
 				NodeInfo ni = nodes.get(i);
 				int function = functions[i];
-				boolean isConstant = ddmanager.isleaf(function);
-				
-				// TODO: set boundary condition for inputs (should not happen here?)
-				// TODO: set value for constant components
+
 				String curID = "s_"+ni.getNodeID();
-				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1.getId(), isConstant);
+				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
 				node2species.put(ni, sp);
+				if (ni.isInput()) {
+					sp.setConstant(true);
+				}
 				
 				// add its transition
 				addTransition(ni, function, matrix.getRegulators(i, true));
@@ -129,14 +133,19 @@ public class SBMLqualExport {
 	}
 	
 	private void addTransition(NodeInfo ni, int function, int[] regulators) {
-		if (ddmanager.isleaf(function)) {
-			// FIXME: input-less transition or constant?
-			return;
-		}
 		
 		String trID = "tr_"+ni.getNodeID();
 		Transition tr = qualBundle.qmodel.createTransition(trID);
 		tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
+		
+		if (ddmanager.isleaf(function)) {
+			// only add a default term
+			FunctionTerm fterm = new FunctionTerm();
+			fterm.setDefaultTerm(true);
+			fterm.setResultLevel(function);
+			tr.addFunctionTerm(fterm);
+			return;
+		}
 		
 		for (int idx: regulators) {
 			NodeInfo ni_reg = coreNodes.get(idx);
