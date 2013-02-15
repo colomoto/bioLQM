@@ -173,7 +173,7 @@ public class SBMLqualImport {
 				max = (byte)sp.getMaxLevel();
 			} catch (Exception e) {}
 			NodeInfo ni = new NodeInfo(name, max);
-			if (sp.isSetConstant()) {
+			if (sp.isSetConstant() && sp.getConstant()) {
 				ni.setInput(true);
 			}
 			variables.add(ni);
