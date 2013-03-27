@@ -93,7 +93,13 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 				int value = path[r];
 			}
 		}
-		
+		if (ni.isInput()) {
+			xw.openTag("annotation");
+			xw.openTag("comment");
+			xw.addContent(ni.getNodeID() + " is an input node marked with an auto-regulation.");
+			xw.closeTag();
+			xw.closeTag();
+		}
 		xw.closeTag();
 	}
 	
