@@ -79,6 +79,7 @@ public class SBMLqualExport {
 			needFilled = false;
 			// add a compartment
 			Compartment comp1 = qualBundle.model.createCompartment("comp1");
+			comp1.setConstant(true);
 	
 			// add qualitative species
 			List<NodeInfo> nodes = coreNodes;
