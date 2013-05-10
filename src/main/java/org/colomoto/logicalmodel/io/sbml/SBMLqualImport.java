@@ -2,6 +2,7 @@ package org.colomoto.logicalmodel.io.sbml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,9 @@ public class SBMLqualImport {
 	
 	private Map<String, Input> m_curInputs = new HashMap<String, Input>();
 
+	public SBMLqualImport(InputStream in) throws XMLStreamException {
+		this.qualBundle = SBMLqualHelper.parseInputStream(in);
+	}
 	
 	public SBMLqualImport(File f) throws IOException, XMLStreamException {
 		this.qualBundle = SBMLqualHelper.loadFile(f);

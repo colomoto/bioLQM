@@ -2,6 +2,7 @@ package org.colomoto.logicalmodel.io.sbml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -25,6 +26,10 @@ public class SBMLqualHelper {
 
 	public static SBMLQualBundle loadFile(File f) throws IOException, XMLStreamException {
 		return getQualitativeModel( parseFile(f));
+	}
+	
+	public static SBMLQualBundle parseInputStream(InputStream in) throws XMLStreamException {
+		return getQualitativeModel( new SBMLReader().readSBMLFromStream(in));
 	}
 	
 	public static SBMLDocument parseFile(File f) throws IOException, XMLStreamException {
