@@ -57,6 +57,10 @@ public class SBMLqualHelper {
 		ExtendedLayoutModel lmodel = new ExtendedLayoutModel(smodel);
 		smodel.addExtension(LayoutConstants.namespaceURI, lmodel);
 
+		// Add the "required" attributes for the extensions (should be automated later)
+		sdoc.getSBMLDocumentAttributes().put(QualConstant.shortLabel + ":required", "true");
+		sdoc.getSBMLDocumentAttributes().put(LayoutConstants.shortLabel + ":required", "false");
+
 		return new SBMLQualBundle(sdoc, smodel, qmodel, lmodel);
 	}
 	
