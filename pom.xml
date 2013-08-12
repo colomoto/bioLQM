@@ -21,7 +21,7 @@
        <snapshots><enabled>true</enabled></snapshots>
        <releases><enabled>true</enabled></releases>
        <name>GINsim temporary repo</name>
-       <url>http://crfb.univ-mrs.fr/~naldi/maven</url>
+       <url>http://kdbio.inesc-id.pt/ginsim/maven</url>
     </repository>
   </repositories>
 
@@ -50,8 +50,18 @@
     </dependency>
 
     <dependency>
-        <groupId>org.sbml</groupId>
+        <groupId>org.sbml.jsbml</groupId>
         <artifactId>jsbml</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>org.sbml.jsbml</groupId>
+        <artifactId>layout</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>org.sbml.jsbml</groupId>
+        <artifactId>qual</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
 

@@ -9,7 +9,7 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.SBasePlugin;
-import org.sbml.jsbml.ext.layout.ExtendedLayoutModel;
+import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.qual.QualConstant;
 import org.sbml.jsbml.ext.qual.QualitativeModel;
@@ -54,7 +54,7 @@ public class SBMLqualHelper {
 		// add qual and layout extensions
 		QualitativeModel qmodel = new QualitativeModel(smodel);
 		smodel.addExtension(QualConstant.namespaceURI, qmodel);
-		ExtendedLayoutModel lmodel = new ExtendedLayoutModel(smodel);
+		LayoutModelPlugin lmodel = new LayoutModelPlugin(smodel);
 		smodel.addExtension(LayoutConstants.namespaceURI, lmodel);
 
 		// Add the "required" attributes for the extensions (should be automated later)
@@ -75,10 +75,10 @@ public class SBMLqualHelper {
 			qmodel = (QualitativeModel)plugin;
 		}
 
-		ExtendedLayoutModel lmodel = null;
+		LayoutModelPlugin lmodel = null;
 		plugin = smodel.getExtension(LayoutConstants.namespaceURI);
-		if (plugin instanceof ExtendedLayoutModel) {
-			lmodel = (ExtendedLayoutModel)plugin;
+		if (plugin instanceof LayoutModelPlugin) {
+			lmodel = (LayoutModelPlugin)plugin;
 		}
 
 		return new SBMLQualBundle(sdoc, smodel, qmodel, lmodel);

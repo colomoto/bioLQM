@@ -1,6 +1,6 @@
 package org.colomoto.logicalmodel.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,14 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestResult;
-
 import org.colomoto.TestHelper;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.ReferenceModels;
 import org.colomoto.logicalmodel.services.ServiceManager;
 import org.junit.Test;
-import org.sbml.jsbml.xml.test.GetNotesStringTests;
 
 /**
  * Brute force tests for all formats supporting both import and export.
