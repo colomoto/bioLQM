@@ -17,14 +17,20 @@
   <repositories>
     <!-- GINsim repository provides ready-to-use jars for MDDlib, JSBML and mangosdk.spi  -->
     <repository>
-       <id>ginsim_temp</id>
+       <id>ginsim_inesc_snapshot</id>
        <snapshots><enabled>true</enabled></snapshots>
+       <releases><enabled>false</enabled></releases>
+       <name>GINsim snapshot repository</name>
+       <url>http://kdbio.inesc-id.pt/ginsim/maven/snapshot</url>
+    </repository>
+    <repository>
+       <id>ginsim_inesc_stable</id>
+       <snapshots><enabled>false</enabled></snapshots>
        <releases><enabled>true</enabled></releases>
-       <name>GINsim temporary repo</name>
-       <url>http://kdbio.inesc-id.pt/ginsim/maven</url>
+       <name>GINsim deps</name>
+       <url>http://kdbio.inesc-id.pt/ginsim/maven/stable</url>
     </repository>
   </repositories>
-
 
   <dependencies>
 
