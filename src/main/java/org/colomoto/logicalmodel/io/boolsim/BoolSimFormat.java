@@ -15,7 +15,7 @@ public class BoolSimFormat extends AbstractFormat {
 	public static final String ID = "boolsim";
 	
 	public BoolSimFormat() {
-		super(ID, "boolsim format", true, true);
+		super(ID, "boolsim format");
 	}
 
 	

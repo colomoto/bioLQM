@@ -3,6 +3,7 @@ package org.colomoto.logicalmodel.io;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 
 import org.colomoto.logicalmodel.LogicalModel;
 
@@ -20,16 +21,33 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	private final boolean canImport;
 	private final boolean supportsMultivalued;
 	
-	protected AbstractFormat(String id, String name, boolean canExport, boolean canImport) {
-		this(id, name, false, canExport, canImport);
+	private static final String NAME_IMPORT = "importFile";
+	private static final String NAME_EXPORT = "export";
+	
+	protected AbstractFormat(String id, String name) {
+		this(id, name, false);
 	}
 	
-	protected AbstractFormat(String id, String name, boolean supportsMultivalued, boolean canExport, boolean canImport) {
+	protected AbstractFormat(String id, String name, boolean supportsMultivalued) {
 		this.formatID = id;
 		this.formatName = name;
-		this.canExport = canExport;
-		this.canImport = canImport;
 		this.supportsMultivalued = supportsMultivalued;
+
+		boolean canImport = false;
+		boolean canExport = false;
+		Class cl = getClass();
+		for (Method m: cl.getMethods()) {
+			if (m.getDeclaringClass() != cl) {
+				continue;
+			}
+			if (m.getName() == NAME_IMPORT) {
+				canImport = true;
+			} else if (m.getName() == NAME_EXPORT) {
+				canExport = true;
+			}
+		}
+		this.canImport = canImport;
+		this.canExport = canExport;
 	}
 	
 	@Override

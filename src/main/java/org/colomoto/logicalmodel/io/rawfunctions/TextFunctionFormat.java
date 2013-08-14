@@ -15,7 +15,7 @@ public class TextFunctionFormat extends AbstractFormat {
 	public static final String ID = "rawfunctions";
 	
 	public TextFunctionFormat() {
-		super(ID, "Raw functions format", true, true);
+		super(ID, "Raw functions format");
 	}
 
 	
