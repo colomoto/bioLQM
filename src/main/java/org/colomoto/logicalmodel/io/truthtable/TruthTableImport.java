@@ -110,7 +110,7 @@ public final class TruthTableImport {
 				}
 			}
 		}
-		
+		br.close();
 		return new LogicalModelImpl(nodeOrder, ddmanager, kMDDs);
 	}
 
