@@ -49,6 +49,8 @@ public class SBMLqualExport {
 	private String[] coreIDS;
 	private boolean needFilled = true;
 	
+	private String tr_prefix = "tr_";
+	
 	public SBMLqualExport(LogicalModel model) {
 		this.model = model;
 		this.ddmanager = model.getMDDManager();
@@ -74,20 +76,40 @@ public class SBMLqualExport {
 		return qualBundle;
 	}
 
+	/**
+	 * Make sure that transition IDs can not conflict with species IDs
+	 */
+	private void ensureTransitionPrefix() {
+		for (NodeInfo ni: coreNodes) {
+			String curID = ni.getNodeID();
+			while (curID.startsWith(tr_prefix)) {
+				tr_prefix += "_";
+			}
+		}
+		for (NodeInfo ni: model.getExtraComponents()) {
+			String curID = ni.getNodeID();
+			while (curID.startsWith(tr_prefix)) {
+				tr_prefix += "_";
+			}
+		}
+	}
+	
 	public synchronized void ensureFilled() {
 		if (needFilled) {
+			ensureTransitionPrefix();
+			
 			needFilled = false;
 			// add a compartment
 			Compartment comp1 = qualBundle.model.createCompartment("comp1");
 			comp1.setConstant(true);
-	
+			
 			// add qualitative species
 			List<NodeInfo> nodes = coreNodes;
 			coreIDS = new String[coreNodes.size()];
 			int[] functions = model.getLogicalFunctions();
 			for (int i=0 ; i<functions.length ; i++) {
 				NodeInfo ni = nodes.get(i);
-				String curID = "s_"+ni.getNodeID();
+				String curID = ni.getNodeID();
 				coreIDS[i] = curID;
 				
 				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
@@ -115,7 +137,7 @@ public class SBMLqualExport {
 				NodeInfo ni = nodes.get(i);
 				int function = functions[i];
 
-				String curID = "s_"+ni.getNodeID();
+				String curID = ni.getNodeID();
 				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
 				node2species.put(ni, sp);
 				if (ni.isInput()) {
@@ -135,7 +157,7 @@ public class SBMLqualExport {
 	
 	private void addTransition(NodeInfo ni, int function, int[] regulators) {
 		
-		String trID = "tr_"+ni.getNodeID();
+		String trID = tr_prefix+ni.getNodeID();
 		Transition tr = qualBundle.qmodel.createTransition(trID);
 		tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
 		
