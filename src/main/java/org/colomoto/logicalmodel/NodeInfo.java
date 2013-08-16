@@ -57,7 +57,11 @@ public class NodeInfo {
 	public boolean equals( Object obj) {
 		
 		if ( obj instanceof NodeInfo) {
-			return super.equals(obj);
+			NodeInfo other = (NodeInfo)obj;
+			return this.nodeID.equals(other.nodeID) &&
+				this.max == other.max &&
+				this.isInput == other.isInput;
+			
 		} else if( obj instanceof NodeInfoHolder) {
 			return super.equals(((NodeInfoHolder)obj).getNodeInfo());
 		} else {

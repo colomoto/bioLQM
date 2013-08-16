@@ -7,7 +7,9 @@ import java.io.IOException;
 
 import org.colomoto.TestHelper;
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.LogicalModelComparator;
 import org.colomoto.logicalmodel.services.ServiceManager;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -51,7 +53,8 @@ public class TestBatchImports {
 					if (refModel == null) {
 						refModel = model;
 					} else {
-						// TODO: check that the models are identical
+						// check that the models are identical
+						Assert.assertTrue( LogicalModelComparator.compare(refModel, model) );
 					}
 				} catch (IOException e) {
 					fail();
