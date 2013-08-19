@@ -9,6 +9,7 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.tool.LogicalModelTool;
 
 /**
  * List available "services".
@@ -35,6 +36,9 @@ public class ServiceManager {
 	private final List<LogicalModelFormat> formats;
 	private final Map<String, LogicalModelFormat> id2format = new HashMap<String, LogicalModelFormat>();
 	
+	private final List<LogicalModelTool> tools;
+	private final Map<String, LogicalModelTool> id2tool = new HashMap<String, LogicalModelTool>();
+	
 	private ServiceManager() {
 		formats = new ArrayList<LogicalModelFormat>();
 		
@@ -52,9 +56,21 @@ public class ServiceManager {
             }
         }
 		
-		for (LogicalModelFormat format: formats) {
-			id2format.put( format.getID(), format);
-		}
+		tools = new ArrayList<LogicalModelTool>();
+		
+        Iterator<LogicalModelTool> tool_list = ServiceLoader.load( LogicalModelTool.class).iterator(); 
+        while (tool_list.hasNext()) {
+            try {
+            	LogicalModelTool tool = tool_list.next();
+            	if( tool != null){
+            		tools.add(tool);
+        			id2tool.put( tool.getID(), tool);
+            	}
+            }
+            catch (ServiceConfigurationError e){
+
+            }
+        }
 	}
 	
 	/**
@@ -75,5 +91,25 @@ public class ServiceManager {
 	 */
 	public Iterable<LogicalModelFormat> getFormats() {
 		return formats;
+	}
+
+	/**
+	 * Get the tool declaration for a given ID.
+	 * 
+	 * @param name ID of the tool
+	 * @return the tool declaration instance or null if not found.
+	 */
+	public LogicalModelTool getTool(String name) {
+		
+		return id2tool.get(name);
+	}
+	
+	/**
+	 * Get the available tools.
+	 * 
+	 * @return all available tools
+	 */
+	public Iterable<LogicalModelTool> getTools() {
+		return tools;
 	}
 }

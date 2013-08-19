@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.tool.LogicalModelTool;
 
 /**
  * Simple command-line interface for the CoLoMoTo toolbox.
@@ -22,6 +23,20 @@ public class Colomoto {
 		
 		if (args.length < 2) {
 			help();
+		} else if ("-r".equals(args[0]) ) {
+			String toolID = args[1].trim();
+			CLIToolRunner runner = new CLIToolRunner(args[1].trim());
+			
+			LogicalModelFormat format = null;
+			int curArg = 2;
+			if ("-f".equals(args[curArg]) ) {
+				runner.setFormat(args[curArg+1]);
+				curArg += 2;
+			}
+
+			for (int i=curArg ; i<args.length ; i++) {
+				runner.run(args[i].trim());
+			}
 		} else if (args.length == 2) {
 			CLIConverter cli = new CLIConverter(args[0], args[1]);
 			cli.convert(args[0], args[1]);
@@ -71,6 +86,9 @@ public class Colomoto {
 		sb.append("  for batch file format conversion, where the ");
 		sb.append("import/export file formats are mandatory.\n");
 		sb.append("\n");
+		sb.append("Usage: ").append(command).append(" -r tool infile\n");
+		sb.append("  to run a tool on a model (import format is inferred from extension)");
+		sb.append("\n");
 		sb.append("List of supported formats:\n");
 		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
 			String cap;
@@ -118,6 +136,15 @@ public class Colomoto {
 		sb.append("PN@INA infile.xml file.txt\n");
 		sb.append("  ").append(command).append(" sbml").append(FORMAT_SEPARATOR);
 		sb.append("ginml file1.in...filen.in /path/to/outfolder/");
+		
+		sb.append("\n\n");
+		sb.append("List of tools:\n");
+		for (LogicalModelTool tool: ServiceManager.getManager().getTools()) {
+			String level = tool.supportsMultivalued() ? "M " : "B ";
+			sb.append(level).append(" ").append(tool.getID());
+			sb.append("\t").append(tool.getName()).append("\n");
+		}
+		
 		System.out.println(sb);
 	}
 

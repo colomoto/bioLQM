@@ -111,7 +111,7 @@ public class CLIConverter {
 		}
 	}
 	
-	private static LogicalModelFormat getFormat(String name) {
+	public static LogicalModelFormat getFormat(String name) {
 
 		String[] t_name = name.split("@");
 		if (t_name.length > 2) {
