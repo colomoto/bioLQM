@@ -73,23 +73,25 @@ public class Colomoto {
 	}
 	
 	public static void help() {
+		String separator = "------------------------------------------------------------------------------------\n";
 		String command = "java -jar LogicalModel.jar";
 		StringBuffer sb = new StringBuffer();
-		sb.append("Usage: ").append(command).append(" [informat");
+		sb.append(separator+"| Usage: \n"+separator);
+		sb.append("# Convert a single file:\n");
+		sb.append(command).append(" [informat");
 		sb.append(FORMAT_SEPARATOR).append("outformat] infile outfile\n");
-		sb.append("  for single file format conversion, where the ");
-		sb.append("import/export file formats \n  are inferred from ");
-		sb.append("file extensions, if not explicitly specified.\n");
-		sb.append("\n");
-		sb.append("Usage: ").append(command).append(" informat");
+
+		sb.append("\n# Convert a group of files:\n");
+		sb.append(command).append(" informat");
 		sb.append(FORMAT_SEPARATOR).append("outformat infile1...infilen outfolder\n");
-		sb.append("  for batch file format conversion, where the ");
-		sb.append("import/export file formats are mandatory.\n");
-		sb.append("\n");
-		sb.append("Usage: ").append(command).append(" -r tool infile\n");
-		sb.append("  to run a tool on a model (import format is inferred from extension)");
-		sb.append("\n");
-		sb.append("List of supported formats:\n");
+		
+		sb.append("\n# Run a tool on an imported model:\n");
+		sb.append(command).append(" -r tool infile\n");
+
+		
+		sb.append("\n\n"+separator+"| Available formats: (use @ to select subformats)\n");
+		sb.append("|   '<'/'>': import / export  ; 'B'/'M' Boolean/Multivalued\n");
+		sb.append(separator);
 		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
 			String cap;
 			if (format.canImport()) {
@@ -126,24 +128,23 @@ public class Colomoto {
 			sb.append(level).append(cap).append(" ").append(format.getID()).append(extra);
 			sb.append("\t").append(format.getName()).append("\n");
 		}
-		sb.append("where:\n");
-		sb.append("  '<' and '>' indicate import and export support capabilities\n");
-		sb.append("  '@' indicates the available subformats\n");
-		sb.append("\n");
-		sb.append("Examples:\n");
-		sb.append("  ").append(command).append(" infile.sbml outfile.ginml\n");
-		sb.append("  ").append(command).append(" sbml").append(FORMAT_SEPARATOR);
-		sb.append("PN@INA infile.xml file.txt\n");
-		sb.append("  ").append(command).append(" sbml").append(FORMAT_SEPARATOR);
-		sb.append("ginml file1.in...filen.in /path/to/outfolder/");
 		
-		sb.append("\n\n");
-		sb.append("List of tools:\n");
+		
+		sb.append("\n\n"+separator+"| Available tools:\n"+separator);
 		for (LogicalModelTool tool: ServiceManager.getManager().getTools()) {
 			String level = tool.supportsMultivalued() ? "M " : "B ";
 			sb.append(level).append(" ").append(tool.getID());
 			sb.append("\t").append(tool.getName()).append("\n");
 		}
+		
+		
+		sb.append("\n\n"+separator+"| Examples:\n"+separator);
+		sb.append(command).append(" infile.sbml outfile.ginml\n");
+		sb.append(command).append(" sbml").append(FORMAT_SEPARATOR);
+		sb.append("PN@INA infile.xml file.txt\n");
+		sb.append(command).append(" sbml").append(FORMAT_SEPARATOR);
+		sb.append("ginml file1.in...filen.in /path/to/outfolder/");
+		sb.append(command).append("-r stable infile.sbml\n");
 		
 		System.out.println(sb);
 	}
