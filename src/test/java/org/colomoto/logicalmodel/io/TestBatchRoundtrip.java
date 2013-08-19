@@ -11,8 +11,10 @@ import java.util.List;
 
 import org.colomoto.TestHelper;
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.LogicalModelComparator;
 import org.colomoto.logicalmodel.ReferenceModels;
 import org.colomoto.logicalmodel.services.ServiceManager;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -79,6 +81,6 @@ public class TestBatchRoundtrip {
 		File f = TestHelper.getTestOutput("io_roundtrips", ioName);
 		format.export(model, new FileOutputStream(f));
 		LogicalModel importedModel = format.importFile(f);
-		// TODO: check if both models are identical
+		Assert.assertTrue( LogicalModelComparator.compare(model, importedModel) );
 	}
 }
