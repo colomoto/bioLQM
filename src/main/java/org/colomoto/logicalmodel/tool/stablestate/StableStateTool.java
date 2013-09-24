@@ -17,7 +17,7 @@ public class StableStateTool extends AbstractTool {
 	}
 
 	@Override
-	public void run(LogicalModel model) throws IOException {
+	public void run(LogicalModel model) {
 		StableStateSearcher ssearcher = new StableStateSearcher(model);
 		int stable = ssearcher.getResult();
 		MDDManager ddm = ssearcher.getMDDManager();
