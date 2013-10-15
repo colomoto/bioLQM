@@ -35,8 +35,16 @@ public class RawFunctionExport {
 			MDDVariable var = variables[idx];
 			writer.write(var+": ");
 			
-			// write a normalised logical function
-			int[] path = searcher.setNode(functions[idx]);
+			int function = functions[idx];
+			
+			// directly write fixed values
+			if (ddmanager.isleaf(function)) {
+				writer.write(""+function);
+				continue;
+			}
+			
+			// write a normalised logical function if the value is not fixed
+			int[] path = searcher.setNode(function);
 			boolean first = true;
 			for (int leaf: searcher) {
 				if (leaf == 0) {

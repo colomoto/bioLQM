@@ -64,8 +64,13 @@ public class RawFunctionImport {
 		for (String s: nodes) {
 			String s_function = m_functions.get(s);
 			if (s_function != null) {
-				FunctionNode fnode = parser.compile(opFactory, s_function);
-				functions[ i ] = fnode.getMDD(ddmanager);;
+				try {
+					int value = Integer.parseInt(s_function);
+					functions[ i ] = value;
+				} catch (NumberFormatException e) {
+					FunctionNode fnode = parser.compile(opFactory, s_function);
+					functions[ i ] = fnode.getMDD(ddmanager);;
+				}
 			}
 			i++;
 		}
