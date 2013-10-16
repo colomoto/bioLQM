@@ -46,39 +46,47 @@ public class RawFunctionExport {
 			// write a normalised logical function if the value is not fixed
 			int[] path = searcher.setNode(function);
 			boolean first = true;
+			boolean multiple = false;
+			StringBuffer funcBuffer = new StringBuffer();
 			for (int leaf: searcher) {
 				if (leaf == 0) {
 					continue;
 				}
 				
 				if (!first) {
-					writer.write(" | ");
+					funcBuffer.append(") | (");
+					multiple = true;
+				} else {
+					first = false;
 				}
 				
-				writer.write("(");
-				
 				// write each constraint
-				first = true;
+				boolean andFirst = true;
 				for (int i=0 ; i<path.length ; i++) {
 					int cst = path[i];
 					if (cst < 0) {
 						continue;
 					}
 					
-					if (!first) {
-						writer.write(" & ");
+					if (!andFirst) {
+						funcBuffer.append(" & ");
 					}
 					
 					if (cst == 0) {
-						writer.write("!"+variables[i].key);
+						funcBuffer.append("!"+variables[i].key);
 					} else {
 						// FIXME: adapt for multivalued
-						writer.write(variables[i].key.toString());
+						funcBuffer.append(variables[i].key.toString());
 					}
-					first = false;
+					andFirst = false;
 				}
+			}
+			if (multiple) {
+				writer.write("(");
+				writer.write(funcBuffer.toString());
 				writer.write(")");
-				first = false;
+			} else {
+				writer.write(funcBuffer.toString());
 			}
 			writer.write("\n");
 		}
