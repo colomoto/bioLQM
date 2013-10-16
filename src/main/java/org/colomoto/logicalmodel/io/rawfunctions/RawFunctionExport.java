@@ -39,7 +39,7 @@ public class RawFunctionExport {
 			
 			// directly write fixed values
 			if (ddmanager.isleaf(function)) {
-				writer.write(""+function);
+				writer.write(function+"\n");
 				continue;
 			}
 			
