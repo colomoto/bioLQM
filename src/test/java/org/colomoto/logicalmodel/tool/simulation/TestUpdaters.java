@@ -9,6 +9,7 @@ import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.tool.simulation.updater.AsynchronousUpdater;
+import org.colomoto.logicalmodel.tool.simulation.updater.BlockSequentialUpdater;
 import org.colomoto.logicalmodel.tool.simulation.updater.SequentialUpdater;
 import org.colomoto.logicalmodel.tool.simulation.updater.SynchronousUpdater;
 import org.colomoto.mddlib.MDDManager;
@@ -36,6 +37,38 @@ public class TestUpdaters {
 		int fa = va.getNode(0, 1);
 		int fb = vb.getNode(0, 1);
 		functions[2] = MDDBaseOperators.AND.combine(manager, fa, fb);
+		
+		return new LogicalModelImpl(vars, manager, functions);
+	}
+	
+	private LogicalModel getOtherModel() {
+		// build a list of variables and functions for a model
+		List<NodeInfo> vars = new ArrayList<NodeInfo>();
+		vars.add(new NodeInfo("A"));
+		vars.add(new NodeInfo("B"));
+		vars.add(new NodeInfo("C"));
+		vars.add(new NodeInfo("D"));
+		vars.add(new NodeInfo("E"));
+		
+		MDDManager manager = new MDDStoreImpl(vars, 2);
+		int[] functions = new int[vars.size()];
+		MDDVariable va = manager.getVariableForKey(vars.get(0));
+		MDDVariable vb = manager.getVariableForKey(vars.get(1));
+		MDDVariable vc = manager.getVariableForKey(vars.get(2));
+		MDDVariable vd = manager.getVariableForKey(vars.get(3));
+		MDDVariable ve = manager.getVariableForKey(vars.get(4));
+		int fa = va.getNode(0, 1);
+		int fna = va.getNode(1, 0);
+		int fb = vb.getNode(0, 1);
+		int fnb = vb.getNode(1,0);
+		int fc = vc.getNode(0, 1);
+		int fd = vd.getNode(0, 1);
+
+		functions[0] = fa;
+		functions[1] = MDDBaseOperators.AND.combine(manager, fa, fc);
+		functions[2] = fnb;
+		functions[3] = fna;
+		functions[4] = MDDBaseOperators.OR.combine(manager, fb, fd);
 		
 		return new LogicalModelImpl(vars, manager, functions);
 	}
@@ -83,16 +116,7 @@ public class TestUpdaters {
 	@Test
 	public void testBlockSequentialUpdater() throws IOException {
 		
-		// Get the model
-		RawFunctionImport lectura = new RawFunctionImport();
-		File f = new File ("simpleFunctions.txt");
-		try {
-			lectura.parse(f);
-		} catch (FileNotFoundException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		LogicalModel model = lectura.getModel();
+		LogicalModel model = getOtherModel();
 		
 		// create the block sequential scheme
 		Integer [] scheme = {1,2,1,1,2};
