@@ -79,6 +79,76 @@ public class TestUpdaters {
 
 		Assert.assertEquals(false, it.hasNext());
 	}
+	
+	@Test
+	public void testBlockSequentialUpdater() throws IOException {
+		
+		// Get the model
+		RawFunctionImport lectura = new RawFunctionImport();
+		File f = new File ("simpleFunctions.txt");
+		try {
+			lectura.parse(f);
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		LogicalModel model = lectura.getModel();
+		
+		// create the block sequential scheme
+		Integer [] scheme = {1,2,1,1,2};
+		LogicalModelUpdater updater = new BlockSequentialUpdater(model,scheme);
+		byte[] state = {1,1,1,1,1};
+		updater.setState(state);
+		
+		Iterator<byte[]> it = updater.iterator();
+		Assert.assertEquals(true, it.hasNext());
+		byte[] next = it.next();
+		Assert.assertEquals(1, next[0]);
+		Assert.assertEquals(0, next[1]);
+		Assert.assertEquals(0, next[2]);
+		Assert.assertEquals(0, next[3]);
+		Assert.assertEquals(0, next[4]);
+
+		Assert.assertEquals(false, it.hasNext());
+		
+		
+		Integer [] scheme1 = {1,1,1,1,2};
+		updater = new BlockSequentialUpdater(model,scheme1);
+		updater.setState(state);
+		
+		it = updater.iterator();
+		Assert.assertEquals(true, it.hasNext());
+		next = it.next();
+		Assert.assertEquals(1, next[0]);
+		Assert.assertEquals(1, next[1]);
+		Assert.assertEquals(0, next[2]);
+		Assert.assertEquals(0, next[3]);
+		Assert.assertEquals(1, next[4]);
+
+		Assert.assertEquals(false, it.hasNext());
+		
+		Integer [] scheme2 = {1,2,3,4,5};
+		updater = new BlockSequentialUpdater(model,scheme2);
+		updater.setState(state);
+		
+		LogicalModelUpdater updater1 = new SequentialUpdater(model);
+		updater1.setState(state);
+		
+		Iterator<byte[]> it1 = updater1.iterator();
+		Assert.assertEquals(true, it1.hasNext());
+		byte[] next1 = it1.next();
+		
+		it = updater.iterator();
+		Assert.assertEquals(true, it.hasNext());
+		next = it.next();
+		
+		Assert.assertEquals(next1[0], next[0]);
+		Assert.assertEquals(next1[1], next[1]);
+		Assert.assertEquals(next1[2], next[2]);
+		Assert.assertEquals(next1[3], next[3]);
+		Assert.assertEquals(next1[4], next[4]);
+		
+	}
 
 	@Test
 	public void testSequentialUpdater() throws IOException {
