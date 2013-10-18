@@ -119,7 +119,7 @@ public class TestUpdaters {
 		LogicalModel model = getOtherModel();
 		
 		// create the block sequential scheme
-		Integer [] scheme = {1,2,1,1,2};
+		int[] scheme = {1,2,1,1,2};
 		LogicalModelUpdater updater = new BlockSequentialUpdater(model,scheme);
 		byte[] state = {1,1,1,1,1};
 		updater.setState(state);
@@ -136,7 +136,7 @@ public class TestUpdaters {
 		Assert.assertEquals(false, it.hasNext());
 		
 		
-		Integer [] scheme1 = {1,1,1,1,2};
+		int[] scheme1 = {1,1,1,1,2};
 		updater = new BlockSequentialUpdater(model,scheme1);
 		updater.setState(state);
 		
@@ -151,7 +151,7 @@ public class TestUpdaters {
 
 		Assert.assertEquals(false, it.hasNext());
 		
-		Integer [] scheme2 = {1,2,3,4,5};
+		int[] scheme2 = {1,2,3,4,5};
 		updater = new BlockSequentialUpdater(model,scheme2);
 		updater.setState(state);
 		

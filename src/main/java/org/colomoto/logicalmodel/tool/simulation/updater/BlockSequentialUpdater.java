@@ -1,16 +1,9 @@
 package org.colomoto.logicalmodel.tool.simulation.updater;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.mddlib.MDDManager;
 
 /**
  * Updater for a block-sequential scheme: there are groups of nodes updated in 
@@ -31,93 +24,74 @@ import org.colomoto.mddlib.MDDManager;
  * 
  * @author Francisco Plana
  */
-
 public class BlockSequentialUpdater extends AbstractUpdater {
 	
-	private Integer [] sizes;
-	private final List<List <Integer> > scheme = new ArrayList<List <Integer>>();
-	private int length;
+	private final List<int[]> blocks;
 
-	public BlockSequentialUpdater(LogicalModel model, Integer [] o) {
+	public BlockSequentialUpdater(LogicalModel model, int[] o) {
 		super(model);
-		generate_scheme(o);
+		blocks = generate_scheme(o);
 	}
 
-	/*
-	 * this method converts the Integer Array provided by the user
-	 * into a list of lists, which every sublist stores the IDs of
-	 * nodes updated synchronously at some time, the sublists
-	 * are ordered in an ascendent way according to the updating time
-	 * 
-	 * the array sizes stores the size of every sublist
-	 * 
-	 * the int length is the amount of blocks (sublists) in the list scheme
+	/**
+	 * Converts the integer array provided by the user into a list of
+	 * integer arrays. Each subarray stores the IDs of nodes in a separate block,
+	 * which will be updated synchronously.
+	 * these arrays are ordered in an ascendent way according to the updating time.
+	 *
+	 * @param o the original array, assigning a block to each component.
 	 */
-	
-	private void generate_scheme(Integer[] o) {
+	private static List<int[]> generate_scheme(int[] o) {
 		
-		List<Integer> L = Arrays.asList(o);
-		
+		List<int[]> blocks = new ArrayList<int[]>();
+		if (o.length < 1) {
+			return blocks;
+		}
+
 		/* 
 		 * The following part gets the maximum and minimum time 
 		 * of the array o, these are the limits that time points
 		 * can take during 1 update sequence; 
 		 */ 
-		
-		Integer MAX = Collections.max(L);
-		Integer MIN = Collections.min(L);
-		
-		int size = MAX - MIN + 1;
-		sizes = new Integer [size];
-		
-		int abs_index, rel_index;
-		List <Integer> aux;
-		
-		// this counts the amount of nodes in every sublist
-		int counter;
-		
-		// Iterate over the update time values in ascendent order
-		for (int i = MIN ; i <= MAX ; i++) {
-			
-			// create the sublist of nodes updated at time i
-			List<Integer> s_list = new ArrayList<Integer>();
-			
-			counter = 0;
-			
-			// The following part gets every appearance of index i in L
-			
-			abs_index = 0;
-			aux = L;
-			if (L.indexOf(i) == -1)
-				continue;
-			else {
-				while(true) {
-			
-					rel_index = aux.indexOf(i);
-					
-					// abs_index+rel_index is the index of the current node updated at time i 
-				
-					s_list.add( abs_index + rel_index );
-					counter++;
-				
-					// update the indexes to continue processing other node (or time)
-					
-					abs_index++;
-					abs_index += rel_index;
-					aux=L.subList( abs_index , L.size() );
-					if (aux.contains(i))
-						continue;
-					else break;
-				}
+		int max = o[0];
+		int min = o[0];
+		for (int v: o) {
+			if (v > max) {
+				max = v;
+			} else if (v < min) {
+				min = v;
 			}
-			
-			this.sizes[i-MIN] = counter;
-			this.scheme.add(s_list);
-			
 		}
 		
-		this.length = scheme.size();
-		
+		// Iterate over the update time values in ascendent order
+		for (int t = min ; t <= max ; t++) {
+			
+			// create the sublist of nodes updated at time t
+			List<Integer> s_list = new ArrayList<Integer>();
+			
+			// The following part gets every appearance of index t in o
+			int idx = 0;
+			for (int v: o) {
+				if (v == t) {
+					s_list.add(idx);
+				}
+				idx++;
+			}
+			
+			// add the selected indices to the list of blocks
+			int nb_components = s_list.size();
+			if (nb_components > 0) {
+				int[] block = new int[nb_components];
+				idx = 0;
+				for (int v: s_list) {
+					block[idx] = v;
+					idx++;
+				}
+				blocks.add(block);
+			}
+		}
+
+		return blocks;
 	}
 
 	@Override
@@ -141,33 +115,23 @@ public class BlockSequentialUpdater extends AbstractUpdater {
 		 */
 		byte[] prev = nextstate;
 		
-		List <Integer> aux;
-		int k_aux;
-		
 		boolean changed = false;
 		
 		// Iterate over the blocks (update times) in the list scheme
-		
-		for(int i = 0 ; i <this.length ; i++) {
-			
-			aux = scheme.get(i); 
+		for(int[] block: blocks) {
 			
 			// Iterate over the nodes in the block i
-			for(int j=0 ; j< this.sizes[i] ; j++) {
-				
-				k_aux=aux.get(j);
+			for(int k_aux: block) {
 				
 				/*
 				 * if there is a change in the previous state, we apply it on the 
 				 * next state
 				 */
-				
 				int change = nodeChange(prev, k_aux);
 				if (change != 0) {
 					nextstate[k_aux] += change;
 					changed = true;
 				}
-				
 			}
 			
 			/*
