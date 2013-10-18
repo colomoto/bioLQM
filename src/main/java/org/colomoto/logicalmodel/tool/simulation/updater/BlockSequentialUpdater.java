@@ -27,10 +27,14 @@ import org.colomoto.logicalmodel.LogicalModel;
 public class BlockSequentialUpdater extends AbstractUpdater {
 	
 	private final List<int[]> blocks;
+	
+	// cached state to save the current state after updating each block
+	private final byte[] tmp_state;
 
 	public BlockSequentialUpdater(LogicalModel model, int[] o) {
 		super(model);
 		blocks = generate_scheme(o);
+		tmp_state = new byte[o.length];
 	}
 
 	/**
@@ -108,17 +112,13 @@ public class BlockSequentialUpdater extends AbstractUpdater {
 		 */
 		byte[] nextstate = state.clone();
 		
-		/*
-		 * this is an auxiliar state vector used to store 
-		 * the previous state over which the updates in the following
-		 * group of nodes of the scheme are applied
-		 */
-		byte[] prev = nextstate;
-		
 		boolean changed = false;
 		
 		// Iterate over the blocks (update times) in the list scheme
 		for(int[] block: blocks) {
+			
+			// save the state before this block
+			System.arraycopy(nextstate, 0, tmp_state, 0, nextstate.length);
 			
 			// Iterate over the nodes in the block i
 			for(int k_aux: block) {
@@ -127,18 +127,12 @@ public class BlockSequentialUpdater extends AbstractUpdater {
 				 * if there is a change in the previous state, we apply it on the 
 				 * next state
 				 */
-				int change = nodeChange(prev, k_aux);
+				int change = nodeChange(tmp_state, k_aux);
 				if (change != 0) {
 					nextstate[k_aux] += change;
 					changed = true;
 				}
 			}
-			
-			/*
-			 * The current nextstate is the previous state when updating
-			 * nodes belonging to the next group of nodes
-			 */
-			prev = nextstate;
 		}
 		
 		if (changed) {

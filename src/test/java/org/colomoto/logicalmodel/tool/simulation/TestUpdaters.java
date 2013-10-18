@@ -131,7 +131,7 @@ public class TestUpdaters {
 		Assert.assertEquals(0, next[1]);
 		Assert.assertEquals(0, next[2]);
 		Assert.assertEquals(0, next[3]);
-		Assert.assertEquals(0, next[4]);
+		Assert.assertEquals(1, next[4]);
 
 		Assert.assertEquals(false, it.hasNext());
 		
