@@ -31,14 +31,6 @@ public class BoolSimImport {
 		while(scanner.hasNext()) {
 			String curLine = scanner.nextLine();
 
-			// sanity check for character that would mess up with the function parser
-			char[] invalidChars = {'|', '(', ')', '!'};
-			for (char c: invalidChars) {
-				if (curLine.indexOf(c) >= 0) {
-					throw new RuntimeException("Invalid character '"+c+"' in: "+curLine);
-				}
-			}
-
 			// find the attribution symbol and sign of the function
 			int positive = 0;
 			int pos = curLine.indexOf("->");
@@ -53,6 +45,14 @@ public class BoolSimImport {
 			String s_function = curLine.substring(0, pos).trim();
 			String s_id = curLine.substring(pos+2).trim();
 			
+			// sanity check for character that would mess up with the function parser
+			char[] invalidChars = {'|', '(', ')', '!'};
+			for (char c: invalidChars) {
+				if (s_function.indexOf(c) >= 0) {
+					throw new RuntimeException("Invalid character '"+c+"' in: "+s_function);
+				}
+			}
+
 			// find all identifiers: some may not have a defined function
 			String[] t_nodes = s_function.split("&");
 			for (String node: t_nodes) {
@@ -97,6 +97,7 @@ public class BoolSimImport {
 		for (String s: nodes) {
 			String[] t_function = m_functions.get(s);
 			if (t_function == null) {
+				i++;
 				continue;
 			}
 			
