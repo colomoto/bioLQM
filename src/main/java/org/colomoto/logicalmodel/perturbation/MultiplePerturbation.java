@@ -31,8 +31,13 @@ public class MultiplePerturbation<P extends LogicalModelPerturbation> extends Ab
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		boolean first = true;
 		for (LogicalModelPerturbation p: perturbations) {
-			sb.append(" ");
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
 			sb.append(p.toString());
 		}
 		return sb.toString();
