@@ -95,11 +95,12 @@ public class ReduceOperation {
 		int index = -1;
 		for (int i=0 ; i<t_ori.length ; i++) {
 			MDDVariable nvar = ddmanager.getNodeVariable(t_ori[i]);
-			if (nvar != null && bestVar.after(nvar)) { 
-				// also update when equal to avoid stupid optimisations...
-				bestVar = nvar;
-				index = i;
-			}
+			if (nvar == null || nvar.after(bestVar)) {
+                continue;
+            }
+            // also update when equal to avoid stupid optimisations...
+            bestVar = nvar;
+            index = i;
 		}
 		
 		int[] next = new int[bestVar.nbval];

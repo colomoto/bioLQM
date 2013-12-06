@@ -174,8 +174,11 @@ public class ModelReducer {
 	 * 
 	 * @return a new LogicalModel
 	 */
-	public LogicalModel getModel() {
-		
+    public LogicalModel getModel() {
+        return getModel(true);
+    }
+
+    public LogicalModel getModel(boolean includeExtra) {
 		int countCore = 0;
 		boolean[] inCore = new boolean[allFunctions.length];
 		for (int i=0 ; i<variables.length ; i++) {
@@ -189,9 +192,9 @@ public class ModelReducer {
 		
 		// prepare the content of the new model
 		int[] coreFunctions = new int[countCore];
-		int[] extraFunctions = new int[allFunctions.length - countCore];
 		List<MDDVariable> newVariables = new ArrayList<MDDVariable>();
 		List<NodeInfo> coreNodes = new ArrayList<NodeInfo>(countCore);
+        int[] extraFunctions = new int[allFunctions.length - countCore];
 		List<NodeInfo> extraNodes = new ArrayList<NodeInfo>(extraFunctions.length);
 		
 		// add each node/function in core or extra
@@ -209,7 +212,10 @@ public class ModelReducer {
 		}
 
 		MDDManager newDDManager = ddmanager.getManager(newVariables);
-		return new LogicalModelImpl(newDDManager, coreNodes, coreFunctions, extraNodes, extraFunctions);
+        if (includeExtra) {
+            return new LogicalModelImpl(newDDManager, coreNodes, coreFunctions, extraNodes, extraFunctions);
+        }
+        return new LogicalModelImpl(coreNodes, newDDManager, coreFunctions);
 	}
 }
 
