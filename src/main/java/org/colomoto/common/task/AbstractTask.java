@@ -21,7 +21,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
      *
      * @return the result of the computation
      */
-    abstract public T doGetResult();
+    abstract protected T doGetResult();
 
     @Override
     public synchronized T getResult() {

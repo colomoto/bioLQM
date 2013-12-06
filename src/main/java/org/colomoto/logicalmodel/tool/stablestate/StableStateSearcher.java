@@ -2,6 +2,7 @@ package org.colomoto.logicalmodel.tool.stablestate;
 
 import java.util.List;
 
+import org.colomoto.common.task.AbstractTask;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
@@ -14,11 +15,10 @@ import org.colomoto.mddlib.PathSearcher;
  * 
  * @author Aurelien Naldi
  */
-public class StableStateSearcher extends Thread {
+public class StableStateSearcher extends AbstractTask<Integer> {
 
 	private final LogicalModel model;
-	private int result = -1;
-	
+
 	/**
 	 * Create a new stable state searcher.
 	 * Not that the provided model will be used directly for stable state search:
@@ -30,44 +30,33 @@ public class StableStateSearcher extends Thread {
 		this.model = model;
 	}
 
-	@Override
-	public void run() {
-		this.result = -1;
-		Iterable<Integer> ordering = new StructuralNodeOrderer(model);
-		StableOperation sop = new StableOperation();
-		int[] mdds = model.getLogicalFunctions();
+    @Override
+    protected Integer doGetResult() {
+        Iterable<Integer> ordering = new StructuralNodeOrderer(model);
+        StableOperation sop = new StableOperation();
+        int[] mdds = model.getLogicalFunctions();
 
-		// loop over the existing nodes!
-		int prev=1;
-		int result=prev;
-		List<NodeInfo> nodes = model.getNodeOrder();
-		MDDManager ddmanager = model.getMDDManager();
-		for (int i: ordering) {
-			NodeInfo node = nodes.get(i);
-			prev = result;
-			MDDVariable var = ddmanager.getVariableForKey(node);
-			int f = mdds[i];
-			result = sop.getStable(ddmanager, prev, f, var);
-			ddmanager.free(prev);
-		}
-		
-		this.result = result;
-	}
-	
-	/**
-	 * Get the MDD representing stable states.
-	 * The corresponding MDD is stored in the MDDManager from the model.
-	 * This will run the computation if it was not done before, otherwise it will just return the cached result.
-	 * 
-	 * @return a MDD ID
-	 */
-	public int getResult() {
-		if (result < 0) {
-			run();
-		}
-		return result;
-	}
-	
+        // loop over the existing nodes!
+        int prev=1;
+        int result=prev;
+        List<NodeInfo> nodes = model.getNodeOrder();
+        MDDManager ddmanager = model.getMDDManager();
+        for (int i: ordering) {
+            NodeInfo node = nodes.get(i);
+            prev = result;
+            MDDVariable var = ddmanager.getVariableForKey(node);
+            int f = mdds[i];
+            result = sop.getStable(ddmanager, prev, f, var);
+            ddmanager.free(prev);
+            if (canceled) {
+                ddmanager.free(result);
+                return null;
+            }
+        }
+
+        return result;
+    }
+
 	/**
 	 * Convenience method to retrieve the MDDManager in which the result is stored.
 	 * 
