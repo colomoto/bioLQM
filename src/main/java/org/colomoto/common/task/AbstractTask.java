@@ -24,12 +24,12 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
     abstract protected T doGetResult();
 
     @Override
-    public synchronized T getResult() {
+    public T getResult() {
         return result;
     }
 
     @Override
-    public synchronized TaskStatus getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
@@ -56,7 +56,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
     }
 
     @Override
-    public synchronized void cancel() {
+    public void cancel() {
         if (status == TaskStatus.RUNNING) {
             this.canceled = true;
         }
