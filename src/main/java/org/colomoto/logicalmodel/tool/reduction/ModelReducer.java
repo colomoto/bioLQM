@@ -58,9 +58,23 @@ public class ModelReducer {
 
 	/**
 	 * Find outputs and pseudo-outputs in the model and remove them all.
+     * This will preserve fixed inputs.
+     *
 	 * @return the number of removed elements (outputs and pseudo-outputs)
+     * @see #removePseudoOutputs(boolean)
 	 */
 	public int removePseudoOutputs() {
+        return this.removePseudoOutputs(true);
+    }
+
+    /**
+     * Find outputs and pseudo-outputs in the model and remove them all.
+     * Fixed inputs can be preserved or removed as well.
+     *
+     * @param preserveFixedInputs
+     * @return the number of removed elements (outputs and pseudo-outputs)
+     */
+    public int removePseudoOutputs(boolean preserveFixedInputs) {
 		// count targets of every component and build lists of regulators
 		int[] targetCount = new int[allFunctions.length];
 		Set<Integer>[] regulators = new Set[allFunctions.length];
@@ -103,6 +117,9 @@ public class ModelReducer {
 				Set<Integer> regs = regulators[idx];
 				if (regs != null) {
 					for (int regIdx: regulators[idx]) {
+                        if (preserveFixedInputs && ddmanager.isleaf(allFunctions[regIdx])) {
+                            continue;
+                        }
 						targetCount[regIdx]--;
 						if (targetCount[regIdx] == 0) {
 							pseudoOutputs.add(regIdx);
@@ -120,7 +137,7 @@ public class ModelReducer {
 		
 		return pseudoOutputs.size();
 	}
-	
+
 	/**
 	 * Remove a selected variable.
 	 * 
@@ -179,6 +196,10 @@ public class ModelReducer {
     }
 
     public LogicalModel getModel(boolean includeExtra) {
+        return getModel(true, includeExtra);
+    }
+
+    public LogicalModel getModel(boolean preserveFixedInputs, boolean includeExtra) {
 		int countCore = 0;
 		boolean[] inCore = new boolean[allFunctions.length];
 		for (int i=0 ; i<variables.length ; i++) {
@@ -187,7 +208,10 @@ public class ModelReducer {
 			if (varTargets != null && varTargets.size() > 0) {
 				inCore[i] = true;
 				countCore++;
-			}
+			} else if (preserveFixedInputs && ddmanager.isleaf(allFunctions[i])) {
+                inCore[i] = true;
+                countCore++;
+            }
 		}
 		
 		// prepare the content of the new model
