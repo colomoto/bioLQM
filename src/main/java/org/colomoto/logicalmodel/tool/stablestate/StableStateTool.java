@@ -19,7 +19,7 @@ public class StableStateTool extends AbstractTool {
 	@Override
 	public void run(LogicalModel model) {
 		StableStateSearcher ssearcher = new StableStateSearcher(model);
-		int stable = ssearcher.getResult();
+		int stable = ssearcher.call();
 		MDDManager ddm = ssearcher.getMDDManager();
 		
 		PathSearcher psearcher = new PathSearcher(ddm, 1);
