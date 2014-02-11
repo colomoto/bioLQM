@@ -21,7 +21,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
      *
      * @return the result of the computation
      */
-    abstract protected T doGetResult();
+    abstract protected T doGetResult() throws Exception;
 
     @Override
     public T getResult() {
@@ -34,7 +34,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
     }
 
     @Override
-    public synchronized T call() {
+    public synchronized T call() throws Exception {
         if (this.status == TaskStatus.RUNNING) {
             throw new RuntimeException("Should not be able to call a running task");
         }
@@ -70,7 +70,11 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
 
     @Override
     public void run() {
-        T result = call();
+        try {
+            T result = call();
+        } catch (Exception e) {
+            this.status = TaskStatus.ERROR;
+        }
 
         if (listener != null) {
             listener.taskUpdated(this);

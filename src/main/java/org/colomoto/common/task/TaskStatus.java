@@ -7,5 +7,5 @@ package org.colomoto.common.task;
  */
 public enum TaskStatus {
 
-    STOPPED, RUNNING, CANCELED, FINISHED;
+    STOPPED, RUNNING, CANCELED, FINISHED, ERROR;
 }
