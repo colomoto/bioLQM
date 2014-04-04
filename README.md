@@ -37,7 +37,7 @@ For now it supports the following formats (< and > denote import/export capabili
   * <> [SBML-qual](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
   * <> raw logical functions
   * <> boolsim
-  *  > [GINML](http://gin.univ-mrs.fr/GINsim/ginml.html)
+  *  > [GINML](http://doc.ginsim.org/format-ginml.html)
   *  > [GNA](http://ibis.inrialpes.fr/article122.html)
   *  > Petri net (INA, PNML, APNN)
 
@@ -60,8 +60,8 @@ these common tools and exports. Further work will be needed to share some pieces
 Where does it come from?
 ------------------------
 
-Most of this comes from a refactoring of [GINsim](http://gin.univ-mrs.fr/GINsim) to cleanup its core and enable more code sharing.
-Discussions among [CoLoMoTo](www.colomoto.org) participants showed a growing interest for improved interoperability.
+Most of this comes from a refactoring of [GINsim](http://www.ginsim.org) to cleanup its core and enable more code sharing.
+Discussions among [CoLoMoTo](http://www.colomoto.org) participants showed a growing interest for improved interoperability.
 This motivated the [qualitative extension](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
 for SBML and this common toolbox.
 
