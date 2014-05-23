@@ -7,7 +7,7 @@ import org.colomoto.logicalmodel.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-public class SynchronousUpdater extends AbstractUpdater {
+public class SynchronousUpdater extends AbstractSingleSuccessorUpdater {
 
 	/**
 	 * Create a new synchronous updater
@@ -19,17 +19,16 @@ public class SynchronousUpdater extends AbstractUpdater {
 	}
 
 	@Override
-	public byte[] buildNext() {
+	public byte[] getSuccessor(byte[] state) {
 		byte[] nextstate = null;
-		while (status < size) {
-			int change = nodeChange(state, status);
+		for (int idx=0 ; idx < size ; idx++) {
+			int change = nodeChange(state, idx);
 			if (change != 0) {
 				if (nextstate == null) {
 					nextstate = state.clone();
 				}
-				nextstate[status] += change;
+				nextstate[idx] += change;
 			}
-			status++;
 		}
 		return nextstate;
 	}

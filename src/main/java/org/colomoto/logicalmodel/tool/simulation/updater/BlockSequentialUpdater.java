@@ -24,7 +24,7 @@ import org.colomoto.logicalmodel.LogicalModel;
  * 
  * @author Francisco Plana
  */
-public class BlockSequentialUpdater extends AbstractUpdater {
+public class BlockSequentialUpdater extends AbstractSingleSuccessorUpdater {
 	
 	private final List<int[]> blocks;
 	
@@ -99,13 +99,7 @@ public class BlockSequentialUpdater extends AbstractUpdater {
 	}
 
 	@Override
-	public byte[] buildNext() {
-		// only build one successor
-		if (status != 0) {
-			return null;
-		}
-		status = 1;
-		
+    public byte[] getSuccessor(byte[] state) {
 		/*
 		 * this the state that will be returned
 		 * here it is initialized to be current basal state

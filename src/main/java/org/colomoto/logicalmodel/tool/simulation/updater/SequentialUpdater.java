@@ -8,12 +8,12 @@ import org.colomoto.logicalmodel.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-public class SequentialUpdater extends AbstractUpdater {
+public class SequentialUpdater extends AbstractSingleSuccessorUpdater {
 
 	private final int[] order;
 	
 	/**
-	 * Create a new synchronous updater, using the default order
+	 * Create a new sequential updater, using the default order
 	 * 
 	 * @param model
 	 */
@@ -26,7 +26,7 @@ public class SequentialUpdater extends AbstractUpdater {
 	}
 	
 	/**
-	 * Create a new synchronous updater, using a custom order
+	 * Create a new sequential updater, using a custom order
 	 * 
 	 * @param model
 	 */
@@ -36,13 +36,7 @@ public class SequentialUpdater extends AbstractUpdater {
 	}
 
 	@Override
-	public byte[] buildNext() {
-		// only build one successor
-		if (status != 0) {
-			return null;
-		}
-		status = 1;
-		
+    public byte[] getSuccessor(byte[] state) {
 		// create the sequential successor
 		byte[] nextstate = state.clone();
 		boolean changed = false;
