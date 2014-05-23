@@ -6,6 +6,8 @@ import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.tool.LogicalModelTool;
 
+import javax.script.ScriptEngine;
+
 /**
  * Simple command-line interface for the CoLoMoTo toolbox.
  * For now, all it does is format conversion.
@@ -20,10 +22,30 @@ public class Colomoto {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
+        ExtensionLoader.loadExtensions("extensions", Colomoto.class);
+
 		if (args.length < 2) {
 			help();
-		} else if ("-r".equals(args[0]) ) {
+        } else if ("-s".equals(args[0]) ) {
+
+            String scriptname = args[1];
+            ScriptEngine engine = null;
+            try {
+                engine = ScriptEngineLoader.loadEngine(scriptname);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+
+            try {
+                // add the launcher variable and actually run the script
+                engine.put("lm", new ScriptLauncher());
+                engine.eval(new java.io.FileReader(scriptname));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if ("-r".equals(args[0]) ) {
 			String toolID = args[1].trim();
 			CLIToolRunner runner = new CLIToolRunner(args[1].trim());
 			
@@ -84,12 +106,15 @@ public class Colomoto {
 		sb.append("\n# Convert a group of files:\n");
 		sb.append(command).append(" informat");
 		sb.append(FORMAT_SEPARATOR).append("outformat infile1...infilen outfolder\n");
-		
-		sb.append("\n# Run a tool on an imported model:\n");
-		sb.append(command).append(" -r tool infile\n");
 
-		
-		sb.append("\n\n"+separator+"| Available formats: (use @ to select subformats)\n");
+        sb.append("\n# Run a tool on an imported model:\n");
+        sb.append(command).append(" -r tool infile\n");
+
+        sb.append("\n# Run a script:\n");
+        sb.append(command).append(" -s script.js [arguments...]\n");
+
+
+        sb.append("\n\n"+separator+"| Available formats: (use @ to select subformats)\n");
 		sb.append("|   '<'/'>': import / export  ; 'B'/'M' Boolean/Multivalued\n");
 		sb.append(separator);
 		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
