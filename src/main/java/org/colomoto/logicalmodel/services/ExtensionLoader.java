@@ -5,16 +5,21 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 /**
- * Helper class to support extensions
+ * Helper class to support extensions.
+ *
+ * @author Aurelien Naldi
  */
 public class ExtensionLoader {
 
     private static ClassLoader cld = null;
 
     /**
-     * Retrieve a classloader supporting extensions
+     * Retrieve a classloader covering the extensions.
+     *
      * @return the extended classloader
      */
     public static ClassLoader getClassLoader() {
@@ -29,7 +34,7 @@ public class ExtensionLoader {
      */
     public static void loadExtensions(String ename, Class cl) {
         if (cld != null) {
-            System.err.print("Extensions are already loaded");
+            System.err.println("Extensions are already loaded");
             return;
         }
 
@@ -73,6 +78,26 @@ public class ExtensionLoader {
             cld = cl.getClassLoader();
         }
 
+    }
+
+    /**
+     * Provide a ServiceLoader which will use the extended classpath if available.
+     *
+     * @param cl the class to load
+     * @return a ServiceLoader: iterable list of matching classes
+     */
+    public static ServiceLoader load(Class cl) {
+        return ServiceLoader.load(cl, getClassLoader());
+    }
+
+    /**
+     * Discover services using the extended classpath.
+     *
+     * @param cl the class to load
+     * @return an iterator over the matching classes
+     */
+    public static Iterator iterator(Class cl) {
+        return load(cl).iterator();
     }
 
 }
