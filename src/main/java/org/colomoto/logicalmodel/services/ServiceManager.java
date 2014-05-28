@@ -42,7 +42,7 @@ public class ServiceManager {
 	private ServiceManager() {
 		formats = new ArrayList<LogicalModelFormat>();
 		
-        Iterator<LogicalModelFormat> service_list = ServiceLoader.load( LogicalModelFormat.class).iterator(); 
+        Iterator<LogicalModelFormat> service_list = ExtensionLoader.iterator( LogicalModelFormat.class);
         while (service_list.hasNext()) {
             try {
             	LogicalModelFormat format = service_list.next();
@@ -58,7 +58,7 @@ public class ServiceManager {
 		
 		tools = new ArrayList<LogicalModelTool>();
 		
-        Iterator<LogicalModelTool> tool_list = ServiceLoader.load( LogicalModelTool.class).iterator(); 
+        Iterator<LogicalModelTool> tool_list = ExtensionLoader.iterator(LogicalModelTool.class);
         while (tool_list.hasNext()) {
             try {
             	LogicalModelTool tool = tool_list.next();

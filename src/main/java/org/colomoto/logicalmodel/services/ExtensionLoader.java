@@ -15,6 +15,7 @@ import java.util.ServiceLoader;
  */
 public class ExtensionLoader {
 
+    private static ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
     private static ClassLoader cld = null;
 
     /**
@@ -23,6 +24,9 @@ public class ExtensionLoader {
      * @return the extended classloader
      */
     public static ClassLoader getClassLoader() {
+        if (cld == null) {
+            return contextLoader;
+        }
         return cld;
     }
 
@@ -52,7 +56,7 @@ public class ExtensionLoader {
         // extend the classpath if needed
         File extensionDir = new File(basedir, "extensions");
         if (!extensionDir.isDirectory()) {
-            cld = cl.getClassLoader();
+            cld = contextLoader;
             return;
         }
 
@@ -68,14 +72,10 @@ public class ExtensionLoader {
                 urls[i++] = f.toURI().toURL();
             }
 
-            for (URL u: urls) {
-                System.out.println("EXT: " + u);
-            }
-            System.out.println();
-            cld = new URLClassLoader(urls);
+            cld = new URLClassLoader(urls, contextLoader);
         } catch (IOException e) {
             System.err.println("Could not load extension files");
-            cld = cl.getClassLoader();
+            cld = contextLoader;
         }
 
     }
