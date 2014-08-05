@@ -16,88 +16,124 @@ import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 
+/**
+ * Imports a file in the Truth Table format into a LogicalModel.
+ * 
+ * @author Pedro T. Monteiro
+ */
 public final class TruthTableImport {
 
 	private final String SEPARATOR = "\\s+";
-	private int maxLines;
 
-	private byte[] getMaxValues(FileReader fr) throws IOException {
-		BufferedReader br = new BufferedReader(fr);
+	/**
+	 * From a BufferedReader it gets the next valid line, ignoring empty lines
+	 * and comments starting with the character '#'.
+	 * 
+	 * @param br
+	 * @return
+	 * @throws IOException
+	 */
+	private String getNextValidLine(BufferedReader br) throws IOException {
 		String line;
-		byte bMax[] = null;
-		int nLines = 0;
-		maxLines = 0;
-
-		// 1st - Checks for max values only
-		do {
-			line = br.readLine();
-		} while (line != null && line.trim().isEmpty());
-		nLines++;
-		String[] saLine = line.split(SEPARATOR);
-		int iN = saLine[0].length();
-		bMax = new byte[iN];
-		do {
-			if (!line.trim().isEmpty()) {
-				saLine = line.split(SEPARATOR);
-				// Looks only at the departing state
-				for (int i = 0; i < iN; i++) {
-					byte val = (byte) Character.getNumericValue(saLine[0]
-							.charAt(i));
-					if (bMax[i] < val)
-						bMax[i] = val;
-				}
-				nLines++;
-			}
-		} while ((line = br.readLine()) != null);
-		br.close();
-
-		if (bMax.length > 0) {
-			maxLines = 1;
-			for (int i = 0; i < bMax.length; i++) {
-				maxLines *= (bMax[i] + 1);
-			}
-			if (nLines < maxLines) {
-				System.err.println("TruthTable incomplete: found " + nLines
-						+ " (" + maxLines + " expected).\nMissing target "
-						+ "states assumed to go towards null state.");
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			if (!line.startsWith("#")) {
+				break;
 			}
 		}
-		return bMax;
+		return line;
+	}
+
+	private boolean isHeader(String line) {
+		return line.matches(".*[a-zA-Z].*");
+	}
+
+	private List<NodeInfo> getNodes(File file) throws IOException {
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+
+		// Get Header node names
+		List<String> nodeNames = new ArrayList<String>();
+		String line = this.getNextValidLine(br);
+		String[] saLine = line.split(SEPARATOR);
+		if (!this.isHeader(line)) {
+			// No header
+			for (int i = 0; i < saLine[0].length(); i++)
+				nodeNames.add("G" + i);
+		} else {
+			// Has header
+			for (String id : saLine)
+				nodeNames.add(id);
+			line = this.getNextValidLine(br);
+		}
+		int nLines = 1;
+
+		// Get node max values
+		saLine = line.split(SEPARATOR);
+		int iN = saLine[0].length();
+		byte[] bMax = new byte[iN];
+		do {
+			for (int i = 0; i < iN; i++) {
+				byte val = (byte) Character
+						.getNumericValue(saLine[0].charAt(i));
+				if (bMax[i] < val)
+					bMax[i] = val;
+			}
+			line = this.getNextValidLine(br);
+			if (line == null)
+				break;
+			nLines++;
+			saLine = line.split(SEPARATOR);
+		} while (true);
+
+		int totalLines = 1;
+		for (int i = 0; i < bMax.length; i++) {
+			totalLines *= (bMax[i] + 1);
+		}
+		if (nLines < totalLines) {
+			System.err.println("TruthTable incomplete: found " + nLines + " ("
+					+ totalLines + " expected).\nMissing target "
+					+ "states assumed to go towards null state.");
+		}
+
+		List<NodeInfo> nodeOrder = new ArrayList<NodeInfo>();
+		for (int i = 0; i < bMax.length; i++) {
+			nodeOrder.add(new NodeInfo(nodeNames.get(i), bMax[i]));
+		}
+
+		br.close();
+		fr.close();
+		return nodeOrder;
 	}
 
 	public LogicalModel getModel(File file) throws IOException {
-		FileReader fr = new FileReader(file);
-		byte[] bMax = getMaxValues(fr);
-		fr.close();
-		fr = new FileReader(file);
-		BufferedReader br = new BufferedReader(fr);
+		List<NodeInfo> nodeOrder = this.getNodes(file);
 
-		List<NodeInfo> nodeOrder = new ArrayList<NodeInfo>();
+		// Create the MDDManager
 		byte max = 0;
-		for (int i = 0; i < bMax.length; i++) {
-			nodeOrder.add(new NodeInfo("G" + i, bMax[i]));
-			if (bMax[i] > max)
-				max = bMax[i];
-		}
-
 		MDDVariableFactory mvf = new MDDVariableFactory();
 		for (NodeInfo node : nodeOrder) {
 			mvf.add(node, (byte) (node.getMax() + 1));
+			if (node.getMax() > max)
+				max = node.getMax();
 		}
 		MDDManager ddmanager = MDDManagerFactory.getManager(mvf, (max + 1));
 
+		// Fill in the MDDs
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+
 		int[] kMDDs = new int[nodeOrder.size()];
 		String line;
-		while ((line = br.readLine()) != null) {
-			if (line.trim().isEmpty())
+		while ((line = this.getNextValidLine(br)) != null) {
+			if (this.isHeader(line))
 				continue;
 			String[] saLine = line.split(SEPARATOR);
 
 			// Get the MDD for that line (source state - saLine[0])
 			int[] state = new int[nodeOrder.size()];
 			for (int j = 0; j < nodeOrder.size(); j++) {
-				state[j] = Character.getNumericValue(saLine[0]
-						.charAt(j));
+				state[j] = Character.getNumericValue(saLine[0].charAt(j));
 			}
 
 			// Update the components (target state - saLine[1])
@@ -111,13 +147,14 @@ public final class TruthTableImport {
 			}
 		}
 		br.close();
+		fr.close();
 		return new LogicalModelImpl(nodeOrder, ddmanager, kMDDs);
 	}
 
 	private int buildPathMDD(MDDManager ddmanager, int[] state, int leaf) {
 		MDDVariable[] ddVariables = ddmanager.getAllVariables();
-		int mddPath = leaf; 
-		for (int i = ddVariables.length - 1; i >= 0 ; i--) {
+		int mddPath = leaf;
+		for (int i = ddVariables.length - 1; i >= 0; i--) {
 			int[] children = new int[ddVariables[i].nbval];
 			children[state[i]] = mddPath;
 			mddPath = ddVariables[i].getNode(children);

@@ -2,6 +2,7 @@ package org.colomoto.logicalmodel.io.truthtable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.AbstractFormat;
@@ -28,4 +29,9 @@ public class TruthTableFormat extends AbstractFormat {
 		return importer.getModel(f);
 	}
 
+	@Override
+	public void export(LogicalModel model, OutputStream out) throws IOException {
+		TruthTableExport tt = new TruthTableExport();
+		tt.export(model, out);
+	}
 }
