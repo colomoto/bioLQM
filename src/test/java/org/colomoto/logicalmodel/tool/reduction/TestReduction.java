@@ -1,14 +1,13 @@
 package org.colomoto.logicalmodel.tool.reduction;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.colomoto.TestHelper;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
+import org.colomoto.logicalmodel.ReferenceModels;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.rawfunctions.TextFunctionFormat;
 import org.colomoto.logicalmodel.services.ServiceManager;
@@ -18,9 +17,7 @@ public class TestReduction {
 
 	@Test
 	public void testCoreReduction() throws IOException {
-		File f = TestHelper.getTestResource("simpleFunctions.txt");
-		LogicalModelFormat format = ServiceManager.getManager().getFormat(TextFunctionFormat.ID);
-		LogicalModel model = format.importFile(f);
+		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
 
 		List<NodeInfo> core = model.getNodeOrder();
 		List<NodeInfo> extra = model.getExtraComponents();
@@ -51,9 +48,7 @@ public class TestReduction {
 	}
 	
 	public void checkOutputReduction(String name, int expectedOutputs, int expectedPseudoOutputs) throws IOException {
-		LogicalModelFormat format = ServiceManager.getManager().getFormat(TextFunctionFormat.ID);
-
-		LogicalModel model = format.importFile(TestHelper.getTestResource(name));
+		LogicalModel model = ReferenceModels.getModel(name);
 		List<NodeInfo> core = model.getNodeOrder();
 		List<NodeInfo> extra = model.getExtraComponents();
 		int nbCore = core.size();

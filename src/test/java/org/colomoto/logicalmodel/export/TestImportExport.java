@@ -14,6 +14,7 @@ import org.colomoto.TestHelper;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
+import org.colomoto.logicalmodel.ReferenceModels;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.ginml.LogicalModel2GINML;
 import org.colomoto.logicalmodel.io.rawfunctions.TextFunctionFormat;
@@ -112,10 +113,8 @@ public class TestImportExport extends TestCase {
 
 	@Test
 	public void testRawFunctionImport() throws IOException {
-		File f = TestHelper.getTestResource("simpleFunctions.txt");
-		LogicalModelFormat format = ServiceManager.getManager().getFormat(TextFunctionFormat.ID);
-		LogicalModel model = format.importFile(f);
-
+		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
+		
 		List<NodeInfo> coreComponents = model.getNodeOrder();
 		
 		assertEquals(5, coreComponents.size());
