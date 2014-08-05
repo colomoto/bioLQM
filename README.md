@@ -40,6 +40,7 @@ For now it supports the following formats (< and > denote import/export capabili
   *  > [GINML](http://doc.ginsim.org/format-ginml.html)
   *  > [GNA](http://ibis.inrialpes.fr/article122.html)
   *  > Petri net (INA, PNML, APNN)
+  * <> [Truth table](http://doc.ginsim.org/format-truthtable.html)
 
 The integration of a filter only requires a simple format declaration class.
 These classes are automatically detected using some java annotations.
