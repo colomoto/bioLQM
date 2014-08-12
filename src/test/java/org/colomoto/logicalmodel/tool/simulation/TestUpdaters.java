@@ -78,22 +78,19 @@ public class TestUpdaters {
 		LogicalModel model = getModel();
 		LogicalModelUpdater updater = new AsynchronousUpdater(model);
 		byte[] state = {0,0,0};
-		updater.setState(state);
-		
-		Iterator<byte[]> it = updater.iterator();
-		Assert.assertEquals(true, it.hasNext());
-		byte[] next = it.next();
+		List<byte[]> successors = updater.getSuccessors(state);
+		Assert.assertEquals(2, successors.size());
+
+		byte[] next = successors.get(0);
 		Assert.assertEquals(1, next[0]);
 		Assert.assertEquals(0, next[1]);
 		Assert.assertEquals(0, next[2]);
 
-		Assert.assertEquals(true, it.hasNext());
-		next = it.next();
-		Assert.assertEquals(0, next[0]);
+        next = successors.get(1);
+        Assert.assertEquals(0, next[0]);
 		Assert.assertEquals(1, next[1]);
 		Assert.assertEquals(0, next[2]);
 
-		Assert.assertEquals(false, it.hasNext());
 	}
 
 	@Test

@@ -1,6 +1,7 @@
 package org.colomoto.logicalmodel.tool.simulation.updater;
 
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.tool.simulation.DeterministicUpdater;
 
 /**
  * Updater for the sequential scheme: all components are updated one after the other in a single successor.
@@ -8,7 +9,7 @@ import org.colomoto.logicalmodel.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-public class SequentialUpdater extends AbstractSingleSuccessorUpdater {
+public class SequentialUpdater extends AbstractSingleSuccessorUpdater implements DeterministicUpdater {
 
 	private final int[] order;
 	
@@ -38,20 +39,17 @@ public class SequentialUpdater extends AbstractSingleSuccessorUpdater {
 	@Override
     public byte[] getSuccessor(byte[] state) {
 		// create the sequential successor
-		byte[] nextstate = state.clone();
-		boolean changed = false;
+        byte[] refstate = state;
+		byte[] nextstate = null;
 		for (int idx: order) {
-			int change = nodeChange(nextstate, idx);
-			if (change != 0) {
-				nextstate[idx] += change;
-				changed = true;
+            int change = nodeChange(refstate, idx);
+            if (change != 0) {
+                nextstate = update(refstate, idx, change, nextstate);
+                refstate = nextstate;
 			}
 		}
 		
-		if (changed) {
-			return nextstate;
-		}
-		return null;
+        return nextstate;
 	}
 
 }

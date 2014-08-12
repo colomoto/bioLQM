@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.tool.simulation.DeterministicUpdater;
 
 /**
  * Updater for a block-sequential scheme: there are groups of nodes updated in 
@@ -24,7 +25,7 @@ import org.colomoto.logicalmodel.LogicalModel;
  * 
  * @author Francisco Plana
  */
-public class BlockSequentialUpdater extends AbstractSingleSuccessorUpdater {
+public class BlockSequentialUpdater extends AbstractSingleSuccessorUpdater implements DeterministicUpdater {
 	
 	private final List<int[]> blocks;
 	

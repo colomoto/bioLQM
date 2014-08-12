@@ -1,6 +1,7 @@
 package org.colomoto.logicalmodel.tool.simulation.updater;
 
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.tool.simulation.RandomUpdater;
 
 import java.util.Random;
 
@@ -9,7 +10,7 @@ import java.util.Random;
  *
  * @author Aurelien Naldi
  */
-public class WeightedRandomUpdater extends AbstractSingleSuccessorUpdater {
+public class WeightedRandomUpdater extends AbstractRandomUpdater {
 
     // the weights associated to each component
     private final int[] weights;
@@ -17,9 +18,6 @@ public class WeightedRandomUpdater extends AbstractSingleSuccessorUpdater {
     // the changes and weights which are active for the current step
     private final int[] step_weights;
     private final int[][] step_changes;
-
-    // random generator
-    private final Random random = new Random();
 
 	/**
 	 * Create a new random updater
@@ -92,7 +90,7 @@ public class WeightedRandomUpdater extends AbstractSingleSuccessorUpdater {
 
         int s = 0;
         int idx = 0;
-        int r = random.nextInt(totalweight);
+        int r = getRandomInt(totalweight);
         for (  ; idx<nb_changes ; idx++) {
             s += this.step_weights[idx];
             if (s > r) {
