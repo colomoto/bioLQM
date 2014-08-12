@@ -1,9 +1,6 @@
 package org.colomoto.logicalmodel.tool.simulation.updater;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.tool.simulation.RandomUpdater;
-
-import java.util.Random;
 
 /**
  * Updater picking a random successor in the asynchronous scheme, with optional weight.
@@ -46,7 +43,7 @@ public class WeightedRandomUpdater extends AbstractRandomUpdater {
     }
 
 	@Override
-	public byte[] getSuccessor(byte[] state) {
+	public byte[] pickSuccessor(byte[] state) {
         int nb_changes = 0;
         int totalweight = 0;
 
@@ -90,7 +87,7 @@ public class WeightedRandomUpdater extends AbstractRandomUpdater {
 
         int s = 0;
         int idx = 0;
-        int r = getRandomInt(totalweight);
+        int r = random.nextInt(totalweight);
         for (  ; idx<nb_changes ; idx++) {
             s += this.step_weights[idx];
             if (s > r) {

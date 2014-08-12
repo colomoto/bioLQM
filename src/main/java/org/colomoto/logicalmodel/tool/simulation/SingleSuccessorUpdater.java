@@ -11,11 +11,4 @@ package org.colomoto.logicalmodel.tool.simulation;
  */
 public interface SingleSuccessorUpdater extends LogicalModelUpdater {
 
-	/**
-	 * Get the successor of a state state.
-	 * @param state the current state
-     * @return the successor state
-	 */
-	byte[] getSuccessor(byte[] state);
-	
 }

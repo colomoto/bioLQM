@@ -1,12 +1,17 @@
 package org.colomoto.logicalmodel.tool.simulation;
 
 /**
- * Interface for determinist updaters.
- * A determinist updater is an updater which always returns the same single successor for a given state.
- * This interface does not add any method, it only serves to specify that the updater is determinist (vs random).
+ * Interface for deterministic updaters which always return the same single successor for a given state.
  *
  * @author Aurelien Naldi
  */
-public interface DeterministicUpdater extends SingleSuccessorUpdater {
+public interface DeterministicUpdater {
+
+    /**
+     * Get the successor of a state state.
+     * @param state the current state
+     * @return the successor state
+     */
+    byte[] getSuccessor(byte[] state);
 
 }

@@ -12,14 +12,8 @@ import java.util.List;
  */
 public abstract class AbstractDeterministicUpdater extends BaseUpdater implements DeterministicUpdater {
 
-
     public AbstractDeterministicUpdater(LogicalModel model) {
         super(model);
-    }
-
-    @Override
-    public List<byte[]> getSuccessors(byte[] state) {
-        return BaseUpdater.getSingleSuccessors( getSuccessor(state) );
     }
 
 }

@@ -11,12 +11,12 @@ import java.util.Iterator;
  */
 public class SingleSuccessorSimulation implements Iterable<byte[]> {
 
-    private final SingleSuccessorUpdater updater;
+    private final DeterministicUpdater updater;
     private final byte[] init;
 
     private final int max_steps;
 
-    public SingleSuccessorSimulation(SingleSuccessorUpdater updater, byte[] init, int max_steps) {
+    public SingleSuccessorSimulation(DeterministicUpdater updater, byte[] init, int max_steps) {
         this.updater = updater;
         this.init = init;
         this.max_steps = max_steps;
@@ -31,10 +31,10 @@ public class SingleSuccessorSimulation implements Iterable<byte[]> {
 class StateIterator implements Iterator<byte[]> {
 
     private byte[] state;
-    private final SingleSuccessorUpdater updater;
+    private final DeterministicUpdater updater;
     private int steps;
 
-    public StateIterator(byte[] state, SingleSuccessorUpdater updater, int max_steps) {
+    public StateIterator(byte[] state, DeterministicUpdater updater, int max_steps) {
         this.state = state;
         this.updater = updater;
         this.steps = max_steps;

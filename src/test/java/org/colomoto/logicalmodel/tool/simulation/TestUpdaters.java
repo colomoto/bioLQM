@@ -76,7 +76,7 @@ public class TestUpdaters {
 	@Test
 	public void testAsynchronousUpdater() throws IOException {
 		LogicalModel model = getModel();
-		LogicalModelUpdater updater = new AsynchronousUpdater(model);
+		MultipleSuccessorsUpdater updater = new AsynchronousUpdater(model);
 		byte[] state = {0,0,0};
 		List<byte[]> successors = updater.getSuccessors(state);
 		Assert.assertEquals(2, successors.size());
@@ -96,7 +96,7 @@ public class TestUpdaters {
 	@Test
 	public void testSynchronousUpdater() throws IOException {
 		LogicalModel model = getModel();
-		SingleSuccessorUpdater updater = new SynchronousUpdater(model);
+        DeterministicUpdater updater = new SynchronousUpdater(model);
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
 		
@@ -113,7 +113,7 @@ public class TestUpdaters {
 		
 		// create the block sequential scheme
 		int[] scheme = {1,2,1,1,2};
-        SingleSuccessorUpdater updater = new BlockSequentialUpdater(model,scheme);
+        DeterministicUpdater updater = new BlockSequentialUpdater(model,scheme);
 		byte[] state = {1,1,1,1,1};
         byte[] next = updater.getSuccessor(state);
 		
@@ -137,7 +137,7 @@ public class TestUpdaters {
 		updater = new BlockSequentialUpdater(model,scheme2);
         next = updater.getSuccessor(state);
 
-        SingleSuccessorUpdater updater1 = new SequentialUpdater(model);
+        DeterministicUpdater updater1 = new SequentialUpdater(model);
         byte[] next1 = updater1.getSuccessor(state);
 
 		Assert.assertEquals(next1[0], next[0]);
@@ -151,7 +151,7 @@ public class TestUpdaters {
 	@Test
 	public void testSequentialUpdater() throws IOException {
 		LogicalModel model = getModel();
-        SingleSuccessorUpdater updater = new SequentialUpdater(model);
+        DeterministicUpdater updater = new SequentialUpdater(model);
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
 		
@@ -164,7 +164,7 @@ public class TestUpdaters {
 	public void testCustomSequentialUpdater() throws IOException {
 		LogicalModel model = getModel();
 		int[] order = {1,2,0};
-        SingleSuccessorUpdater updater = new SequentialUpdater(model, order);
+        DeterministicUpdater updater = new SequentialUpdater(model, order);
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
 

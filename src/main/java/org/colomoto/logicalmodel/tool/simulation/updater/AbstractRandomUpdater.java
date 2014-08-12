@@ -14,28 +14,14 @@ import java.util.Random;
 public abstract class AbstractRandomUpdater extends BaseUpdater implements RandomUpdater {
 
     // random generator
-    private final Random random = new Random();
+    protected final Random random = new Random();
 
     public AbstractRandomUpdater(LogicalModel model) {
         super(model);
     }
 
     @Override
-    public List<byte[]> getSuccessors(byte[] state) {
-        return BaseUpdater.getSingleSuccessors( getSuccessor(state) );
-    }
-
-
-    /**
-     * Set the seed for the random generator (for reproducibility in tests, NOT for real use)
-     *
-     * @param seed
-     */
     public void setSeed(long seed) {
         random.setSeed(seed);
-    }
-
-    protected int getRandomInt(int max) {
-        return random.nextInt();
     }
 }
