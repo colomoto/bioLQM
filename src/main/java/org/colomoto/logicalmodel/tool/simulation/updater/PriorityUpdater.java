@@ -10,11 +10,15 @@ import java.util.List;
  * be updated synchronously or asynchronously.
  * Only components from the first group with updated components will be taken into account
  *
- * NOTE: this is a draft generating a single successor, proper implementation will follow
+ * NOTE: this implementation is incomplete:
+ * <ul>
+ *   <li>it does not handle separation of increasing and decreasing transitions</li>
+ *   <li>it does not fully allow to setup the priority classes properly</li>
+ * </ul>
  *
  * @author Aurelien Naldi
  */
-public class PriorityUpdater extends AbstractDeterministicUpdater {
+public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	private final List<PriorityClass> priorityClasses;
 
@@ -24,10 +28,7 @@ public class PriorityUpdater extends AbstractDeterministicUpdater {
 	}
 
 	/**
-	 * Converts the integer array provided by the user into a list of
-	 * integer arrays. Each subarray stores the IDs of nodes in a separate block,
-	 * which will be updated synchronously.
-	 * these arrays are ordered in an ascendent way according to the updating time.
+	 * Converts the integer array provided by the user into a list of priority classes.
 	 *
 	 * @param o the original array, assigning a block to each component.
 	 */
@@ -85,47 +86,46 @@ public class PriorityUpdater extends AbstractDeterministicUpdater {
 	}
 
 	@Override
-    public byte[] getSuccessor(byte[] state) {
+    public List<byte[]> getSuccessors(byte[] state) {
 		/*
 		 * this the state that will be returned
 		 * here it is initialized to be current basal state
 		 */
-		byte[] nextstate = state.clone();
+		byte[] nextstate = null;
+        List<byte[]> successors = null;
 		
-		boolean changed = false;
-		
-		// Iterate over the blocks (update times) in the list scheme
+		// Iterate over the priority classes
 		for(PriorityClass pclass: priorityClasses) {
 
             // stop if previous block had some changes and this one is not grouped with it
-            if (changed && pclass.is_new) {
+            if (successors != null && pclass.is_new) {
                 break;
             }
 
-			// Iterate over the nodes in the block i
-			for(int k_aux: pclass.components) {
+			// Update the nodes in the current priority class
+			for(int idx: pclass.components) {
 				
-				/*
-				 * if there is a change in the previous state, we apply it on the 
-				 * next state
-				 */
-				int change = nodeChange(state, k_aux);
+				int change = nodeChange(state, idx);
 				if (change != 0) {
-					nextstate[k_aux] += change;
-					changed = true;
+                    nextstate = update(state, idx, change, nextstate);
+                    if (!pclass.is_synchronous) {
+                        successors = addSuccessor(successors, nextstate);
+                        nextstate = null;
+                    }
 				}
-			}
-		}
-		
-		if (changed) {
-			return nextstate;
-		}
 
-		return null;
+			}
+            if (nextstate != null) {
+                successors = addSuccessor(successors, nextstate);
+                nextstate = null;
+            }
+		}
 		
+		return successors;
 	}
 
 }
+
 
 class PriorityClass {
     public final int[] components;
