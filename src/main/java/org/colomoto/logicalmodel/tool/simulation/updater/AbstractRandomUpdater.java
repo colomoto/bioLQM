@@ -3,6 +3,7 @@ package org.colomoto.logicalmodel.tool.simulation.updater;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.tool.simulation.RandomUpdater;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Random;
  *
  * @author Aurelien Naldi
  */
-public abstract class AbstractRandomUpdater extends AbstractSingleSuccessorUpdater implements RandomUpdater {
+public abstract class AbstractRandomUpdater extends BaseUpdater implements RandomUpdater {
 
     // random generator
     private final Random random = new Random();
@@ -18,6 +19,12 @@ public abstract class AbstractRandomUpdater extends AbstractSingleSuccessorUpdat
     public AbstractRandomUpdater(LogicalModel model) {
         super(model);
     }
+
+    @Override
+    public List<byte[]> getSuccessors(byte[] state) {
+        return BaseUpdater.getSingleSuccessors( getSuccessor(state) );
+    }
+
 
     /**
      * Set the seed for the random generator (for reproducibility in tests, NOT for real use)

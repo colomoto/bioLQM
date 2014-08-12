@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author Aurelien Naldi
  */
-public class PriorityUpdater extends AbstractSingleSuccessorUpdater {
+public class PriorityUpdater extends AbstractDeterministicUpdater {
 
 	private final List<PriorityClass> priorityClasses;
 

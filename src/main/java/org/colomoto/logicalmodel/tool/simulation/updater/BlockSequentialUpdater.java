@@ -25,7 +25,7 @@ import org.colomoto.logicalmodel.tool.simulation.DeterministicUpdater;
  * 
  * @author Francisco Plana
  */
-public class BlockSequentialUpdater extends AbstractSingleSuccessorUpdater implements DeterministicUpdater {
+public class BlockSequentialUpdater extends AbstractDeterministicUpdater implements DeterministicUpdater {
 	
 	private final List<int[]> blocks;
 	

@@ -9,7 +9,7 @@ import org.colomoto.logicalmodel.tool.simulation.DeterministicUpdater;
  * 
  * @author Aurelien Naldi
  */
-public class SequentialUpdater extends AbstractSingleSuccessorUpdater implements DeterministicUpdater {
+public class SequentialUpdater extends AbstractDeterministicUpdater implements DeterministicUpdater {
 
 	private final int[] order;
 	

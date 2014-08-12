@@ -8,7 +8,7 @@ import org.colomoto.logicalmodel.tool.simulation.DeterministicUpdater;
  * 
  * @author Aurelien Naldi
  */
-public class SynchronousUpdater extends AbstractSingleSuccessorUpdater implements DeterministicUpdater {
+public class SynchronousUpdater extends AbstractDeterministicUpdater implements DeterministicUpdater {
 
 	/**
 	 * Create a new synchronous updater
