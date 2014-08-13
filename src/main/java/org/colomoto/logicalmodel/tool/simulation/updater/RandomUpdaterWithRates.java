@@ -10,10 +10,10 @@ import org.colomoto.logicalmodel.LogicalModel;
 public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     // the rates associated to each component
-    private final int[] rates;
+    private final double[] rates;
 
     // the changes and rates which are active for the current step
-    private final int[] step_rates;
+    private final double[] step_rates;
     private final int[][] step_changes;
 
 	/**
@@ -25,12 +25,12 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         this(model, null);
     }
 
-    public RandomUpdaterWithRates(LogicalModel model, int[] rates) {
+    public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
         super(model);
         if (rates == null) {
-            this.rates = new int[this.size];
+            this.rates = new double[this.size];
             for (int i=0 ; i<this.rates.length ; i++) {
-                this.rates[i] = 1;
+                this.rates[i] = 1.0;
             }
         } else {
             this.rates = rates;
@@ -38,14 +38,14 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
         // create empty arrays to store the available changes at each steps
         // reusing these arrays means that this class is NOT thread safe
-        this.step_rates = new int[this.size];
+        this.step_rates = new double[this.size];
         this.step_changes = new int[this.size][2];
     }
 
 	@Override
 	public byte[] pickSuccessor(byte[] state) {
         int nb_changes = 0;
-        int totalrate = 0;
+        double totalrate = 0;
 
 		for (int idx=0 ; idx < size ; idx++) {
 			int change = nodeChange(state, idx);
@@ -54,7 +54,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
             }
 
             // store the available change
-            int r = this.rates[idx];
+            double r = this.rates[idx];
             totalrate += r;
             step_rates[nb_changes] = totalrate;
             step_changes[nb_changes][0] = idx;
@@ -67,8 +67,10 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         }
 
         byte[] nextstate = state.clone();
-        int[] selected = select(nb_changes, totalrate);
-        nextstate[ selected[0] ] += selected[1];
+        int selected = select(nb_changes, totalrate);
+        int idx = step_changes[selected][0];
+        int change = step_changes[selected][1];
+        nextstate[idx] += change;
 		return nextstate;
 	}
 
@@ -80,20 +82,20 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
      * @param totalrate
      * @return
      */
-    private int[] select(int nb_changes, int totalrate) {
+    private int select(int nb_changes, double totalrate) {
         if (nb_changes == 1) {
-            return step_changes[0];
+            return 0;
         }
 
         int s = 0;
         int idx = 0;
-        int r = random.nextInt(totalrate);
+        double r = totalrate * random.nextDouble();
         for (  ; idx<nb_changes ; idx++) {
             s += this.step_rates[idx];
             if (s > r) {
                 break;
             }
         }
-        return step_changes[idx];
+        return idx;
     }
 }
