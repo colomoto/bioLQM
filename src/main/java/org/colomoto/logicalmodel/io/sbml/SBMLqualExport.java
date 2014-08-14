@@ -150,6 +150,28 @@ public class SBMLqualExport {
 			}
 		}
 	}
+
+    /**
+     * Apply an initial condition to the exported model.
+     *
+     * @param state the initial levels for each core component (negative values for unspecified)
+     */
+    public void setInitialCondition(byte[] state) {
+        ensureFilled();
+
+        for (int idx=0 ; idx<state.length ; idx++) {
+            int v = state[idx];
+            if (v < 0) {
+                continue;
+            }
+
+            NodeInfo ni = coreNodes.get(idx);
+            QualitativeSpecies species = getSpecies(ni);
+            if (species != null) {
+                species.setInitialLevel(v);
+            }
+        }
+    }
 	
 	public QualitativeSpecies getSpecies(NodeInfo ni) {
 			return node2species.get(ni);
