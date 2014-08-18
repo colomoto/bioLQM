@@ -42,4 +42,15 @@ public class MultiplePerturbation<P extends LogicalModelPerturbation> extends Ab
 		}
 		return sb.toString();
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof MultiplePerturbation) {
+			MultiplePerturbation mp = (MultiplePerturbation)o;
+			if (this.perturbations.size() == mp.perturbations.size() && 
+					this.perturbations.containsAll(mp.perturbations) &&
+					mp.perturbations.containsAll(this.perturbations))
+				return true;
+		}
+		return false;
+	}
 }
