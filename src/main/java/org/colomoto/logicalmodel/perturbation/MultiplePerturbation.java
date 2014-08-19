@@ -3,6 +3,7 @@ package org.colomoto.logicalmodel.perturbation;
 import java.util.List;
 
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.NodeInfo;
 
 /**
  * A multiple perturbation is a list of perturbations all applied together.
@@ -53,4 +54,15 @@ public class MultiplePerturbation<P extends LogicalModelPerturbation> extends Ab
 		}
 		return false;
 	}
+
+    @Override
+    public boolean affectsNode(NodeInfo node) {
+        for (LogicalModelPerturbation p: perturbations) {
+            if (p.affectsNode(node)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -63,4 +63,9 @@ public class InteractionPerturbation extends AbstractPerturbation {
 		return false;
 	}
 
+    @Override
+    public boolean affectsNode(NodeInfo node) {
+        return target.equals(node);
+    }
+
 }

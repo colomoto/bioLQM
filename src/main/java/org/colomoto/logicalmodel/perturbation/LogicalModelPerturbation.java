@@ -2,6 +2,7 @@ package org.colomoto.logicalmodel.perturbation;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelModifier;
+import org.colomoto.logicalmodel.NodeInfo;
 
 /**
  * Common interface for perturbations.
@@ -18,5 +19,13 @@ public interface LogicalModelPerturbation extends LogicalModelModifier {
 	 * @param model
 	 */
 	void update(LogicalModel model);
-	
+
+    /**
+     * Test if the perturbation affects the function of a specific node
+     *
+     * @param node
+     * @return true if node is affected by this perturbation
+     */
+    boolean affectsNode(NodeInfo node);
+
 }

@@ -60,8 +60,13 @@ public class FixedValuePerturbation extends AbstractPerturbation {
 		
 		model.getMDDManager().free(oldValue);
 	}
-	
-	public String toString() {
+
+    @Override
+    public boolean affectsNode(NodeInfo node) {
+        return component.equals(node);
+    }
+
+    public String toString() {
 		if (value == 0) {
 			return component.getNodeID() + " KO";
 		}

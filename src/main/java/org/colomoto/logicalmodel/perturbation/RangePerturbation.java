@@ -81,4 +81,9 @@ public class RangePerturbation extends AbstractPerturbation {
 		return false;
 	}
 
+    @Override
+    public boolean affectsNode(NodeInfo node) {
+        return component.equals(node);
+    }
+
 }
