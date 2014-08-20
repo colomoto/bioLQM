@@ -71,7 +71,7 @@ for SBML and this common toolbox.
 Licence
 -------
 
-This code is available under LGPL v2+/CeCILL-C.
+This code is available under LGPL v3+/CeCILL-C.
 
 
 Authors
