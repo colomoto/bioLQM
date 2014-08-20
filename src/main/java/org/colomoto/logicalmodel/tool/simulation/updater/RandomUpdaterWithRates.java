@@ -12,10 +12,6 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
     // the rates associated to each component
     private final double[] rates;
 
-    // the changes and rates which are active for the current step
-    private final double[] step_rates;
-    private final int[][] step_changes;
-
 	/**
 	 * Create a new random updater
 	 *
@@ -35,17 +31,15 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         } else {
             this.rates = rates;
         }
-
-        // create empty arrays to store the available changes at each steps
-        // reusing these arrays means that this class is NOT thread safe
-        this.step_rates = new double[this.size];
-        this.step_changes = new int[this.size][2];
     }
 
 	@Override
 	public byte[] pickSuccessor(byte[] state) {
+        // track the changes and rates which are enabled for the current step
         int nb_changes = 0;
         double totalrate = 0;
+        double[] step_rates = new double[size];
+        int[][] step_changes = new int[this.size][2];
 
 		for (int idx=0 ; idx < size ; idx++) {
 			int change = nodeChange(state, idx);
@@ -67,7 +61,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         }
 
         byte[] nextstate = state.clone();
-        int selected = select(nb_changes, totalrate);
+        int selected = select(step_rates, nb_changes, totalrate);
         int idx = step_changes[selected][0];
         int change = step_changes[selected][1];
         nextstate[idx] += change;
@@ -82,7 +76,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
      * @param totalrate
      * @return
      */
-    private int select(int nb_changes, double totalrate) {
+    private int select(double[] step_rates, int nb_changes, double totalrate) {
         if (nb_changes == 1) {
             return 0;
         }
@@ -91,7 +85,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         int idx = 0;
         double r = totalrate * random.nextDouble();
         for (  ; idx<nb_changes ; idx++) {
-            s += this.step_rates[idx];
+            s += step_rates[idx];
             if (s > r) {
                 break;
             }

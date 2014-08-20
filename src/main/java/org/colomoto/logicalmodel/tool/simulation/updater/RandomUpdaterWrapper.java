@@ -13,8 +13,8 @@ import java.util.Random;
  */
 public class RandomUpdaterWrapper implements RandomUpdater {
 
-    MultipleSuccessorsUpdater updater;
-    Random random = new Random();
+    private final MultipleSuccessorsUpdater updater;
+    private final Random random = new Random();
 
     public RandomUpdaterWrapper(MultipleSuccessorsUpdater updater) {
         this.updater = updater;
