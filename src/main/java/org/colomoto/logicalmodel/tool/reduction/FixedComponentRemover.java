@@ -28,6 +28,13 @@ public class FixedComponentRemover implements LogicalModelModifier {
             ddmanager.use(f);
             functions[i] = f;
         }
+        int[] oldExtraFunctions = model.getLogicalFunctions();
+        int[] extraFunctions = new int[oldExtraFunctions.length];
+        for (int i=0 ; i<extraFunctions.length ; i++) {
+            int f = oldExtraFunctions[i];
+            ddmanager.use(f);
+            extraFunctions[i] = f;
+        }
 
         boolean[] knownFixed = new boolean[ functions.length ];
 
@@ -58,6 +65,17 @@ public class FixedComponentRemover implements LogicalModelModifier {
                             ddmanager.free(newFunc);
                         }
                     }
+                    for (int j=0 ; j<extraFunctions.length ; j++) {
+                        int curFunc = extraFunctions[j];
+                        int newFunc = op.restrict( curFunc );
+                        if (newFunc != curFunc) {
+                            changed = true;
+                            ddmanager.free(curFunc);
+                            extraFunctions[j] = newFunc;
+                        } else {
+                            ddmanager.free(newFunc);
+                        }
+                    }
                 }
             }
 
@@ -67,12 +85,18 @@ public class FixedComponentRemover implements LogicalModelModifier {
         if (changed) {
             List<NodeInfo> core = model.getNodeOrder();
             List<NodeInfo> extra = model.getExtraComponents();
-            int[] extraFunctions = model.getExtraLogicalFunctions();
             LogicalModel newModel = new LogicalModelImpl(ddmanager, core, functions, extra, extraFunctions);
 
             return newModel;
         }
 
+        // the model was unchanged: free the copied functions
+        for (int f: functions) {
+            ddmanager.free(f);
+        }
+        for (int f: extraFunctions) {
+            ddmanager.free(f);
+        }
         return model;
     }
 
