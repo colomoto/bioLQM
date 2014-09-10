@@ -10,6 +10,7 @@ import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.ReferenceModels;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.rawfunctions.TextFunctionFormat;
+import org.colomoto.logicalmodel.perturbation.RegulatorRemovalOperation;
 import org.colomoto.logicalmodel.services.ServiceManager;
 import org.junit.Test;
 
@@ -70,4 +71,19 @@ public class TestReduction {
 		assertEquals(nbExtra+eRemoved, extra.size());
 	}
 
+    @Test
+    public void testFixedPropagation() throws IOException {
+        LogicalModel model = ReferenceModels.getModel("propagate_fixed.txt");
+
+        FixedComponentRemover remover = new FixedComponentRemover();
+
+        LogicalModel newModel = remover.apply(model);
+
+        int[] oldFunctions = model.getLogicalFunctions();
+        int[] functions = newModel.getLogicalFunctions();
+        assertEquals(1, functions[1]);
+        assertEquals(0, functions[2]);
+        assert(oldFunctions[3] != functions[3]);
+        assertEquals(oldFunctions[4], functions[4]);
+    }
 }

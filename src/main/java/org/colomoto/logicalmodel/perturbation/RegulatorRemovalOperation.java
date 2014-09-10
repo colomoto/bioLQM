@@ -36,6 +36,7 @@ public class RegulatorRemovalOperation {
 		
 		MDDVariable var = manager.getNodeVariable(node);
 		if (var.after(regulator)) {
+            manager.use(node);
 			return node;
 		}
 		
@@ -46,13 +47,13 @@ public class RegulatorRemovalOperation {
 		if (var.nbval == 2) {
 			int f = restrict(manager.getChild(node, 0));
 			int t = restrict(manager.getChild(node, 1));
-			return var.getNode(f, t);
+			return var.getNodeFree(f, t);
 		}
 		
 		int[] children = new int[var.nbval];
 		for (int i=0 ; i<var.nbval ; i++) {
 			children[i] = restrict(manager.getChild(node, i));
 		}
-		return var.getNode(children);
+		return var.getNodeFree(children);
 	}
 }

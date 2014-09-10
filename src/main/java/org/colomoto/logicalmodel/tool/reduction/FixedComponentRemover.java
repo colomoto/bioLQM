@@ -44,7 +44,7 @@ public class FixedComponentRemover implements LogicalModelModifier {
                     knownFixed[i] = true;
                     hasNewFixed = true;
 
-                    MDDVariable var = ddmanager.getNodeVariable(i);
+                    MDDVariable var = ddmanager.getAllVariables()[i];
                     RegulatorRemovalOperation op = new RegulatorRemovalOperation(ddmanager, var, f);
 
                     for (int j=0 ; j<functions.length ; j++) {
