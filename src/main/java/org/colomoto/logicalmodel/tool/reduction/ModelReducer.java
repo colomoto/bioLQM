@@ -27,6 +27,7 @@ public class ModelReducer {
 	
 	private final MDDVariable[] variables;
 	private final int[] allFunctions;
+    private final int coreSize;
 	private final Map<MDDVariable, Set<Integer>> targets;
 	
 	public ModelReducer(LogicalModel model) {
@@ -40,7 +41,8 @@ public class ModelReducer {
 		// copy logical function and create lists of regulators
 		int[] functions = model.getLogicalFunctions();
 		int[] extraFunctions = model.getExtraLogicalFunctions();
-		
+		this.coreSize = functions.length;
+
 		this.targets = new HashMap<MDDVariable, Set<Integer>>();
 		this.allFunctions = new int[functions.length + extraFunctions.length];
 		int curIdx = 0;
@@ -76,9 +78,9 @@ public class ModelReducer {
      */
     public int removePseudoOutputs(boolean preserveFixedInputs) {
 		// count targets of every component and build lists of regulators
-		int[] targetCount = new int[allFunctions.length];
+		int[] targetCount = new int[coreSize];
 		Set<Integer>[] regulators = new Set[allFunctions.length];
-		for (int i=0 ; i<targetCount.length ; i++) {
+		for (int i=0 ; i<coreSize ; i++) {
 			MDDVariable curVar = variables[i];
 			Set<Integer> curTargets = targets.get(curVar);
 			if (curTargets == null) {

@@ -28,7 +28,7 @@ public class FixedComponentRemover implements LogicalModelModifier {
             ddmanager.use(f);
             functions[i] = f;
         }
-        int[] oldExtraFunctions = model.getLogicalFunctions();
+        int[] oldExtraFunctions = model.getExtraLogicalFunctions();
         int[] extraFunctions = new int[oldExtraFunctions.length];
         for (int i=0 ; i<extraFunctions.length ; i++) {
             int f = oldExtraFunctions[i];
