@@ -1,8 +1,7 @@
 package org.colomoto.logicalmodel.tool.stablestate;
 
-import java.io.IOException;
-
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.tool.AbstractTool;
 import org.colomoto.logicalmodel.tool.LogicalModelTool;
 import org.colomoto.mddlib.MDDManager;
@@ -25,6 +24,12 @@ public class StableStateTool extends AbstractTool {
 
             PathSearcher psearcher = new PathSearcher(ddm, 1);
             int[] path = psearcher.setNode(stable);
+            if (psearcher.countPaths() > 0) {
+            	for (NodeInfo node : model.getNodeOrder()) {
+            		System.out.print(node.getNodeID() + " ");
+            	}
+            	System.out.println();
+            }
             for (int v: psearcher) {
                 for (int i: path) {
                     System.out.print(i+" ");
