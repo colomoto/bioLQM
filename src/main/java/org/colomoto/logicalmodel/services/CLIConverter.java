@@ -9,6 +9,7 @@ import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.MultiplexedFormat;
+import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
 
 /**
  * Helper for command-line conversions: define input and output formats
@@ -101,14 +102,27 @@ public class CLIConverter {
 	 * @param outputFile
 	 */
 	public void convert(String inputFile, String outputFile) {
-		
-		try {
-			LogicalModel model = inputFormat.importFile(new File(inputFile));
-			OutputStream out = new FileOutputStream(outputFile);
-			outputFormat.export(model, out);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+        try {
+            LogicalModel model = inputFormat.importFile(new File(inputFile));
+
+            // handle multivalued models: stop or booleanize if needed
+            if (!outputFormat.supportsMultivalued() && !model.isBoolean()) {
+                // TODO: detect when to Booleanize the model
+                if (false) {
+                    System.out.println("Warning: Exporting a Booleanized version of the multivalued model");
+                    model = Booleanizer.booleanize( model);
+                } else {
+                    System.err.println("This format does not support multivalued models");
+                    return;
+                }
+            }
+
+            OutputStream out = new FileOutputStream(outputFile);
+            outputFormat.export(model, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public static LogicalModelFormat getFormat(String name) {

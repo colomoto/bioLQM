@@ -93,4 +93,11 @@ public interface LogicalModel {
 	 * @return
 	 */
 	LogicalModel getView(List<NodeInfo> neworder);
+
+    /**
+     * Check if this model is Boolean.
+     *
+     * @return true if the model has no multivalued components, false otherwise.
+     */
+    boolean isBoolean();
 }

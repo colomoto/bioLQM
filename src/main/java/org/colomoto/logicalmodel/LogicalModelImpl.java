@@ -51,7 +51,7 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 
 	@Override
-	public List getNodeOrder() {
+	public List<NodeInfo> getNodeOrder() {
 		return coreNodes;
 	}
 
@@ -101,4 +101,19 @@ public class LogicalModelImpl implements LogicalModel {
 		return new LogicalModelImpl(newmanager, neworder, newcorefunctions, extraNodes, extraFunctions);
 	}
 
+    @Override
+    public boolean isBoolean() {
+        for (NodeInfo ni: getNodeOrder()) {
+            if (ni.getMax() > 1) {
+                return false;
+            }
+        }
+        for (NodeInfo ni: getExtraComponents()) {
+            if (ni.getMax() > 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
