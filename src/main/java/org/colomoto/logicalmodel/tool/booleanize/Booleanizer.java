@@ -4,6 +4,7 @@ import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 
 import java.util.*;
@@ -44,7 +45,8 @@ public class Booleanizer {
 
         this.newCore  = addComponents( core, mv2bool);
         this.newExtra = addComponents( extra, mv2bool);
-        this.newDDM = new MDDStoreImpl( newCore, ddm.getLeafCount() );
+
+        this.newDDM = getBoolManager(ddm, mv2bool);
         this.newCoreFunctions = new int[ newCore.size() ];
         this.newExtraFunctions = new int[ newExtra.size() ];
 
@@ -52,7 +54,14 @@ public class Booleanizer {
         transformFunctions(extra, extraFunctions, newExtraFunctions);
     }
 
-    public static List<NodeInfo> addComponents( List<NodeInfo> nodes, Map<NodeInfo, List<NodeInfo>> mv2bool) {
+    private MDDManager getBoolManager( MDDManager ddm, Map<NodeInfo, List<NodeInfo>> mv2bool) {
+
+        // FIXME: construct a clean list of variables
+
+        return new MDDStoreImpl( newCore, ddm.getLeafCount() );
+    }
+
+    private List<NodeInfo> addComponents( List<NodeInfo> nodes, Map<NodeInfo, List<NodeInfo>> mv2bool) {
 
         List<NodeInfo> newComponents = new ArrayList<NodeInfo>();
         for (NodeInfo ni: nodes) {
@@ -84,10 +93,10 @@ public class Booleanizer {
             int f = srcFunctions[s++];
 
             if (bnodes == null) {
-                targetFunctions[t++] = transform(f);
+                targetFunctions[t++] = transform(f, 1);
             } else {
                 for (int i=0 ; i<bnodes.size() ; i++) {
-                    targetFunctions[t++] = transform(f, i);
+                    targetFunctions[t++] = transform(f, i+1);
                 }
             }
         }
@@ -101,26 +110,42 @@ public class Booleanizer {
      * @param f MDD in the original MDDManager
      * @return a new MDD in the Boolean MDDManager
      */
-    public int transform(int f) {
-
-        // TODO: transform a function
-
-        return 0;
-    }
-
-    /**
-     * Take a Multivalued function and transfer it into the new MDDManager,
-     * replacing the multi-valued regulators if any.
-     *
-     * @param f MDD in the original MDDManager
-     * @param v the currently selected value
-     * @return a new MDD in the Boolean MDDManager
-     */
     public int transform(int f, int v) {
 
-        // TODO: transform a function
+        if (ddm.isleaf(f)) {
+            if (f >= v) {
+                return 1;
+            }
 
-        return 0;
+            return 0;
+        }
+
+        MDDVariable var = ddm.getNodeVariable(f);
+        if (var.nbval == 2) {
+            MDDVariable newVar = newDDM.getVariableForKey( var.key );
+            if (newVar == null) {
+                throw new RuntimeException("No matching variable during Boolean conversion");
+            }
+
+            int c0 = transform( ddm.getChild(f, 0), v );
+            int c1 = transform( ddm.getChild(f, 1), v );
+            return newVar.getNodeFree(c0, c1);
+        }
+
+        // The current variable is multivalued: replace it by the Boolean placeholders
+        MDDVariable[] newVars = null; // FIXME: retrieve replacement variables
+        int[] values = ddm.getChildren(f);
+        int[] newValues = new int[ values.length ];
+        for (int i=0 ; i<values.length ; i++) {
+            newValues[i] = transform(values[i], v);
+        }
+        int cur = newValues[ newValues.length-1 ];
+        for (int i= newVars.length-1 ; i>=0 ; i--) {
+            int prev = newValues[i];
+            cur = newVars[i].getNodeFree(prev, cur);
+        }
+
+        return cur;
     }
 
 
