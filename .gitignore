@@ -13,3 +13,5 @@ bak
 *.DS_Store
 META-INF
 *.log
+.idea
+*.iml
