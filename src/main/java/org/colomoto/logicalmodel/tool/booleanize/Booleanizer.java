@@ -4,13 +4,15 @@ import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDOperator;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
+import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 import java.util.*;
 
 /**
- * [WIP] Construct a Boolean version of a multi-valued model.
+ * Construct a Boolean version of a multi-valued model.
  * If the model has no multi-valued component, it will be preserved.
  * Otherwise, each multivalued component will be replaced by multiple Boolean components.
  *
@@ -33,7 +35,7 @@ public class Booleanizer {
     private final MDDManager ddm, newDDM;
     private final List<NodeInfo> core, extra, newCore, newExtra;
     private final int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
-    private final Map<NodeInfo, List<NodeInfo>> mv2bool = new HashMap<NodeInfo, List<NodeInfo>>();
+    private final Map<String,NodeInfo[]> mv2bool = new HashMap<String, NodeInfo[]>();
 
 
     public Booleanizer(LogicalModel ori) {
@@ -43,10 +45,12 @@ public class Booleanizer {
         this.coreFunctions = ori.getLogicalFunctions();
         this.extraFunctions = ori.getExtraLogicalFunctions();
 
-        this.newCore  = addComponents( core, mv2bool);
-        this.newExtra = addComponents( extra, mv2bool);
+        this.newCore = getBoolComponents(core);
+        this.newExtra = getBoolComponents(extra);
 
-        this.newDDM = getBoolManager(ddm, mv2bool);
+        List<Object> variables = getBoolVariables(ddm);
+        this.newDDM = new MDDStoreImpl(variables, ddm.getLeafCount());
+
         this.newCoreFunctions = new int[ newCore.size() ];
         this.newExtraFunctions = new int[ newExtra.size() ];
 
@@ -54,27 +58,56 @@ public class Booleanizer {
         transformFunctions(extra, extraFunctions, newExtraFunctions);
     }
 
-    private MDDManager getBoolManager( MDDManager ddm, Map<NodeInfo, List<NodeInfo>> mv2bool) {
+    private List<Object> getBoolVariables( MDDManager ddm) {
 
-        // FIXME: construct a clean list of variables
+        // TODO: retrieve the proper order also if the manager is a proxy
+        MDDVariable[] variables = ddm.getAllVariables();
+        List<Object> boolVariables = new ArrayList<Object>();
 
-        return new MDDStoreImpl( newCore, ddm.getLeafCount() );
+        for (MDDVariable var: variables) {
+            if (var.nbval < 3) {
+                boolVariables.add( var.key);
+            } else {
+                NodeInfo[] mapped = getMapped(var.key.toString(), var.nbval);
+                for (NodeInfo ni: mapped) {
+                    boolVariables.add( ni);
+                }
+            }
+        }
+
+        return boolVariables;
     }
 
-    private List<NodeInfo> addComponents( List<NodeInfo> nodes, Map<NodeInfo, List<NodeInfo>> mv2bool) {
+
+    private NodeInfo[] getMapped( String key, int nbval) {
+        if (nbval < 3) {
+            return null;
+        }
+
+        NodeInfo[] mapped = mv2bool.get(key);
+        if (mapped != null) {
+            return mapped;
+        }
+
+        mapped = new NodeInfo[nbval-1];
+        mv2bool.put( key, mapped);
+        for (int v=1 ; v<nbval ; v++) {
+            mapped[v-1] = new NodeInfo(key+"_b"+v);
+        }
+        return mapped;
+    }
+
+    private List<NodeInfo> getBoolComponents( List<NodeInfo> nodes) {
 
         List<NodeInfo> newComponents = new ArrayList<NodeInfo>();
         for (NodeInfo ni: nodes) {
             int max = ni.getMax();
             if (max > 1) {
                 String name = ni.getNodeID();
-                List<NodeInfo> mapped = new ArrayList<NodeInfo>(max);
-                for (int i=1 ; i<= max ; i++) {
-                    NodeInfo bnode = new NodeInfo(name+"_b"+i);
-                    mapped.add( bnode);
+                NodeInfo[] mapped = getMapped(name, max+1);
+                for (NodeInfo bnode: mapped) {
                     newComponents.add(bnode);
                 }
-                mv2bool.put(ni, mapped);
             } else {
                 newComponents.add(ni);
             }
@@ -89,14 +122,27 @@ public class Booleanizer {
         int s = 0;
         int t = 0;
         for (NodeInfo ni: nodes) {
-            List<NodeInfo> bnodes = mv2bool.get(ni);
+            NodeInfo[] bnodes = mv2bool.get(ni.getNodeID());
             int f = srcFunctions[s++];
 
             if (bnodes == null) {
                 targetFunctions[t++] = transform(f, 1);
             } else {
-                for (int i=0 ; i<bnodes.size() ; i++) {
-                    targetFunctions[t++] = transform(f, i+1);
+                for (int i=0 ; i<bnodes.length ; i++) {
+                    int bf = transform(f, i+1);
+                    if (i>0) {transform(f, i+1);
+                        // a subvariable can not be activated if the previous one is not active
+                        MDDVariable prevVar = newDDM.getVariableForKey( bnodes[i-1]);
+                        int prev = prevVar.getNode(0,1);
+                        bf = MDDBaseOperators.AND.combine(newDDM, bf, prev);
+                    }
+                    if (i < bnodes.length-1) {
+                        // a subvariable can not be disabled if the next one is active
+                        MDDVariable nextVar = newDDM.getVariableForKey( bnodes[i+1]);
+                        int next = nextVar.getNode(0,1);
+                        bf = MDDBaseOperators.OR.combine(newDDM, bf, next);
+                    }
+                    targetFunctions[t++] = bf;
                 }
             }
         }
@@ -133,7 +179,10 @@ public class Booleanizer {
         }
 
         // The current variable is multivalued: replace it by the Boolean placeholders
-        MDDVariable[] newVars = null; // FIXME: retrieve replacement variables
+        NodeInfo[] newVars = mv2bool.get( var.key.toString());
+        if (newVars == null) {
+            throw new RuntimeException("No mapped bool vars found");
+        }
         int[] values = ddm.getChildren(f);
         int[] newValues = new int[ values.length ];
         for (int i=0 ; i<values.length ; i++) {
@@ -142,7 +191,8 @@ public class Booleanizer {
         int cur = newValues[ newValues.length-1 ];
         for (int i= newVars.length-1 ; i>=0 ; i--) {
             int prev = newValues[i];
-            cur = newVars[i].getNodeFree(prev, cur);
+            MDDVariable bvar = newDDM.getVariableForKey( newVars[i]);
+            cur = bvar.getNodeFree(prev, cur);
         }
 
         return cur;

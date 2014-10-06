@@ -23,7 +23,8 @@ public class CLIConverter {
 	
 	private final LogicalModelFormat inputFormat;
 	private final LogicalModelFormat outputFormat;
-	private final File outputFolder; 
+	private final File outputFolder;
+    private final boolean booleanize;
 	
 	/**
 	 * Create a converter with input and output formats.
@@ -45,6 +46,13 @@ public class CLIConverter {
 	public CLIConverter(String s_in, String s_out, File outDir) {
 		inputFormat = getFormat(s_in);
 		outputFormat = getFormat(s_out);
+
+        // TODO: make the booleanize flag more flexible
+        if (!outputFormat.supportsMultivalued() ) {
+            this.booleanize = true;
+        } else {
+            this.booleanize = false;
+        }
 
 		// check that the provided formats exist and have the right capabilities
 		if (inputFormat == null) {
@@ -96,7 +104,7 @@ public class CLIConverter {
 	}
 
 	/**
-	 * Convert a file providing an output filename explicitely.
+	 * Convert a file providing an output filename explicitly.
 	 * 
 	 * @param inputFile
 	 * @param outputFile
@@ -106,13 +114,11 @@ public class CLIConverter {
         try {
             LogicalModel model = inputFormat.importFile(new File(inputFile));
 
-            // handle multivalued models: stop or booleanize if needed
-            if (!outputFormat.supportsMultivalued() && !model.isBoolean()) {
-                // TODO: detect when to Booleanize the model
-                if (false) {
+            if (!model.isBoolean()) {
+                if (booleanize) {
                     System.out.println("Warning: Exporting a Booleanized version of the multivalued model");
-                    model = Booleanizer.booleanize( model);
-                } else {
+                    model = Booleanizer.booleanize(model);
+                } else if (!outputFormat.supportsMultivalued()) {
                     System.err.println("This format does not support multivalued models");
                     return;
                 }
