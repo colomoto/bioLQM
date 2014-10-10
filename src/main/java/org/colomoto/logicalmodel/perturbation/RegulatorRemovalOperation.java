@@ -41,7 +41,9 @@ public class RegulatorRemovalOperation {
 		}
 		
 		if (var == regulator) {
-			return manager.getChild(node, value);
+            int n = manager.getChild(node, value);
+            manager.use(n);
+			return n;
 		}
 		
 		if (var.nbval == 2) {
