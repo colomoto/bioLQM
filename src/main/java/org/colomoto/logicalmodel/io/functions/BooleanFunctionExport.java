@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.io.rawfunctions;
+package org.colomoto.logicalmodel.io.functions;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,7 +15,7 @@ import org.colomoto.mddlib.PathSearcher;
  * 
  * @author Aurelien Naldi
  */
-public class RawFunctionExport {
+public class BooleanFunctionExport {
 
 	/**
 	 * Export a logical model into logical functions.

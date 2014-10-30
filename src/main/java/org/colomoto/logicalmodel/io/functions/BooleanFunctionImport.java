@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.io.rawfunctions;
+package org.colomoto.logicalmodel.io.functions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,13 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.FunctionParser;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
@@ -24,7 +22,7 @@ import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
  * 
  * @author Aurelien Naldi
  */
-public class RawFunctionImport {
+public class BooleanFunctionImport {
 	
 	private final List<String> nodes = new ArrayList<String>();
 	private final Map<String, String> m_functions = new HashMap<String, String>();

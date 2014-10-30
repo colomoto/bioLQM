@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.io.rawfunctions;
+package org.colomoto.logicalmodel.io.booleannet;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.mddlib.MDDManager;
@@ -15,7 +15,7 @@ import java.io.Writer;
  * 
  * @author Aurelien Naldi
  */
-public class AlternativeFunctionExport {
+public class BoolnetExport {
 
 	/**
 	 * Export a logical model into logical functions.

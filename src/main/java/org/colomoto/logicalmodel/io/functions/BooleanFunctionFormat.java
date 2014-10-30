@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.io.rawfunctions;
+package org.colomoto.logicalmodel.io.functions;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,18 +10,18 @@ import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.mangosdk.spi.ProviderFor;
 
 @ProviderFor(LogicalModelFormat.class)
-public class TextFunctionFormat extends AbstractFormat {
+public class BooleanFunctionFormat extends AbstractFormat {
 
-	public static final String ID = "rawfunctions";
+	public static final String ID = "boolfunctions";
 	
-	public TextFunctionFormat() {
+	public BooleanFunctionFormat() {
 		super(ID, "Raw functions format");
 	}
 
 	
 	@Override
 	public LogicalModel importFile(File f) throws IOException {
-		RawFunctionImport importer = new RawFunctionImport();
+		BooleanFunctionImport importer = new BooleanFunctionImport();
 		importer.parse(f);
 		
 		return importer.getModel();
@@ -30,7 +30,7 @@ public class TextFunctionFormat extends AbstractFormat {
 
 	@Override
 	public void export(LogicalModel model, OutputStream out) throws IOException {
-		RawFunctionExport exporter = new RawFunctionExport();
+		BooleanFunctionExport exporter = new BooleanFunctionExport();
 		exporter.export(model, out);
 	}
 

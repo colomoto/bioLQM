@@ -11,7 +11,7 @@ import org.colomoto.logicalmodel.services.ServiceManager;
 public class ReferenceModels {
 
 	private static final File dir = TestHelper.getTestResource("reference_models");
-	private static LogicalModelFormat format = ServiceManager.getManager().getFormat("rawfunctions");
+	private static LogicalModelFormat format = ServiceManager.getManager().getFormat("boolfunctions");
 	
 	
 	static {

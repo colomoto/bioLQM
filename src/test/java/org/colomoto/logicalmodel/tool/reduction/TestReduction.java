@@ -8,10 +8,6 @@ import java.util.List;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.ReferenceModels;
-import org.colomoto.logicalmodel.io.LogicalModelFormat;
-import org.colomoto.logicalmodel.io.rawfunctions.TextFunctionFormat;
-import org.colomoto.logicalmodel.perturbation.RegulatorRemovalOperation;
-import org.colomoto.logicalmodel.services.ServiceManager;
 import org.junit.Test;
 
 public class TestReduction {
