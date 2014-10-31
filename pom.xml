@@ -52,7 +52,7 @@
     <dependency>
         <groupId>org.colomoto</groupId>
         <artifactId>MDDlib</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
     </dependency>
 
     <dependency>

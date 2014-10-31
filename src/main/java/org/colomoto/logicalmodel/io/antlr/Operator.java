@@ -1,8 +1,13 @@
 package org.colomoto.logicalmodel.io.antlr;
 
+import java.util.function.BinaryOperator;
+
 /**
- * Created by aurelien on 10/2/14.
+ * Operator supported in function parsers
  */
 public enum Operator {
+
     AND, OR;
+
+
 }

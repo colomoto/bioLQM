@@ -11,7 +11,11 @@ import org.colomoto.logicalmodel.io.antlr.*;
 import org.colomoto.logicalmodel.io.antlr.BooleanNetBaseListener;
 import org.colomoto.logicalmodel.io.antlr.BooleanNetLexer;
 import org.colomoto.logicalmodel.io.antlr.BooleanNetParser;
+import org.colomoto.mddlib.logicalfunction.FunctionNode;
+import org.colomoto.mddlib.logicalfunction.OperandFactory;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.List;
 
 /**
@@ -21,32 +25,53 @@ import java.util.List;
  */
 public class BooleanNetParserListener extends BooleanNetBaseListener {
 
-    private final ExpressionStack stack = new ExpressionStack();
     private final ParseTreeWalker walker = new ParseTreeWalker();
+    private final ErrorListener errorListener = new ErrorListener();
 
-    public String parse(String e) {
+    private final OperandFactory operandFactory;
+    private final ExpressionStack stack;
 
-        ErrorListener errorListener = new ErrorListener();
+    public BooleanNetParserListener( OperandFactory operandFactory) {
 
-        // parser for a given string
-        CharStream input = new ANTLRInputStream(e);
-        BooleanNetLexer lexer = new BooleanNetLexer( input);
+        this.operandFactory = operandFactory;
+        this.stack = new ExpressionStack(operandFactory);
+
+    }
+
+    private BooleanNetParser getParser(CharStream input) {
+        BooleanNetLexer lexer = new BooleanNetLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         BooleanNetParser parser = new BooleanNetParser(tokens);
 
         parser.removeErrorListeners();
-        parser.addErrorListener( errorListener);
+        parser.addErrorListener(errorListener);
 
-        // actual parsing target
+        return parser;
+    }
+
+    public FunctionNode getExpr( String e) {
+        return getExpr( new ANTLRInputStream( e));
+    }
+
+    public FunctionNode getExpr( Reader reader) throws IOException {
+        return getExpr( new ANTLRInputStream(reader));
+    }
+
+    public FunctionNode getExpr( CharStream input) {
+        BooleanNetParser parser = getParser( input);
         ParseTree tree = parser.expr();
 
         if (errorListener.hasErrors()) {
             System.out.println("Found some errors");
             return null;
         }
+        return loadExpr( tree);
+    }
 
+    private FunctionNode loadExpr( ParseTree expr) {
+        stack.clear();
         ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(this, tree);
+        walker.walk(this, expr);
 
         return stack.done();
     }
@@ -84,6 +109,11 @@ public class BooleanNetParserListener extends BooleanNetBaseListener {
     }
 
     @Override
+    public void exitAndExpr(@NotNull BooleanNetParser.AndExprContext ctx) {
+        stack.operator( Operator.AND);
+    }
+
+    @Override
     public void exitOrExpr(@NotNull BooleanNetParser.OrExprContext ctx) {
         stack.operator( Operator.OR);
     }
@@ -97,7 +127,9 @@ public class BooleanNetParserListener extends BooleanNetBaseListener {
     }
 
     @Override
-    public void exitAndExpr(@NotNull BooleanNetParser.AndExprContext ctx) {
-        stack.operator( Operator.AND);
+    public void exitAssign(@NotNull BooleanNetParser.AssignContext ctx) {
+        ctx.var();
+        ParseTree tree = ctx.expr();
+        FunctionNode node = loadExpr( tree);
     }
 }

@@ -14,6 +14,8 @@ import org.colomoto.logicalmodel.io.antlr.Value;
 import org.colomoto.logicalmodel.io.antlr.BooleanFunctionBaseListener;
 import org.colomoto.logicalmodel.io.antlr.BooleanFunctionLexer;
 import org.colomoto.logicalmodel.io.antlr.BooleanFunctionParser;
+import org.colomoto.mddlib.logicalfunction.FunctionNode;
+import org.colomoto.mddlib.logicalfunction.OperandFactory;
 
 import java.util.List;
 
@@ -24,9 +26,14 @@ import java.util.List;
  */
 public class BooleanFunctionParserListener extends BooleanFunctionBaseListener {
 
+    private final OperandFactory operandFactory;
     ExpressionStack stack;
 
-    public String parse(String e) {
+    public BooleanFunctionParserListener( OperandFactory operandFactory) {
+        this.operandFactory = operandFactory;
+    }
+
+    public FunctionNode parse(String e) {
 
         ErrorListener errorListener = new ErrorListener();
 
@@ -47,7 +54,7 @@ public class BooleanFunctionParserListener extends BooleanFunctionBaseListener {
             return null;
         }
 
-        this.stack = new ExpressionStack();
+        this.stack = new ExpressionStack(operandFactory);
         new ParseTreeWalker().walk(this, tree);
 
         return stack.done();
