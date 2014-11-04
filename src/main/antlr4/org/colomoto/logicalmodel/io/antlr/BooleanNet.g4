@@ -1,6 +1,7 @@
 grammar BooleanNet;
 
-model: assign+ ;
+model: header assign+ ;
+header: '#BOOLEAN RULES\n' ;
 
 assign: var '*=' expr ;
 
