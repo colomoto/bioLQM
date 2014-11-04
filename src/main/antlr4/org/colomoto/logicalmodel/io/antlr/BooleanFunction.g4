@@ -1,5 +1,7 @@
 grammar BooleanFunction;
 
+model: assign+ ;
+
 assign: var ':' expr ;
 
 expr:  expr AND expr                      #andExpr

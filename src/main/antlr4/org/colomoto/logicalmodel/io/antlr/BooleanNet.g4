@@ -1,5 +1,7 @@
 grammar BooleanNet;
 
+model: assign+ ;
+
 assign: var '*=' expr ;
 
 expr:  expr AND expr                      #andExpr

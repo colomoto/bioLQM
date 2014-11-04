@@ -5,6 +5,7 @@ import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.ValueNode;
 import org.colomoto.mddlib.logicalfunction.operators.AndOperatorFactory;
 import org.colomoto.mddlib.logicalfunction.operators.NotOperatorFactory;
+import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
 
 import java.util.Stack;
 
@@ -33,7 +34,7 @@ public class ExpressionStack {
                 result = AndOperatorFactory.FACTORY.getNode(stack);
                 break;
             case OR:
-                result = AndOperatorFactory.FACTORY.getNode(stack);
+                result = OrOperatorFactory.FACTORY.getNode(stack);
                 break;
         }
         if (result == null) {

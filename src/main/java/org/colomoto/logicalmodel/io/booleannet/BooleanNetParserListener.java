@@ -13,10 +13,11 @@ import org.colomoto.logicalmodel.io.antlr.BooleanNetLexer;
 import org.colomoto.logicalmodel.io.antlr.BooleanNetParser;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
+import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.List;
+import java.util.*;
 
 /**
  * launch an antlr-generated parser, listen for events and feed them to an ExpressionStack
@@ -47,6 +48,32 @@ public class BooleanNetParserListener extends BooleanNetBaseListener {
         parser.addErrorListener(errorListener);
 
         return parser;
+    }
+
+    public Map<String,FunctionNode> getModel( CharStream input) {
+        BooleanNetParser parser = getParser( input);
+        BooleanNetParser.ModelContext mctx = parser.model();
+        Set<String> variables = new HashSet<String>();
+
+        // first collect all valid variables
+        for (BooleanNetParser.AssignContext actx: mctx.assign()) {
+            variables.add(actx.var().ID().getText());
+        }
+
+        // then load the actual functions
+        Map<String, FunctionNode> var2function = new HashMap<String, FunctionNode>();
+        for (BooleanNetParser.AssignContext actx: mctx.assign()) {
+            String var = actx.var().ID().getText();
+            FunctionNode node = loadExpr( actx.expr());
+
+            FunctionNode curNode = var2function.get(var);
+            if (curNode != null) {
+                node = OrOperatorFactory.FACTORY.getNode(curNode, node);
+            }
+            var2function.put( var, node);
+        }
+
+        return var2function;
     }
 
     public FunctionNode getExpr( String e) {
