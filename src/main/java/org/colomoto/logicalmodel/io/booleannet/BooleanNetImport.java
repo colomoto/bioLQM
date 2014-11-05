@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author Aurelien Naldi
  */
-public class BooleanNetParserManager {
+public class BooleanNetImport {
 
     /**
      * Entry point to parse a full model.
@@ -44,7 +44,10 @@ public class BooleanNetParserManager {
 
         if (errors.hasErrors()) {
             // TODO: better check for errors
-            System.out.println("Found some errors");
+            System.out.println("Found some errors:");
+            for (String s: errors.getErrors()) {
+                System.out.println("  "+s);
+            }
             return null;
         }
 
@@ -98,7 +101,10 @@ public class BooleanNetParserManager {
         ParseTree tree = parser.expr();
 
         if (errors.hasErrors()) {
-            System.out.println("Found some errors");
+            System.out.println("Errors!!");
+            for (String s: errors.getErrors()) {
+                System.out.println("  "+s);
+            }
             return null;
         }
         BooleanNetParserListener listener = new BooleanNetParserListener( factory);

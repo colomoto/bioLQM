@@ -26,6 +26,10 @@ public class ErrorListener extends BaseErrorListener {
         return errors.size() > 0;
     }
 
+    public List<String> getErrors() {
+        return errors;
+    }
+
     @Override
     public void syntaxError(@NotNull Recognizer<?, ?> recognizer, @Nullable Object offendingSymbol, int line, int charPositionInLine, @NotNull String msg, @Nullable RecognitionException e) {
         errors.add(line+":"+charPositionInLine + "  "+msg);

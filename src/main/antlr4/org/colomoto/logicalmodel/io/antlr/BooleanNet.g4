@@ -1,9 +1,9 @@
 grammar BooleanNet;
 
-model: header assign+ ;
-header: '#BOOLEAN RULES\n' ;
-
-assign: var '*=' expr ;
+// a model can start with comments and contain empty lines anywhere
+model: comment* assign+ ;
+comment: '#' ~NEWLINE*? NEWLINE+ ;
+assign: var '*' '=' expr NEWLINE* ;
 
 expr:  expr AND expr                      #andExpr
     | expr OR expr                        #orExpr
@@ -14,8 +14,9 @@ not: NOT;
 var: ID ;
 val: VALUE ;
 
-// skip spaces
-WS : ( ' ' | '\t' | '\r' | '\n' )+ -> skip;
+// spaces and line breaks
+WS : [' ' '\t' '\r' ]+ -> channel(HIDDEN);
+NEWLINE : '\r'? '\n' ;
 
 fragment LETTER: [a-zA-Z_];
 fragment ALPHA: LETTER|'_';

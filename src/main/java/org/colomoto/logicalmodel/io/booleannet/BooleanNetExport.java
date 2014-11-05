@@ -15,7 +15,7 @@ import java.io.Writer;
  * 
  * @author Aurelien Naldi
  */
-public class BoolnetExport {
+public class BooleanNetExport {
 
 	/**
 	 * Export a logical model into logical functions.

@@ -8,11 +8,11 @@ import org.mangosdk.spi.ProviderFor;
 import java.io.*;
 
 @ProviderFor(LogicalModelFormat.class)
-public class BoolnetFormat extends AbstractFormat {
+public class BooleanNetFormat extends AbstractFormat {
 
 	public static final String ID = "booleannet";
 
-	public BoolnetFormat() {
+	public BooleanNetFormat() {
 		super(ID, "Alternative functions format");
 	}
 
@@ -21,12 +21,12 @@ public class BoolnetFormat extends AbstractFormat {
 	public LogicalModel importFile(File f) throws IOException {
 
 		Reader reader = new FileReader( f);
-		return BooleanNetParserManager.getModel( reader);
+		return BooleanNetImport.getModel(reader);
 	}
 
 	@Override
 	public void export(LogicalModel model, OutputStream out) throws IOException {
-		BoolnetExport exporter = new BoolnetExport();
+		BooleanNetExport exporter = new BooleanNetExport();
 		exporter.export(model, out);
 	}
 
