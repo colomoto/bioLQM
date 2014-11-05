@@ -1,18 +1,25 @@
 package org.colomoto.logicalmodel.io.boolsim;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.*;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
-import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDManagerFactory;
+import org.colomoto.logicalmodel.io.antlr.*;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
-import org.colomoto.mddlib.logicalfunction.FunctionParser;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
+import org.colomoto.mddlib.logicalfunction.operators.AndOperatorFactory;
+import org.colomoto.mddlib.logicalfunction.operators.NotOperatorFactory;
+import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
 
 /**
  * Import boolsim models.
@@ -22,101 +29,140 @@ import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
  */
 public class BoolSimImport {
 
-	private final List<String> nodes = new ArrayList<String>();
-	private final Map<String, String[]> m_functions = new HashMap<String, String[]>();
+	/**
+	 * Entry point to parse a full model.
+	 *
+	 * @return
+	 */
+	public static LogicalModel getModel( Reader reader) throws IOException {
 
-	public void parse(File f) throws FileNotFoundException {
-		Scanner scanner = new Scanner(f);
-		Set<String> knownNodes = new TreeSet<String>();
-		while(scanner.hasNext()) {
-			String curLine = scanner.nextLine();
+		CharStream input = new ANTLRInputStream(reader);
+		ErrorListener errors = new ErrorListener();
+		BoolsimParser parser = getParser(input, errors);
+		BoolsimParser.ModelContext mctx = parser.model();
 
-			// find the attribution symbol and sign of the function
-			int positive = 0;
-			int pos = curLine.indexOf("->");
-			if (pos < 0) {
-				pos = curLine.indexOf("-|");
-				if (pos < 0) {
-					System.err.println("Invalid line: "+curLine);
-				}
-				positive = 1;
+		if (errors.hasErrors()) {
+			// TODO: better check for errors
+			System.out.println("Found some errors:");
+			for (String s: errors.getErrors()) {
+				System.out.println("  "+s);
 			}
-			
-			String s_function = curLine.substring(0, pos).trim();
-			String s_id = curLine.substring(pos+2).trim();
-			
-			// sanity check for character that would mess up with the function parser
-			char[] invalidChars = {'|', '(', ')', '!'};
-			for (char c: invalidChars) {
-				if (s_function.indexOf(c) >= 0) {
-					throw new RuntimeException("Invalid character '"+c+"' in: "+s_function);
-				}
-			}
-
-			// find all identifiers: some may not have a defined function
-			String[] t_nodes = s_function.split("&");
-			for (String node: t_nodes) {
-				node = node.replace("^","").trim();
-				knownNodes.add(node);
-			}
-			
-			// transform syntax to be recognised by the internal parser
-			s_function = s_function.replace("^","!");
-			s_function = "("+s_function+")";
-			String[] cur_functions = m_functions.get(s_id);
-			if (cur_functions == null) {
-				knownNodes.add(s_id);
-				cur_functions = new String[2];
-				m_functions.put(s_id, cur_functions);
-			}
-
-			if (cur_functions[positive] == null) {
-				cur_functions[positive] = s_function;
-			} else {
-				cur_functions[positive] += " | "+s_function;
-			}
+			return null;
 		}
 
-		scanner.close();
-		nodes.addAll(knownNodes);
-	}
+		Map<String, NodeInfo> id2var = new HashMap<String, NodeInfo>();
+		List<NodeInfo> variables = new ArrayList<NodeInfo>();
 
-	public LogicalModel getModel() {
-
-		List<NodeInfo> modelNodes = new ArrayList<NodeInfo>();
-		for (String s: nodes) {
-			modelNodes.add( new NodeInfo(s));
-		}
-
-		FunctionParser parser = new FunctionParser();
-		OperandFactory opFactory = new SimpleOperandFactory<NodeInfo>(modelNodes);
-		MDDManager ddmanager = opFactory.getMDDManager();
-
-		int[] functions = new int[nodes.size()];
-		int i=0;
-		for (String s: nodes) {
-			String[] t_function = m_functions.get(s);
-			if (t_function == null) {
-				i++;
+		// first collect all valid variables
+		for (BoolsimParser.AssignContext actx: mctx.assign()) {
+			String id = actx.var().ID().getText();
+			if ( id2var.containsKey(id)) {
 				continue;
 			}
-			
-			// turn positive and negative terms into a single function
-			String s_function = t_function[0];
-			if (s_function == null) {
-				s_function = "!("+t_function[1]+")";
-			}
-			else if (t_function[1] != null){
-				s_function = "("+s_function+") & !("+t_function[1]+")";
-			}
 
-			if (s_function != null) {
-				FunctionNode fnode = parser.compile(opFactory, s_function);
-				functions[ i ] = fnode.getMDD(ddmanager);;
-			}
-			i++;
+			NodeInfo ni = new NodeInfo(id);
+			id2var.put(id, ni);
+			variables.add( ni);
 		}
 
-		return new LogicalModelImpl(modelNodes, ddmanager, functions);
+		// create the operand factory to assist the parser
+		OperandFactory operandFactory = new SimpleOperandFactory<NodeInfo>(variables);
+		BoolsimParserListener listener = new BoolsimParserListener( operandFactory);
+
+		// then load the actual functions
+		Map<NodeInfo, FunctionNode[]> var2functions = new HashMap<NodeInfo, FunctionNode[]>();
+		for (BoolsimParser.AssignContext actx: mctx.assign()) {
+			String id = actx.var().ID().getText();
+			int signIdx = 0;
+			if (actx.op().POSITIVE() == null) {
+				signIdx = 1;
+			}
+
+			NodeInfo ni = id2var.get( id);
+			FunctionNode node = listener.loadExpr(actx.expr());
+
+			FunctionNode[] functions = var2functions.get( ni);
+			if (functions == null) {
+				functions = new FunctionNode[2];
+				var2functions.put(ni, functions);
+			}
+
+			FunctionNode curNode = functions[signIdx];
+			if (curNode != null) {
+				node = OrOperatorFactory.FACTORY.getNode(curNode, node);
+			}
+			functions[signIdx] = node;
+		}
+
+		// integrate positive and negative effects
+		Map<NodeInfo, FunctionNode> var2function = new HashMap<NodeInfo, FunctionNode>();
+		for (NodeInfo ni: var2functions.keySet()) {
+			FunctionNode[] functions = var2functions.get(ni);
+			FunctionNode posNode = functions[0];
+			FunctionNode negNode = functions[1];
+			if (negNode != null) {
+				negNode = NotOperatorFactory.FACTORY.getNode( negNode);
+
+				if (posNode != null) {
+					negNode = AndOperatorFactory.FACTORY.getNode(posNode, negNode);
+				}
+				var2function.put(ni, negNode);
+			} else {
+				var2function.put(ni, posNode);
+			}
+		}
+
+		return ExpressionStack.constructModel(operandFactory, variables, var2function);
 	}
+
+
+	private static BoolsimParser getParser(CharStream input, ErrorListener errors) {
+		BoolsimLexer lexer = new BoolsimLexer(input);
+		TokenStream tokens = new CommonTokenStream(lexer);
+		BoolsimParser parser = new BoolsimParser(tokens);
+
+		parser.removeErrorListeners();
+		parser.addErrorListener(errors);
+
+		return parser;
+	}
+
+}
+
+
+class BoolsimParserListener extends BoolsimBaseListener {
+
+	private final ParseTreeWalker walker = new ParseTreeWalker();
+	private final ExpressionStack stack;
+
+	public BoolsimParserListener( OperandFactory operandFactory) {
+		this.stack = new ExpressionStack( operandFactory);
+	}
+
+	public FunctionNode loadExpr( ParseTree expr) {
+		stack.clear();
+		walker.walk(this, expr);
+
+		return stack.done();
+	}
+
+	@Override
+	public void exitVar(@NotNull BoolsimParser.VarContext ctx) {
+		String var = ctx.ID().getText();
+		stack.ident(var);
+	}
+
+	@Override
+	public void exitAndExpr(@NotNull BoolsimParser.AndExprContext ctx) {
+		stack.operator( Operator.AND);
+	}
+
+	@Override
+	public void exitSimpleExpr(@NotNull BoolsimParser.SimpleExprContext ctx) {
+		List nots = ctx.not();
+		if (nots != null && nots.size() % 2 > 0) {
+			stack.not();
+		}
+	}
+
 }

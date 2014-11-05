@@ -1,8 +1,6 @@
 package org.colomoto.logicalmodel.io.boolsim;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.AbstractFormat;
@@ -21,10 +19,9 @@ public class BoolSimFormat extends AbstractFormat {
 	
 	@Override
 	public LogicalModel importFile(File f) throws IOException {
-		BoolSimImport importer = new BoolSimImport();
-		importer.parse(f);
-		
-		return importer.getModel();
+
+		Reader reader = new FileReader( f);
+		return BoolSimImport.getModel(reader);
 	}
 
 
