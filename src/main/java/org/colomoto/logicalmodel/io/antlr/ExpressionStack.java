@@ -1,5 +1,9 @@
 package org.colomoto.logicalmodel.io.antlr;
 
+import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.LogicalModelImpl;
+import org.colomoto.logicalmodel.NodeInfo;
+import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.ValueNode;
@@ -7,6 +11,8 @@ import org.colomoto.mddlib.logicalfunction.operators.AndOperatorFactory;
 import org.colomoto.mddlib.logicalfunction.operators.NotOperatorFactory;
 import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -18,6 +24,32 @@ import java.util.Stack;
  * @author Aurelien Naldi
  */
 public class ExpressionStack {
+
+    /**
+     * Build a LogicalModel from a list of nodes and parsed functions.
+     * This method should be shared between parsers!
+     *
+     * @param operandFactory
+     * @param nodes
+     * @param var2function
+     * @return
+     */
+    public static LogicalModel constructModel(OperandFactory operandFactory, List<NodeInfo> nodes, Map<NodeInfo,FunctionNode> var2function) {
+
+        MDDManager manager = operandFactory.getMDDManager();
+
+        int[] functions = new int[nodes.size()];
+        for (int i=0 ; i<functions.length ; i++) {
+            FunctionNode node = var2function.get( nodes.get(i));
+            if (node == null) {
+                functions[i] = 0;
+            } else {
+                functions[i] = node.getMDD( manager);
+            }
+        }
+        return new LogicalModelImpl(nodes, manager, functions);
+    }
+
 
     private Stack<FunctionNode> stack = new Stack<FunctionNode>();
     private final OperandFactory operandFactory;

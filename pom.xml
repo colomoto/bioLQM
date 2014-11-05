@@ -7,7 +7,7 @@
   <groupId>org.colomoto</groupId>
   <artifactId>LogicalModel</artifactId>
   <name>Core LogicalModel toolbox</name>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <description>simple toolbox for logicalmodel manipulation (not edition)</description>
   <inceptionYear>2012</inceptionYear>
   <packaging>jar</packaging>

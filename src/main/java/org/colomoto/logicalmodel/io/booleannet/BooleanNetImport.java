@@ -84,7 +84,7 @@ public class BooleanNetImport {
             var2function.put( ni, node);
         }
 
-        return constructModel( operandFactory, variables, var2function);
+        return ExpressionStack.constructModel( operandFactory, variables, var2function);
     }
 
     /**
@@ -111,30 +111,6 @@ public class BooleanNetImport {
         return listener.loadExpr(tree);
     }
 
-    /**
-     * Build a LogicalModel from a list of nodes and parsed functions.
-     * This method should be shared between parsers!
-     *
-     * @param operandFactory
-     * @param nodes
-     * @param var2function
-     * @return
-     */
-    public static LogicalModel constructModel(OperandFactory operandFactory, List<NodeInfo> nodes, Map<NodeInfo,FunctionNode> var2function) {
-
-        MDDManager manager = operandFactory.getMDDManager();
-
-        int[] functions = new int[nodes.size()];
-        for (int i=0 ; i<functions.length ; i++) {
-            FunctionNode node = var2function.get( nodes.get(i));
-            if (node == null) {
-                functions[i] = 0;
-            } else {
-                functions[i] = node.getMDD( manager);
-            }
-        }
-        return new LogicalModelImpl(nodes, manager, functions);
-    }
 
     private static BooleanNetParser getParser(CharStream input, ErrorListener errors) {
         BooleanNetLexer lexer = new BooleanNetLexer(input);
@@ -153,11 +129,9 @@ public class BooleanNetImport {
 class BooleanNetParserListener extends BooleanNetBaseListener {
 
     private final ParseTreeWalker walker = new ParseTreeWalker();
-    private final OperandFactory operandFactory;
     private final ExpressionStack stack;
 
     public BooleanNetParserListener( OperandFactory operandFactory) {
-        this.operandFactory = operandFactory;
         this.stack = new ExpressionStack( operandFactory);
     }
 
