@@ -117,41 +117,58 @@ public class Colomoto {
         sb.append("\n\n"+separator+"| Available formats: (use @ to select subformats)\n");
 		sb.append("|   '<'/'>': import / export  ; 'B'/'M' Boolean/Multivalued\n");
 		sb.append(separator);
+
+		// detect the longest format name to generate a nice output
+		int namelength = 10;
+		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
+			String id = format.getID();
+			if (id.length() > namelength) {
+				namelength = id.length();
+			}
+			if (format instanceof FormatMultiplexer) {
+				Enum[] subformats = ((FormatMultiplexer) format).getSubformats();
+				for (Enum e: subformats) {
+					id = e.name();
+					if (id.length()+3 > namelength) {
+						namelength = id.length()+3;
+					}
+				}
+			}
+		}
+
+		String nameformat = "%1$-"+namelength+"s    ";
 		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
 			String cap;
 			if (format.canImport()) {
 				if (format.canExport()) {
-					cap = "  <>";
+					cap = " <> ";
 				} else {
-					cap = "  < ";
+					cap = " <  ";
 				}
 			} else {
 				if (format.canExport()) {
-					cap = "   >";
+					cap = "  > ";
 				} else {
-					cap = "  --";
+					cap = " -- ";
 				}
 			}
 			
 			String level = format.supportsMultivalued() ? "M " : "B ";
 
-			String extra = "";
 			if (format instanceof FormatMultiplexer) {
 				Enum[] subformats = ((FormatMultiplexer)format).getSubformats();
-				extra += "@[";
-				boolean first = true;
+				String id = String.format(nameformat, format.getID());
+				sb.append(level).append(cap).append(" ").append(id);
+				sb.append("\t").append(format.getName()).append("\n");
 				for (Enum e: subformats) {
-					if (first) {
-						first = false;
-					} else  {
-						extra += ",";
-					}
-					extra += e;
+					id = String.format(nameformat, "  @"+e);
+					sb.append("       ").append(id).append("\n");
 				}
-				extra += "]";
+			} else {
+				String id = String.format(nameformat, format.getID());
+				sb.append(level).append(cap).append(" ").append(id);
+				sb.append("\t").append(format.getName()).append("\n");
 			}
-			sb.append(level).append(cap).append(" ").append(format.getID()).append(extra);
-			sb.append("\t").append(format.getName()).append("\n");
 		}
 		
 		
