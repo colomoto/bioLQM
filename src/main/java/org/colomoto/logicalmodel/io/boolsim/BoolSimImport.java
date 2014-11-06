@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.io.antlr.*;
@@ -50,20 +51,14 @@ public class BoolSimImport {
 			return null;
 		}
 
-		Map<String, NodeInfo> id2var = new HashMap<String, NodeInfo>();
-		List<NodeInfo> variables = new ArrayList<NodeInfo>();
-
-		// first collect all valid variables
+		// First collect all encountered variables
+		BoolsimVariableCollector collector = new BoolsimVariableCollector();
+		// force the assigned variables to show up first in the node order
 		for (BoolsimParser.AssignContext actx: mctx.assign()) {
-			String id = actx.var().ID().getText();
-			if ( id2var.containsKey(id)) {
-				continue;
-			}
-
-			NodeInfo ni = new NodeInfo(id);
-			id2var.put(id, ni);
-			variables.add( ni);
+			collector.exitVar( actx.var());
 		}
+		// also collect variables which only appear in conditions
+		List<NodeInfo> variables = collector.findVariables(mctx);
 
 		// create the operand factory to assist the parser
 		OperandFactory operandFactory = new SimpleOperandFactory<NodeInfo>(variables);
@@ -71,6 +66,7 @@ public class BoolSimImport {
 
 		// then load the actual functions
 		Map<NodeInfo, FunctionNode[]> var2functions = new HashMap<NodeInfo, FunctionNode[]>();
+		Map<String, NodeInfo> id2var = collector.getVarMap();
 		for (BoolsimParser.AssignContext actx: mctx.assign()) {
 			String id = actx.var().ID().getText();
 			int signIdx = 0;
@@ -127,6 +123,33 @@ public class BoolSimImport {
 		return parser;
 	}
 
+}
+
+
+class BoolsimVariableCollector extends BoolsimBaseListener {
+
+	private final ParseTreeWalker walker = new ParseTreeWalker();
+	List<NodeInfo> variables = new ArrayList<NodeInfo>();
+	Map<String,NodeInfo> id2node = new HashMap<String, NodeInfo>();
+
+	@Override
+	public void exitVar(@NotNull BoolsimParser.VarContext ctx) {
+		String var = ctx.ID().getText();
+		if (!id2node.containsKey(var)) {
+			NodeInfo ni = new NodeInfo(var);
+			id2node.put(var, ni);
+			variables.add(ni);
+		}
+	}
+
+	public List<NodeInfo> findVariables(ParseTree tree) {
+		walker.walk(this, tree);
+		return variables;
+	}
+
+	public Map<String,NodeInfo> getVarMap() {
+		return id2node;
+	}
 }
 
 
