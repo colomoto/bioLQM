@@ -50,13 +50,13 @@ abstract public class AbstractMultipleSuccessorUpdater extends BaseUpdater imple
         return new SingleStateList(next);
     }
 
-    public static List<byte[]> getSuccessors(byte[][] nexts) {
-        if (nexts == null || nexts.length == 0) {
+    public static List<byte[]> getSuccessors(List<byte[]> nexts) {
+        if (nexts == null || nexts.size() == 0) {
             return EMPTYSUCCESSOR;
         }
 
-        if (nexts.length == 1) {
-            return new SingleStateList(nexts[0]);
+        if (nexts.size() == 1) {
+            return new SingleStateList(nexts.get(0));
         }
 
         return new StateList(nexts);
@@ -104,19 +104,19 @@ class SingleStateList extends AbstractList<byte[]> {
 
 class StateList extends AbstractList<byte[]> {
 
-    private final byte[][] states;
+    private final List<byte[]> states;
 
-    public StateList(byte[][] states) {
+    public StateList(List<byte[]> states) {
         this.states = states;
     }
 
     @Override
     public byte[] get(int i) {
-        return states[i];
+        return states.get(i);
     }
 
     @Override
     public int size() {
-        return states.length;
+        return states.size();
     }
 }
