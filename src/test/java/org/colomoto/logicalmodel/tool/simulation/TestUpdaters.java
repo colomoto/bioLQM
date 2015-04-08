@@ -2,7 +2,6 @@ package org.colomoto.logicalmodel.tool.simulation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.colomoto.logicalmodel.LogicalModel;
@@ -10,6 +9,8 @@ import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.tool.simulation.updater.AsynchronousUpdater;
 import org.colomoto.logicalmodel.tool.simulation.updater.BlockSequentialUpdater;
+import org.colomoto.logicalmodel.tool.simulation.updater.PriorityClasses;
+import org.colomoto.logicalmodel.tool.simulation.updater.PriorityUpdater;
 import org.colomoto.logicalmodel.tool.simulation.updater.SequentialUpdater;
 import org.colomoto.logicalmodel.tool.simulation.updater.SynchronousUpdater;
 import org.colomoto.mddlib.MDDManager;
@@ -171,5 +172,47 @@ public class TestUpdaters {
 		Assert.assertEquals(1, next[0]);
 		Assert.assertEquals(1, next[1]);
 		Assert.assertEquals(0, next[2]);
+	}
+	
+	@Test
+	public void testPriorityUpdater() throws IOException {
+		LogicalModel model = getOtherModel();
+		PriorityClasses pcs = new PriorityClasses();
+		int[] pc = {0,0,1,0,2,0,3,0,4,0};
+		
+		// One class Sync
+		pcs.add(pc, true);
+		PriorityUpdater updater = new PriorityUpdater(model, pcs);
+		byte[] state = {1,1,0,1,0};
+		List<byte[]> lNext = updater.getSuccessors(state);
+		Assert.assertEquals(1, lNext.size());
+		Assert.assertEquals(1, lNext.get(0)[0]);
+		Assert.assertEquals(0, lNext.get(0)[1]);
+		Assert.assertEquals(0, lNext.get(0)[2]);
+		Assert.assertEquals(0, lNext.get(0)[3]);
+		Assert.assertEquals(1, lNext.get(0)[4]);
+		
+		// One class Async
+		pcs = new PriorityClasses();
+		pcs.add(pc, false);
+		updater = new PriorityUpdater(model, pcs);
+		lNext = updater.getSuccessors(state);
+		Assert.assertEquals(3, lNext.size());
+
+		// Two class s[B-E+] s[AB+CDE-]
+		pcs = new PriorityClasses();
+		int[] pc1 = {1,-1,4,1};
+		pcs.add(pc1, true);
+		int[] pc2 = {0,0,1,1,2,0,3,0,4,-1};
+		pcs.add(pc2, true);
+		updater = new PriorityUpdater(model, pcs);
+		lNext = updater.getSuccessors(state);
+		Assert.assertEquals(1, lNext.size());
+		Assert.assertEquals(1, lNext.get(0)[0]);
+		Assert.assertEquals(0, lNext.get(0)[1]);
+		Assert.assertEquals(0, lNext.get(0)[2]);
+		Assert.assertEquals(1, lNext.get(0)[3]);
+		Assert.assertEquals(1, lNext.get(0)[4]);
+
 	}
 }
