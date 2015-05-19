@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.colomoto.logicalmodel.LogicalModel;
+import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -25,7 +26,8 @@ public class BoolSimExport {
 	 * @param out
 	 * @throws IOException
 	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public void export(LogicalModel multiVmodel, OutputStream out) throws IOException {
+		LogicalModel model = Booleanizer.booleanize(multiVmodel);
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);
