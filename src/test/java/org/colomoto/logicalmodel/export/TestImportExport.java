@@ -20,6 +20,7 @@ import org.colomoto.logicalmodel.io.ginml.LogicalModel2GINML;
 import org.colomoto.logicalmodel.io.functions.BooleanFunctionFormat;
 import org.colomoto.logicalmodel.io.sbml.SBMLqualExport;
 import org.colomoto.logicalmodel.io.sbml.SBMLqualImport;
+import org.colomoto.logicalmodel.io.pint.PintExport;
 import org.colomoto.logicalmodel.services.ServiceManager;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -129,4 +130,20 @@ public class TestImportExport extends TestCase {
 		LogicalModelFormat format = ServiceManager.getManager().getFormat(BooleanFunctionFormat.ID);
 		format.export(getSimpleModel(), new FileOutputStream(f));
 	}
+
+	@Test
+	public void testPintExport() {
+		LogicalModel model = getSimpleModel();
+		exportPint(model, "testExport.an");
+	}
+	public void exportPint(LogicalModel model, String filename) {
+		PintExport exporter = new PintExport();
+		try {
+			FileOutputStream out = new FileOutputStream(TestHelper.getTestOutput(filename));
+			exporter.export(model, out);
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
+	}
+
 }
