@@ -12,7 +12,7 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(LogicalModelFormat.class)
 public class PintFormat extends AbstractFormat {
 
-	public PintFormat() { super("an", "Pint format", true); }
+	public PintFormat() { super("an", "Pint format", ModelType.MULTIVALUED); }
 
 	/*
 	@Override

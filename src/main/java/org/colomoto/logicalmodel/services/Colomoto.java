@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.io.LogicalModelFormat.ModelType;
 import org.colomoto.logicalmodel.tool.LogicalModelTool;
 
 import javax.script.ScriptEngine;
@@ -153,7 +154,7 @@ public class Colomoto {
 				}
 			}
 			
-			String level = format.supportsMultivalued() ? "M " : "B ";
+			String level = format.getModelType() == ModelType.MULTIVALUED ? "M " : "B ";
 
 			if (format instanceof FormatMultiplexer) {
 				Enum[] subformats = ((FormatMultiplexer)format).getSubformats();

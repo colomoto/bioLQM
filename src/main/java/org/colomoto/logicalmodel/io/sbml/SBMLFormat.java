@@ -20,7 +20,7 @@ import org.mangosdk.spi.ProviderFor;
 public class SBMLFormat extends AbstractFormat {
 
 	public SBMLFormat() {
-		super("sbml", "SBML-qual v1.0 format", true);
+		super("sbml", "SBML-qual v1.0 format", ModelType.MULTIVALUED);
 	}
 	
 	

@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.io.LogicalModelFormat.ModelType;
 import org.colomoto.logicalmodel.io.MultiplexedFormat;
 import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
 
@@ -47,12 +48,7 @@ public class CLIConverter {
 		inputFormat = getFormat(s_in);
 		outputFormat = getFormat(s_out);
 
-        // TODO: make the booleanize flag more flexible
-        if (!outputFormat.supportsMultivalued() ) {
-            this.booleanize = true;
-        } else {
-            this.booleanize = false;
-        }
+		this.booleanize = (outputFormat.getModelType() == ModelType.BOOLEAN_CAN_EXPORT_MULTIVALUE);
 
 		// check that the provided formats exist and have the right capabilities
 		if (inputFormat == null) {
@@ -118,7 +114,7 @@ public class CLIConverter {
                 if (booleanize) {
                     System.out.println("Warning: Exporting a Booleanized version of the multivalued model");
                     model = Booleanizer.booleanize(model);
-                } else if (!outputFormat.supportsMultivalued()) {
+                } else {
                     System.err.println("This format does not support multivalued models");
                     return;
                 }

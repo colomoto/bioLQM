@@ -19,19 +19,19 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 
 	private final boolean canExport;
 	private final boolean canImport;
-	private final boolean supportsMultivalued;
+	private final ModelType modelType;
 	
 	private static final String NAME_IMPORT = "importFile";
 	private static final String NAME_EXPORT = "export";
 	
 	protected AbstractFormat(String id, String name) {
-		this(id, name, false);
+		this(id, name, ModelType.BOOLEAN_STRICT);
 	}
 	
-	protected AbstractFormat(String id, String name, boolean supportsMultivalued) {
+	protected AbstractFormat(String id, String name, ModelType modelType) {
 		this.formatID = id;
 		this.formatName = name;
-		this.supportsMultivalued = supportsMultivalued;
+		this.modelType = modelType;
 
 		boolean canImport = false;
 		boolean canExport = false;
@@ -71,8 +71,8 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	}
 
 	@Override
-	public boolean supportsMultivalued() {
-		return supportsMultivalued;
+	public ModelType getModelType() {
+		return this.modelType;
 	}
 
 	@Override

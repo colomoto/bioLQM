@@ -14,6 +14,8 @@ import org.colomoto.logicalmodel.LogicalModel;
  */
 public interface LogicalModelFormat {
 
+	public enum ModelType { BOOLEAN_STRICT, BOOLEAN_CAN_EXPORT_MULTIVALUE, MULTIVALUED };
+
 	/**
 	 * get the ID of the format. It will be used to retrieve the format
 	 * @return the format ID
@@ -44,7 +46,7 @@ public interface LogicalModelFormat {
 	 * 
 	 * @return true if it supports multivalued models, false for Boolean formats
 	 */
-	boolean supportsMultivalued();
+	ModelType getModelType();
 	
 	/**
 	 * Export a logical model to this format.

@@ -19,7 +19,7 @@ import org.mangosdk.spi.ProviderFor;
 public class TruthTableFormat extends AbstractFormat {
 
 	public TruthTableFormat() {
-		super("tt", "Truth table format", true);
+		super("tt", "Truth table format", ModelType.MULTIVALUED);
 	}
 
 	@Override
