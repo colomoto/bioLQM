@@ -13,7 +13,7 @@ public class BoolSimFormat extends AbstractFormat {
 	public static final String ID = "boolsim";
 	
 	public BoolSimFormat() {
-		super(ID, "boolsim format", ModelType.BOOLEAN_CAN_EXPORT_MULTIVALUE);
+		super(ID, "boolsim format", MultivaluedSupport.BOOLEANIZED);
 	}
 
 	

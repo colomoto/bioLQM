@@ -14,7 +14,7 @@ public class PetriNetFormat extends AbstractFormatMultiplexer<PetriNetSubformats
 	public static final String ID = "PN";
 
 	public PetriNetFormat() {
-		super(ID, "Petri Net subformats", ModelType.MULTIVALUED, PetriNetSubformats.values());
+		super(ID, "Petri Net subformats", MultivaluedSupport.MULTIVALUED, PetriNetSubformats.values());
 	}
 
 	@Override

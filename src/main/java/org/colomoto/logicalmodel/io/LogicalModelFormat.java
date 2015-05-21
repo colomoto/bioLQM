@@ -14,7 +14,17 @@ import org.colomoto.logicalmodel.LogicalModel;
  */
 public interface LogicalModelFormat {
 
-	public enum ModelType { BOOLEAN_STRICT, BOOLEAN_CAN_EXPORT_MULTIVALUE, MULTIVALUED };
+	enum MultivaluedSupport {
+
+		BOOLEAN_STRICT("b"), BOOLEANIZED("B"), MULTIVALUED("M");
+
+		public final String flag;
+
+		MultivaluedSupport(String flag) {
+			this.flag = flag;
+		}
+
+	};
 
 	/**
 	 * get the ID of the format. It will be used to retrieve the format
@@ -46,7 +56,15 @@ public interface LogicalModelFormat {
 	 * 
 	 * @return true if it supports multivalued models, false for Boolean formats
 	 */
-	ModelType getModelType();
+	@Deprecated
+	boolean supportsMultivalued();
+
+	/**
+	 * Precise type of support for multivalued models.
+	 *
+	 * @return the type of support: native, booleanized or none
+	 */
+	MultivaluedSupport getMultivaluedSupport();
 	
 	/**
 	 * Export a logical model to this format.

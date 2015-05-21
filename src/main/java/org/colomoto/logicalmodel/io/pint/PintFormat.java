@@ -1,6 +1,5 @@
 package org.colomoto.logicalmodel.io.pint;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -12,7 +11,7 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(LogicalModelFormat.class)
 public class PintFormat extends AbstractFormat {
 
-	public PintFormat() { super("an", "Pint format", ModelType.MULTIVALUED); }
+	public PintFormat() { super("an", "Pint format", MultivaluedSupport.MULTIVALUED); }
 
 	/*
 	@Override

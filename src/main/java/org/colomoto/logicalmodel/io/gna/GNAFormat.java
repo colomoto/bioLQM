@@ -18,7 +18,7 @@ import org.mangosdk.spi.ProviderFor;
 public class GNAFormat extends AbstractFormat {
 
 	public GNAFormat() {
-		super("gna", "GNA (non-xml) format", ModelType.MULTIVALUED);
+		super("gna", "GNA (non-xml) format", MultivaluedSupport.MULTIVALUED);
 	}
 	
 	@Override

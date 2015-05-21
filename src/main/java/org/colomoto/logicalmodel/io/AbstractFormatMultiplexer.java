@@ -11,10 +11,10 @@ public class AbstractFormatMultiplexer<T extends Enum> extends AbstractFormat im
 	private final T[] subformats;
 	
 	protected AbstractFormatMultiplexer(String id, String name, T[] subformats) {
-		this(id, name, ModelType.BOOLEAN_STRICT, subformats);
+		this(id, name, MultivaluedSupport.BOOLEAN_STRICT, subformats);
 	}
 	
-	protected AbstractFormatMultiplexer(String id, String name, ModelType modelType, T[] subformats) {
+	protected AbstractFormatMultiplexer(String id, String name, MultivaluedSupport modelType, T[] subformats) {
 		super(id, name, modelType);
 		this.subformats = subformats;
 	}
