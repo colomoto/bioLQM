@@ -36,17 +36,22 @@ public class SBMLqualHelper {
 		
 		return new SBMLReader().readSBML(f);
 	}
-	
+
 	/**
 	 * Create a new Bundle, with an empty qualitative model
 	 * 
 	 * @return a new SBML document
 	 */
 	public static SBMLQualBundle newBundle() {
+		return newBundle(false);
+	}
+	public static SBMLQualBundle newBundle(boolean addLayout) {
 		// init SBML document
 		SBMLDocument sdoc = new SBMLDocument(3,1);
 		sdoc.addNamespace(QualConstant.shortLabel, "xmlns", QualConstant.namespaceURI);
-		sdoc.addNamespace(LayoutConstants.shortLabel, "xmlns", LayoutConstants.namespaceURI);
+		if (addLayout) {
+			sdoc.addNamespace(LayoutConstants.shortLabel, "xmlns", LayoutConstants.namespaceURI);
+		}
 
 		// create the main SBML model
 		Model smodel = sdoc.createModel("model_id");
@@ -54,12 +59,15 @@ public class SBMLqualHelper {
 		// add qual and layout extensions
 		QualitativeModel qmodel = new QualitativeModel(smodel);
 		smodel.addExtension(QualConstant.namespaceURI, qmodel);
-		LayoutModelPlugin lmodel = new LayoutModelPlugin(smodel);
-		smodel.addExtension(LayoutConstants.namespaceURI, lmodel);
-
 		// Add the "required" attributes for the extensions (should be automated later)
 		sdoc.getSBMLDocumentAttributes().put(QualConstant.shortLabel + ":required", "true");
-		sdoc.getSBMLDocumentAttributes().put(LayoutConstants.shortLabel + ":required", "false");
+
+		LayoutModelPlugin lmodel = null;
+		if (addLayout) {
+			lmodel = new LayoutModelPlugin(smodel);
+			smodel.addExtension(LayoutConstants.namespaceURI, lmodel);
+			sdoc.getSBMLDocumentAttributes().put(LayoutConstants.shortLabel + ":required", "false");
+		}
 
 		return new SBMLQualBundle(sdoc, smodel, qmodel, lmodel);
 	}

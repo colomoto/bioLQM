@@ -119,7 +119,10 @@ public class SBMLqualExport {
 				if (ni.isInput()) {
 					sp.setConstant(true);
 					// TODO: check consistency between function and input role?
+				} else {
+					sp.setConstant(false);
 				}
+
 			}
 			
 			// add transitions
@@ -139,6 +142,7 @@ public class SBMLqualExport {
 
 				String curID = ni.getNodeID();
 				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
+				sp.setConstant(false);
 				node2species.put(ni, sp);
 				if (ni.isInput()) {
 					sp.setConstant(true);
