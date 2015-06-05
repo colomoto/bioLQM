@@ -53,6 +53,7 @@ public class PriorityClasses {
 			return;
 		// Format: [varA,0,varC,1] [varB,0,varC,-1]
 		if (this.priorities.get(idxPC).unsplit(idxVar, split)) {
+			// Then it removes the complement split
 			int invSplit = -1 * split;
 			for (PriorityClass pc : this.priorities) {
 				if (pc.remove(idxVar, invSplit)) {
@@ -177,9 +178,9 @@ public class PriorityClasses {
 		}
 
 		/**
-		 * Marks a given variable as not split. The user is responsible for
-		 * finding the variable complement on the other classes (or the present
-		 * one).
+		 * Marks a given variable as not split. The caller method is responsible
+		 * for finding the variable complement on the other classes (or the
+		 * present one).
 		 * 
 		 * @param idx
 		 * @param split
@@ -190,7 +191,7 @@ public class PriorityClasses {
 				return false;
 
 			for (int i = 0; i < this.variables.length; i += 2) {
-				if (this.variables[i] == idx) {
+				if (this.variables[i] == idx && this.variables[i + 1] == split) {
 					this.variables[i + 1] = 0;
 					break;
 				}
@@ -217,7 +218,7 @@ public class PriorityClasses {
 				}
 				newVars[j] = this.variables[i];
 				newVars[j + 1] = this.variables[i + 1];
-				j+=2;
+				j += 2;
 			}
 			this.variables = newVars;
 			return true;
