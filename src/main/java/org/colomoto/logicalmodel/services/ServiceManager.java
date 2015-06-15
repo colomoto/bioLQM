@@ -35,17 +35,20 @@ public class ServiceManager {
 	
 	private final List<LogicalModelFormat> formats;
 	private final Map<String, LogicalModelFormat> id2format = new HashMap<String, LogicalModelFormat>();
-	
+
 	private final List<LogicalModelTool> tools;
 	private final Map<String, LogicalModelTool> id2tool = new HashMap<String, LogicalModelTool>();
-	
+
+	private final List<Service> services;
+	private final Map<String, Service> id2service = new HashMap<String, Service>();
+
 	private ServiceManager() {
 		formats = new ArrayList<LogicalModelFormat>();
 		
-        Iterator<LogicalModelFormat> service_list = ExtensionLoader.iterator( LogicalModelFormat.class);
-        while (service_list.hasNext()) {
+        Iterator<LogicalModelFormat> format_list = ExtensionLoader.iterator( LogicalModelFormat.class);
+        while (format_list.hasNext()) {
             try {
-            	LogicalModelFormat format = service_list.next();
+            	LogicalModelFormat format = format_list.next();
             	if( format != null){
             		formats.add(format);
         			id2format.put( format.getID(), format);
@@ -55,22 +58,39 @@ public class ServiceManager {
 
             }
         }
-		
-		tools = new ArrayList<LogicalModelTool>();
-		
-        Iterator<LogicalModelTool> tool_list = ExtensionLoader.iterator(LogicalModelTool.class);
-        while (tool_list.hasNext()) {
-            try {
-            	LogicalModelTool tool = tool_list.next();
-            	if( tool != null){
-            		tools.add(tool);
-        			id2tool.put( tool.getID(), tool);
-            	}
-            }
-            catch (ServiceConfigurationError e){
 
-            }
-        }
+		tools = new ArrayList<LogicalModelTool>();
+
+		Iterator<LogicalModelTool> tool_list = ExtensionLoader.iterator(LogicalModelTool.class);
+		while (tool_list.hasNext()) {
+			try {
+				LogicalModelTool tool = tool_list.next();
+				if( tool != null){
+					tools.add(tool);
+					id2tool.put( tool.getID(), tool);
+				}
+			}
+			catch (ServiceConfigurationError e){
+
+			}
+		}
+
+
+		services = new ArrayList<Service>();
+
+		Iterator<Service> service_list = ExtensionLoader.iterator(Service.class);
+		while (service_list.hasNext()) {
+			try {
+				Service service = service_list.next();
+				if( service != null){
+					services.add(service);
+					id2service.put( service.getID(), service);
+				}
+			}
+			catch (ServiceConfigurationError e){
+
+			}
+		}
 	}
 	
 	/**
@@ -95,21 +115,42 @@ public class ServiceManager {
 
 	/**
 	 * Get the tool declaration for a given ID.
-	 * 
+	 *
 	 * @param name ID of the tool
 	 * @return the tool declaration instance or null if not found.
 	 */
 	public LogicalModelTool getTool(String name) {
-		
+
 		return id2tool.get(name);
 	}
-	
+
 	/**
 	 * Get the available tools.
-	 * 
+	 *
 	 * @return all available tools
 	 */
 	public Iterable<LogicalModelTool> getTools() {
 		return tools;
+	}
+
+
+	/**
+	 * Get the service for a given ID.
+	 *
+	 * @param name ID of the service
+	 * @return the service instance or null if not found.
+	 */
+	public Service getService(String name) {
+
+		return id2service.get(name);
+	}
+
+	/**
+	 * Get the available services.
+	 *
+	 * @return all available services
+	 */
+	public Iterable<Service> getServices() {
+		return services;
 	}
 }
