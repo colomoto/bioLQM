@@ -1,5 +1,6 @@
 package org.colomoto.logicalmodel.tool.simulation.updater;
 
+import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.tool.simulation.MultipleSuccessorsUpdater;
 import org.colomoto.logicalmodel.tool.simulation.RandomUpdater;
 
@@ -39,5 +40,10 @@ public class RandomUpdaterWrapper implements RandomUpdater {
     @Override
     public void setSeed(long seed) {
         random.setSeed(seed);
+    }
+
+    @Override
+    public LogicalModel getModel() {
+        return updater.getModel();
     }
 }

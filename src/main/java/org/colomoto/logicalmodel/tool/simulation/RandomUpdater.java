@@ -7,7 +7,7 @@ package org.colomoto.logicalmodel.tool.simulation;
  *
  * @author Aurelien Naldi
  */
-public interface RandomUpdater {
+public interface RandomUpdater extends SingleSuccessorUpdater {
 
     /**
      * Get the successor of a state state.

@@ -5,7 +5,7 @@ package org.colomoto.logicalmodel.tool.simulation;
  *
  * @author Aurelien Naldi
  */
-public interface DeterministicUpdater {
+public interface DeterministicUpdater extends SingleSuccessorUpdater {
 
     /**
      * Get the successor of a state state.
