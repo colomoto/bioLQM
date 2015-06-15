@@ -26,8 +26,7 @@ public class BoolSimExport {
 	 * @param out
 	 * @throws IOException
 	 */
-	public void export(LogicalModel multiVmodel, OutputStream out) throws IOException {
-		LogicalModel model = Booleanizer.booleanize(multiVmodel);
+	public void export(LogicalModel model, OutputStream out) throws IOException {
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);

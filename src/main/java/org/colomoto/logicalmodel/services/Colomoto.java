@@ -115,7 +115,7 @@ public class Colomoto {
 
 
         sb.append("\n\n"+separator+"| Available formats: (use @ to select subformats)\n");
-		sb.append("|   '<'/'>': import / export  ; 'B'/'M' Boolean/Multivalued\n");
+		sb.append("|   '<'/'>': import / export  ; 'b'/'B'/'M' Boolean/Booleanized/Multivalued\n");
 		sb.append(separator);
 
 		// detect the longest format name to generate a nice output
@@ -153,7 +153,7 @@ public class Colomoto {
 				}
 			}
 			
-			String level = format.supportsMultivalued() ? "M " : "B ";
+			String level = format.getMultivaluedSupport().flag;
 
 			if (format instanceof FormatMultiplexer) {
 				Enum[] subformats = ((FormatMultiplexer)format).getSubformats();

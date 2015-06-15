@@ -34,6 +34,10 @@ public class MultiplexedFormat<T extends Enum> implements LogicalModelFormat {
 		return format.getName();
 	}
 	@Override
+	public MultivaluedSupport getMultivaluedSupport() {
+		return format.getMultivaluedSupport();
+	}
+	@Override
 	public boolean supportsMultivalued() {
 		return format.supportsMultivalued();
 	}

@@ -18,7 +18,7 @@ import org.mangosdk.spi.ProviderFor;
 public class GINMLFormat extends AbstractFormat {
 
 	public GINMLFormat() {
-		super("ginml", "GINML format", true);
+		super("ginml", "GINML format", MultivaluedSupport.MULTIVALUED);
 	}
 	
 	@Override
