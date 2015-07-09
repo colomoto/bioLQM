@@ -11,10 +11,6 @@ import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.tool.simulation.updater.AsynchronousUpdater;
-import org.colomoto.logicalmodel.tool.simulation.updater.BlockSequentialUpdater;
-import org.colomoto.logicalmodel.tool.simulation.updater.PriorityClasses;
-import org.colomoto.logicalmodel.tool.simulation.updater.PriorityUpdater;
-import org.colomoto.logicalmodel.tool.simulation.updater.SequentialUpdater;
 import org.colomoto.logicalmodel.tool.simulation.updater.SynchronousUpdater;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
@@ -24,13 +20,21 @@ import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-class SimulationTestImpl extends Simulation {
+class SimulationTestImpl extends MultipleSuccessorSimulation {
 
 	public HashSet<byte[]> hs;
 
 	public SimulationTestImpl(MultipleSuccessorsUpdater updater) {
 		super(updater);
 		hs = new HashSet<byte[]>();
+	}
+
+	@Override
+	public void addState(byte[] state) {
+		if ( !contains(state) ) {
+			hs.add(state);
+			enqueue(state);
+		}
 	}
 
 	// Not optimal solution, but an hashcode of a byte[] is not well defined
@@ -47,8 +51,7 @@ class SimulationTestImpl extends Simulation {
 	}
 
 	@Override
-	public boolean addTransition(byte[] from, byte[] to) {
-		return (!contains(from) && hs.add(from)) || (!contains(to) && hs.add(to));
+	public void addTransition(byte[] from, byte[] to) {
 	}
 }
 
