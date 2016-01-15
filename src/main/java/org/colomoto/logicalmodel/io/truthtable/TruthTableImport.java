@@ -37,7 +37,7 @@ public final class TruthTableImport {
 		String line;
 		while ((line = br.readLine()) != null) {
 			line = line.trim();
-			if (!line.startsWith("#")) {
+			if (!line.startsWith("#") && !line.isEmpty()) {
 				break;
 			}
 		}
@@ -80,11 +80,11 @@ public final class TruthTableImport {
 					bMax[i] = val;
 			}
 			line = this.getNextValidLine(br);
-			if (line == null)
-				break;
-			nLines++;
-			saLine = line.split(SEPARATOR);
-		} while (true);
+			if (line != null && !line.isEmpty()) {
+				nLines++;
+				saLine = line.split(SEPARATOR);
+			}
+		} while (line != null);
 
 		int totalLines = 1;
 		for (int i = 0; i < bMax.length; i++) {
