@@ -16,6 +16,8 @@ public class NodeInfo {
 	private byte max;
 	private boolean isInput = false;
 
+	private NodeInfo[] booleanized_group = null;
+
 	public NodeInfo(String name) {
 		this(name, (byte)1);
 	}
@@ -75,4 +77,10 @@ public class NodeInfo {
 		return nodeID;
 	}
 
+	public NodeInfo[] getBooleanizedGroup() {
+		return booleanized_group;
+	}
+	public void setBooleanizedGroup(NodeInfo[]booleanized_group) {
+		this.booleanized_group = booleanized_group;
+	}
 }

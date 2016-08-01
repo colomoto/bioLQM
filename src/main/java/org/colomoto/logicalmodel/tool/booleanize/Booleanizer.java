@@ -94,6 +94,12 @@ public class Booleanizer {
         for (int v=1 ; v<nbval ; v++) {
             mapped[v-1] = new NodeInfo(key+"_b"+v);
         }
+
+        // keep track of their group membership
+        for (NodeInfo ni: mapped) {
+            ni.setBooleanizedGroup(mapped);
+        }
+
         return mapped;
     }
 
