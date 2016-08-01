@@ -91,6 +91,10 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	}
 
 	@Override
+	public void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException {
+		export(model, outputProvider.getOutputStream());
+	}
+
 	public void export(LogicalModel model, OutputStream out) throws IOException {
 		throw new RuntimeException("Export not implemented for format " + getID());
 	}

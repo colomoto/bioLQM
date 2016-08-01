@@ -70,10 +70,10 @@ public interface LogicalModelFormat {
 	 * Export a logical model to this format.
 	 * 
 	 * @param model the model to export
-	 * @param out an outputstream to write the exported text
+	 * @param outputProvider an object providing output streams on demand for saving to one or multiple files
 	 * @throws IOException
 	 */
-	void export(LogicalModel model, OutputStream out) throws IOException;
+	void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException;
 
 	/**
 	 * Import a file in this format and build a logical model for it.

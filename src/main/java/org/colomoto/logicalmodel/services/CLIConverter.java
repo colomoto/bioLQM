@@ -10,6 +10,7 @@ import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.LogicalModelFormat.MultivaluedSupport;
 import org.colomoto.logicalmodel.io.MultiplexedFormat;
+import org.colomoto.logicalmodel.io.OutputStreamProvider;
 import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
 
 /**
@@ -120,7 +121,7 @@ public class CLIConverter {
                 }
             }
 
-            OutputStream out = new FileOutputStream(outputFile);
+            OutputStreamProvider out = new OutputStreamProvider(outputFile);
             outputFormat.export(model, out);
         } catch (IOException e) {
             e.printStackTrace();
