@@ -1,5 +1,7 @@
 package org.colomoto.logicalmodel.perturbation;
 
+import java.util.List;
+
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 
@@ -32,6 +34,16 @@ public class RangePerturbation extends AbstractPerturbation {
 		this.component = target;
 		this.min = min;
 		this.max = max;
+	}
+
+	@Override
+	public void restrictValues(byte[] state, List<NodeInfo> nodeOrder) {
+		int index = nodeOrder.indexOf(this.component);
+		if (state[index] < this.min) {
+			state[index] = (byte) this.min;
+		} else if (state[index] > this.max) {
+			state[index] = (byte) this.max;
+		} // else keep value
 	}
 	
 	@Override

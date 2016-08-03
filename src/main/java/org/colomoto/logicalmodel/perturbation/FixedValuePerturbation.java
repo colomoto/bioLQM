@@ -1,5 +1,7 @@
 package org.colomoto.logicalmodel.perturbation;
 
+import java.util.List;
+
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 
@@ -34,6 +36,12 @@ public class FixedValuePerturbation extends AbstractPerturbation {
 		}
 		this.component = target;
 		this.value = value;
+	}
+
+	@Override
+	public void restrictValues(byte[] state, List<NodeInfo> nodeOrder) {
+		int index = nodeOrder.indexOf(this.component);
+		state[index] = (byte) this.value;
 	}
 	
 	@Override

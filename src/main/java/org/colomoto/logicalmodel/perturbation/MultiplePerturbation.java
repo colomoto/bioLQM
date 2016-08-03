@@ -22,7 +22,14 @@ public class MultiplePerturbation<P extends LogicalModelPerturbation> extends Ab
 	public MultiplePerturbation(List<P> perturbations) {
 		this.perturbations = perturbations;
 	}
-	
+
+	@Override
+	public void restrictValues(byte[] state, List<NodeInfo> nodeOrder) {
+		for (LogicalModelPerturbation perturbation : perturbations) {
+			perturbation.restrictValues(state, nodeOrder);
+		}
+	}
+
 	@Override
 	public void update(LogicalModel model) {
 		for (LogicalModelPerturbation perturbation: perturbations) {

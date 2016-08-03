@@ -1,5 +1,7 @@
 package org.colomoto.logicalmodel.perturbation;
 
+import java.util.List;
+
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
@@ -21,6 +23,11 @@ public class InteractionPerturbation extends AbstractPerturbation {
 		this.regValue = regValue;
 		this.target = target;
 		this.regulator = regulator;
+	}
+
+	@Override
+	public void restrictValues(byte[] state, List<NodeInfo> nodeOrder) {
+		// Does not make sense with this perturbation
 	}
 	
 	@Override
