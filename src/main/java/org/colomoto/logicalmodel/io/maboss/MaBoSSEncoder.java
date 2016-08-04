@@ -87,7 +87,7 @@ public class MaBoSSEncoder {
 				}
 				names = names.substring(1);
 				out.write( "["+names+"].istate = 1 ["+ writeValues(l,0)+"]");
-				for (int i=1 ; i<l ; i++) {
+				for (int i=1 ; i<=l ; i++) {
 					out.write(", 0 [" +writeValues(l,i)+ "]");
 				}
 				out.write(";\n");
