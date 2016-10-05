@@ -168,7 +168,7 @@ public class Booleanizer {
             NodeInfo[] bnodes = ni.getBooleanizedGroup();
             if (bnodes == null) {
                 idx++;
-                return;
+                continue;
             }
             int i=0;
             for ( ; i<bnodes.length ; i++) {

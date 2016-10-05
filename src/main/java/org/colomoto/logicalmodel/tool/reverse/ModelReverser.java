@@ -6,6 +6,7 @@ import java.util.List;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
+import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 
@@ -25,6 +26,9 @@ public class ModelReverser {
 	private final int[] allFunctions;
 
 	public ModelReverser(LogicalModel model) {
+		// First booleanize the model
+		model = Booleanizer.booleanize(model);
+
 		this.ddmanager = model.getMDDManager();
 		this.revOp = new ReverseOperation(ddmanager);
 		this.variables = ddmanager.getAllVariables();
@@ -51,6 +55,9 @@ public class ModelReverser {
 		for (int varIdx = 0; varIdx < variables.length; varIdx++) {
 			reverse(varIdx);
 		}
+
+		// Fix the functions for booleanized models
+		Booleanizer.preventForbiddenStates(ddmanager, allNodes, allFunctions);
 	}
 
 	/**
