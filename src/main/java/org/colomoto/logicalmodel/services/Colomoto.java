@@ -1,6 +1,7 @@
 package org.colomoto.logicalmodel.services;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
@@ -37,10 +38,14 @@ public class Colomoto {
                 System.out.println(e.getMessage());
                 return;
             }
+            
+            // copy relevant arguments
+            String[] scriptargs = Arrays.copyOfRange(args, 2, args.length);
 
             try {
                 // add the launcher variable and actually run the script
                 engine.put("lm", new ScriptLauncher());
+                engine.put("args", scriptargs);
                 engine.eval(new java.io.FileReader(scriptname));
             } catch (Exception e) {
                 e.printStackTrace();
