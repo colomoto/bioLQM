@@ -1,16 +1,13 @@
 package org.colomoto.logicalmodel.io.petrinet;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.LogManager;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
+import org.colomoto.logicalmodel.io.OutputStreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 
@@ -198,14 +195,14 @@ public abstract class AbstractPNEncoder {
     
     abstract protected void doExport( String netName, List<NodeInfo> nodes, List[] t_transition, byte[][] t_markup, OutputStreamWriter out) throws IOException;
     
-    public void export( PNConfig config, OutputStream out) throws IOException {
+    public void export( PNConfig config, OutputStreamProvider out) throws IOException {
     	
     	// start with the common parts
         List[] t_transition = new List[len];
         byte[][] t_markup = prepareExport(config, t_transition);
 
         // TODO: add support for output nodes?
-        OutputStreamWriter writer = new OutputStreamWriter(out);
+        OutputStreamWriter writer = new OutputStreamWriter(out.getOutputStream());
     	doExport( "defaultName", nodeOrder, t_transition, t_markup, writer);
     	writer.close();
     }

@@ -25,13 +25,12 @@ public class AbstractFormatMultiplexer<T extends Enum> extends AbstractFormat im
 	}
 
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public void export(LogicalModel model, OutputStreamProvider out) throws IOException {
 		export(model, out, subformats[0]);
 	}
 
-	
 	@Override
-	public void export(LogicalModel model, OutputStream out, T subformat) throws IOException {
+	public void export(LogicalModel model, OutputStreamProvider out, T subformat) throws IOException {
 		throw new RuntimeException("Export not implemented for format " + getID());
 	}
 

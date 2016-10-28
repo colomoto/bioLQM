@@ -94,6 +94,12 @@ public class Booleanizer {
         for (int v=1 ; v<nbval ; v++) {
             mapped[v-1] = new NodeInfo(key+"_b"+v);
         }
+
+        // keep track of their group membership
+        for (NodeInfo ni: mapped) {
+            ni.setBooleanizedGroup(mapped);
+        }
+
         return mapped;
     }
 
@@ -148,6 +154,45 @@ public class Booleanizer {
         }
     }
 
+    /**
+     * Ensure that a booleanized model has no transition leading to forbidden states.
+     *
+     * @param newDDM
+     * @param nodes
+     * @param functions
+     */
+    public static void preventForbiddenStates(MDDManager newDDM, List<NodeInfo> nodes, int[] functions) {
+
+        int idx = 0;
+        for (NodeInfo ni: nodes) {
+            NodeInfo[] bnodes = ni.getBooleanizedGroup();
+            if (bnodes == null) {
+                idx++;
+                continue;
+            }
+            int i=0;
+            for ( ; i<bnodes.length ; i++) {
+                if (bnodes[i] == ni) {
+                    break;
+                }
+            }
+            int bf = functions[idx];
+            if (i > 0) {
+                // a subvariable can not be activated if the previous one is not active
+                MDDVariable prevVar = newDDM.getVariableForKey(bnodes[i - 1]);
+                int prev = prevVar.getNode(0, 1);
+                bf = MDDBaseOperators.AND.combine(newDDM, bf, prev);
+            }
+            if (i < bnodes.length - 1) {
+                // a subvariable can not be disabled if the next one is active
+                MDDVariable nextVar = newDDM.getVariableForKey(bnodes[i + 1]);
+                int next = nextVar.getNode(0, 1);
+                bf = MDDBaseOperators.OR.combine(newDDM, bf, next);
+            }
+            functions[idx] = bf;
+            idx++;
+        }
+    }
 
     /**
      * Take a Boolean function and transfer it into the new MDDManager,

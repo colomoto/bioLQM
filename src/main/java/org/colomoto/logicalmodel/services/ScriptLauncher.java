@@ -2,9 +2,9 @@ package org.colomoto.logicalmodel.services;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.io.OutputStreamProvider;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -56,7 +56,7 @@ public class ScriptLauncher {
         }
 
         try {
-            outputFormat.export(model, new FileOutputStream( filename));
+            outputFormat.export(model, new OutputStreamProvider( filename));
             return true;
         } catch (IOException e) {
             e.printStackTrace();

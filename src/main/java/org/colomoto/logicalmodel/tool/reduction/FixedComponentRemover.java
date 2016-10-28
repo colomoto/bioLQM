@@ -16,7 +16,16 @@ import java.util.List;
  * @author Aurelien Naldi
  */
 public class FixedComponentRemover implements LogicalModelModifier {
-
+	private boolean removeFixed;
+	
+	public FixedComponentRemover() {
+		// By default the components are kept in the model
+		this.removeFixed = false;
+	}
+	public FixedComponentRemover(boolean removeFixed) {
+		this.removeFixed = removeFixed;
+	}
+	
     @Override
     public LogicalModel apply(LogicalModel model) {
 
@@ -84,6 +93,21 @@ public class FixedComponentRemover implements LogicalModelModifier {
         // construct an updated model if needed
         if (changed) {
             List<NodeInfo> core = model.getNodeOrder();
+        	if (this.removeFixed) {
+        		for (int i = knownFixed.length - 1; i >= 0; i--) {
+        			if (knownFixed[i]) {
+        				core.remove(i);
+        			}
+        		}
+        		int[] newFunctions = new int[core.size()];
+        		for (int i = 0, n=0; i < knownFixed.length; i++) {
+        			if (!knownFixed[i]) {
+        				newFunctions[n] = functions[i];
+        				n++;
+        			}
+        		}
+        		functions = newFunctions;
+        	}
             List<NodeInfo> extra = model.getExtraComponents();
             LogicalModel newModel = new LogicalModelImpl(ddmanager, core, functions, extra, extraFunctions);
 

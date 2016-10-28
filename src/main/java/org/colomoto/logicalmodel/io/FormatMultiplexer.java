@@ -2,7 +2,6 @@ package org.colomoto.logicalmodel.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
 
@@ -16,7 +15,7 @@ public interface FormatMultiplexer<T extends Enum> extends LogicalModelFormat {
 	 * @param subformat the identifier of the subformat
 	 * @throws IOException
 	 */
-	void export(LogicalModel model, OutputStream out, T subformat) throws IOException;
+	void export(LogicalModel model, OutputStreamProvider out, T subformat) throws IOException;
 
 	/**
 	 * Import a file in a specific subformat and build a logical model for it.

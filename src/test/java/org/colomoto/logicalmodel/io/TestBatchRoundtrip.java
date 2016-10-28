@@ -58,6 +58,7 @@ public class TestBatchRoundtrip {
 					roundtrip(format, name, model);
 				} catch (Exception e) {
 					fail("Format "+format.getID()+" failed on "+name+"\nMessage: "+e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -79,7 +80,7 @@ public class TestBatchRoundtrip {
 	private void roundtrip(LogicalModelFormat format, String name, LogicalModel model) throws FileNotFoundException, IOException {
 		String ioName = name+"."+format.getID();
 		File f = TestHelper.getTestOutput("io_roundtrips", ioName);
-		format.export(model, new FileOutputStream(f));
+		format.export(model, new OutputStreamProvider(f));
 		LogicalModel importedModel = format.importFile(f);
 		Assert.assertTrue( LogicalModelComparator.compare(model, importedModel) );
 	}

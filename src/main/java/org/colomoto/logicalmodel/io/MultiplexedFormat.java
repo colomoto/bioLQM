@@ -50,7 +50,7 @@ public class MultiplexedFormat<T extends Enum> implements LogicalModelFormat {
 		return format.canImport();
 	}
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public void export(LogicalModel model, OutputStreamProvider out) throws IOException {
 		format.export(model, out, subformat);
 	}
 	@Override

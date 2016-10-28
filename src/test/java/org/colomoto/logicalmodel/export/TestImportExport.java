@@ -16,6 +16,7 @@ import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.ReferenceModels;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.io.OutputStreamProvider;
 import org.colomoto.logicalmodel.io.ginml.LogicalModel2GINML;
 import org.colomoto.logicalmodel.io.functions.BooleanFunctionFormat;
 import org.colomoto.logicalmodel.io.sbml.SBMLqualExport;
@@ -128,7 +129,7 @@ public class TestImportExport extends TestCase {
 	public void testRawFunctionExport() throws IOException {
 		File f = TestHelper.getTestOutput("exportFunctions.txt");
 		LogicalModelFormat format = ServiceManager.getManager().getFormat(BooleanFunctionFormat.ID);
-		format.export(getSimpleModel(), new FileOutputStream(f));
+		format.export(getSimpleModel(), new OutputStreamProvider(f));
 	}
 
 	@Test
