@@ -24,10 +24,12 @@ public class AvatarFormat extends AbstractFormat {
 		super("avatar", "Avatar v1.0 format", MultivaluedSupport.MULTIVALUED);
 	}
 	
+/*
 	@Override
 	public LogicalModel importFile(File f) throws IOException {
 		return new AvatarImport(f).getModel();
 	}
+*/
 	
 	@Override
 	public void export(LogicalModel model, OutputStream out) throws IOException, AvatarLogicalModelException {
