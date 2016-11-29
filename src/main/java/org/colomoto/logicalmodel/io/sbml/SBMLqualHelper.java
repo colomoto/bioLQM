@@ -11,8 +11,8 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.SBasePlugin;
 import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
-import org.sbml.jsbml.ext.qual.QualConstant;
-import org.sbml.jsbml.ext.qual.QualitativeModel;
+import org.sbml.jsbml.ext.qual.QualConstants;
+import org.sbml.jsbml.ext.qual.QualModelPlugin;
 import org.sbml.jsbml.xml.stax.SBMLReader;
 
 /**
@@ -48,7 +48,7 @@ public class SBMLqualHelper {
 	public static SBMLQualBundle newBundle(boolean addLayout) {
 		// init SBML document
 		SBMLDocument sdoc = new SBMLDocument(3,1);
-		sdoc.addNamespace(QualConstant.shortLabel, "xmlns", QualConstant.namespaceURI);
+		sdoc.addNamespace(QualConstants.shortLabel, "xmlns", QualConstants.namespaceURI);
 		if (addLayout) {
 			sdoc.addNamespace(LayoutConstants.shortLabel, "xmlns", LayoutConstants.namespaceURI);
 		}
@@ -57,10 +57,10 @@ public class SBMLqualHelper {
 		Model smodel = sdoc.createModel("model_id");
 		
 		// add qual and layout extensions
-		QualitativeModel qmodel = new QualitativeModel(smodel);
-		smodel.addExtension(QualConstant.namespaceURI, qmodel);
+		QualModelPlugin qmodel = new QualModelPlugin(smodel);
+		smodel.addExtension(QualConstants.namespaceURI, qmodel);
 		// Add the "required" attributes for the extensions (should be automated later)
-		sdoc.getSBMLDocumentAttributes().put(QualConstant.shortLabel + ":required", "true");
+		sdoc.getSBMLDocumentAttributes().put(QualConstants.shortLabel + ":required", "true");
 
 		LayoutModelPlugin lmodel = null;
 		if (addLayout) {
@@ -77,10 +77,12 @@ public class SBMLqualHelper {
 		Model smodel = sdoc.getModel();
 		
 		// Warning: how will we deal with multiple namespace versions?
-		QualitativeModel qmodel = null;
-		SBasePlugin plugin = smodel.getExtension(QualConstant.namespaceURI);
-		if (plugin instanceof QualitativeModel) {
-			qmodel = (QualitativeModel)plugin;
+		QualModelPlugin qmodel = null;
+		SBasePlugin plugin = smodel.getExtension(QualConstants.namespaceURI);
+		if (plugin instanceof QualModelPlugin) {
+			qmodel = (QualModelPlugin)plugin;
+		} else {
+			System.out.println("Failed creating the qual model plugin");
 		}
 
 		LayoutModelPlugin lmodel = null;
