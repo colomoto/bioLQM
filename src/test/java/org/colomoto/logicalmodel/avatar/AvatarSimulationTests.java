@@ -1,6 +1,5 @@
 package org.colomoto.logicalmodel.avatar;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,11 +9,7 @@ import junit.framework.TestCase;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.StatefulLogicalModelImpl;
-import org.colomoto.logicalmodel.io.avatar.AvatarExport;
-import org.colomoto.logicalmodel.io.avatar.AvatarImport;
 import org.colomoto.logicalmodel.io.avatar.AvatarUtils;
-import org.colomoto.logicalmodel.tool.simulation.avatar.AvatarUpdater;
-import org.colomoto.logicalmodel.tool.simulation.avatar.FirefrontUpdater;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
@@ -23,8 +18,11 @@ import org.junit.Test;
 
 public class AvatarSimulationTests extends TestCase {
 
+	@Test
 	public void testFileSimulations() {
-		List<LogicalModel> models = importAvatar(getAvatarInputFiles());
+		List<LogicalModel> models = new ArrayList<LogicalModel>();
+		models.add(getModerateModel());
+		models.add(getSimpleModel());
 		for(LogicalModel model : models){
 			byte[] istate = ((StatefulLogicalModelImpl)model).getInitialStates().get(0);
 			System.out.println("Stateful model: "+model.toString());
@@ -35,31 +33,6 @@ public class AvatarSimulationTests extends TestCase {
 			AvatarSimulation avaSimulation = new AvatarSimulation(model,istate);
 			avaSimulation.runSimulation();
 		}
-	}
-
-	private List<String> getAvatarInputFiles() {
-		String dir = "C:\\Users\\Rui\\Documents\\00 PosDoc\\Avatar Material\\table-models\\";
-		return Arrays.asList(dir+"sp4.avatar");/*"mmc-cycD1.avatar");/*,dir+"mmc.avatar",
-				dir+"random_001_v010_k2.avatar",dir+"random_002_v010_k2.avatar",
-				dir+"random_003_v015_k2.avatar",dir+"random_004_v015_k2.avatar",
-				dir+"sp1.avatar",dir+"sp2.avatar",dir+"sp4.avatar",
-				dir+"synthetic_1.avatar",dir+"synthetic_2.avatar",dir+"th-reduced.avatar");*/
-	}
-
-	private List<LogicalModel> importAvatar(List<String> filenames) {
-		List<LogicalModel> result = new ArrayList<LogicalModel>();
-		for(String filename : filenames){
-			System.out.println("FILE:"+filename);
-			try {
-				AvatarImport avatar = new AvatarImport(new File(filename));
-				result.add(avatar.getModel());
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println(e);
-				fail(e.getMessage());
-			} 
-		}
-		return result;
 	}
 
 	public void estModelSimulation() {
@@ -109,14 +82,6 @@ public class AvatarSimulationTests extends TestCase {
 		byte[] initialState = new byte[]{0,2,0};
 		LogicalModel model = new StatefulLogicalModelImpl(variables, ddmanager, functions, Arrays.asList(initialState), "moderateModel");
 		
-		try {
-			AvatarExport export = new AvatarExport(model);
-			File out = new File("testModerateExport.avatar");
-			export.export(out);
-		} catch (Exception e) {
-			System.out.println(e);
-			fail(e.getMessage());
-		} 
 		return model;
 	}
 
