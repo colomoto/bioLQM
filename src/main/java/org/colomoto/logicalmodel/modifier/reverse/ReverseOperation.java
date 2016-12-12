@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.tool.reverse;
+package org.colomoto.logicalmodel.modifier.reverse;
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;

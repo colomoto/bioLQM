@@ -1,9 +1,7 @@
 package org.colomoto.logicalmodel.services;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
@@ -11,7 +9,7 @@ import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.LogicalModelFormat.MultivaluedSupport;
 import org.colomoto.logicalmodel.io.MultiplexedFormat;
 import org.colomoto.logicalmodel.io.OutputStreamProvider;
-import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
+import org.colomoto.logicalmodel.modifier.booleanize.Booleanizer;
 
 /**
  * Helper for command-line conversions: define input and output formats

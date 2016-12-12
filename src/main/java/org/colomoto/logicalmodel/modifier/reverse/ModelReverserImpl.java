@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.tool.reverse;
+package org.colomoto.logicalmodel.modifier.reverse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
 import org.colomoto.logicalmodel.NodeInfo;
-import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
+import org.colomoto.logicalmodel.modifier.booleanize.Booleanizer;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 
@@ -16,7 +16,7 @@ import org.colomoto.mddlib.MDDVariable;
  * 
  * @author Pedro T. Monteiro
  */
-public class ModelReverser {
+public class ModelReverserImpl {
 
 	private final MDDManager ddmanager;
 	private final ReverseOperation revOp;
@@ -25,7 +25,7 @@ public class ModelReverser {
 	private final MDDVariable[] variables;
 	private final int[] allFunctions;
 
-	public ModelReverser(LogicalModel model) {
+	public ModelReverserImpl(LogicalModel model) {
 		// First booleanize the model
 		model = Booleanizer.booleanize(model);
 

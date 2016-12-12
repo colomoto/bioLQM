@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.tool.booleanize.Booleanizer;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;

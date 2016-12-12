@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.tool.reverse;
+package org.colomoto.logicalmodel.modifier.reverse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +70,9 @@ public class TestReversion extends TestCase {
 	}
 
 	private void testDoubleReversion(LogicalModel mOrig) {
-		ModelReverser modelRev1 = new ModelReverser(mOrig);
+		ModelReverserImpl modelRev1 = new ModelReverserImpl(mOrig);
 		modelRev1.reverse();
-		ModelReverser modelRev2 = new ModelReverser(modelRev1.getModel());
+		ModelReverserImpl modelRev2 = new ModelReverserImpl(modelRev1.getModel());
 		modelRev2.reverse();
 		LogicalModel mRev = modelRev2.getModel();
 
