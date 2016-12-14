@@ -2,7 +2,6 @@ package org.colomoto.logicalmodel.modifier.reduction;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
-import org.colomoto.logicalmodel.modifier.ModelModifier;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.logicalmodel.modifier.perturbation.RegulatorRemovalOperation;
 import org.colomoto.mddlib.MDDManager;
@@ -15,23 +14,10 @@ import java.util.List;
  *
  * @author Aurelien Naldi
  */
-public class FixedComponentRemover implements ModelModifier {
+public class FixedComponentRemover {
 
-    private boolean removeFixed;
-    private final LogicalModel model;
-	
-	public FixedComponentRemover(LogicalModel model) {
-		// By default the components are kept in the model
-        this(model, false);
-	}
 
-	public FixedComponentRemover(LogicalModel model, boolean removeFixed) {
-        this.model = model;
-		this.removeFixed = removeFixed;
-	}
-	
-    @Override
-    public LogicalModel getModifiedModel() {
+    public static LogicalModel reduceFixed(LogicalModel model, boolean removeFixed) {
 
         MDDManager ddmanager = model.getMDDManager();
         int[] oldFunctions = model.getLogicalFunctions();
@@ -97,7 +83,7 @@ public class FixedComponentRemover implements ModelModifier {
         // construct an updated model if needed
         if (changed) {
             List<NodeInfo> core = model.getNodeOrder();
-        	if (this.removeFixed) {
+        	if (removeFixed) {
         		for (int i = knownFixed.length - 1; i >= 0; i--) {
         			if (knownFixed[i]) {
         				core.remove(i);

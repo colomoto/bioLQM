@@ -71,9 +71,7 @@ public class TestReduction {
     public void testFixedPropagation() throws IOException {
         LogicalModel model = ReferenceModels.getModel("propagate_fixed.txt");
 
-        FixedComponentRemover remover = new FixedComponentRemover(model);
-
-        LogicalModel newModel = remover.getModifiedModel();
+        LogicalModel newModel = FixedComponentRemover.reduceFixed(model, false);
 
         int[] oldFunctions = model.getLogicalFunctions();
         int[] functions = newModel.getLogicalFunctions();

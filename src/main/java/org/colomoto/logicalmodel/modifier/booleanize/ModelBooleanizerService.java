@@ -1,7 +1,7 @@
 package org.colomoto.logicalmodel.modifier.booleanize;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.modifier.AbstractModelModifier;
+import org.colomoto.logicalmodel.modifier.AbstractModelModifierService;
 import org.colomoto.logicalmodel.modifier.ModelModifier;
 import org.colomoto.logicalmodel.modifier.ModelModifierService;
 import org.mangosdk.spi.ProviderFor;
@@ -12,9 +12,9 @@ import org.mangosdk.spi.ProviderFor;
  * @author Aurelien Naldi
  */
 @ProviderFor(ModelModifierService.class)
-public class ModelBooleanizerService extends AbstractModelModifier {
+public class ModelBooleanizerService extends AbstractModelModifierService {
 
-    public static final String ID = "bool";
+    public static final String ID = "booleanize";
     public static final String NAME = "model booleanizer";
     public static final String DESCR = "(no parameters)";
 

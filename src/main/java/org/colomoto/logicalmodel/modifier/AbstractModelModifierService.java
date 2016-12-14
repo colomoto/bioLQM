@@ -8,11 +8,11 @@ import org.colomoto.logicalmodel.LogicalModel;
  *
  * @author Aurelien Naldi
  */
-abstract public class AbstractModelModifier implements ModelModifierService {
+abstract public class AbstractModelModifierService implements ModelModifierService {
 
     private final String id, name, descr;
 
-    public AbstractModelModifier(String id, String name, String descr) {
+    public AbstractModelModifierService(String id, String name, String descr) {
         this.id = id;
         this.name = name;
         this.descr = descr;
