@@ -16,9 +16,10 @@ public class ModelReverserService extends AbstractModelModifier {
 
     public static final String ID = "rev";
     public static final String NAME = "model reverser";
+    public static final String DESCR = "(no parameters)";
 
     public ModelReverserService() {
-        super(ID, NAME);
+        super(ID, NAME, DESCR);
     }
 
     @Override
@@ -26,9 +27,24 @@ public class ModelReverserService extends AbstractModelModifier {
         return getModifier(model);
     }
 
-    
+    /**
+     * Shorthand to skip the parameter String.
+     *
+     * @param model
+     * @return
+     */
     public ModelModifier getModifier(LogicalModel model) {
         return new ModelReverser(model);
+    }
+
+    /**
+     * Shorthand to skip the parameter String.
+     *
+     * @param model
+     * @return
+     */
+    public LogicalModel getModifiedModel(LogicalModel model) {
+        return getModifier(model).getModifiedModel();
     }
 
 }

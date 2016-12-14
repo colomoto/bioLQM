@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.modifier.ModelModifierService;
 import org.colomoto.logicalmodel.tool.LogicalModelTool;
 
 import javax.script.ScriptEngine;
@@ -175,8 +176,29 @@ public class Colomoto {
 				sb.append("\t").append(format.getName()).append("\n");
 			}
 		}
-		
-		
+
+
+		// detect the longest modifier ID and name to generate a nice output
+		int idlength = 5;
+		namelength = 10;
+		for (ModelModifierService modifier: ServiceManager.getManager().getModifiers()) {
+			String id = modifier.getID();
+			String name = modifier.getName();
+			if (id.length() > idlength) {
+				idlength = id.length();
+			}
+			if (name.length() > namelength) {
+				namelength = name.length();
+			}
+		}
+
+		String idformat = "%1$-"+idlength+"s    ";
+		nameformat = "%1$-"+namelength+"s    ";
+		sb.append("\n\n"+separator+"| Available modifiers:\n"+separator);
+		for (ModelModifierService modifier: ServiceManager.getManager().getModifiers()) {
+			sb.append(String.format(idformat, modifier.getID()) + "\t" + String.format(nameformat, modifier.getName()) + modifier.getDescription() + "\n");
+		}
+
 		sb.append("\n\n"+separator+"| Available tools:\n"+separator);
 		for (LogicalModelTool tool: ServiceManager.getManager().getTools()) {
 			String level = tool.supportsMultivalued() ? "M " : "B ";

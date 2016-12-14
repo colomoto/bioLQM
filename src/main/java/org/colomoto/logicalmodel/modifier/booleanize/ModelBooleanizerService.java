@@ -14,17 +14,26 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(ModelModifierService.class)
 public class ModelBooleanizerService extends AbstractModelModifier {
 
-    public static final String ID = "rev";
-    public static final String NAME = "model modifier";
+    public static final String ID = "bool";
+    public static final String NAME = "model booleanizer";
+    public static final String DESCR = "(no parameters)";
 
     public ModelBooleanizerService() {
-        super(ID, NAME);
+        super(ID, NAME, DESCR);
     }
 
+    @Override
     public ModelModifier getModifier(LogicalModel model, String parameters) {
+        return getModifier(model);
+    }
+
+    public ModelModifier getModifier(LogicalModel model) {
         return new ModelBooleanizer(model);
     }
 
+    public LogicalModel getModifiedModel(LogicalModel model) {
+        return getModifier(model).getModifiedModel();
+    }
 }
 
 class ModelBooleanizer implements ModelModifier {

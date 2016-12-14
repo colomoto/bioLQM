@@ -15,6 +15,13 @@ import org.colomoto.logicalmodel.services.Service;
 public interface ModelModifierService extends Service {
 
     /**
+     * Provide a brief description of parameters for the help message
+     *
+     * @return a short String describing the service parameters
+     */
+    String getDescription();
+
+    /**
      * Setup a new modifier object.
      *
      * @param model the model to modify
@@ -23,5 +30,15 @@ public interface ModelModifierService extends Service {
      * @return a configured modifier instance
      */
     ModelModifier getModifier(LogicalModel model, String parameters);
+
+    /**
+     * Setup a modifier and directly retrieve the modified model.
+     * This is a shorthand for getModifier(model,parameters).getModifiedModel()
+     *
+     * @param model
+     * @param parameters
+     * @return
+     */
+    LogicalModel getModifiedModel(LogicalModel model, String parameters);
 
 }
