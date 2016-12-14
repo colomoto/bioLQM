@@ -1,7 +1,7 @@
-package org.colomoto.logicalmodel.tool.reduction;
+package org.colomoto.logicalmodel.modifier.reduction;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.LogicalModelModifier;
+import org.colomoto.logicalmodel.modifier.ModelModifier;
 import org.colomoto.logicalmodel.services.Service;
 import org.mangosdk.spi.ProviderFor;
 
@@ -27,12 +27,12 @@ public class ReductionService implements Service {
 
 
     public LogicalModel removeOutputs(LogicalModel model) {
-        OutputSimplifier simplifier = new OutputSimplifier();
-        return simplifier.apply(model);
+        OutputSimplifier simplifier = new OutputSimplifier(model);
+        return simplifier.getModifiedModel();
     }
 
     public LogicalModel removeDuplicates(LogicalModel model) {
-        LogicalModelModifier simplifier = new DuplicateRemover();
-        return simplifier.apply(model);
+        ModelModifier simplifier = new DuplicateRemover(model);
+        return simplifier.getModifiedModel();
     }
 }

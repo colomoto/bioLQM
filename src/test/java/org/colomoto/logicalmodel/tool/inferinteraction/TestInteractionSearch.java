@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.inferinteraction;
+package org.colomoto.logicalmodel.tool.inferinteraction;
 
 import java.util.ArrayList;
 import java.util.List;

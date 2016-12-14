@@ -9,6 +9,7 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
+import org.colomoto.logicalmodel.modifier.ModelModifierService;
 import org.colomoto.logicalmodel.tool.LogicalModelTool;
 
 /**
@@ -41,6 +42,9 @@ public class ServiceManager {
 
 	private final List<Service> services;
 	private final Map<String, Service> id2service = new HashMap<String, Service>();
+
+	private final List<ModelModifierService> modifiers;
+	private final Map<String, ModelModifierService> id2modifier = new HashMap<String, ModelModifierService>();
 
 	private ServiceManager() {
 		formats = new ArrayList<LogicalModelFormat>();
@@ -85,6 +89,23 @@ public class ServiceManager {
 				if( service != null){
 					services.add(service);
 					id2service.put( service.getID(), service);
+				}
+			}
+			catch (ServiceConfigurationError e){
+
+			}
+		}
+
+
+		modifiers = new ArrayList<ModelModifierService>();
+
+		Iterator<ModelModifierService> modifier_list = ExtensionLoader.iterator(ModelModifierService.class);
+		while (modifier_list.hasNext()) {
+			try {
+				ModelModifierService modifier = modifier_list.next();
+				if( modifier != null){
+					modifiers.add(modifier);
+					id2modifier.put( modifier.getID(), modifier);
 				}
 			}
 			catch (ServiceConfigurationError e){
@@ -152,5 +173,25 @@ public class ServiceManager {
 	 */
 	public Iterable<Service> getServices() {
 		return services;
+	}
+
+	/**
+	 * Get the service for a given ID.
+	 *
+	 * @param name ID of the service
+	 * @return the service instance or null if not found.
+	 */
+	public ModelModifierService getModifier(String name) {
+
+		return id2modifier.get(name);
+	}
+
+	/**
+	 * Get the available model modifier services.
+	 *
+	 * @return all available services for model modifiers
+	 */
+	public Iterable<ModelModifierService> getModifiers() {
+		return modifiers;
 	}
 }

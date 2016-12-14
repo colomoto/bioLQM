@@ -70,11 +70,11 @@ public class TestReversion extends TestCase {
 	}
 
 	private void testDoubleReversion(LogicalModel mOrig) {
-		ModelReverserImpl modelRev1 = new ModelReverserImpl(mOrig);
+		ModelReverser modelRev1 = new ModelReverser(mOrig);
 		modelRev1.reverse();
-		ModelReverserImpl modelRev2 = new ModelReverserImpl(modelRev1.getModel());
+		ModelReverser modelRev2 = new ModelReverser(modelRev1.getModifiedModel());
 		modelRev2.reverse();
-		LogicalModel mRev = modelRev2.getModel();
+		LogicalModel mRev = modelRev2.getModifiedModel();
 
 		int[] fOrig = mOrig.getLogicalFunctions();
 		int[] fRev = mRev.getLogicalFunctions();

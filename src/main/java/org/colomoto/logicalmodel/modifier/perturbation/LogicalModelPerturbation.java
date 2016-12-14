@@ -1,9 +1,9 @@
-package org.colomoto.logicalmodel.perturbation;
+package org.colomoto.logicalmodel.modifier.perturbation;
 
 import java.util.List;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.LogicalModelModifier;
+import org.colomoto.logicalmodel.modifier.ModelModifier;
 import org.colomoto.logicalmodel.NodeInfo;
 
 /**
@@ -11,7 +11,7 @@ import org.colomoto.logicalmodel.NodeInfo;
  * 
  * @author Aurelien Naldi
  */
-public interface LogicalModelPerturbation extends LogicalModelModifier {
+public interface LogicalModelPerturbation {
 
 	/**
 	 * Apply the perturbation(s) directly to a state, i.e., restricts the values
@@ -39,4 +39,10 @@ public interface LogicalModelPerturbation extends LogicalModelModifier {
      */
     boolean affectsNode(NodeInfo node);
 
+	/**
+	 *
+	 * @param model
+	 * @return
+	 */
+	LogicalModel apply(LogicalModel model);
 }

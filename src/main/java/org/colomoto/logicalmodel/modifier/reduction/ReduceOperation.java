@@ -1,9 +1,7 @@
-package org.colomoto.logicalmodel.tool.reduction;
+package org.colomoto.logicalmodel.modifier.reduction;
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
-import org.colomoto.mddlib.NodeRelation;
-import org.colomoto.mddlib.operators.AbstractOperator;
 
 /**
  * Rewrite a logical function to remove a regulator.

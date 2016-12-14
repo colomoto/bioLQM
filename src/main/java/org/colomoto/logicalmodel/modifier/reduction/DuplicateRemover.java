@@ -1,8 +1,8 @@
-package org.colomoto.logicalmodel.tool.reduction;
+package org.colomoto.logicalmodel.modifier.reduction;
 
 import org.colomoto.logicalmodel.LogicalModel;
 import org.colomoto.logicalmodel.LogicalModelImpl;
-import org.colomoto.logicalmodel.LogicalModelModifier;
+import org.colomoto.logicalmodel.modifier.ModelModifier;
 import org.colomoto.logicalmodel.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
@@ -16,10 +16,16 @@ import java.util.Map;
  * This tool will find nodes sharing the same logical function and remove duplicates.
  * These duplicates will be considered as mirror nodes for the first of them and reduced.
  */
-public class DuplicateRemover implements LogicalModelModifier {
+public class DuplicateRemover implements ModelModifier {
+
+	private final LogicalModel model;
+
+	public DuplicateRemover(LogicalModel model) {
+		this.model = model;
+	}
 
 	@Override
-	public LogicalModel apply(LogicalModel model) {
+	public LogicalModel getModifiedModel() {
 
 		MDDManager ddmanager = model.getMDDManager();
 

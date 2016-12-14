@@ -14,6 +14,8 @@ import java.io.IOException;
  */
 public class ScriptLauncher {
 
+    public ServiceManager srv = ServiceManager.getManager();
+
     public LogicalModel loadModel(String filename) {
         return loadModel(filename, null);
     }

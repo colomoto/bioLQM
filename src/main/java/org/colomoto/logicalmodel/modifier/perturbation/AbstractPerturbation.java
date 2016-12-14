@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.perturbation;
+package org.colomoto.logicalmodel.modifier.perturbation;
 
 import org.colomoto.logicalmodel.LogicalModel;
 

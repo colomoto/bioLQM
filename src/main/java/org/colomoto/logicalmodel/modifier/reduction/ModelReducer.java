@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.tool.reduction;
+package org.colomoto.logicalmodel.modifier.reduction;
 
 import java.util.ArrayList;
 import java.util.HashMap;

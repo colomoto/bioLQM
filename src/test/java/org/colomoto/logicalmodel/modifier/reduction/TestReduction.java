@@ -1,4 +1,4 @@
-package org.colomoto.logicalmodel.tool.reduction;
+package org.colomoto.logicalmodel.modifier.reduction;
 
 import static org.junit.Assert.assertEquals;
 
@@ -71,9 +71,9 @@ public class TestReduction {
     public void testFixedPropagation() throws IOException {
         LogicalModel model = ReferenceModels.getModel("propagate_fixed.txt");
 
-        FixedComponentRemover remover = new FixedComponentRemover();
+        FixedComponentRemover remover = new FixedComponentRemover(model);
 
-        LogicalModel newModel = remover.apply(model);
+        LogicalModel newModel = remover.getModifiedModel();
 
         int[] oldFunctions = model.getLogicalFunctions();
         int[] functions = newModel.getLogicalFunctions();
