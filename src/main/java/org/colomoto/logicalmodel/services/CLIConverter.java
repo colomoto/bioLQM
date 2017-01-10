@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.logicalmodel.LogicalModel;
-import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.io.LogicalModelFormat.MultivaluedSupport;
-import org.colomoto.logicalmodel.io.MultiplexedFormat;
 import org.colomoto.logicalmodel.io.OutputStreamProvider;
 import org.colomoto.logicalmodel.modifier.booleanize.Booleanizer;
 
@@ -128,29 +126,8 @@ public class CLIConverter {
 	
 	public static LogicalModelFormat getFormat(String name) {
 
-		String[] t_name = name.split("@");
-		if (t_name.length > 2) {
-			throw new RuntimeException("Invalid format name: "+ name);
-		}
-		if (t_name.length == 2) {
-			// dealing with a subformat, add some tricks here
-			LogicalModelFormat format = getFormat(t_name[0]);
-			if (format instanceof FormatMultiplexer) {
-				return new MultiplexedFormat<Enum>((FormatMultiplexer)format, t_name[1]);
-			} else {
-				return null;
-			}
-		}
-		
 		// dealing with a "normal" format identification
-		LogicalModelFormat format = manager.getFormat(t_name[0]);
-		if (t_name.length == 2 && format != null) {
-			if (format instanceof FormatMultiplexer) {
-				FormatMultiplexer<?> fmt = (FormatMultiplexer)format;
-			} else {
-				format = null;
-			}
-		}
+		LogicalModelFormat format = manager.getFormat(name);
 		if (format == null) {
 			// try using a file extension
 			String extension = name.substring(name.lastIndexOf('.')+1);

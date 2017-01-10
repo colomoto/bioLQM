@@ -3,7 +3,6 @@ package org.colomoto.logicalmodel.services;
 import java.io.File;
 import java.util.Arrays;
 
-import org.colomoto.logicalmodel.io.FormatMultiplexer;
 import org.colomoto.logicalmodel.io.LogicalModelFormat;
 import org.colomoto.logicalmodel.modifier.ModelModifierService;
 import org.colomoto.logicalmodel.tool.LogicalModelTool;
@@ -120,7 +119,7 @@ public class Colomoto {
         sb.append(command).append(" -s script.js [arguments...]\n");
 
 
-        sb.append("\n\n"+separator+"| Available formats: (use @ to select subformats)\n");
+        sb.append("\n\n"+separator+"| Available formats:\n");
 		sb.append("|   '<'/'>': import / export  ; 'b'/'B'/'M' Boolean/Booleanized/Multivalued\n");
 		sb.append(separator);
 
@@ -130,15 +129,6 @@ public class Colomoto {
 			String id = format.getID();
 			if (id.length() > namelength) {
 				namelength = id.length();
-			}
-			if (format instanceof FormatMultiplexer) {
-				Enum[] subformats = ((FormatMultiplexer) format).getSubformats();
-				for (Enum e: subformats) {
-					id = e.name();
-					if (id.length()+3 > namelength) {
-						namelength = id.length()+3;
-					}
-				}
 			}
 		}
 
@@ -160,21 +150,9 @@ public class Colomoto {
 			}
 			
 			String level = format.getMultivaluedSupport().flag;
-
-			if (format instanceof FormatMultiplexer) {
-				Enum[] subformats = ((FormatMultiplexer)format).getSubformats();
-				String id = String.format(nameformat, format.getID());
-				sb.append(level).append(cap).append(" ").append(id);
-				sb.append("\t").append(format.getName()).append("\n");
-				for (Enum e: subformats) {
-					id = String.format(nameformat, "  @"+e);
-					sb.append("       ").append(id).append("\n");
-				}
-			} else {
-				String id = String.format(nameformat, format.getID());
-				sb.append(level).append(cap).append(" ").append(id);
-				sb.append("\t").append(format.getName()).append("\n");
-			}
+			String id = String.format(nameformat, format.getID());
+			sb.append(level).append(cap).append(" ").append(id);
+			sb.append("\t").append(format.getName()).append("\n");
 		}
 
 
