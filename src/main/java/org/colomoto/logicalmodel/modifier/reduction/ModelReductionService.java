@@ -56,7 +56,16 @@ class ReductionSettings {
     }
 
     public ReductionSettings(String parameters) {
-
+        String[] options = parameters.split(",");
+        for (String o: options) {
+            if ("fixed".equalsIgnoreCase(o)) {
+                handleFixed = true;
+            } else if ("duplicate".equalsIgnoreCase(o)) {
+                handleDuplicates = true;
+            } else if ("output".equalsIgnoreCase(o)) {
+                handleOutputs = true;
+            }
+        }
     }
 
 }
