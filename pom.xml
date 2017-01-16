@@ -5,13 +5,13 @@
 
   <!-- Project Description -->
   <groupId>org.colomoto</groupId>
-  <artifactId>LogicalModel</artifactId>
-  <name>Core LogicalModel toolbox</name>
+  <artifactId>bioLQM</artifactId>
+  <name>Logical Qualitative Models of biological network</name>
   <version>0.4-SNAPSHOT</version>
-  <description>simple toolbox for logicalmodel manipulation (not edition)</description>
+  <description>simple toolbox for the manipulation of logical models (not edition)</description>
   <inceptionYear>2012</inceptionYear>
   <packaging>jar</packaging>
-  <url>https://github.com/colomoto/logicalmodel</url>
+  <url>https://github.com/colomoto/bioLQM</url>
 
 
   <repositories>
@@ -92,7 +92,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.colomoto.logicalmodel.services.Colomoto</mainClass>
+              <mainClass>org.colomoto.biolqm.services.Colomoto</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -151,7 +151,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-  	      <mainClass>org.colomoto.logicalmodel.services.Colomoto</mainClass>
+  	      <mainClass>org.colomoto.biolqm.services.Colomoto</mainClass>
             </manifest>
           </archive>
         </configuration>

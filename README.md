@@ -45,7 +45,7 @@ For now it supports the following formats (< and > denote import/export capabili
 
 The integration of a filter only requires a simple format declaration class.
 These classes are automatically detected using some java annotations.
-(see subpackages of org.colomoto.logicalmodel.io)
+(see subpackages of org.colomoto.biolqm.io)
 
 
 It relies on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export, 
