@@ -47,6 +47,8 @@ public class ModelReverser implements ModelModifier {
 				+ extrafunctions.length - 1); i++) {
 			this.allFunctions[i] = extrafunctions[i - functions.length];
 		}
+
+		this.reverse();
 	}
 
 	/**
