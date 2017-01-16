@@ -1,5 +1,5 @@
-Logical Model
-=================
+bioLQM: Logical Qualitative Models of biological networks
+=========================================================
 
 The aim of this project is to improve interoperability between logical modeling tools,
 motivated by the [CoLoMoTo](www.colomoto.org) discussion group.
@@ -29,7 +29,7 @@ To compile it you will need is java6 JDK and [maven](http://maven.apache.org/).
 
 For now, the included command-line tool only does model conversion as follow:
 
-    java -jar LogicalModel-0.2.jar <your_input_file.sbml>  <your_output_file.ginml>
+    java -jar bioLQM-0.4.jar <your_input_file.sbml>  <your_output_file.ginml>
 
 It will guess the desired formats based on file extensions.
 Launch it without arguments to see the available formats and extra options.
@@ -52,9 +52,8 @@ It relies on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export
 and on a small [MDD manipulation toolkit](https://github.com/colomoto/mddlib).
 
 
-This is integrated into GINsim and an adaptation as cytoscape plugin is ongoing.
-In both cases, the external tool will provide a model editor, some specific tools and thin wrapper around
-these common tools and exports. Further work will be needed to share some pieces of the graphical interface.
+This is also integrated into GINsim, which provides a model editor,
+some specific tools and thin wrapper around the common tools and exports.
 
 [Javadoc snapshots](http://colomoto.github.com/gh-documentation/) are also available.
 
@@ -81,9 +80,14 @@ Authors
 Aurelien Naldi   
 Pedro Monteiro  
 Duncan Berenguier  
+Loïc Pauleve  
+Francisco Plana  
+Rui Henriques  
 Julien Dorier  
+Gautier Stoll  
 Add your name here ;)   
 
 The rest of the GINsim crew provided insight:   
 Claudine Chaouiya  
 Denis Thieffry  
+
