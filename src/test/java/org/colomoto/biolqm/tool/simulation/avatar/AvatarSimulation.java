@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.avatar;
+package org.colomoto.biolqm.tool.simulation.avatar;
 
 import java.util.HashSet;
 import java.util.Iterator;

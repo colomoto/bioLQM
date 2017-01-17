@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.avatar;
+package org.colomoto.biolqm.tool.simulation.avatar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
