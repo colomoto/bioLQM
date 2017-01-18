@@ -30,6 +30,9 @@ public class Colomoto {
 			help();
         } else if ("-s".equals(args[0]) ) {
 
+			// TODO: add a way to remove the deprecated aliases
+			boolean compatible_mode = true;
+
             String scriptname = args[1];
             ScriptEngine engine = null;
             try {
@@ -44,8 +47,13 @@ public class Colomoto {
 
             try {
                 // add the launcher variable and actually run the script
-                engine.put("lm", new ScriptLauncher());
-                engine.put("args", scriptargs);
+				ScriptLauncher lqm = new ScriptLauncher(scriptargs);
+				engine.put("lqm", lqm);
+
+				if (compatible_mode) {
+					engine.put("lm", lqm);
+					engine.put("args", scriptargs);
+				}
                 engine.eval(new java.io.FileReader(scriptname));
             } catch (Exception e) {
                 e.printStackTrace();
