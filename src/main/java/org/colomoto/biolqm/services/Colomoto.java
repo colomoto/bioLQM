@@ -1,8 +1,9 @@
 package org.colomoto.biolqm.services;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
+import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.colomoto.biolqm.tool.LogicalModelTool;
@@ -17,8 +18,8 @@ import javax.script.ScriptEngine;
  */
 public class Colomoto {
 
-	private static final String FORMAT_SEPARATOR = ":";
-	
+	private static final ServiceManager manager = ServiceManager.getManager();
+
 	/**
 	 * @param args
 	 */
@@ -27,81 +28,129 @@ public class Colomoto {
         ExtensionLoader.loadExtensions("extensions", Colomoto.class);
 
 		if (args.length < 2) {
-			help();
-        } else if ("-s".equals(args[0]) ) {
-
-			// TODO: add a way to remove the deprecated aliases
-			boolean compatible_mode = true;
-
-            String scriptname = args[1];
-            ScriptEngine engine = null;
-            try {
-                engine = ScriptEngineLoader.loadEngine(scriptname);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return;
-            }
-            
-            // copy relevant arguments
-            String[] scriptargs = Arrays.copyOfRange(args, 2, args.length);
-
-            try {
-                // add the launcher variable and actually run the script
-				ScriptLauncher lqm = new ScriptLauncher(scriptargs);
-				engine.put("lqm", lqm);
-
-				if (compatible_mode) {
-					engine.put("lm", lqm);
-					engine.put("args", scriptargs);
-				}
-                engine.eval(new java.io.FileReader(scriptname));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if ("-r".equals(args[0]) ) {
-			String toolID = args[1].trim();
-			CLIToolRunner runner = new CLIToolRunner(args[1].trim());
-			
-			LogicalModelFormat format = null;
-			int curArg = 2;
-			if ("-f".equals(args[curArg]) ) {
-				runner.setFormat(args[curArg+1]);
-				curArg += 2;
+			error("not enough arguments");
+			return;
+        }
+		
+		if ("-s".equals(args[0]) ) {
+			runScript(args, true);
+            return;
+        }
+		
+		// no-compat script: temporary addition to facilitate the transition to LQM API
+		if ("-ncs".equals(args[0]) ) {
+			runScript(args, false);
+            return;
+        }
+		
+		int argIdx = 0;
+		String inputFormat = null;
+		
+		if ("-if".equals(args[argIdx])) {
+			if (args.length < argIdx+4) {
+				error("Not enough arguments after input format");
+				return;
 			}
+			argIdx++;
+			inputFormat = args[argIdx++];
+		}
+		
+		String inputFilename = args[argIdx++];
+		LogicalModel model = ScriptLauncher.loadModel(inputFilename, inputFormat);
+		
+		if ("-m".equals(args[argIdx])) {
+			if (args.length < argIdx+3) {
+				error("Not enough arguments after modifier");
+				return;
+			}
+			argIdx++;
+			String s_modifier = args[argIdx++];
+			// TODO: handle modifier parameters
+			String modifierName = s_modifier;
+			ModelModifierService modifier = ServiceManager.getManager().getModifier(modifierName);
+			model = modifier.getModifiedModel(model, "");
+		}
 
-			for (int i=curArg ; i<args.length ; i++) {
-				runner.run(args[i].trim());
+		if ("-r".equals(args[argIdx]) ) {
+			if (args.length < argIdx+2) {
+				error("Not enough arguments after runnable tool");
+				return;
 			}
-		} else if (args.length == 2) {
-			CLIConverter cli = new CLIConverter(args[0], args[1]);
-			cli.convert(args[0], args[1]);
-			
-		} else {
-			String s_convert = args[0];
-			String[] formats = s_convert.split(FORMAT_SEPARATOR);
-			if (formats == null || formats.length != 2) {
-				throw new RuntimeException("Invalid format conversion flag: "+s_convert);
+			argIdx++;
+			String toolID = args[argIdx++];
+			LogicalModelTool tool = ServiceManager.getManager().getTool(toolID);
+			if (tool == null) {
+				throw new RuntimeException("Unknown tool: "+toolID);
 			}
-			
-			File outDir = new File(args[args.length-1]);
-			if (!outDir.isDirectory()) {
-				outDir = null;
-				
-				if (args.length > 3) {
-					throw new RuntimeException("Multiple conversion require an existing output directory");
-				}
-				
-				CLIConverter cli = new CLIConverter(formats[0], formats[1]);
-				cli.convert(args[1], args[2]);
-			} else {			
-				CLIConverter cli = new CLIConverter(formats[0], formats[1], outDir);
-				for (int i=1 ; i<args.length-1 ; i++) {
-					cli.convert(args[i]);
-				}
+			try {
+				tool.run(model);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			return;
+		}
+
+		String outputFormat = null;
+		if ("-of".equals(args[argIdx])) {
+			if (args.length < argIdx+3) {
+				error("Not enough arguments after output format");
+				return;
+			}
+			argIdx++;
+			outputFormat = args[argIdx++];
+		}
+		
+		String outputTarget = args[argIdx++];
+		ScriptLauncher.saveModel(model, outputTarget, outputFormat);
+
+		if (argIdx < args.length) {
+			error((args.length-argIdx) + " remaining arguments "+args.length + "  "+ argIdx);
 		}
 	}
 
+	private static void runScript(String[] args, boolean compatible_mode) {
+
+        String scriptname = args[1];
+        ScriptEngine engine = null;
+        try {
+            engine = ScriptEngineLoader.loadEngine(scriptname);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        
+        // copy relevant arguments
+        String[] scriptargs = Arrays.copyOfRange(args, 2, args.length);
+
+        try {
+            // add the launcher variable and actually run the script
+			ScriptLauncher lqm = new ScriptLauncher(scriptargs);
+			engine.put("lqm", lqm);
+
+			if (compatible_mode) {
+				engine.put("lm", lqm);
+				engine.put("args", scriptargs);
+			}
+            engine.eval(new java.io.FileReader(scriptname));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+	}
+	
+	public static LogicalModelFormat getFormat(String name) {
+
+		// dealing with a "normal" format identification
+		LogicalModelFormat format = manager.getFormat(name);
+		if (format == null) {
+			// try using a file extension
+			String extension = name.substring(name.lastIndexOf('.')+1);
+			format = manager.getFormat(extension);
+		}
+		
+		return format;
+	}
+	
 	public static void error(String message) {
 		System.err.println(message);
 		help();
@@ -109,23 +158,17 @@ public class Colomoto {
 	
 	public static void help() {
 		String separator = "------------------------------------------------------------------------------------\n";
-		String command = "java -jar LogicalModel.jar";
+		String command = "java -jar bioLQM.jar";
 		StringBuffer sb = new StringBuffer();
 		sb.append(separator+"| Usage: \n"+separator);
 		sb.append("# Convert a single file:\n");
-		sb.append(command).append(" [informat");
-		sb.append(FORMAT_SEPARATOR).append("outformat] infile outfile\n");
-
-		sb.append("\n# Convert a group of files:\n");
-		sb.append(command).append(" informat");
-		sb.append(FORMAT_SEPARATOR).append("outformat infile1...infilen outfolder\n");
+		sb.append(command).append(" [-if informat] infile [-m modifier] [-of outformat] outfile\n");
 
         sb.append("\n# Run a tool on an imported model:\n");
-        sb.append(command).append(" -r tool infile\n");
+        sb.append(command).append(" [-if informat] infile [-m modifier] -r tool\n");
 
         sb.append("\n# Run a script:\n");
         sb.append(command).append(" -s script.js [arguments...]\n");
-
 
         sb.append("\n\n"+separator+"| Available formats:\n");
 		sb.append("|   '<'/'>': import / export  ; 'b'/'B'/'M' Boolean/Booleanized/Multivalued\n");
@@ -195,11 +238,10 @@ public class Colomoto {
 		
 		sb.append("\n\n"+separator+"| Examples:\n"+separator);
 		sb.append(command).append(" infile.sbml outfile.ginml\n");
-		sb.append(command).append(" sbml").append(FORMAT_SEPARATOR);
-		sb.append("PN@INA infile.xml file.txt\n");
-		sb.append(command).append(" sbml").append(FORMAT_SEPARATOR);
-		sb.append("ginml file1.in...filen.in /path/to/outfolder/\n");
-		sb.append(command).append(" -r stable infile.sbml\n");
+		sb.append(command).append(" infile.sbml -m booleanize outfile.sbml\n");
+		sb.append(command).append(" -if sbml infile.xml -of ina file.txt\n");
+		sb.append(command).append(" -if sbml file1.in...filen.in -of ginml /path/to/outfolder/\n");
+		sb.append(command).append(" infile.sbml -r stable\n");
 		
 		System.out.println(sb);
 	}

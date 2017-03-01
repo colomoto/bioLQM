@@ -14,22 +14,22 @@ import java.io.IOException;
  */
 public class ScriptLauncher {
 
-    public ServiceManager srv = ServiceManager.getManager();
+    public static ServiceManager srv = ServiceManager.getManager();
     public final String[] args;
 
     public ScriptLauncher(String[] args) {
         this.args = args;
     }
 
-    public LogicalModel loadModel(String filename) {
+    public static LogicalModel loadModel(String filename) {
         return loadModel(filename, null);
     }
 
-    public LogicalModel loadModel(String filename, String format) {
+    public static LogicalModel loadModel(String filename, String format) {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
         }
-        LogicalModelFormat inputFormat = CLIConverter.getFormat(format);
+        LogicalModelFormat inputFormat = Colomoto.getFormat(format);
         if (inputFormat == null) {
             System.err.println("Format not found: " + format);
             return null;
@@ -48,11 +48,11 @@ public class ScriptLauncher {
         return null;
     }
 
-    public boolean saveModel(LogicalModel model, String filename, String format) {
+    public static boolean saveModel(LogicalModel model, String filename, String format) {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
         }
-        LogicalModelFormat outputFormat = CLIConverter.getFormat(format);
+        LogicalModelFormat outputFormat = Colomoto.getFormat(format);
         if (outputFormat == null) {
             System.err.println("Format not found: "+format);
             return false;
