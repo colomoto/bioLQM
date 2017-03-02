@@ -1,10 +1,12 @@
 package org.colomoto.biolqm.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.colomoto.biolqm.tool.LogicalModelTool;
 
@@ -54,7 +56,7 @@ public class Colomoto {
 		}
 		
 		String inputFilename = args[argIdx++];
-		LogicalModel model = ScriptLauncher.loadModel(inputFilename, inputFormat);
+		LogicalModel model = loadModel(inputFilename, inputFormat);
 		
 		if ("-m".equals(args[argIdx])) {
 			if (args.length < argIdx+3) {
@@ -99,7 +101,7 @@ public class Colomoto {
 		}
 		
 		String outputTarget = args[argIdx++];
-		ScriptLauncher.saveModel(model, outputTarget, outputFormat);
+		saveModel(model, outputTarget, outputFormat);
 
 		if (argIdx < args.length) {
 			error((args.length-argIdx) + " remaining arguments "+args.length + "  "+ argIdx);
@@ -243,5 +245,52 @@ public class Colomoto {
 		
 		System.out.println(sb);
 	}
+
+    public static LogicalModel loadModel(String filename, String format) {
+        if (format == null) {
+            format = filename.substring(filename.lastIndexOf(".")+1);
+        }
+        LogicalModelFormat inputFormat = Colomoto.getFormat(format);
+        if (inputFormat == null) {
+            System.err.println("Format not found: " + format);
+            return null;
+        }
+
+        if (!inputFormat.canImport()) {
+            throw new RuntimeException(inputFormat.getID() +" Format does not support import");
+        }
+
+        try {
+            LogicalModel model = inputFormat.importFile(new File(filename));
+            return model;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean saveModel(LogicalModel model, String filename, String format) {
+        if (format == null) {
+            format = filename.substring(filename.lastIndexOf(".")+1);
+        }
+        LogicalModelFormat outputFormat = Colomoto.getFormat(format);
+        if (outputFormat == null) {
+            System.err.println("Format not found: "+format);
+            return false;
+        }
+
+        if (!outputFormat.canExport()) {
+            throw new RuntimeException(outputFormat.getID() +" Format does not support export");
+        }
+
+        try {
+            outputFormat.export(model, new OutputStreamProvider( filename));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
 
 }

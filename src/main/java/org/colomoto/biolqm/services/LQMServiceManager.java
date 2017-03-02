@@ -20,7 +20,7 @@ import org.colomoto.biolqm.tool.LogicalModelTool;
  * @author Aurelien Naldi
  */
 public class LQMServiceManager {
-
+	
 	private static final List<LogicalModelFormat> formats = new ArrayList<LogicalModelFormat>();
 	private static final Map<String, LogicalModelFormat> id2format = new HashMap<String, LogicalModelFormat>();
 

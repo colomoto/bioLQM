@@ -2,75 +2,55 @@ package org.colomoto.biolqm.services;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProvider;
-
-import java.io.File;
-import java.io.IOException;
+import org.colomoto.biolqm.modifier.ModelModifierService;
+import org.colomoto.biolqm.tool.LogicalModelTool;
 
 /**
- * wrap common API to provide convenient access in scripts.
+ * Wrap common API to provide convenient access in scripts.
  *
  * @author Aurelien Naldi
  */
 public class ScriptLauncher {
 
-	// useless instance of the service manager to simplify scripting API
-    public static LQMServiceManager srv = new LQMServiceManager();
     public final String[] args;
 
     public ScriptLauncher(String[] args) {
         this.args = args;
     }
 
-    public static LogicalModel loadModel(String filename) {
+    public LogicalModel loadModel(String filename) {
         return loadModel(filename, null);
     }
 
-    public static LogicalModel loadModel(String filename, String format) {
-        if (format == null) {
-            format = filename.substring(filename.lastIndexOf(".")+1);
-        }
-        LogicalModelFormat inputFormat = Colomoto.getFormat(format);
-        if (inputFormat == null) {
-            System.err.println("Format not found: " + format);
-            return null;
-        }
-
-        if (!inputFormat.canImport()) {
-            throw new RuntimeException(inputFormat.getID() +" Format does not support import");
-        }
-
-        try {
-            LogicalModel model = inputFormat.importFile(new File(filename));
-            return model;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public LogicalModel loadModel(String filename, String format) {
+    	return Colomoto.loadModel(filename, format);
     }
 
-    public static boolean saveModel(LogicalModel model, String filename, String format) {
-        if (format == null) {
-            format = filename.substring(filename.lastIndexOf(".")+1);
-        }
-        LogicalModelFormat outputFormat = Colomoto.getFormat(format);
-        if (outputFormat == null) {
-            System.err.println("Format not found: "+format);
-            return false;
-        }
-
-        if (!outputFormat.canExport()) {
-            throw new RuntimeException(outputFormat.getID() +" Format does not support export");
-        }
-
-        try {
-            outputFormat.export(model, new OutputStreamProvider( filename));
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-
+    public boolean saveModel(LogicalModel model, String filename, String format) {
+        return Colomoto.saveModel(model, filename, format);
+    }
+    
+    public LogicalModel modifyModel(LogicalModel model, String name) {
+    	return modifyModel(model, name, "");
+    }
+    
+    public LogicalModel modifyModel(LogicalModel model, String name, String parameters) {
+    	return getModifier(name).getModifiedModel(model, parameters);
+    }
+    
+    public LogicalModelFormat getFormat(String name) {
+    	return LQMServiceManager.getFormat(name);
     }
 
+    public ModelModifierService getModifier(String name) {
+    	return LQMServiceManager.getModifier(name);
+    }
+    
+    public Service getService(String name) {
+    	return LQMServiceManager.getService(name);
+    }
+    
+    public LogicalModelTool getTool(String name) {
+    	return LQMServiceManager.getTool(name);
+    }
 }
