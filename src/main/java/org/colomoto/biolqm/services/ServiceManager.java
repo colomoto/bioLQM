@@ -186,6 +186,21 @@ public class ServiceManager {
 	}
 
 	/**
+	 * Get the service for a given ID.
+	 *
+	 * @param name ID of the service
+	 * @return the service instance or null if not found.
+	 */
+	public <T extends ModelModifierService> T getModifier(Class<T> cl) {
+		for (ModelModifierService srv: getModifiers()) {
+			if (cl.isInstance(srv)) {
+				return (T)srv;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get the available model modifier services.
 	 *
 	 * @return all available services for model modifiers
