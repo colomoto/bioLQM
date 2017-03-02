@@ -22,7 +22,7 @@ import org.colomoto.biolqm.io.functions.BooleanFunctionFormat;
 import org.colomoto.biolqm.io.sbml.SBMLqualExport;
 import org.colomoto.biolqm.io.sbml.SBMLqualImport;
 import org.colomoto.biolqm.io.pint.PintExport;
-import org.colomoto.biolqm.services.ServiceManager;
+import org.colomoto.biolqm.services.LQMServiceManager;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
@@ -128,7 +128,7 @@ public class TestImportExport extends TestCase {
 	@Test
 	public void testRawFunctionExport() throws IOException {
 		File f = TestHelper.getTestOutput("exportFunctions.txt");
-		LogicalModelFormat format = ServiceManager.getManager().getFormat(BooleanFunctionFormat.ID);
+		LogicalModelFormat format = LQMServiceManager.getFormat(BooleanFunctionFormat.ID);
 		format.export(getSimpleModel(), new OutputStreamProvider(f));
 	}
 

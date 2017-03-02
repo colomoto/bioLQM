@@ -18,8 +18,6 @@ import javax.script.ScriptEngine;
  */
 public class Colomoto {
 
-	private static final ServiceManager manager = ServiceManager.getManager();
-
 	/**
 	 * @param args
 	 */
@@ -67,7 +65,7 @@ public class Colomoto {
 			String s_modifier = args[argIdx++];
 			// TODO: handle modifier parameters
 			String modifierName = s_modifier;
-			ModelModifierService modifier = ServiceManager.getManager().getModifier(modifierName);
+			ModelModifierService modifier = LQMServiceManager.getModifier(modifierName);
 			model = modifier.getModifiedModel(model, "");
 		}
 
@@ -78,7 +76,7 @@ public class Colomoto {
 			}
 			argIdx++;
 			String toolID = args[argIdx++];
-			LogicalModelTool tool = ServiceManager.getManager().getTool(toolID);
+			LogicalModelTool tool = LQMServiceManager.getTool(toolID);
 			if (tool == null) {
 				throw new RuntimeException("Unknown tool: "+toolID);
 			}
@@ -141,11 +139,11 @@ public class Colomoto {
 	public static LogicalModelFormat getFormat(String name) {
 
 		// dealing with a "normal" format identification
-		LogicalModelFormat format = manager.getFormat(name);
+		LogicalModelFormat format = LQMServiceManager.getFormat(name);
 		if (format == null) {
 			// try using a file extension
 			String extension = name.substring(name.lastIndexOf('.')+1);
-			format = manager.getFormat(extension);
+			format = LQMServiceManager.getFormat(extension);
 		}
 		
 		return format;
@@ -176,7 +174,7 @@ public class Colomoto {
 
 		// detect the longest format name to generate a nice output
 		int namelength = 10;
-		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
+		for (LogicalModelFormat format: LQMServiceManager.getFormats()) {
 			String id = format.getID();
 			if (id.length() > namelength) {
 				namelength = id.length();
@@ -184,7 +182,7 @@ public class Colomoto {
 		}
 
 		String nameformat = "%1$-"+namelength+"s    ";
-		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
+		for (LogicalModelFormat format: LQMServiceManager.getFormats()) {
 			String cap;
 			if (format.canImport()) {
 				if (format.canExport()) {
@@ -210,7 +208,7 @@ public class Colomoto {
 		// detect the longest modifier ID and name to generate a nice output
 		int idlength = 5;
 		namelength = 10;
-		for (ModelModifierService modifier: ServiceManager.getManager().getModifiers()) {
+		for (ModelModifierService modifier: LQMServiceManager.getModifiers()) {
 			String id = modifier.getID();
 			String name = modifier.getName();
 			if (id.length() > idlength) {
@@ -224,12 +222,12 @@ public class Colomoto {
 		String idformat = "%1$-"+idlength+"s    ";
 		nameformat = "%1$-"+namelength+"s    ";
 		sb.append("\n\n"+separator+"| Available modifiers:\n"+separator);
-		for (ModelModifierService modifier: ServiceManager.getManager().getModifiers()) {
+		for (ModelModifierService modifier: LQMServiceManager.getModifiers()) {
 			sb.append(String.format(idformat, modifier.getID()) + "\t" + String.format(nameformat, modifier.getName()) + modifier.getDescription() + "\n");
 		}
 
 		sb.append("\n\n"+separator+"| Available tools:\n"+separator);
-		for (LogicalModelTool tool: ServiceManager.getManager().getTools()) {
+		for (LogicalModelTool tool: LQMServiceManager.getTools()) {
 			String level = tool.supportsMultivalued() ? "M " : "B ";
 			sb.append(level).append(" ").append(tool.getID());
 			sb.append("\t").append(tool.getName()).append("\n");

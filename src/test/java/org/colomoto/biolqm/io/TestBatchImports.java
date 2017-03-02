@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
-import org.colomoto.biolqm.services.ServiceManager;
+import org.colomoto.biolqm.services.LQMServiceManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,13 +37,12 @@ public class TestBatchImports {
 			}
 			
 			// all files in this folder should be imported into identical models
-			ServiceManager manager = ServiceManager.getManager();
 			LogicalModel refModel = null;
 			for (File f: group.listFiles()) {
 				// guess format
 				String name = f.getName();
 				String extension = name.substring( name.lastIndexOf('.')+1 );
-				LogicalModelFormat format = manager.getFormat(extension);
+				LogicalModelFormat format = LQMServiceManager.getFormat(extension);
 				if (format == null) {
 					fail("Could not guess format for "+extension +" ("+f+")");
 				}

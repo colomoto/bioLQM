@@ -5,12 +5,12 @@ import java.io.IOException;
 
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.services.ServiceManager;
+import org.colomoto.biolqm.services.LQMServiceManager;
 
 public class ReferenceModels {
 
 	private static final File dir = TestHelper.getTestResource("reference_models");
-	private static LogicalModelFormat format = ServiceManager.getManager().getFormat("boolfunctions");
+	private static LogicalModelFormat format = LQMServiceManager.getFormat("boolfunctions");
 	
 	
 	static {

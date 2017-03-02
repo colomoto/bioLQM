@@ -12,7 +12,7 @@ import org.colomoto.TestHelper;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
 import org.colomoto.biolqm.ReferenceModels;
-import org.colomoto.biolqm.services.ServiceManager;
+import org.colomoto.biolqm.services.LQMServiceManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class TestBatchRoundtrip {
 
 		String[] names = ReferenceModels.getNames();
 		List<LogicalModelFormat> ioformats = new ArrayList<LogicalModelFormat>();
-		for (LogicalModelFormat format: ServiceManager.getManager().getFormats()) {
+		for (LogicalModelFormat format: LQMServiceManager.getFormats()) {
 			if (format.canImport() && format.canExport()) {
 				ioformats.add(format);
 			}

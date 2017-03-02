@@ -14,7 +14,8 @@ import java.io.IOException;
  */
 public class ScriptLauncher {
 
-    public static ServiceManager srv = ServiceManager.getManager();
+	// useless instance of the service manager to simplify scripting API
+    public static LQMServiceManager srv = new LQMServiceManager();
     public final String[] args;
 
     public ScriptLauncher(String[] args) {

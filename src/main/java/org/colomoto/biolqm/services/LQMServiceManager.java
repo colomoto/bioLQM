@@ -12,42 +12,28 @@ import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.colomoto.biolqm.tool.LogicalModelTool;
 
 /**
- * List available "services".
- * For now it only manages formats, to be further extended...
- * 
+ * Static service manager: list available "services" in LQM:
+ * <ul>
+ *   <li>formats</li>
+ *   <li>modifiers</li>
+ * </ul>
  * @author Aurelien Naldi
  */
-public class ServiceManager {
+public class LQMServiceManager {
 
-	private static ServiceManager MANAGER = null;
-	
-	/**
-	 * Retrieve the single-instance service manager.
-	 * 
-	 * @return the service manager
-	 */
-	public static ServiceManager getManager() {
-		if (MANAGER == null) {
-			MANAGER = new ServiceManager();
-		}
-		return MANAGER;
-	}
-	
-	private final List<LogicalModelFormat> formats;
-	private final Map<String, LogicalModelFormat> id2format = new HashMap<String, LogicalModelFormat>();
+	private static final List<LogicalModelFormat> formats = new ArrayList<LogicalModelFormat>();
+	private static final Map<String, LogicalModelFormat> id2format = new HashMap<String, LogicalModelFormat>();
 
-	private final List<LogicalModelTool> tools;
-	private final Map<String, LogicalModelTool> id2tool = new HashMap<String, LogicalModelTool>();
+	private static final List<LogicalModelTool> tools = new ArrayList<LogicalModelTool>();
+	private static final Map<String, LogicalModelTool> id2tool = new HashMap<String, LogicalModelTool>();
 
-	private final List<Service> services;
-	private final Map<String, Service> id2service = new HashMap<String, Service>();
+	private static final List<Service> services = new ArrayList<Service>();
+	private static final Map<String, Service> id2service = new HashMap<String, Service>();
 
-	private final List<ModelModifierService> modifiers;
-	private final Map<String, ModelModifierService> id2modifier = new HashMap<String, ModelModifierService>();
+	private static final List<ModelModifierService> modifiers = new ArrayList<ModelModifierService>();
+	private static final Map<String, ModelModifierService> id2modifier = new HashMap<String, ModelModifierService>();
 
-	private ServiceManager() {
-		formats = new ArrayList<LogicalModelFormat>();
-		
+	static {
         Iterator<LogicalModelFormat> format_list = ExtensionLoader.iterator( LogicalModelFormat.class);
         while (format_list.hasNext()) {
             try {
@@ -61,8 +47,6 @@ public class ServiceManager {
 
             }
         }
-
-		tools = new ArrayList<LogicalModelTool>();
 
 		Iterator<LogicalModelTool> tool_list = ExtensionLoader.iterator(LogicalModelTool.class);
 		while (tool_list.hasNext()) {
@@ -79,8 +63,6 @@ public class ServiceManager {
 		}
 
 
-		services = new ArrayList<Service>();
-
 		Iterator<Service> service_list = ExtensionLoader.iterator(Service.class);
 		while (service_list.hasNext()) {
 			try {
@@ -95,8 +77,6 @@ public class ServiceManager {
 			}
 		}
 
-
-		modifiers = new ArrayList<ModelModifierService>();
 
 		Iterator<ModelModifierService> modifier_list = ExtensionLoader.iterator(ModelModifierService.class);
 		while (modifier_list.hasNext()) {
@@ -119,8 +99,7 @@ public class ServiceManager {
 	 * @param name ID of the format
 	 * @return the format declaration instance or null if not found.
 	 */
-	public LogicalModelFormat getFormat(String name) {
-		
+	public static LogicalModelFormat getFormat(String name) {
 		return id2format.get(name);
 	}
 	
@@ -129,7 +108,7 @@ public class ServiceManager {
 	 * 
 	 * @return all available formats
 	 */
-	public Iterable<LogicalModelFormat> getFormats() {
+	public static Iterable<LogicalModelFormat> getFormats() {
 		return formats;
 	}
 
@@ -139,7 +118,7 @@ public class ServiceManager {
 	 * @param name ID of the tool
 	 * @return the tool declaration instance or null if not found.
 	 */
-	public LogicalModelTool getTool(String name) {
+	public static LogicalModelTool getTool(String name) {
 
 		return id2tool.get(name);
 	}
@@ -149,7 +128,7 @@ public class ServiceManager {
 	 *
 	 * @return all available tools
 	 */
-	public Iterable<LogicalModelTool> getTools() {
+	public static Iterable<LogicalModelTool> getTools() {
 		return tools;
 	}
 
@@ -160,8 +139,7 @@ public class ServiceManager {
 	 * @param name ID of the service
 	 * @return the service instance or null if not found.
 	 */
-	public Service getService(String name) {
-
+	public static Service getService(String name) {
 		return id2service.get(name);
 	}
 
@@ -170,7 +148,7 @@ public class ServiceManager {
 	 *
 	 * @return all available services
 	 */
-	public Iterable<Service> getServices() {
+	public static Iterable<Service> getServices() {
 		return services;
 	}
 
@@ -180,8 +158,7 @@ public class ServiceManager {
 	 * @param name ID of the service
 	 * @return the service instance or null if not found.
 	 */
-	public ModelModifierService getModifier(String name) {
-
+	public static ModelModifierService getModifier(String name) {
 		return id2modifier.get(name);
 	}
 
@@ -191,7 +168,7 @@ public class ServiceManager {
 	 * @param name ID of the service
 	 * @return the service instance or null if not found.
 	 */
-	public <T extends ModelModifierService> T getModifier(Class<T> cl) {
+	public static <T extends ModelModifierService> T getModifier(Class<T> cl) {
 		for (ModelModifierService srv: getModifiers()) {
 			if (cl.isInstance(srv)) {
 				return (T)srv;
@@ -205,7 +182,7 @@ public class ServiceManager {
 	 *
 	 * @return all available services for model modifiers
 	 */
-	public Iterable<ModelModifierService> getModifiers() {
+	public static Iterable<ModelModifierService> getModifiers() {
 		return modifiers;
 	}
 }
