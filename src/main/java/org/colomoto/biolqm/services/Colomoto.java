@@ -8,6 +8,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.colomoto.biolqm.modifier.ModelModifierService;
+import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
 import org.colomoto.biolqm.tool.LogicalModelTool;
 
 import javax.script.ScriptEngine;
@@ -65,10 +66,27 @@ public class Colomoto {
 			}
 			argIdx++;
 			String s_modifier = args[argIdx++];
-			// TODO: handle modifier parameters
+			String s_parameters = "";
+			int idx = s_modifier.indexOf(":");
+			if (idx >= 0) {
+				// Handle modifier parameters
+				s_parameters = s_modifier.substring(idx+1);
+				s_modifier = s_modifier.substring(0, idx);
+			}
 			String modifierName = s_modifier;
 			ModelModifierService modifier = LQMServiceManager.getModifier(modifierName);
-			model = modifier.getModifiedModel(model, "");
+			model = modifier.getModifiedModel(model, s_parameters);
+		}
+		
+		if ("-p".equals(args[argIdx])) {
+			if (args.length < argIdx+3) {
+				error("Not enough arguments after modifier");
+				return;
+			}
+			argIdx++;
+			String s_parameters = args[argIdx++];
+			ModelModifierService modifier = LQMServiceManager.getModifier(PerturbationService.class);
+			model = modifier.getModifiedModel(model, s_parameters);
 		}
 
 		if ("-r".equals(args[argIdx]) ) {
