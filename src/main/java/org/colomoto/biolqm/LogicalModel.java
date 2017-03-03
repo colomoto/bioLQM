@@ -26,6 +26,13 @@ public interface LogicalModel {
 	 * 
 	 * @return the list of nodeInfo objects for core components.
 	 */
+	List<NodeInfo> getComponents();
+
+	/**
+	 * proxy for the getComponent method.
+	 * @return the list of NodeInfo objects for core components.
+	 */
+	@Deprecated
 	List<NodeInfo> getNodeOrder();
 	
 	/**
@@ -100,4 +107,7 @@ public interface LogicalModel {
      * @return true if the model has no multivalued components, false otherwise.
      */
     boolean isBoolean();
+
+    
+	NodeInfo getComponent(String s_source);
 }

@@ -18,6 +18,27 @@ public class ScriptLauncher {
         this.args = args;
     }
 
+    public LogicalModel load(String filename) {
+    	return loadModel(filename);
+    }
+
+    public LogicalModel load(String filename, String format) {
+    	return loadModel(filename, format);
+    }
+
+    public boolean save(LogicalModel model, String filename, String format) {
+        return saveModel(model, filename, format);
+    }
+    
+    public LogicalModel modify(LogicalModel model, String name) {
+    	return modifyModel(model, name);
+    }
+    
+    public LogicalModel modify(LogicalModel model, String name, String parameters) {
+    	return modifyModel(model, name, parameters);
+    }
+
+    
     public LogicalModel loadModel(String filename) {
         return loadModel(filename, null);
     }

@@ -51,8 +51,14 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 
 	@Override
-	public List<NodeInfo> getNodeOrder() {
+	public List<NodeInfo> getComponents() {
 		return coreNodes;
+	}
+	
+	@Override
+	@Deprecated
+	public List<NodeInfo> getNodeOrder() {
+		return getComponents();
 	}
 
 	@Override
@@ -116,4 +122,24 @@ public class LogicalModelImpl implements LogicalModel {
 
         return true;
     }
+
+	@Override
+	public NodeInfo getComponent(String id) {
+		if (id == null) {
+			return null;
+		}
+		
+		for (NodeInfo ni: getNodeOrder()) {
+			if (id.equals(ni.getNodeID())) {
+				return ni;
+			}
+		}
+		for (NodeInfo ni: getExtraComponents()) {
+			if (id.equals(ni.getNodeID())) {
+				return ni;
+			}
+		}
+		
+		return null;
+	}
 }
