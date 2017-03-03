@@ -59,36 +59,42 @@ public class Colomoto {
 		String inputFilename = args[argIdx++];
 		LogicalModel model = loadModel(inputFilename, inputFormat);
 		
-		if ("-m".equals(args[argIdx])) {
-			if (args.length < argIdx+3) {
-				error("Not enough arguments after modifier");
-				return;
+		while (true) {
+			if ("-m".equals(args[argIdx])) {
+				if (args.length < argIdx+3) {
+					error("Not enough arguments after modifier");
+					return;
+				}
+				argIdx++;
+				String s_modifier = args[argIdx++];
+				String s_parameters = "";
+				int idx = s_modifier.indexOf(":");
+				if (idx >= 0) {
+					// Handle modifier parameters
+					s_parameters = s_modifier.substring(idx+1);
+					s_modifier = s_modifier.substring(0, idx);
+				}
+				String modifierName = s_modifier;
+				ModelModifierService modifier = LQMServiceManager.getModifier(modifierName);
+				model = modifier.getModifiedModel(model, s_parameters);
+				continue;
 			}
-			argIdx++;
-			String s_modifier = args[argIdx++];
-			String s_parameters = "";
-			int idx = s_modifier.indexOf(":");
-			if (idx >= 0) {
-				// Handle modifier parameters
-				s_parameters = s_modifier.substring(idx+1);
-				s_modifier = s_modifier.substring(0, idx);
+			
+			if ("-p".equals(args[argIdx])) {
+				if (args.length < argIdx+3) {
+					error("Not enough arguments after modifier");
+					return;
+				}
+				argIdx++;
+				String s_parameters = args[argIdx++];
+				ModelModifierService modifier = LQMServiceManager.getModifier(PerturbationService.class);
+				model = modifier.getModifiedModel(model, s_parameters);
+				continue;
 			}
-			String modifierName = s_modifier;
-			ModelModifierService modifier = LQMServiceManager.getModifier(modifierName);
-			model = modifier.getModifiedModel(model, s_parameters);
+			
+			break;
 		}
 		
-		if ("-p".equals(args[argIdx])) {
-			if (args.length < argIdx+3) {
-				error("Not enough arguments after modifier");
-				return;
-			}
-			argIdx++;
-			String s_parameters = args[argIdx++];
-			ModelModifierService modifier = LQMServiceManager.getModifier(PerturbationService.class);
-			model = modifier.getModifiedModel(model, s_parameters);
-		}
-
 		if ("-r".equals(args[argIdx]) ) {
 			if (args.length < argIdx+2) {
 				error("Not enough arguments after runnable tool");

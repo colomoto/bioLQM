@@ -15,8 +15,12 @@ public class ReductionModifier implements ModelModifier {
 
     @Override
     public LogicalModel getModifiedModel() {
-        LogicalModel result = model;
-
+        ModelReducer reducer = new ModelReducer(model);
+        if (settings.handleOutputs) {
+            reducer.removePseudoOutputs();
+        }
+        LogicalModel result = reducer.getModel();
+        
         if (settings.handleFixed) {
             result = FixedComponentRemover.reduceFixed(result, settings.purgeFixed);
         }
@@ -25,11 +29,6 @@ public class ReductionModifier implements ModelModifier {
             result = DuplicateRemover.removeDuplicateComponents(result);
         }
 
-        ModelReducer reducer = new ModelReducer(model);
-        if (settings.handleOutputs) {
-            reducer.removePseudoOutputs();
-        }
-
-        return reducer.getModel();
+        return result;
     }
 }

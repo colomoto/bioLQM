@@ -18,6 +18,8 @@ public class ReductionSettings {
         for (String o: options) {
             if ("fixed".equalsIgnoreCase(o)) {
                 handleFixed = true;
+            } else if ("purge".equalsIgnoreCase(o)) {
+                purgeFixed = true;
             } else if ("duplicate".equalsIgnoreCase(o)) {
                 handleDuplicates = true;
             } else if ("output".equalsIgnoreCase(o)) {
