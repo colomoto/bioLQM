@@ -21,7 +21,7 @@ public class PerturbationService extends AbstractModelModifierService {
 
     public static final String ID = "perturbation";
     public static final String NAME = "model perturbation";
-    public static final String DESCR = "Example: Node1%0;Node2%1";
+    public static final String DESCR = "Example: Node1%0,Node2%1";
 
     public PerturbationService() {
         super(ID, NAME, DESCR);
@@ -41,7 +41,7 @@ public class PerturbationService extends AbstractModelModifierService {
      */
     private static LogicalModelPerturbation getPerturbationFromString(LogicalModel model, String parameters) {
     	
-    	String[] s_perturbations = parameters.split(";");
+    	String[] s_perturbations = parameters.split(",");
     	if (s_perturbations.length == 1) {
     		return getSimplePerturbationFromString(model, parameters);
     	}
