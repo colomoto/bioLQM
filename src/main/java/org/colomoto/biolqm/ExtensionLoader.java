@@ -93,33 +93,23 @@ public class ExtensionLoader {
      * @param cl the class to load
      * @return a ServiceLoader: iterable list of matching classes
      */
-    public static <T> ServiceLoader<T> load(Class<T> cl) {
+    private static <T> ServiceLoader<T> load(Class<T> cl) {
         return ServiceLoader.load(cl, getClassLoader());
-    }
-
-    /**
-     * Discover services using the extended classpath.
-     *
-     * @param cl the class to load
-     * @return an iterator over the matching classes
-     */
-    public static <T> Iterator<T> iterator(Class<T> cl) {
-        return load(cl).iterator();
     }
 
     /**
      * Discover and load a list of services.
      * 
      * @param cl the base class to discover services
-     * @return the list of loaded instances
+     * @return the list of loaded instances (bypassing reflection and constructor errors)
      */
     public static <T> List<T> load_instances(Class<T> cl) {
-        Iterator<T> it = ExtensionLoader.iterator( cl);
+        Iterator<T> it = load(cl).iterator();
         List<T> loaded = new ArrayList<T>();
         while (it.hasNext()) {
             try {
             	T element = it.next();
-            	if( element != null){
+            	if (element != null) {
             		loaded.add(element);
             	}
             }
