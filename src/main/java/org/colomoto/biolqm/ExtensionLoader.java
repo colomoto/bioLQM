@@ -5,7 +5,10 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 /**
@@ -19,9 +22,9 @@ public class ExtensionLoader {
     private static ClassLoader cld = null;
 
     /**
-     * Retrieve a classloader covering the extensions.
+     * Retrieve a class loader covering the extensions.
      *
-     * @return the extended classloader
+     * @return the extended class loader
      */
     public static ClassLoader getClassLoader() {
         if (cld == null) {
@@ -36,7 +39,7 @@ public class ExtensionLoader {
      * @param ename name of the optional extension folder
      * @param cl caller class (needed to find the basename)
      */
-    public static void loadExtensions(String ename, Class cl) {
+    public static void loadExtensions(String ename, Class<?> cl) {
         if (cld != null) {
             System.err.println("Extensions are already loaded");
             return;
@@ -69,7 +72,7 @@ public class ExtensionLoader {
         FileFilter filter = new FileFilter() {
             public boolean accept(File file) {return file.getPath().toLowerCase().endsWith(".jar");}
         };
-        File[] files = extensionDir.listFiles();
+        File[] files = extensionDir.listFiles(filter);
         try {
             URL[] urls = new URL[files.length];
             int i=0;
@@ -82,7 +85,6 @@ public class ExtensionLoader {
             System.err.println("Could not load extension files");
             cld = contextLoader;
         }
-
     }
 
     /**
@@ -91,7 +93,7 @@ public class ExtensionLoader {
      * @param cl the class to load
      * @return a ServiceLoader: iterable list of matching classes
      */
-    public static ServiceLoader load(Class cl) {
+    public static <T> ServiceLoader<T> load(Class<T> cl) {
         return ServiceLoader.load(cl, getClassLoader());
     }
 
@@ -101,8 +103,31 @@ public class ExtensionLoader {
      * @param cl the class to load
      * @return an iterator over the matching classes
      */
-    public static Iterator iterator(Class cl) {
+    public static <T> Iterator<T> iterator(Class<T> cl) {
         return load(cl).iterator();
+    }
+
+    /**
+     * Discover and load a list of services.
+     * 
+     * @param cl the base class to discover services
+     * @return the list of loaded instances
+     */
+    public static <T> List<T> load_instances(Class<T> cl) {
+        Iterator<T> it = ExtensionLoader.iterator( cl);
+        List<T> loaded = new ArrayList<T>();
+        while (it.hasNext()) {
+            try {
+            	T element = it.next();
+            	if( element != null){
+            		loaded.add(element);
+            	}
+            }
+            catch (ServiceConfigurationError e){
+            	// TODO: handle loading errors
+            }
+        }
+        return loaded;
     }
 
 }

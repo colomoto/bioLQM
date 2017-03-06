@@ -139,17 +139,6 @@ public class LQMScriptLauncher {
     	return LQMServiceManager.getModifier(name);
     }
     
-    
-    /**
-     * Retrieve a service.
-     * @param name the ID of the service
-     * @return the corresponding service
-     * @see LQMServiceManager#getService(String)
-     */
-    public Service getService(String name) {
-    	return LQMServiceManager.getService(name);
-    }
-    
     /**
      * Retrieve a tool service.
      * @param name the ID of the tool
