@@ -97,7 +97,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.colomoto.biolqm.services.Colomoto</mainClass>
+              <mainClass>org.colomoto.biolqm.LQMLauncher</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -156,7 +156,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-  	      <mainClass>org.colomoto.biolqm.services.Colomoto</mainClass>
+              <mainClass>org.colomoto.biolqm.LQMLauncher</mainClass>
             </manifest>
           </archive>
         </configuration>

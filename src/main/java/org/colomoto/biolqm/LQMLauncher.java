@@ -1,10 +1,9 @@
-package org.colomoto.biolqm.services;
+package org.colomoto.biolqm;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.colomoto.biolqm.modifier.ModelModifierService;
@@ -14,21 +13,21 @@ import org.colomoto.biolqm.tool.LogicalModelTool;
 import javax.script.ScriptEngine;
 
 /**
- * Simple command-line interface for the CoLoMoTo toolbox.
- * For now, all it does is format conversion.
+ * Entry point to launch the bioLQM toolbox.
+ * It dispatches arguments to the CLI or script mode
  * 
  * @author Aurelien Naldi
  */
-public class Colomoto {
+public class LQMLauncher {
 
 	/**
-	 * The main entry point, dispatching between the CLI and script mode
+	 * The main entry point.
 	 * 
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
 
-        ExtensionLoader.loadExtensions("extensions", Colomoto.class);
+        ExtensionLoader.loadExtensions("extensions", LQMLauncher.class);
 
 		if (args.length < 2) {
 			error("not enough arguments");
@@ -139,7 +138,7 @@ public class Colomoto {
         String scriptname = args[1];
         ScriptEngine engine = null;
         try {
-            engine = ScriptEngineLoader.loadEngine(scriptname);
+            engine = LQMScriptLauncher.loadEngine(scriptname);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
@@ -150,7 +149,7 @@ public class Colomoto {
 
         try {
             // add the launcher variable and actually run the script
-			ScriptLauncher lqm = new ScriptLauncher(scriptargs);
+			LQMScriptLauncher lqm = new LQMScriptLauncher(scriptargs);
 			engine.put("lqm", lqm);
 
 			if (compatible_mode) {
@@ -283,7 +282,7 @@ public class Colomoto {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
         }
-        LogicalModelFormat inputFormat = Colomoto.getFormat(format);
+        LogicalModelFormat inputFormat = LQMLauncher.getFormat(format);
         if (inputFormat == null) {
             System.err.println("Format not found: " + format);
             return null;
@@ -314,7 +313,7 @@ public class Colomoto {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
         }
-        LogicalModelFormat outputFormat = Colomoto.getFormat(format);
+        LogicalModelFormat outputFormat = LQMLauncher.getFormat(format);
         if (outputFormat == null) {
             System.err.println("Format not found: "+format);
             return false;

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.services;
+package org.colomoto.biolqm;
 
 import java.util.ArrayList;
 import java.util.HashMap;

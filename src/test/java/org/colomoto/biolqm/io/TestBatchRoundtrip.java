@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.TestHelper;
+import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
 import org.colomoto.biolqm.ReferenceModels;
-import org.colomoto.biolqm.services.LQMServiceManager;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.TestHelper;
+import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
-import org.colomoto.biolqm.services.LQMServiceManager;
 import org.junit.Assert;
 import org.junit.Test;
 

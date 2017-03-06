@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.services.LQMServiceManager;
 
 public class ReferenceModels {
 

@@ -1,7 +1,7 @@
 package org.colomoto.biolqm.modifier;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.services.Service;
+import org.colomoto.biolqm.Service;
 
 /**
  * A service providing modifiers for logical models.

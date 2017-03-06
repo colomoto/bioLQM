@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import junit.framework.TestCase;
 
 import org.colomoto.TestHelper;
+import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
@@ -22,7 +23,6 @@ import org.colomoto.biolqm.io.functions.BooleanFunctionFormat;
 import org.colomoto.biolqm.io.sbml.SBMLqualExport;
 import org.colomoto.biolqm.io.sbml.SBMLqualImport;
 import org.colomoto.biolqm.io.pint.PintExport;
-import org.colomoto.biolqm.services.LQMServiceManager;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;

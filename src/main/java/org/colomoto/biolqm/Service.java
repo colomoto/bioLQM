@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.services;
+package org.colomoto.biolqm;
 
 /**
  * Simple service description interface.

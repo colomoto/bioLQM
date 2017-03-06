@@ -3,7 +3,7 @@ package org.colomoto.biolqm.tool;
 import java.io.IOException;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.services.Service;
+import org.colomoto.biolqm.Service;
 
 /**
  * Simple tool description interface.
