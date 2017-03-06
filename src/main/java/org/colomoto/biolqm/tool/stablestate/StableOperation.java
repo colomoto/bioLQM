@@ -12,7 +12,7 @@ import org.colomoto.mddlib.operators.AbstractFlexibleOperator;
 /**
  * MDD operation used to build a stability condition.
  * The operation needs the current node and merges an existing condition with its function.
- * <p/><b>Warning</b>: it is NOT thread-safe. Use multiple instances of this class for multiple threads.
+ * <b>Warning</b>: it is NOT thread-safe. Use multiple instances of this class for multiple threads.
  * 
  * @author Aurelien Naldi
  */

@@ -22,7 +22,9 @@ import javax.script.ScriptEngine;
 public class Colomoto {
 
 	/**
-	 * @param args
+	 * The main entry point, dispatching between the CLI and script mode
+	 * 
+	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
 
@@ -270,6 +272,13 @@ public class Colomoto {
 		System.out.println(sb);
 	}
 
+	/**
+	 * Load a model from file.
+	 * 
+	 * @param filename the path to the loaded file
+	 * @param format the name of the import format
+	 * @return the loaded model
+	 */
     public static LogicalModel loadModel(String filename, String format) {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
@@ -293,6 +302,14 @@ public class Colomoto {
         return null;
     }
 
+    /**
+     * Save a model to file
+     * 
+     * @param model the model to save
+     * @param filename the path of the output file
+     * @param format the name of the export format
+     * @return true if success
+     */
     public static boolean saveModel(LogicalModel model, String filename, String format) {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);

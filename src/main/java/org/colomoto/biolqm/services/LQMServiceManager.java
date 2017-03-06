@@ -163,9 +163,10 @@ public class LQMServiceManager {
 	}
 
 	/**
-	 * Get the service for a given ID.
+	 * Get the service instance for a given class
 	 *
-	 * @param name ID of the service
+	 * @param cl the class of the service
+	 * @param <T> the type of the class and returned instance
 	 * @return the service instance or null if not found.
 	 */
 	public static <T extends ModelModifierService> T getModifier(Class<T> cl) {

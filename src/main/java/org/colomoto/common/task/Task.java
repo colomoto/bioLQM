@@ -37,7 +37,7 @@ public interface Task<T> extends Callable<T> {
      * Run the task in a separate thread.
      * The listener will be notified when the task is finished.
      *
-     * @param listener
+     * @param listener will be notified when the task is done
      */
     void background(TaskListener listener);
 }

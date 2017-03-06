@@ -96,8 +96,8 @@ public interface LogicalModel {
 	/**
 	 * Get a logical model with the same nodes but a different order for the core components.
 	 * 
-	 * @param neworder
-	 * @return
+	 * @param neworder the desired ordered list of components
+	 * @return a re-ordered view of the same model
 	 */
 	LogicalModel getView(List<NodeInfo> neworder);
 
@@ -108,6 +108,12 @@ public interface LogicalModel {
      */
     boolean isBoolean();
 
-    
+
+    /**
+     * Retrieve a component by name.
+     * 
+     * @param s_source the name of the component
+     * @return the component or null if not found
+     */
 	NodeInfo getComponent(String s_source);
 }

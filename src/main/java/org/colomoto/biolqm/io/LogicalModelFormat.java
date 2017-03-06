@@ -70,7 +70,7 @@ public interface LogicalModelFormat {
 	 * 
 	 * @param model the model to export
 	 * @param outputProvider an object providing output streams on demand for saving to one or multiple files
-	 * @throws IOException
+	 * @throws IOException if writing failed
 	 */
 	void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException;
 
@@ -79,7 +79,7 @@ public interface LogicalModelFormat {
 	 * 
 	 * @param f the file to import
 	 * @return a new LogicalModel containing the imported data.
-	 * @throws IOException
+	 * @throws IOException if loading failed
 	 */
 	LogicalModel importFile(File f) throws IOException;
 	

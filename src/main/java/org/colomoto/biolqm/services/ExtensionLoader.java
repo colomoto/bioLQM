@@ -33,8 +33,8 @@ public class ExtensionLoader {
     /**
      * Trigger the loading of extensions. This must be called only once, before all use of getClassLoader()
      *
-     * @param ename
-     * @param cl
+     * @param ename name of the optional extension folder
+     * @param cl caller class (needed to find the basename)
      */
     public static void loadExtensions(String ename, Class cl) {
         if (cld != null) {
@@ -53,8 +53,13 @@ public class ExtensionLoader {
             basedir = jar.getParent();
         }
 
-        // extend the classpath if needed
-        File extensionDir = new File(basedir, "extensions");
+        // extend the classpath if an extension folder is available
+        if (ename == null) {
+            cld = contextLoader;
+            return;
+        }
+        
+        File extensionDir = new File(basedir, ename);
         if (!extensionDir.isDirectory()) {
             cld = contextLoader;
             return;

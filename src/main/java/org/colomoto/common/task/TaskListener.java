@@ -7,5 +7,9 @@ package org.colomoto.common.task;
  */
 public interface TaskListener {
 
+	/**
+	 * Notifies a task update (finished or canceled)
+	 * @param task the followed task
+	 */
     void taskUpdated(Task task);
 }

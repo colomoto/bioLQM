@@ -3,6 +3,7 @@ package org.colomoto.biolqm.tool;
 import java.io.IOException;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.services.Service;
 
 /**
  * Simple tool description interface.
@@ -10,20 +11,7 @@ import org.colomoto.biolqm.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-public interface LogicalModelTool {
-
-	/**
-	 * get the ID of the tool.
-	 * @return the tool ID
-	 */
-	String getID();
-	
-	/**
-	 * Get a longer name for the tool.
-	 * This is descriptive only and has no real role.
-	 * @return the tool name
-	 */
-	String getName();
+public interface LogicalModelTool extends Service {
 
 	/**
 	 * Does this tool handle multivalued models?

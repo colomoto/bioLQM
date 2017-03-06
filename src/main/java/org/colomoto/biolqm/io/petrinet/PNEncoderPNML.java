@@ -154,10 +154,10 @@ public class PNEncoderPNML extends AbstractPNEncoder {
     	out.addTag("position", new String[] {"x",""+x , "y",""+y});
     	out.closeTag();
     	out.openTag("name");
-    	out.addTagWithContent("value", id);
+    	out.addTag("value", id);
     	out.closeTag();
     	out.openTag("initialMarking");
-    	out.addTagWithContent("value", ""+markup);
+    	out.addTag("value", ""+markup);
     	out.closeTag();
         out.closeTag(); // place
 	}
@@ -169,16 +169,16 @@ public class PNEncoderPNML extends AbstractPNEncoder {
 		out.addTag("position", new String[] {"x",""+x , "y",""+y});
 		out.closeTag();
 		out.openTag("name");
-		out.addTagWithContent("value", id);
+		out.addTag("value", id);
 		out.closeTag();
 		out.openTag("orientation");
-		out.addTagWithContent("value", "0");
+		out.addTag("value", "0");
 		out.closeTag();
 		out.openTag("rate");
-		out.addTagWithContent("value", "1.0");
+		out.addTag("value", "1.0");
 		out.closeTag();
 		out.openTag("timed");
-		out.addTagWithContent("value", "false");
+		out.addTag("value", "false");
 		out.closeTag();
 	    out.closeTag();
 	}
@@ -189,7 +189,7 @@ public class PNEncoderPNML extends AbstractPNEncoder {
 		out.addAttr("source", src);
 		out.addAttr("target", target);
 		out.openTag("inscription");
-		out.addTagWithContent("value", ""+value);
+		out.addTag("value", ""+value);
 		out.closeTag();
 		out.closeTag();
 	}

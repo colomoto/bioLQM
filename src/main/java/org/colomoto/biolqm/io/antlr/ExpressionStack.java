@@ -29,10 +29,11 @@ public class ExpressionStack {
      * Build a LogicalModel from a list of nodes and parsed functions.
      * This method should be shared between parsers!
      *
-     * @param operandFactory
-     * @param nodes
-     * @param var2function
-     * @return
+     * @param operandFactory factory providing the MDD manager and operands for these nodes
+     * @param nodes the list of nodes
+     * @param var2function the parsed function for each node
+     * 
+     * @return the corresponding logical model
      */
     public static LogicalModel constructModel(OperandFactory operandFactory, List<NodeInfo> nodes, Map<NodeInfo,FunctionNode> var2function) {
 

@@ -17,9 +17,9 @@ public class LogicalModelComparator {
 	 * This will test if they have the same core variables and functions.
 	 * Extra variables are not tested (yet).
 	 * 
-	 * @param m1
-	 * @param m2
-	 * @return
+	 * @param m1 the reference model
+	 * @param m2 the compared model
+	 * @return true if the two models are identical
 	 */
 	public static boolean compare(LogicalModel m1, LogicalModel m2) {
 		

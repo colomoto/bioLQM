@@ -20,6 +20,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
      * Placeholder for the actual implementation.
      *
      * @return the result of the computation
+     * @throws Exception forwarded from the call() method
      */
     abstract protected T doGetResult() throws Exception;
 
@@ -71,7 +72,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
     @Override
     public void run() {
         try {
-            T result = call();
+            call();
         } catch (Exception e) {
             this.status = TaskStatus.ERROR;
         }

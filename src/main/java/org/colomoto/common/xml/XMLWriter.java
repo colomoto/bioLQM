@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class XMLWriter {
 
     private OutputStreamWriter out = null;
-    private List v_stack = new ArrayList();
+    private List<String> v_stack = new ArrayList<String>();
     private boolean inTag;
     private boolean inContent;
     private boolean indent;
@@ -35,45 +35,41 @@ public class XMLWriter {
     
     /**
      * Create a XMLWriter with the path to a file.
-     * 
-     * @param filename
-     * @param dtdFile
-     * @throws IOException
+     * @param filename the path to the output file
+     * @param dtdFile path to the DTD file
+     * @throws IOException if the output can not be written or fails
      */
     public XMLWriter(String filename, String dtdFile) throws IOException {
     	this(new FileOutputStream(filename), dtdFile);
 	}
 
     /**
-     * Create a XMLWriter with an existing Writer.
-     * Warning: the writer should use the right encoding, otherwise we may get into troubles.
-     * 
-     * @param out
-     * @param dtdFile
-     * @throws IOException
+     * Create an XML writer with indenting enabled by default.
+     * @param out the output writer
+     * @param dtdFile path to the DTD file
+     * @throws IOException if the output can not be written or fails
      */
     public XMLWriter(OutputStreamWriter out, String dtdFile) throws IOException {
         this(out,dtdFile,true);
     }
+    
     /**
-     * Create a XMLWriter with an output stream.
-     * It will create a Writer for this stream, using an UTF-8 encoding.
-     * 
-     * @param out
-     * @param dtdFile
-     * @throws IOException
+     * Create an XML writer with indenting enabled by default.
+     * @param out the output stream
+     * @param dtdFile path to the DTD file
+     * @throws IOException if the output can not be written or fails
      */
     public XMLWriter(OutputStream out, String dtdFile) throws IOException {
-        this(new OutputStreamWriter(out, "UTF-8"),dtdFile,true);
+        this(new OutputStreamWriter(out, "UTF-8"),dtdFile, true);
     }
 
     /**
      * Create a XMLWriter with an existing Writer.
      * 
-     * @param out
-     * @param dtdFile
-     * @param indent
-     * @throws IOException
+     * @param out the output writer
+     * @param dtdFile path to the DTD file
+     * @param indent enable indenting (pretty printing)
+     * @throws IOException if the output can not be written or fails
      */
     private XMLWriter(OutputStreamWriter out, String dtdFile, boolean indent) throws IOException {
         this.indent = indent;
@@ -87,9 +83,9 @@ public class XMLWriter {
 	/**
      * ask to store the next calls into a string buffer.
      * Use <code>getBuffer()</code> to stop it and get the content of the buffer.
-     * @throws IOException
+     * @throws IOException if writing fails
      */
-    public void toBuffer()  throws IOException {
+    public void toBuffer() throws IOException {
         if (inTag) {
             write(">");
             if (indent) {
@@ -115,9 +111,11 @@ public class XMLWriter {
     }
     
     /**
-     * @param s
-     * @param isAttVal
-     * @throws IOException
+     * Write a string, using escaping as needed.
+     * 
+     * @param s the String to write
+     * @param isAttVal specifies if this is an attribute value (uses a different escaping)
+     * @throws IOException if writing fails
      */
     public void writeEsc (String s, boolean isAttVal) throws IOException
     {
@@ -149,8 +147,9 @@ public class XMLWriter {
     }
 
     /**
-     * @param s
-     * @throws IOException
+     * Write a String directly (no escaping)
+     * @param s the string to write
+     * @throws IOException if writing fails
      */
     public void write(String s) throws IOException {
         if (buf != null) {
@@ -161,8 +160,9 @@ public class XMLWriter {
     }
     
     /**
-     * @param c
-     * @throws IOException
+     * Write a single character directly t the output
+     * @param c the character
+     * @throws IOException if writing fails
      */
     public void write(char c) throws IOException {
         if (buf != null) {
@@ -173,9 +173,9 @@ public class XMLWriter {
     }
     
     /**
-     * open a tag in the XML output file
-     * @param name
-     * @throws IOException
+     * Open a tag in the XML output file
+     * @param name the tag name
+     * @throws IOException if writing fails
      */
     public void openTag(String name) throws IOException {
     	if (inTag) {
@@ -196,20 +196,20 @@ public class XMLWriter {
     }
 
     /**
-     * add (i.e. open and close) a tag without any attributes and content.
-     * @param name
-     * @throws IOException
+     * Add (i.e. open and close) a tag without any attributes and content.
+     * @param name the tag name
+     * @throws IOException if writing fails
      */
     public void addTag(String name) throws IOException {
     	openTag(name);
     	closeTag();
     }
     /**
-     * add (i.e. open and close) a tag with specified attributes and content.
-     * @param name
-     * @param attributes
-     * @param content
-     * @throws IOException
+     * Add (i.e. open and close) a tag with specified attributes and content.
+     * @param name the tag name
+     * @param attributes the list of attributes and their values
+     * @param content the content text
+     * @throws IOException if writing fails
      */
     public void addTag(String name, String[] attributes, String content) throws IOException {
     	openTag(name, attributes);
@@ -217,10 +217,10 @@ public class XMLWriter {
     	closeTag();
     }
     /**
-     * open a tag and add it the specified attributes.
-     * @param name
-     * @param attributes
-     * @throws IOException
+     * Open a tag and add it the specified attributes.
+     * @param name the tag name
+     * @param attributes the list of attributes and their values
+     * @throws IOException if writing fails
      */
     public void openTag(String name, String[] attributes) throws IOException {
     	openTag(name);
@@ -229,10 +229,10 @@ public class XMLWriter {
     	}
     }
     /**
-     * add (i.e. open and close) a tag with specified attributes and no content.
-     * @param name
-     * @param attributes
-     * @throws IOException
+     * Add (i.e. open and close) a tag with specified attributes and no content.
+     * @param name the tag name
+     * @param attributes the list of attributes and their values
+     * @throws IOException if writing fails
      */
     public void addTag(String name, String[] attributes) throws IOException {
     	openTag(name, attributes);
@@ -240,30 +240,23 @@ public class XMLWriter {
     }
 
     /**
-     * add (i.e. open and close) a tag with specified content and no attributes.
-     * @param tag
-     * @param content
-     * @throws IOException
+     * Add (i.e. open and close) a tag with specified content and no attributes.
+     * 
+     * @param tag the tag name
+     * @param content the content to add
+     * @throws IOException if writing fails
      */
-    public void addTagWithContent(String tag, Object content) throws IOException {
-    	addTagWithContent(tag, content.toString());
-    }
-    /**
-     * add (i.e. open and close) a tag with specified content and no attributes.
-     * @param tag
-     * @param content
-     * @throws IOException
-     */
-    public void addTagWithContent(String tag, String content) throws IOException {
+    public void addTag(String tag, String content) throws IOException {
     	openTag(tag);
     	addContent(content);
     	closeTag();
     }
 
     /**
-     * close the currently opened tag.
-     * depending on context it will use "/&gt; or "&lt;/name&gt;"
-     * @throws IOException
+     * Close the currently opened tag.
+     * Depending on context it will use "/&gt; or "&lt;/name&gt;"
+     * 
+     * @throws IOException if writing fails
      */
     public void closeTag() throws IOException {
         int l = v_stack.size()-1;
@@ -288,9 +281,9 @@ public class XMLWriter {
     /**
      * add an attribute to the opened tag.
      * If the tag is no-more really opened it will return silently without writing anything.
-     * @param name
-     * @param value
-     * @throws IOException
+     * @param name the attribute name
+     * @param value the attribute value
+     * @throws IOException if writing fails
      */
     public void addAttr(String name, String value) throws IOException {
         if (!inTag) {
@@ -306,9 +299,9 @@ public class XMLWriter {
     }
     
     /**
-     * add a "text child"
-     * @param s
-     * @throws IOException 
+     * Add a "text child"
+     * @param s the content to write (will be escaped as needed)
+     * @throws IOException if writing fails
      */
     public void addContent(String s) throws IOException {
         if (inTag) {
@@ -319,20 +312,20 @@ public class XMLWriter {
         inContent = true;
     }
     /**
-     * add a "text child", already formated: should _NOT_ be escaped
-     * @param s
+     * Add a "text child", already formated: should _NOT_ be escaped
+     * @param s the formatted content
      * @param b if true, then the file might get indented
-     * @throws IOException 
+     * @throws IOException if writing fails
      */
     public void addFormatedContent(String s, boolean b) throws IOException {
     	addLongContent(s, b, false);
     }
 
     /**
-     * add a complex "text child", it will be enclosed into CDATA markers
-     * @param s
+     * Add a complex "text child", it will be enclosed into CDATA markers
+     * @param s the complex content
      * @param b if true, then the file might get indented
-     * @throws IOException 
+     * @throws IOException if writing fails
      */
     public void addComplexContent(String s, boolean b) throws IOException {
     	addLongContent(s, b, true);
@@ -341,10 +334,10 @@ public class XMLWriter {
     /**
      * Common implementation for formatted and complex content.
      * 
-     * @param s
-     * @param b
-     * @param cdata
-     * @throws IOException
+     * @param s the content
+     * @param b if true, will use indenting
+     * @param cdata if true, content will be encapsulated in CDATA markers
+     * @throws IOException if writing fails
      */
     private void addLongContent(String s, boolean b, boolean cdata) throws IOException {
         if (inTag) {
@@ -364,9 +357,9 @@ public class XMLWriter {
     }
     
     /**
-     * Close the writer: all open tags and the underlying outputstream.
+     * Close the writer: automatically closes all open tags and the underlying output stream.
      * 
-     * @throws IOException
+     * @throws IOException if writing fails
      */
     public void close() throws IOException {
     	while (v_stack.size() > 0) {

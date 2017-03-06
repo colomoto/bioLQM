@@ -46,9 +46,9 @@ public class ConnectivityMatrix {
 	/**
 	 * Helper to fill the connectivity matrix to be called by the constructor only.
 	 * 
-	 * @param ddmanager
-	 * @param functions
-	 * @param regulators
+	 * @param ddmanager the MDD manager
+	 * @param functions all functions
+	 * @param the identified matrix of regulators
 	 */
 	private int[][] fillRegulators(MDDManager ddmanager, int[] functions) {
 		int[][] regulators = new int[functions.length][];
@@ -80,8 +80,8 @@ public class ConnectivityMatrix {
 	/**
 	 * Helper to fill the list of targets based on the existing lists of regulators.
 	 * 
-	 * @param coreComponents
-	 * @param regulators
+	 * @param coreSize the number of core components
+	 * @param regulators the identified regulators
 	 * @return
 	 */
 	private int[][] fillTargets(int coreSize, int[][] regulators) {
@@ -151,8 +151,8 @@ public class ConnectivityMatrix {
 	 * Each position in the returned array denotes the sign of the regulator
 	 * at the same position in the list of regulators returned by getRegulators(int, boolean).
 	 * 
-	 * @param idx
-	 * @param extra
+	 * @param idx the component index
+	 * @param extra if true, consider extra components instead of core
 	 * @return a list of regulation signs.
 	 */
 	public VariableEffect[][] getRegulatorEffects(int idx, boolean extra) {

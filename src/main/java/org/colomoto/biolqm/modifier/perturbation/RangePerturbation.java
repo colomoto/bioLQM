@@ -6,7 +6,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 
 /**
- * Simple perturbation to fix the value of a component.
+ * Simple perturbation to restrict the value of a component in a range.
  * 
  * @author Aurelien Naldi
  */
@@ -17,7 +17,7 @@ public class RangePerturbation extends AbstractPerturbation {
 
 	/**
 	 * Create a range restriction.
-	 * Note that the values should verify 0 <= min <= max < nbval.
+	 * Note that the values should verify 0 &gt;= min &lt;= max < nbval.
 	 * if min = max, then the component will have a fixed value.
 	 * Otherwise, a new function will be computed to ensure that the reached leaf belongs to the [min,max] range.
 	 * 
@@ -51,7 +51,7 @@ public class RangePerturbation extends AbstractPerturbation {
 		int idx = -1;
 		int[] functions = null;
 		
-		idx = model.getNodeOrder().indexOf(component);
+		idx = model.getComponents().indexOf(component);
 		if (idx >= 0) {
 			functions = model.getLogicalFunctions();
 		} else {
@@ -81,10 +81,12 @@ public class RangePerturbation extends AbstractPerturbation {
 		model.getMDDManager().free(oldValue);
 	}
 	
+	@Override
 	public String toString() {
 		return component.getNodeID() + " ["+min+","+max+"]";
 	}
-	
+
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RangePerturbation) {
 			RangePerturbation p = (RangePerturbation)o;

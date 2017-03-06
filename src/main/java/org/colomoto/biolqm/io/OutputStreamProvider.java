@@ -29,23 +29,23 @@ public class OutputStreamProvider {
     /**
      * Get a single stream. When saving to a file it will have the selected filename.
      *
-     * @return
-     * @throws IOException
+     * @return the output stream
+     * @throws IOException if creating the stream failed
      */
     public OutputStream getOutputStream() throws IOException {
         return getOutputStream("$f");
     }
 
     /**
-     * Get a custom stream, specifyng a pattern.
-     * The pattern enables to change the file extension, write multiple files to a subfolder...
+     * Get a custom stream, specifying a pattern.
+     * The pattern enables to change the file extension, write multiple files to a sub-folder...
      * Available patterns:
      * <ul>
      * <li>$f: the selected filename</li>
      * </ul>
-     * @param pattern
-     * @return
-     * @throws IOException
+     * @param pattern a naming pattern for the new stream
+     * @return an output stream associated to the desired pattern
+     * @throws IOException if creating the stream failed
      */
     public OutputStream getOutputStream(String pattern) throws IOException  {
         File f = parent;
