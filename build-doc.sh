@@ -2,7 +2,7 @@
 
 # config: set source doc and output
 DOC="doc"
-OUT="target/site"
+OUT="target/site/doc"
 
 function die(){
  echo $1

@@ -38,10 +38,10 @@ lqm.save(model, "model.boolsim")
     <section id="implementation">
         <title>Implementation</title>
         <p>
-        Under the scene, formats implement the <link href="apidocs/org/colomoto/biolqm/io/LogicalModelFormat.html">LogicalModelFormat</link> interface.
+        Under the scene, formats implement the <link href="../apidocs/org/colomoto/biolqm/io/LogicalModelFormat.html">LogicalModelFormat</link> interface.
         Available formats are discovered by using the <code>@ProviderFor(LogicalModelFormat.class)</code> decorator.
         Formats must declare if they provide import and export filters ad if they handle multivalued models. When extending the
-        <link href="apidocs/org/colomoto/biolqm/io/AbstractFormat.html">AbstractFormat</link> base class, overloading the
+        <link href="../apidocs/org/colomoto/biolqm/io/AbstractFormat.html">AbstractFormat</link> base class, overloading the
         <code>importFile</code> and <code>export</code> methods is sufficient to declare import and export support.
         </p>
     </section>
