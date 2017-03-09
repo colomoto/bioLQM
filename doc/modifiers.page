@@ -1,0 +1,60 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      id="modifiers"
+      type="guide" style="2column">
+
+    <info>
+      <link type="guide" xref="index#start"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Model in, modified model out</desc>
+    </info>
+
+    <title>Model modifiers</title>
+
+    <section id="use">
+        <title>Command line use</title>
+        <p>
+        Model modifiers can be called from the command line after selecting the loaded model, using the <cmd>-m modifier[:parameters]</cmd> switch.
+        The modifier is identified by its name and can be provided with parameters (depending on the specific modifier).
+        For example the arguments <cmd>-m booleanization</cmd> will generate a <link xref="modifier-booleanization">booleanized model</link>
+        (this modifier takes no argument). <cmd>-m perturbation:A%0</cmd> will apply a <link xref="modifier-perturbation">perturbation</link>
+        corresponding to the knockout of component <cmd>A</cmd> (setting its target value to 0).
+        </p>
+        
+        <note style="hint">
+        <p>Modifiers ca be chained on the command line.</p>
+        <p>Perturbations are available directly with the <cmd>-p A%0</cmd> shortcut.</p>
+        </note>
+    </section>
+
+    <section id="script">
+        <title>Scripting</title>
+        <p>
+        In scripts, model modifiers are available through the <cmd>lqm.modify</cmd> method which takes 3 arguments: the model,
+        the name of the modifier, and the parameters.
+        </p>
+
+<code>
+model = lqm.load("model.sbml")
+modified = lqm.modify(model, "perturbation", "A%0")
+</code>
+
+    </section>
+
+    <section id="implementation">
+        <title>Implementation</title>
+        <p>
+        Under the scene, model modifiers implement the <link href="apidocs/org/colomoto/biolqm/modifier/ModelModifier.html">ModelModifier</link> interface,
+        and are accessible throught a dedicated <link href="apidocs/org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</link>.
+        Services are discovered by using the <code>@ProviderFor(ModelModifierService.class)</code> decorator.
+        Some implementors may provide additional methods on the service to facilitate the construction of the modifier instance.
+        </p>
+    </section>
+
+
+    <section id="list">
+        <title>Available Modifiers</title>
+        <links type="topic" style="2column"/>
+    </section>
+
+</page>
+

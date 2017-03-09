@@ -1,0 +1,25 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="scripting">
+    <info>
+        <link type="guide" xref="index#start"/>
+        <revision status="stub" date="2017-03-06"/>
+        <desc>Scripting</desc>
+    </info>
+
+    <title>Scripting bioLQM</title>
+
+    <section id="intro">
+        <title>Introduction</title>
+        <p>
+        </p>
+    </section>
+
+    <section id="howto">
+        <title>How to</title>
+        <p>
+        </p>
+    </section>
+
+</page>
+

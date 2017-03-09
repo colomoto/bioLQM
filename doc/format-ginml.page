@@ -1,0 +1,44 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-ginml">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Generic XML graph format used in GINsim</desc>
+    </info>
+
+    <title>The GINML format</title>
+
+    <p>
+    The <em>GINML</em> format is an extension of the <link href="http://www.gupro.de/GXL">GXL (Graph eXchange Language)</link> format.
+    This extension comprises new attributes and subelements for elements node and edge, and an additional element called parameter.
+    </p>
+
+    <terms>
+        <item><title>element node</title>
+            <p>a new attribute basevalue corresponds to the "based level of expression" of the corresponding component (default value 0).
+                In other words, it is the value of the logical parameter corresponding to the case where none of the incoming interactions if functional.
+                New subelements within a node:
+            </p>
+            <list>
+                <item><p>a list of elements parameter corresponding to the user defined logical parameters for this node</p></item>
+                <item><p>an element intdefining the maximum level of expression of this node</p></item>
+            </list>
+        </item>
+        <item><title>element edge</title>
+<p>a new attribute sign which gives the sign of the interaction (positive for an activation, negative for a repression, otherwise unknown)
+one or two subelements int (level or interval letting the interaction functional)
+element parameter, is empty and has two attributes :
+attribute idActiveInteractions gives the "name" of the parameter. It is the list of the functional interactions exerted upon the considered node,
+attribute val is the value of the logical parameter.</p>
+        </item>
+    </terms>
+
+    <p>
+        See the GINML's dtd or in pdf format 
+        See also the GINML description of the gap-gene network case A, or in pdf format.
+    </p>
+
+</page>
+

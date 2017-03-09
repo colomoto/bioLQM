@@ -1,0 +1,16 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-boolsim">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Import/Export BoolSim models</desc>
+    </info>
+
+    <title>BoolSim</title>
+
+    <p>TODO</p>
+
+</page>
+

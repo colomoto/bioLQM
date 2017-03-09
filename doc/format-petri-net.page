@@ -1,0 +1,20 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:gloss="http://projectmallard.org/experimental/gloss/"
+      type="topic"
+      id="format-petri-net">
+    <info>
+      <link type="guide" xref="index#formats"/>
+      <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Export logical models as Petri net</desc>
+      <gloss:term id="Chaouiya2006" />
+    </info>
+
+    <title>Petri Net Export</title>
+    <p>
+        Regulatory graphs can be exported into discrete <!-- TODO: check nomenclature with claudine -->
+        Petri net using the rewriting method described in <gloss:term xref="biblio" id="Chaouiya2006" >Chaouiya 2006</gloss:term>.
+    </p>
+
+</page>
+

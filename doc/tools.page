@@ -1,0 +1,46 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      id="tools"
+      type="guide" style="2column">
+
+    <info>
+        <link type="guide" xref="index#start"/>
+        <revision status="stub" date="2017-03-06"/>
+        <desc>Tools applied to models</desc>
+    </info>
+
+    <title>Tools</title>
+
+    <p>TODO</p>
+
+    <section id="cli">
+        <title>Command line use</title>
+        <p>TODO</p>
+    </section>
+
+    <section id="script">
+        <title>Scripting</title>
+        <p>
+        TODO
+        </p>
+
+<code>
+model = lqm.load("model.sbml")
+lqm.getTool("stable").run(model)
+</code>
+
+    </section>
+
+    <section id="implementation">
+        <title>Implementation</title>
+        <p>
+        TODO
+        </p>
+    </section>
+
+    <section id="list">
+        <title>Available Tools</title>
+        <links type="topic" style="2column"/>
+    </section>
+
+</page>
+

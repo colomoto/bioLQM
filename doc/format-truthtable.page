@@ -1,0 +1,56 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-truthtable">
+    <info>
+        <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+        <revision status="stub" date="2017-03-06"/>
+        <desc>Import regulatory graph from a truth table</desc>
+    </info>
+
+    <title>Truth table</title>
+
+    <p>A model can be imported into GINsim from a truth table, and vice-versa, representing the its synchronouns dynamics formated as a two-column text file.</p>
+
+    <p>The complete synchronous dynamics of a system can be imported into GINsim automatically generating (one of) the corresponding model.
+    This can be achieved through the import of a Truth Table, where each line of this table contains the source source and target state under a synchronous update.</p>
+
+    <note style="tip">
+        <p>The dynamics represented in a multivalued truth table file, can have more than one corresponding model.</p>
+    </note>
+
+    <terms>
+        <item>
+            <title>Truth Table format</title>
+            <p>
+            A truth table is represented as a two-column file where each line contains a source state followed by its corresponding target state.
+            This file may not describe a complete truth table, i.e., it may not have information regarding some of the source states of the corresponding state transition graph.
+            The first line of the table can have a non-mandatory list of node identifiers to be used.
+            Between each source and target state it is accepted any number of spaces and/or tabs.
+            Also, every line starting with character '#' will be considered as a comment.
+            The description of each state must be characterized by the valuations of their composing components without any space in between (and consequently, the maximum value allowed for each component is 9).
+            An example of a truth table, for a boolean system with three dimensions is the following:
+            </p>
+<code>
+GeneA GeneB GeneC
+000 100
+001 010
+# This is a comment
+010 110
+011 110
+100 100
+# Yet another unnecessary comment
+101 000
+110 110
+111 110
+</code>
+        <p>The importer performs two file reads.
+        During the first read, it reads the node identifiers (if available) and records the maximum value for each of component.
+        During the second read, it creates the model and the logical functions associated to each component.
+        </p>
+        </item>
+
+    </terms>
+
+</page>
+

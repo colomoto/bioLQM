@@ -1,0 +1,62 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="cli">
+
+    <info>
+        <link type="guide" xref="index#start"/>
+        <desc>Command Line Interface</desc>
+        <revision status="review" date="2017-03-06"/>
+    </info>
+
+    <title>Command-Line Interface</title>
+
+   <p>bioLQM can be launched on the command line using the following command.</p>
+   <code>java -jar bioLQM-${version}.jar <var>input_file</var> <var>[model_modifiers]</var> <var>output_file</var>|<var>action</var></code>
+
+   <note type="hint"><p>When launched without argument (or with non-recognized ones), a help message is displayed, showing the syntax and available features.</p></note>
+
+    <p>The command line arguments must contain the 3 parts described below (in this order):</p>
+    <list>
+        <item><p>The loaded file. An import filter will be used to open this file and construct a model.</p>
+            <p>The format can be guessed from the file extension or specified explicitly with the <var>-if format</var> optional argument.</p>
+        </item>
+        <item><p>List of <link xref="modifiers">model modifications</link> using the <var>-m modifier:parameters</var> switch.</p>
+            <p>Note that the <cmd>-p argument</cmd> shortcut can be used to apply a <link xref="modifier-perturbation">perturbation</link> drectly.</p>
+        </item>
+        <item><p>Action to perform on the resulting model: it can be saved to a file or forwarded to a tool.</p>
+            <p>To export the model to a file, provide the output filename. Like when loading a model, the <link xref="formats">format</link> can be guessed from the extension
+            or specified with the <var>-of format</var> optional argument.</p>
+        </item>
+    </list>
+
+    <note type="hint">
+        <p>The <cmd>-s</cmd> switch is used to run bioLQM in <link xref="scripting">script mode</link>.</p>
+    </note>
+
+    <section id="examples">
+        <title>Examples</title>
+        
+        <list>
+            <item>
+                <p>Convert a model from <link xref="format-sbml">SBML qual</link> to <link xref="format-boolsim">boolsim</link>:</p>
+                <code>java -jar bioLQM.jar model.sbml model.boolsim</code>
+            </item>
+        
+            <item>
+                <p>Apply a knockout perturbation before saving the model:</p>
+                <code>java -jar bioLQM.jar model.sbml -p A%0 modified.boolsim</code>
+            </item>
+        
+            <item>
+                <p>Booleanize and save a model:</p>
+                <code>java -jar bioLQM.jar model.sbml -m booleanize model_bool.sbml</code>
+            </item>
+        
+            <item>
+                <p>More complex conversion syntax, specifying input and output formats:</p>
+                <code>java -jar bioLQM.jar -if sbml model.xml -of ina model.pnt</code>
+            </item>
+        </list>
+    </section>
+</page>
+

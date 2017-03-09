@@ -1,0 +1,29 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:gloss="http://projectmallard.org/experimental/gloss/"
+      type="topic"
+      id="tools-stable">
+    <info>
+        <link type="guide" xref="index#tools"/>
+        <link type="guide" xref="tools#list"/>
+        <revision status="review" date="2012-03-08"/>
+        <desc>Finding stable states of a logical model</desc>
+        <gloss:term id="Naldi2007" />
+    </info>
+
+    <title>Stable state search</title>
+
+    <section id="motivation">
+        <title>Motivation</title>
+        <p>This tool provides the analytic (i.e. without running a simulation) determination of stable states
+        of the model. All stable states are determined, regardless of their reachability, using the algorithm
+        described in <gloss:term xref="biblio" id="Naldi2007">Naldi2007</gloss:term>.
+        </p>
+    </section>
+
+    <section id="usage">
+        <title>Usage</title>
+        <p>TODO</p>
+    </section>
+
+</page>
+

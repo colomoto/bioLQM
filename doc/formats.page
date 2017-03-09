@@ -1,0 +1,55 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      id="formats"
+      type="guide" style="2column">
+
+    <info>
+        <link type="guide" xref="index#start"/>
+        <revision status="stub" date="2017-03-06"/>
+        <desc>Define Import / Export filters</desc>
+    </info>
+
+    <title>I/O formats</title>
+
+<p>
+BioLQM supports multiple file formats for the representation of qualitative models.
+The internal model representation can be exported into all supported formats, some formats also provide import filters.
+While some formats natively support multivalued models, many are limited for the Boolean case, and rely on an automatic
+<link xref="modifier-booleanization">booleanization</link> step.
+</p>
+
+    <section id="cli">
+        <title>Command line use</title>
+        <p>TODO</p>
+    </section>
+
+    <section id="script">
+        <title>Scripting</title>
+        <p>
+        In scripts, model loading and saving are available through the <cmd>lqm.load</cmd> and <cmd>lqm.save</cmd> methods respectively.
+        </p>
+
+<code>
+model = lqm.load("model.sbml")
+lqm.save(model, "model.boolsim")
+</code>
+
+    </section>
+
+    <section id="implementation">
+        <title>Implementation</title>
+        <p>
+        Under the scene, formats implement the <link href="apidocs/org/colomoto/biolqm/io/LogicalModelFormat.html">LogicalModelFormat</link> interface.
+        Available formats are discovered by using the <code>@ProviderFor(LogicalModelFormat.class)</code> decorator.
+        Formats must declare if they provide import and export filters ad if they handle multivalued models. When extending the
+        <link href="apidocs/org/colomoto/biolqm/io/AbstractFormat.html">AbstractFormat</link> base class, overloading the
+        <code>importFile</code> and <code>export</code> methods is sufficient to declare import and export support.
+        </p>
+    </section>
+
+    <section id="list">
+        <title>Available Formats</title>
+        <links type="topic" style="2column"/>
+    </section>
+
+</page>
+

@@ -1,0 +1,27 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="modifier-booleanization">
+    <info>
+      <link type="guide" xref="index#modifiers"/>
+      <link type="guide" xref="modifiers#list"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Boolean mapping for multivalued models</desc>
+    </info>
+
+    <title>Model booleanization</title>
+
+    <p>
+    </p>
+
+    <section>
+        <title>The mapping</title>
+        <p>bioLQM uses the mapping originaly proposed by </p>
+    </section>
+
+    <section>
+        <title>Handling non-admissible states</title>
+        <p>TODO</p>
+    </section>
+
+</page>
+

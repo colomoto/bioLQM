@@ -1,0 +1,19 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="modifier-perturbation">
+    <info>
+      <link type="guide" xref="index#modifiers"/>
+      <link type="guide" xref="modifiers#list"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Define perturbations of logical models</desc>
+    </info>
+
+    <title>Model Perturbations (mutants)</title>
+
+    <section>
+        <title>Simple perturbations</title>
+        <p>TODO</p>
+    </section>
+
+</page>
+

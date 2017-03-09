@@ -1,0 +1,43 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="guide" style="2column"
+      id="starting">
+
+	<info>
+		<link type="guide" xref="index#start" group="run"/>
+		<desc>Availability, requirements, first run</desc>
+		<revision status="review" date="2012-11-22"/>
+	</info>
+
+	<title>Install and Run</title>
+
+	<section id="availability">
+		<title>Availability</title>
+
+		<p>bioLQM is freely available without guarantees.
+		The source code is available on (<link href="https://github.com/colomoto/bioLQM"/>)
+		</p>
+	</section>
+
+	<section id="requirements">
+		<title>Requirements</title>
+		<p>bioLQM requires Java 7.
+		You can obtain Java for Linux, Windows, or Solaris at <link href="http://www.java.com">java.com</link>,
+		and Apple provides its own Java version for mac users.
+		</p>
+	</section>
+
+    <section id="javaoptions">
+        <title>Java options</title>
+        <p>The JAVA virtual machine provide many options of its own, for large models, bioLQM could
+        mostly benefit from extending the amount of memory available, with the <code>-Xmx</code> option.
+        For example, one can launch bioLQM with 1000MB of memory using
+       <code>java -Xmm1000M -jar bioLQM-<var>#version</var>.jar</code>.
+       </p>
+       <p>for more details, see 
+       <link href="http://docs.oracle.com/javase/6/docs/technotes/tools/">the java tools documentation</link>
+       </p>
+    </section>
+
+
+</page>
+

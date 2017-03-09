@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE bibliography PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<bibliography>
+	<title>References</title>
+
+
+	<biblioentry id="Chaouiya2006">
+		<authorgroup>
+			<author><firstname>Claudine</firstname><surname>Chaouiya</surname></author>
+			<author><firstname>Elisabeth</firstname><surname>Remy</surname></author>
+			<author><firstname>Denis</firstname><surname>Thieffry</surname></author>
+		</authorgroup>
+		<title>Qualitative Petri Net Modelling of Genetic Networks</title>
+		<publisher><publishername>Lecture Notes in Computer Science</publishername></publisher>
+		<!-- <book>Transactions on Computation Systems Biology VI</book> -->
+		<pubdate>2006</pubdate>
+		<volumenum>4220</volumenum>
+		<pagenums>95-112</pagenums>
+		<biblioid class="doi">10.1007/11880646_5</biblioid>
+	</biblioentry>
+	<biblioentry id="Naldi2007">
+		<authorgroup>
+			<author><firstname>Aurélien</firstname><surname>Naldi</surname></author>
+			<author><firstname>Denis</firstname><surname>Thieffry</surname></author>
+			<author><firstname>Claudine</firstname><surname>Chaouiya</surname></author>
+		</authorgroup>
+		<title>Decision Diagrams for the Representation and Analysis of Logical	Models of Genetic Networks</title>
+		<publisher><publishername>LNCS:LNBI</publishername></publisher>
+		<pubdate>2007</pubdate>
+		<volumenum>4695/2007</volumenum>
+		<pagenums>233-247</pagenums>
+		<biblioid class="doi">10.1007/978-3-540-75140-3_16</biblioid>
+	</biblioentry>
+	<biblioentry id="Naldi2011">
+		<authorgroup>
+			<author><firstname>Aurélien</firstname><surname>Naldi</surname></author>
+			<author><firstname>Elisabeth</firstname><surname>Remy</surname></author>
+			<author><firstname>Denis</firstname><surname>Thieffry</surname></author>
+			<author><firstname>Claudine</firstname><surname>Chaouiya</surname></author>
+		</authorgroup>
+		<title>Dynamically consistent reduction of logical regulatory graphs</title>
+		<publisher><publishername>Theoretical Computer Science</publishername></publisher>
+		<pubdate>2011</pubdate>
+		<volumenum>412 (21)</volumenum>
+		<pagenums>2207-2218</pagenums>
+		<biblioid class="doi">10.1016/j.tcs.2010.10.021</biblioid>
+	</biblioentry>
+	<biblioentry id="Naldi2012">
+		<authorgroup>
+			<author><firstname>Aurélien</firstname><surname>Naldi</surname></author>
+			<author><firstname>Pedro T.</firstname><surname>Monteiro</surname></author>
+			<author><firstname>Claudine</firstname><surname>Chaouiya</surname></author>
+		</authorgroup>
+		<title>Efficient Handling of Large Signalling-Regulatory Networks by Focusing on Their Core Control</title>
+		<publisher><publishername>Lecture Notes in Computer Science</publishername></publisher>
+		<volumenum>Proceedings of CMSB 2012</volumenum>
+		<pubdate>2012</pubdate>
+		<pagenums>288-306</pagenums>
+		<biblioid class="doi">10.1007/978-3-642-33636-2_17</biblioid>
+	</biblioentry>
+</bibliography>

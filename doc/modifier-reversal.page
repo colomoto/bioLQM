@@ -1,0 +1,16 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="fmodifier-reversal">
+    <info>
+      <link type="guide" xref="index#modifiers"/>
+      <link type="guide" xref="modifiers#list"/>
+      <revision status="stub" date="2017-03-06"/>
+      <desc>Models with reversed asynchronous dynamics</desc>
+    </info>
+
+    <title>Model reversal</title>
+
+    <p>TODO</p>
+
+</page>
+
