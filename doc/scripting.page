@@ -9,16 +9,51 @@
 
     <title>Scripting bioLQM</title>
 
-    <section id="intro">
-        <title>Introduction</title>
-        <p>
+    <section id="javascript">
+        <title>Using the built-in javascript engine</title>
+        <p>The following script opens a model given as argument, and generates all single knockout perturbations,
+        saving each modified model in a new file.
         </p>
+
+<code>
+filename = lqm.args[0]
+model = lqm.load(filename)
+nodes = model.getComponents()
+for (i in nodes) {
+    node = nodes[i]
+    perturbed = lqm.modify(model, 'perturbation', node+'%0')
+    lqm.save(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
+}
+</code>
+
     </section>
 
-    <section id="howto">
-        <title>How to</title>
+    <section id="other">
+        <title>Using you favorite engine</title>
         <p>
+        While Java supports only scripting with javascript out of the box, it provides a generic
+        <link href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html">scripting API</link>
+        allowing other languages to be used, through additional script engines. JAR files containing supported engines can be
+        placed in the <var>extensions</var> folder: they will be added to the classpath and bioLQM will use the right engine
+        dependng on the extension of the script file. This feature has been tested with <link href="http://www.jython.org">Jython</link>
+        but other engines should work as well.
         </p>
+        
+        <note type="warning"><p>
+            For some reason, loading a python script through this API is much slower than using the Jython API explicitly.
+            GINsim uses the same mechanism for scripting but explicitly depends on Jython and provides faster startup of
+            python scripts, including the ones which use only bioLQM API (it will still detect other languages properly).
+        </p></note>
+
+        <p>A python version of the previous example.</p>
+<code>
+filename = lqm.args[0]
+model = lqm.load(filename)
+for node in model.getComponents():
+    perturbed = lqm.modify(model, 'perturbation', node+'%0')
+    lqm.save(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
+</code>
+
     </section>
 
 </page>

@@ -10,7 +10,25 @@
 
     <title>BoolSim</title>
 
-    <p>TODO</p>
+    <p>bioLQM supports import and export of Boolean models in boolsim formats, used by
+    <link href="https://www.vital-it.ch/research/software/boolSim">boolsin/genYsis</link> and
+    <link href="https://www.vital-it.ch/research/software/SQUAD">SQUAD</link>.</p>
+
+    <p>This format defines a model as a list of activating and inhibiting conditions of its components.</p>
+    <list>
+        <item><p>The conditions use the <code>&amp;</code> operator for AND, and <code>^</code> for NOT</p></item>
+        <item><p>Activations are defined as: <code>condition -> target</code></p></item>
+        <item><p>Inhibitions are defined as: <code>condition -| target</code></p></item>
+        <item><p>The complete function will be: <code>(activation1 OR activation2) &amp; !(inhibition1 OR inhibition2)</code></p></item>
+    </list>
+
+<code>
+A&amp;^C -> A
+A&amp;C -| B
+B -> B
+^A -> C
+</code>
+
 
 </page>
 
