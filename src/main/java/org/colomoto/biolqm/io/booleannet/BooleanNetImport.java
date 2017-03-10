@@ -30,8 +30,9 @@ public class BooleanNetImport {
 
     /**
      * Entry point to parse a full model.
-     *
-     * @return
+     * @param reader the source stream to parse
+     * @return the reconstructed model
+     * @throws IOException if reading fails
      */
     public static LogicalModel getModel( Reader reader) throws IOException {
 
@@ -84,31 +85,6 @@ public class BooleanNetImport {
 
         return ExpressionStack.constructModel( operandFactory, variables, var2function);
     }
-
-    /**
-     * Entry point to parse a single expression
-     *
-     * @param factory
-     * @param e
-     * @return
-     */
-    public static FunctionNode getExpr( OperandFactory factory, String e) {
-        CharStream input = new ANTLRInputStream( e);
-        ErrorListener errors = new ErrorListener();
-        BooleanNetParser parser = getParser(input, errors);
-        ParseTree tree = parser.expr();
-
-        if (errors.hasErrors()) {
-            System.out.println("Errors!!");
-            for (String s: errors.getErrors()) {
-                System.out.println("  "+s);
-            }
-            return null;
-        }
-        BooleanNetParserListener listener = new BooleanNetParserListener( factory);
-        return listener.loadExpr(tree);
-    }
-
 
     private static BooleanNetParser getParser(CharStream input, ErrorListener errors) {
         BooleanNetLexer lexer = new BooleanNetLexer(input);
@@ -184,7 +160,7 @@ class BooleanNetParserListener extends BooleanNetBaseListener {
 
     @Override
     public void exitSimpleExpr(@NotNull org.colomoto.biolqm.io.antlr.BooleanNetParser.SimpleExprContext ctx) {
-        List nots = ctx.not();
+        List<?> nots = ctx.not();
         if (nots != null && nots.size() % 2 > 0) {
             stack.not();
         }

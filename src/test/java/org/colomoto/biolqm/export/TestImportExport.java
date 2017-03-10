@@ -117,7 +117,7 @@ public class TestImportExport extends TestCase {
 	public void testRawFunctionImport() throws IOException {
 		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
 		
-		List<NodeInfo> coreComponents = model.getNodeOrder();
+		List<NodeInfo> coreComponents = model.getComponents();
 		
 		assertEquals(5, coreComponents.size());
 		

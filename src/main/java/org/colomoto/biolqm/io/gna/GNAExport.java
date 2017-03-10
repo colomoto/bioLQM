@@ -35,7 +35,7 @@ public class GNAExport {
 		
 		MDDManager ddmanager = model.getMDDManager();
 		PathSearcher searcher = new PathSearcher(ddmanager);
-		List<NodeInfo> nodeOrder = model.getNodeOrder();
+		List<NodeInfo> nodeOrder = model.getComponents();
 		int[] functions = model.getLogicalFunctions();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 

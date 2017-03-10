@@ -78,7 +78,7 @@ public class TestSimulations {
 		return new LogicalModelImpl(vars, manager, functions);
 	}
 	
-	private LogicalModel getOtherModel() {
+	private LogicalModel getComponents() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
 		vars.add(new NodeInfo("A"));
@@ -93,7 +93,6 @@ public class TestSimulations {
 		MDDVariable vb = manager.getVariableForKey(vars.get(1));
 		MDDVariable vc = manager.getVariableForKey(vars.get(2));
 		MDDVariable vd = manager.getVariableForKey(vars.get(3));
-		MDDVariable ve = manager.getVariableForKey(vars.get(4));
 		int fa = va.getNode(0, 1);
 		int fna = va.getNode(1, 0);
 		int fb = vb.getNode(0, 1);

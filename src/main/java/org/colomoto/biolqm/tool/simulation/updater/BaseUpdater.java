@@ -15,7 +15,7 @@ abstract public class BaseUpdater implements LogicalModelUpdater {
 
     public BaseUpdater(LogicalModel model) {
         this.model = model;
-        this.size = model.getNodeOrder().size();
+        this.size = model.getComponents().size();
     }
 
     /**

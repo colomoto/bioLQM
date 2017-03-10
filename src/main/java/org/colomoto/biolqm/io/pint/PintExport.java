@@ -9,7 +9,6 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
 
 /**
@@ -22,13 +21,13 @@ public class PintExport {
 	/**
 	 * Export a logical model into automata network transitions
 	 *
-	 * @param model
-	 * @param out
-	 * @throws IOException
+	 * @param model the model to export
+	 * @param out an opened output stream to save the result
+	 * @throws IOException if writing fails
 	 */
 	public void export(LogicalModel model, OutputStream out) throws IOException {
 
-		final List<NodeInfo> nodes = model.getNodeOrder();
+		final List<NodeInfo> nodes = model.getComponents();
 
 		Writer writer = new OutputStreamWriter(out);
 
@@ -54,12 +53,10 @@ public class PintExport {
 		 * Transitions
 		 */
 		MDDManager ddmanager = model.getMDDManager();
-		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);
 
 		int[] functions = model.getLogicalFunctions();
 		for (int idx=0 ; idx<functions.length ; idx++) {
-			MDDVariable var = variables[idx];
 			NodeInfo ni = nodes.get(idx);
 
 			// write a normalised logical function

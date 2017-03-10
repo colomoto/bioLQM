@@ -16,7 +16,7 @@ public class TestReduction {
 	public void testCoreReduction() throws IOException {
 		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
 
-		List<NodeInfo> core = model.getNodeOrder();
+		List<NodeInfo> core = model.getComponents();
 		List<NodeInfo> extra = model.getExtraComponents();
 		
 		int nbCore = core.size();
@@ -32,7 +32,7 @@ public class TestReduction {
 		}
 		LogicalModel reducedModel = reducer.getModel();
 		
-		core = reducedModel.getNodeOrder();
+		core = reducedModel.getComponents();
 		extra = reducedModel.getExtraComponents();
 		
 		assertEquals(nbCore-toRemove.length, core.size());
@@ -46,7 +46,7 @@ public class TestReduction {
 	
 	public void checkOutputReduction(String name, int expectedOutputs, int expectedPseudoOutputs) throws IOException {
 		LogicalModel model = ReferenceModels.getModel(name);
-		List<NodeInfo> core = model.getNodeOrder();
+		List<NodeInfo> core = model.getComponents();
 		List<NodeInfo> extra = model.getExtraComponents();
 		int nbCore = core.size();
 		int nbExtra = extra.size();
@@ -59,7 +59,7 @@ public class TestReduction {
 		assertEquals(expectedPseudoOutputs, removed);
 		
 		LogicalModel reducedModel = reducer.getModel();
-		core = reducedModel.getNodeOrder();
+		core = reducedModel.getComponents();
 		extra = reducedModel.getExtraComponents();
 		
 		int eRemoved = expectedOutputs + expectedPseudoOutputs;

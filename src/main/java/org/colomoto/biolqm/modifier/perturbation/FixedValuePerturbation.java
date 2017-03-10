@@ -49,7 +49,7 @@ public class FixedValuePerturbation extends AbstractPerturbation {
 		int idx = -1;
 		int[] functions = null;
 		
-		idx = model.getNodeOrder().indexOf(component);
+		idx = model.getComponents().indexOf(component);
 		if (idx >= 0) {
 			functions = model.getLogicalFunctions();
 		} else {

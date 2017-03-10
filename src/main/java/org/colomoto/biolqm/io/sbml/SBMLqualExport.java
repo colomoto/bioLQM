@@ -54,7 +54,7 @@ public class SBMLqualExport {
 		this.ddmanager = model.getMDDManager();
 		this.searcher = new PathSearcher(ddmanager, true);
 		this.matrix = new ConnectivityMatrix(model);
-		this.coreNodes = model.getNodeOrder();
+		this.coreNodes = model.getComponents();
 
 		this.qualBundle = SBMLqualHelper.newBundle();
 	}

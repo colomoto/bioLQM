@@ -46,7 +46,7 @@ class NodeIterator implements Iterator<Integer> {
 	}
 	
 	private void buildAdjTable(LogicalModel model) {
-		List<NodeInfo> nodeOrder = model.getNodeOrder();
+		List<NodeInfo> nodeOrder = model.getComponents();
 		MDDManager ddmanager = model.getMDDManager();
 		nbgene = nbremain = nodeOrder.size();
 		t_newreg = new int[nbgene][2];

@@ -20,9 +20,9 @@ public class BooleanFunctionExport {
 	/**
 	 * Export a logical model into logical functions.
 	 * 
-	 * @param model
-	 * @param out
-	 * @throws IOException
+	 * @param model the model to export
+	 * @param out an opened output stream to save the result
+	 * @throws IOException if writing fails
 	 */
 	public void export(LogicalModel model, OutputStream out) throws IOException {
 		MDDManager ddmanager = model.getMDDManager();

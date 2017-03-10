@@ -39,7 +39,7 @@ public class Booleanizer {
 
     public Booleanizer(LogicalModel ori) {
         this.ddm = ori.getMDDManager();
-        this.core = ori.getNodeOrder();
+        this.core = ori.getComponents();
         this.extra = ori.getExtraComponents();
         this.coreFunctions = ori.getLogicalFunctions();
         this.extraFunctions = ori.getExtraLogicalFunctions();

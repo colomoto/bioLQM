@@ -26,7 +26,7 @@ public class TruthTableExport {
 	public void export(LogicalModel model, OutputStream out) throws IOException {
 		Writer writer = new OutputStreamWriter(out);
 
-		List<NodeInfo> nodeOrder = model.getNodeOrder();
+		List<NodeInfo> nodeOrder = model.getComponents();
 		// BEGIN Header
 		String stmp = "";
 		for (NodeInfo node : nodeOrder) {
@@ -46,7 +46,7 @@ public class TruthTableExport {
 			writer.append(this.state2String(this.getStateImage(m, state))
 					+ "\n");
 		} else {
-			NodeInfo node = m.getNodeOrder().get(j);
+			NodeInfo node = m.getComponents().get(j);
 			for (byte b = 0; b <= node.getMax(); b++) {
 				state[j] = b;
 				exportStatesFromDim(writer, m, state, i, j + 1);

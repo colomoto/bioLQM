@@ -52,7 +52,7 @@ public class StatefulLogicalModelImpl extends LogicalModelImpl implements Statef
 	 * @param states the set of initial states to be added
 	 */
 	public StatefulLogicalModelImpl(LogicalModel model, List<byte[]> states) {
-		this(model.getMDDManager(), model.getNodeOrder(), model.getLogicalFunctions(),model.getExtraComponents(),model.getExtraLogicalFunctions(),states,"");
+		this(model.getMDDManager(), model.getComponents(), model.getLogicalFunctions(),model.getExtraComponents(),model.getExtraLogicalFunctions(),states,"");
 	}
 	
 	@Override

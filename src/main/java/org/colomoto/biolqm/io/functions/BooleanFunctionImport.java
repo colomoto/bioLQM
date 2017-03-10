@@ -32,7 +32,9 @@ public class BooleanFunctionImport {
 	/**
 	 * Entry point to parse a full model.
 	 *
-	 * @return
+	 * @param reader source from which to parse
+	 * @return the reconstructed model
+	 * @throws IOException if reading fails
 	 */
 	public static LogicalModel getModel( Reader reader) throws IOException {
 
@@ -85,31 +87,6 @@ public class BooleanFunctionImport {
 
 		return ExpressionStack.constructModel(operandFactory, variables, var2function);
 	}
-
-	/**
-	 * Entry point to parse a single expression
-	 *
-	 * @param factory
-	 * @param e
-	 * @return
-	 */
-	public static FunctionNode getExpr( OperandFactory factory, String e) {
-		CharStream input = new ANTLRInputStream( e);
-		ErrorListener errors = new ErrorListener();
-		BooleanFunctionParser parser = getParser(input, errors);
-		ParseTree tree = parser.expr();
-
-		if (errors.hasErrors()) {
-			System.out.println("Errors!!");
-			for (String s: errors.getErrors()) {
-				System.out.println("  "+s);
-			}
-			return null;
-		}
-		BooleanFunctionParserListener listener = new BooleanFunctionParserListener( factory);
-		return listener.loadExpr(tree);
-	}
-
 
 	private static BooleanFunctionParser getParser(CharStream input, ErrorListener errors) {
 		BooleanFunctionLexer lexer = new BooleanFunctionLexer(input);
@@ -184,7 +161,7 @@ class BooleanFunctionParserListener extends BooleanFunctionBaseListener {
 
 	@Override
 	public void exitSimpleExpr(@NotNull BooleanFunctionParser.SimpleExprContext ctx) {
-		List nots = ctx.not();
+		List<?> nots = ctx.not();
 		if (nots != null && nots.size() % 2 > 0) {
 			stack.not();
 		}

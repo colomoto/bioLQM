@@ -27,7 +27,7 @@ public class MaBoSSEncoder {
 	public MaBoSSEncoder(LogicalModel model) {
 		this.model = model;
 		this.ddmanager = model.getMDDManager();
-		this.nodes = model.getNodeOrder();
+		this.nodes = model.getComponents();
 		this.extraNodes = model.getExtraComponents();
 		this.searcher = new PathSearcher(ddmanager, 1);
 	}

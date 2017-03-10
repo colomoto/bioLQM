@@ -25,7 +25,7 @@ public class StableStateTool extends AbstractTool {
             PathSearcher psearcher = new PathSearcher(ddm, 1);
             int[] path = psearcher.setNode(stable);
             if (psearcher.countPaths() > 0) {
-            	for (NodeInfo node : model.getNodeOrder()) {
+            	for (NodeInfo node : model.getComponents()) {
             		System.out.print(node.getNodeID() + " ");
             	}
             	System.out.println();

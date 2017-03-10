@@ -25,7 +25,7 @@ public final class AvatarUtils {
 
 	/**
 	 * Creates a state (byte array) where components are initialized as -1
-	 * @param nstates the number of components
+	 * @param ncomponents the number of components
 	 * @return the free state (byte array with components initialized with -1)
 	 */
 	public static byte[] getFreeState(int ncomponents) {

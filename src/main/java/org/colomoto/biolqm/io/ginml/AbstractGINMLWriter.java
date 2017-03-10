@@ -18,8 +18,8 @@ abstract public class AbstractGINMLWriter {
     /**
      * Start the GINML export.
      * 
-     * @param out target output stream
-     * @throws IOException
+	 * @param out an opened output stream to save the result
+	 * @throws IOException if writing fails
      */
 	public void export(OutputStream out) throws IOException {
 		
@@ -61,16 +61,16 @@ abstract public class AbstractGINMLWriter {
 	/**
 	 * Start writing the nodes. This must be implemented by subclasses.
 	 * 
-	 * @param out
-	 * @throws IOException
+	 * @param out an opened XML writer to save the result
+	 * @throws IOException if writing fails
 	 */
 	public abstract void writeNodes(XMLWriter out) throws IOException;
 	
 	/**
 	 * Start writing the edges (interactions). This must be implemented by subclasses.
 	 * 
-	 * @param out
-	 * @throws IOException
+	 * @param out an opened XML writer to save the result
+	 * @throws IOException if writing fails
 	 */
 	public abstract void writeEdges(XMLWriter out) throws IOException;
 	
@@ -78,12 +78,12 @@ abstract public class AbstractGINMLWriter {
 	/**
 	 * Write an edge to GINML.
 	 * 
-	 * @param xw
-	 * @param from
-	 * @param to
-	 * @param threshold
-	 * @param sign
-	 * @throws IOException
+	 * @param xw an opened XML writer to save the result
+	 * @param from the name of the source node
+	 * @param to the name of the target node
+	 * @param threshold the threshold of this interaction
+	 * @param sign the sign of this interaction
+	 * @throws IOException if writing fails
 	 */
 	protected void writeEdge(XMLWriter xw, String from, String to, int threshold, String sign) throws IOException {
 		xw.openTag("edge");
@@ -101,10 +101,10 @@ abstract public class AbstractGINMLWriter {
 	 * Write a node declaration to GINML.
 	 * This method will not close the tag to let the caller add child elements, especially parameters.
 	 * 
-	 * @param xw
-	 * @param nodeID
-	 * @param max
-	 * @throws IOException
+	 * @param xw an opened XML writer to save the result
+	 * @param nodeID the ID of the component to save
+	 * @param max the maximal value of this component (should be at least 1)
+	 * @throws IOException if writing fails
 	 */
 	protected void writeNodeDecl(XMLWriter xw, String nodeID, int max) throws IOException {
 		xw.openTag("node");
@@ -116,10 +116,10 @@ abstract public class AbstractGINMLWriter {
 	/**
 	 * Write a logical parameter to GINML.
 	 * 
-	 * @param xw
-	 * @param targetValue
-	 * @param activeInteractions
-	 * @throws IOException
+	 * @param xw an opened XML writer to save the result
+	 * @param targetValue the target value when this parameter is enabled
+	 * @param activeInteractions the list of associated active interactions
+	 * @throws IOException if writing fails
 	 */
 	protected void writeLogicalParameter(XMLWriter xw, int targetValue, String activeInteractions) throws IOException {
 		xw.openTag("parameter");

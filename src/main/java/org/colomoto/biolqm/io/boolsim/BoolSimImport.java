@@ -32,7 +32,9 @@ public class BoolSimImport {
 	/**
 	 * Entry point to parse a full model.
 	 *
-	 * @return
+	 * @param reader source from which to parse
+	 * @return the reconstructed model
+	 * @throws IOException if reading fails
 	 */
 	public static LogicalModel getModel( Reader reader) throws IOException {
 

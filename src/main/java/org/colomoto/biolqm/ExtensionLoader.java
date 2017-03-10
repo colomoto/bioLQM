@@ -100,7 +100,8 @@ public class ExtensionLoader {
     /**
      * Discover and load a list of services.
      * 
-     * @param cl the base class to discover services
+     * @param <T> the type of the returned list of services
+     * @param cl the base class to discover services (of type T)
      * @return the list of loaded instances (bypassing reflection and constructor errors)
      */
     public static <T> List<T> load_instances(Class<T> cl) {

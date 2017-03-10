@@ -23,8 +23,8 @@ public class LogicalModelComparator {
 	 */
 	public static boolean compare(LogicalModel m1, LogicalModel m2) {
 		
-		List<NodeInfo> nodes1 = m1.getNodeOrder();
-		List<NodeInfo> nodes2 = m2.getNodeOrder();
+		List<NodeInfo> nodes1 = m1.getComponents();
+		List<NodeInfo> nodes2 = m2.getComponents();
 		int n = nodes1.size();
 		if (n != nodes2.size()) {
 			return false;

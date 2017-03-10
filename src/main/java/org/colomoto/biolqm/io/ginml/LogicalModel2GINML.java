@@ -32,7 +32,7 @@ public class LogicalModel2GINML extends AbstractGINMLWriter {
 		this.ddmanager = model.getMDDManager();
 		this.matrix = new ConnectivityMatrix(model);
 		
-		this.nodes = model.getNodeOrder();
+		this.nodes = model.getComponents();
 		this.extraNodes = model.getExtraComponents();
 	}
 	

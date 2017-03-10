@@ -34,7 +34,7 @@ public class ModelReverser implements ModelModifier {
 		this.revOp = new ReverseOperation(ddmanager);
 		this.variables = ddmanager.getAllVariables();
 
-		this.allNodes = new ArrayList<NodeInfo>(model.getNodeOrder());
+		this.allNodes = new ArrayList<NodeInfo>(model.getComponents());
 		this.allNodes.addAll(model.getExtraComponents());
 
 		int[] functions = model.getLogicalFunctions();

@@ -21,7 +21,7 @@ public class DuplicateRemover {
 
 		MDDManager ddmanager = model.getMDDManager();
 
-		List<NodeInfo> nodes = model.getNodeOrder();
+		List<NodeInfo> nodes = model.getComponents();
 		int[] functions = model.getLogicalFunctions();
 		int[] newFunctions = functions.clone();
 

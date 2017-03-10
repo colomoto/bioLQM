@@ -82,7 +82,7 @@ public class FixedComponentRemover {
 
         // construct an updated model if needed
         if (changed) {
-            List<NodeInfo> core = model.getNodeOrder();
+            List<NodeInfo> core = model.getComponents();
         	if (removeFixed) {
         		for (int i = knownFixed.length - 1; i >= 0; i--) {
         			if (knownFixed[i]) {

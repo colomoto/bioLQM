@@ -50,7 +50,7 @@ public abstract class AbstractPNEncoder {
 	
 	public AbstractPNEncoder( LogicalModel model) {
 		
-		this.nodeOrder = model.getNodeOrder();
+		this.nodeOrder = model.getComponents();
 		this.ddmanager = model.getMDDManager();
 		this.functions = model.getLogicalFunctions();
 		

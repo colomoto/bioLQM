@@ -39,7 +39,7 @@ public class StableStateSearcher extends AbstractTask<Integer> {
         // loop over the existing nodes!
         int prev=1;
         int result=prev;
-        List<NodeInfo> nodes = model.getNodeOrder();
+        List<NodeInfo> nodes = model.getComponents();
         MDDManager ddmanager = model.getMDDManager();
         for (int i: ordering) {
             NodeInfo node = nodes.get(i);

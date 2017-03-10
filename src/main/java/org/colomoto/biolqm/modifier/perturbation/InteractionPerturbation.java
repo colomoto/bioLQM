@@ -35,7 +35,7 @@ public class InteractionPerturbation extends AbstractPerturbation {
 		int idx = -1;
 		int[] functions = null;
 		
-		idx = model.getNodeOrder().indexOf(target);
+		idx = model.getComponents().indexOf(target);
 		if (idx >= 0) {
 			functions = model.getLogicalFunctions();
 		} else {

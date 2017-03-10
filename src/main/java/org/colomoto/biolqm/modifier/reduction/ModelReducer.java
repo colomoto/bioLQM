@@ -35,7 +35,7 @@ public class ModelReducer {
 		this.rop = new ReduceOperation(ddmanager);
 		this.variables = ddmanager.getAllVariables();
 		
-		this.allNodes = new ArrayList<NodeInfo>(model.getNodeOrder());
+		this.allNodes = new ArrayList<NodeInfo>(model.getComponents());
 		allNodes.addAll(model.getExtraComponents());
 		
 		// copy logical function and create lists of regulators

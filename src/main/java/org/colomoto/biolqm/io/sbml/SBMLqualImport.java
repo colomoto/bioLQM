@@ -419,7 +419,7 @@ public class SBMLqualImport {
 		// extract content from children (NAME and INTEGER only)
 		if (varNode.getType() == Type.NAME && valueNode.getType() == Type.INTEGER) {
 			relValue = valueNode.getInteger();
-		} else if (varNode.getType() == Type.INTEGER && valueNode.getType() == type.NAME) {
+		} else if (varNode.getType() == Type.INTEGER && valueNode.getType() == Type.NAME) {
 			reversed = true;
 			varName = valueNode.getName().trim();
 			relValue = varNode.getInteger();
