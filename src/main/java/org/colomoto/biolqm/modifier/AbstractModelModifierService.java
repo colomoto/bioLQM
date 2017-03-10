@@ -12,6 +12,13 @@ abstract public class AbstractModelModifierService implements ModelModifierServi
 
     private final String id, name, descr;
 
+    /**
+     * Shared constructor for model modifier.
+     * 
+     * @param id the identifier used to retrieve the service instance
+     * @param name the human readable name of the service
+     * @param descr a longer description (for the help message)
+     */
     public AbstractModelModifierService(String id, String name, String descr) {
         this.id = id;
         this.name = name;

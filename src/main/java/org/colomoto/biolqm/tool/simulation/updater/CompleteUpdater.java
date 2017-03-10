@@ -22,7 +22,7 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
 	/**
 	 * Create a new full updater.
 	 * 
-	 * @param model
+	 * @param model the model for which the updater is constructed
 	 */
 	public CompleteUpdater(LogicalModel model) {
 		super(model);

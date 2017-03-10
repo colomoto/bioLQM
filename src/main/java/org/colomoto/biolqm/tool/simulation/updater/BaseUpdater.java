@@ -21,6 +21,7 @@ abstract public class BaseUpdater implements LogicalModelUpdater {
     /**
      * Test if a component is ready to change its state.
      *
+     * @param state the base state
      * @param index the index of the component
      * @return +1, or -1 for pending increase or decrease, 0 if it can not change state.
      */

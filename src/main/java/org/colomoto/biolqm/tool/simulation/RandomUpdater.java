@@ -20,7 +20,7 @@ public interface RandomUpdater extends SingleSuccessorUpdater {
     /**
      * Set the seed for the random generator (for reproducibility in tests, NOT for real use)
      *
-     * @param seed
+     * @param seed the initial seed
      */
     void setSeed(long seed);
 }

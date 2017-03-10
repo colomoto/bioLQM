@@ -155,15 +155,16 @@ public class Booleanizer {
 
     /**
      * Ensure that a booleanized model has no transition leading to forbidden states.
+     * The functions will be modified in place.
      *
-     * @param newDDM
-     * @param nodes
-     * @param functions
+     * @param newDDM the MDD manager for the booleanized model
+     * @param components the list of components of the model
+     * @param functions the functions associated to these components
      */
-    public static void preventForbiddenStates(MDDManager newDDM, List<NodeInfo> nodes, int[] functions) {
+    public static void preventForbiddenStates(MDDManager newDDM, List<NodeInfo> components, int[] functions) {
 
         int idx = 0;
-        for (NodeInfo ni: nodes) {
+        for (NodeInfo ni: components) {
             NodeInfo[] bnodes = ni.getBooleanizedGroup();
             if (bnodes == null) {
                 idx++;
@@ -198,6 +199,7 @@ public class Booleanizer {
      * replacing the multi-valued regulators if any.
      *
      * @param f MDD in the original MDDManager
+     * @param v the value of the component for which we construct the boolean version
      * @return a new MDD in the Boolean MDDManager
      */
     public int transform(int f, int v) {

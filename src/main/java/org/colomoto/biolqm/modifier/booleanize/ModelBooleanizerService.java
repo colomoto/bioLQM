@@ -7,7 +7,7 @@ import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.mangosdk.spi.ProviderFor;
 
 /**
- * Wrap the booleanizer code into the ModelModifier interface.
+ * A service for model booleanization.
  *
  * @author Aurelien Naldi
  */

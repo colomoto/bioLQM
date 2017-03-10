@@ -25,6 +25,6 @@ public interface LogicalModelTool extends Service {
 	 * 
 	 * @param model the model to use
 	 */
-	void run(LogicalModel model) throws IOException;
+	void run(LogicalModel model);
 
 }

@@ -15,12 +15,17 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 	/**
 	 * Create a new random updater
 	 *
-	 * @param model
+	 * @param model the model for which the updater is constructed
 	 */
     public RandomUpdaterWithRates(LogicalModel model) {
         this(model, null);
     }
 
+    /**
+     * 
+	 * @param model the model for which the updater is constructed
+     * @param rates the rates associated to each component
+     */
     public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
         super(model);
         if (rates == null) {

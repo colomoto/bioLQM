@@ -26,6 +26,11 @@ public class ModelReverser implements ModelModifier {
 	private final MDDVariable[] variables;
 	private final int[] allFunctions;
 
+	/**
+	 * Prepare a Model modifier for model reversal.
+	 * 
+	 * @param model The odel to be reversed
+	 */
 	public ModelReverser(LogicalModel model) {
 		// First booleanize the model
 		model = Booleanizer.booleanize(model);
@@ -66,9 +71,9 @@ public class ModelReverser implements ModelModifier {
 	/**
 	 * Reverse the dynamics of the selected variable.
 	 * 
-	 * @param varIdx
+	 * @param varIdx the index of the variable to reverse
 	 */
-	public void reverse(int varIdx) {
+	private void reverse(int varIdx) {
 		MDDVariable var = variables[varIdx];
 		int f = allFunctions[varIdx];
 		int newFunction = revOp.reverse(var, f);
@@ -76,11 +81,7 @@ public class ModelReverser implements ModelModifier {
 		allFunctions[varIdx] = newFunction;
 	}
 
-	/**
-	 * Get a logical model with modified functions capable of reversed dynamics.
-	 * 
-	 * @return a new LogicalModel
-	 */
+	@Override
 	public LogicalModel getModifiedModel() {
 		return new LogicalModelImpl(allNodes, ddmanager, allFunctions);
 	}

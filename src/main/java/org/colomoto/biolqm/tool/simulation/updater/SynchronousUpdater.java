@@ -13,7 +13,7 @@ public class SynchronousUpdater extends AbstractDeterministicUpdater implements 
 	/**
 	 * Create a new synchronous updater
 	 * 
-	 * @param model
+	 * @param model the model for which the updater is constructed
 	 */
 	public SynchronousUpdater(LogicalModel model) {
 		super(model);

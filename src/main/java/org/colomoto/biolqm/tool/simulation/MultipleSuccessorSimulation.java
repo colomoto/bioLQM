@@ -62,7 +62,7 @@ public abstract class MultipleSuccessorSimulation {
 	 * Add a state to the result of this simulation.
 	 * If the state is new, it should be enqueued
 	 *
-	 * @param state
+	 * @param state the added state
 	 */
 	public abstract void addState(byte[] state);
 

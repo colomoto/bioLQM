@@ -107,11 +107,7 @@ public class LQMLauncher {
 			if (tool == null) {
 				throw new RuntimeException("Unknown tool: "+toolID);
 			}
-			try {
-				tool.run(model);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			tool.run(model);
 			return;
 		}
 

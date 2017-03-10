@@ -70,10 +70,11 @@ public class ModelReducer {
     }
 
     /**
-     * Find outputs and pseudo-outputs in the model and remove them all.
-     * Fixed inputs can be preserved or removed as well.
+     * Remove all (pseudo-)outputs from the model.
+     * Fixed inputs which only regulate pseudo outputs can be preserved to avoid
+     * generating an empty reduced model.
      *
-     * @param preserveFixedInputs
+     * @param preserveFixedInputs if true, inputs will not be preserved (not considered as pseudo outputs)
      * @return the number of removed elements (outputs and pseudo-outputs)
      */
     public int removePseudoOutputs(boolean preserveFixedInputs) {
@@ -143,7 +144,7 @@ public class ModelReducer {
 	/**
 	 * Remove a selected variable.
 	 * 
-	 * @param varIdx
+	 * @param varIdx the index of the component to reduce
 	 */
 	public void remove(int varIdx) {
 		MDDVariable var = variables[varIdx];

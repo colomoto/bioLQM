@@ -18,7 +18,7 @@ public class AsynchronousUpdater extends AbstractMultipleSuccessorUpdater {
 	/**
 	 * Create a new asynchronous updater.
 	 * 
-	 * @param model
+	 * @param model the model for which the updater is constructed
 	 */
 	public AsynchronousUpdater(LogicalModel model) {
 		super(model);

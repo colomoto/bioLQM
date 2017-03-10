@@ -17,15 +17,13 @@ public class RangePerturbation extends AbstractPerturbation {
 
 	/**
 	 * Create a range restriction.
-	 * Note that the values should verify 0 &gt;= min &lt;= max < nbval.
+	 * Note that the values should verify 0 &gt;= min &lt;= max &lt; nbval.
 	 * if min = max, then the component will have a fixed value.
 	 * Otherwise, a new function will be computed to ensure that the reached leaf belongs to the [min,max] range.
 	 * 
-	 * <p>Warning: This range restriction is not yet implemented, this full constructor is thus private for now.
-	 * 
-	 * @param target
-	 * @param min
-	 * @param max
+	 * @param target the restricted component
+	 * @param min the minimal value after perturbation
+	 * @param max the max value after perturbation
 	 */
 	public RangePerturbation(NodeInfo target, int min, int max) {
 		if (min < 0 || max < min || max > target.getMax()) {

@@ -19,9 +19,9 @@ public class TruthTableExport {
 	/**
 	 * Exports a logical model into a truth table.
 	 * 
-	 * @param model
-	 * @param out
-	 * @throws IOException
+	 * @param model the model to export
+	 * @param out an opened output stream to save the result
+	 * @throws IOException if writing fails
 	 */
 	public void export(LogicalModel model, OutputStream out) throws IOException {
 		Writer writer = new OutputStreamWriter(out);

@@ -16,7 +16,7 @@ public class SequentialUpdater extends AbstractDeterministicUpdater implements D
 	/**
 	 * Create a new sequential updater, using the default order
 	 * 
-	 * @param model
+	 * @param model the model for which the updater is constructed
 	 */
 	public SequentialUpdater(LogicalModel model) {
 		super(model);
@@ -29,7 +29,8 @@ public class SequentialUpdater extends AbstractDeterministicUpdater implements D
 	/**
 	 * Create a new sequential updater, using a custom order
 	 * 
-	 * @param model
+	 * @param model the model for which the updater is constructed
+	 * @param order the ordering for sequential updates
 	 */
 	public SequentialUpdater(LogicalModel model, int[] order) {
 		super(model);

@@ -26,9 +26,10 @@ public class ReverseOperation {
      * On the target variable, the two children are swapped
      * in addition to being negated.
      *
-     * @param var
-     * @param node
-     * @return
+     * @param var the component being reversed
+     * @param node the identifier of the MDD for the (part of) reversed function
+     * 
+     * @return the identifier of the MDD for the reversed function
      */
     public int reverse(MDDVariable var, int node) {
 

@@ -20,14 +20,14 @@ public class ReduceOperation {
 	
 	/**
 	 * Remove <code>regulator</code> from its target <code>node</code>.
-	 * This is the first part of the algo: we have not yet found the 
+	 * This is the first part of the algorithm: we have not yet found the 
 	 * regulator in the logical function.
-	 * It will be called recursively until we find it (or go too far)
+	 * It will be called recursively until we find it (or go deeper in the MDD than the corresponding variable)
 	 * 
-	 * @param node
-	 * @param regulator
-	 * @param rmVar
-	 * @return
+	 * @param node the index of the MDD representing the function to rewrite
+	 * @param regulator the index of MDD for the function of the reduced component
+	 * @param rmVar the component to be reduced 
+	 * @return the index of the MDD for the rewritten function
 	 */
 	public int remove(int node, int regulator, MDDVariable rmVar) {
 		MDDVariable nvar = ddmanager.getNodeVariable(node);
@@ -74,7 +74,7 @@ public class ReduceOperation {
 
 	/**
 	 * Remove <code>regulator</code> from its target <code>node</code>.
-	 * This is the second part of the algo: we have found the regulator 
+	 * This is the second part of the algorithm: we have found the regulator 
 	 * in the logical function.
 	 * We must thus follow all branches corresponding to its possible values,
 	 * until we can take the final decision.

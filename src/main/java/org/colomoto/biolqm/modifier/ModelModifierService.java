@@ -35,9 +35,9 @@ public interface ModelModifierService extends Service {
      * Setup a modifier and directly retrieve the modified model.
      * This is a shorthand for getModifier(model,parameters).getModifiedModel()
      *
-     * @param model
-     * @param parameters
-     * @return
+     * @param model the model to be modified
+     * @param parameters the setting String (can be empty for some modifiers)
+     * @return a new modified model
      */
     LogicalModel getModifiedModel(LogicalModel model, String parameters);
 

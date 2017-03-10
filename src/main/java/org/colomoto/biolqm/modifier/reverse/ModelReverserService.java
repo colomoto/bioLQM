@@ -28,20 +28,20 @@ public class ModelReverserService extends AbstractModelModifierService {
     }
 
     /**
-     * Shorthand to skip the parameter String.
+     * Shorthand to retrieve a modifier without requiring a parameter String.
      *
-     * @param model
-     * @return
+     * @param model the model to be reversed
+     * @return a reverser instance for this model
      */
     public ModelModifier getModifier(LogicalModel model) {
         return new ModelReverser(model);
     }
 
     /**
-     * Shorthand to skip the parameter String.
+     * Shorthand to retrieve a modified model without requiring a parameter String.
      *
-     * @param model
-     * @return
+     * @param model the model to be reversed
+     * @return the reversed model
      */
     public LogicalModel getModifiedModel(LogicalModel model) {
         return getModifier(model).getModifiedModel();
