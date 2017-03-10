@@ -11,7 +11,7 @@
     <title>Command-Line Interface</title>
 
    <p>bioLQM can be launched on the command line using the following command.</p>
-   <code>java -jar bioLQM-${version}.jar <var>input_file</var> <var>[model_modifiers]</var> <var>output_file</var>|<var>action</var></code>
+   <code>java -jar bioLQM-${version}.jar [-if <var>format</var>] <var>input_file</var> [-m <var>model_modifier</var>]* ([-of <var>format</var>] <var>output_file</var>)|(-r <var>action</var>)</code>
 
    <note type="hint"><p>When launched without argument (or with non-recognized ones), a help message is displayed, showing the syntax and available features.</p></note>
 
@@ -21,7 +21,7 @@
             <p>The format can be guessed from the file extension or specified explicitly with the <var>-if format</var> optional argument.</p>
         </item>
         <item><p>List of <link xref="modifiers">model modifications</link> using the <var>-m modifier:parameters</var> switch.</p>
-            <p>Note that the <cmd>-p argument</cmd> shortcut can be used to apply a <link xref="modifier-perturbation">perturbation</link> drectly.</p>
+            <p>Note that the <cmd>-p argument</cmd> shortcut can be used to apply a <link xref="modifier-perturbation">perturbation</link> directly.</p>
         </item>
         <item><p>Action to perform on the resulting model: it can be saved to a file or forwarded to a tool.</p>
             <p>To export the model to a file, provide the output filename. Like when loading a model, the <link xref="formats">format</link> can be guessed from the extension

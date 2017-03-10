@@ -5,7 +5,7 @@
     <info>
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
-        <revision status="review" date="2012-03-08"/>
+        <revision status="stub" date="2012-03-08"/>
         <desc>Finding stable states of a logical model</desc>
         <gloss:term id="Naldi2007" />
     </info>

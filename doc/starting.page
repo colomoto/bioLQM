@@ -2,29 +2,37 @@
       type="guide" style="2column"
       id="starting">
 
-	<info>
-		<link type="guide" xref="index#start" group="run"/>
-		<desc>Availability, requirements, first run</desc>
-		<revision status="review" date="2012-11-22"/>
-	</info>
+    <info>
+        <link type="guide" xref="index#start" group="run"/>
+        <desc>Availability, requirements, first run</desc>
+        <revision status="draft" date="2012-11-22"/>
+    </info>
 
-	<title>Install and Run</title>
+    <title>Install and Run</title>
 
-	<section id="availability">
-		<title>Availability</title>
+    <section id="availability">
+        <title>Availability</title>
 
-		<p>bioLQM is freely available without guarantees.
-		The source code is available on (<link href="https://github.com/colomoto/bioLQM"/>)
-		</p>
-	</section>
+        <p>bioLQM is freely available without guarantees.
+        The source code is available on (<link href="https://github.com/colomoto/bioLQM"/>)
+        </p>
+    </section>
 
-	<section id="requirements">
-		<title>Requirements</title>
-		<p>bioLQM requires Java 7.
-		You can obtain Java for Linux, Windows, or Solaris at <link href="http://www.java.com">java.com</link>,
-		and Apple provides its own Java version for mac users.
-		</p>
-	</section>
+    <section id="requirements">
+        <title>Requirements</title>
+        <p>bioLQM requires Java 7.
+        You can obtain Java for Linux, Windows, or Solaris at <link href="http://www.java.com">java.com</link>,
+        and Apple provides its own Java version for mac users.
+        </p>
+    </section>
+
+    <section id="build">
+        <title>Building bioLQM</title>
+        <p>BioLQM uses the <link href="https://maven.apache.org/">maven</link> project manager: use <cmd>mvn package</cmd> to build.
+        Maven downloads all requirements and generates the <var>target</var> folder containing the jar file along with a <var>lib</var>
+        folder for dependencies.
+        </p>
+    </section>
 
     <section id="javaoptions">
         <title>Java options</title>

@@ -4,7 +4,7 @@
     <info>
       <link type="guide" xref="index#formats"/>
         <link type="guide" xref="formats#list"/>
-      <revision status="stub" date="2017-03-06"/>
+      <revision status="draft" date="2017-03-06"/>
       <desc>Import/Export BoolSim models</desc>
     </info>
 
