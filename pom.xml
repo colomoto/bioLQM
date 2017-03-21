@@ -71,11 +71,17 @@
         <artifactId>jsbml</artifactId>
         <version>1.1</version>
     </dependency>
-      <dependency>
+    <dependency>
           <groupId>org.antlr</groupId>
           <artifactId>antlr4-runtime</artifactId>
           <version>4.3</version>
-      </dependency>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf</groupId>
+        <artifactId>javabdd</artifactId>
+        <version>1.0b2</version>
+    </dependency>
 
   </dependencies>
 
