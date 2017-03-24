@@ -4,15 +4,70 @@
     <info>
       <link type="guide" xref="index#modifiers"/>
       <link type="guide" xref="modifiers#list"/>
-      <revision status="stub" date="2017-03-06"/>
+      <revision status="review" date="2017-03-24"/>
       <desc>Define perturbations of logical models</desc>
     </info>
 
     <title>Model Perturbations (mutants)</title>
 
     <section>
-        <title>Simple perturbations</title>
-        <p>TODO</p>
+        <title>Description</title>
+        <p>
+        Perturbations are <link xref="modifiers">model modifications</link> which enable the definition of
+        variants of the model by applying one or several local changes. They are widely used to describe
+        mutations (often knockouts), but can also be used to define hypothetical components or interactions
+        in a model.
+        BioLQM supports perturbations on components or on interactions, as well as multiple perturbations.
+        </p>
+    </section>
+
+
+    <section>
+        <title>Usage</title>
+
+        <p>This modifier requires some configuration. The supported perturbations and the syntax of the
+        parameter string to use in <link xref="cli">command line</link> or <link xref="cli">scripting</link>
+        mode are described below.
+        We remind that in command line, the parameter string for perturbations is given in the
+        <cmd>-m perturbation:parameter</cmd>, or <cmd>-p parameter</cmd> switches.
+        In scripts, it is the last argument in <cmd>lqm.modify(model, "perturbation", parameter)</cmd>.
+        </p>
+
+        <p>Simple perturbations are described as <cmd>target%restriction</cmd>, where the target can be a
+        component or an interaction, and the restriction is a fixed value or a range (only for components).</p>
+
+        <terms>
+            <item>
+                <title>Fix the value of a component</title>
+                <p>This is the simplest type of perturbation. The function of the selected component will be
+                replaced by a fixed target value.
+                Use <cmd>A%v</cmd> to fix the value of component <cmd>A</cmd> to value <cmd>v</cmd>.</p>
+            </item>
+            
+            <item>
+                <title>Restrict the value of a multivalued component</title>
+                <p>A slightly less restrctive perturbation,
+                where the target value of a component is blocked inside a smaller range. When the target value
+                of the component is larger (resp. smaller) than the range, it is replaced by the max (resp. min)
+                bound of the range.
+                Use <cmd>A%v1-v2</cmd> to restrict the value of component <cmd>A</cmd> in the range <cmd>[v1,v2]</cmd>.
+                </p>
+            </item>
+            
+            <item>
+                <title>Perturbation of an interaction</title>
+                <p>Remove (or enforce) an interaction from the model. The function of the target component will be modified
+                to always behave as if the source component had the specified value.
+                Use <cmd>A:B%1</cmd> to let <cmd>B</cmd> believe that <cmd>A</cmd> is always active.</p>
+            </item>
+            
+            <item>
+                <title>List of perturbations</title>
+                <p>Define multiple individual perturbations, with a comma-separated list of the above elements.
+                For example <cmd>A%0,B%1</cmd> defines the double knockout of <cmd>A</cmd> and <cmd>B</cmd>.</p>
+            </item>
+        </terms>
+
     </section>
 
 </page>

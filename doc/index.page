@@ -19,7 +19,8 @@
     bioLQM provides a collection of tools for the <link xref="modifiers">modification</link> and <link xref="formats">conversion</link>
     of <em style="strong">Logical qualitative models of biological networks</em>.
     It can be used on the <link xref="cli">command line</link>, through <link xref="scripting">scripts</link>, or embded in other tools
-    such as <link href="http://www.ginsim.org">GINsim</link> or <link href="http://epilog-tool.org">Epilog</link>.
+    such as <link href="http://www.ginsim.org">GINsim</link> or <link href="http://epilog-tool.org">Epilog</link> using the
+    <link href="../apidocs/index.html">Java API</link> directly.
     </p>
 
     <section id="start">
