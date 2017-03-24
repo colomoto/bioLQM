@@ -4,7 +4,7 @@
 
     <info>
         <link type="guide" xref="index#start"/>
-        <revision status="draft" date="2017-03-06"/>
+        <revision status="review" date="2017-03-24"/>
         <desc>Define Import / Export filters</desc>
     </info>
 
@@ -19,32 +19,66 @@ While some formats natively support multivalued models, many are limited for the
 
     <section id="cli">
         <title>Command line use</title>
-        <p>TODO</p>
+        
+        <p>
+        The first part of bioLQM <link xref="cli">command line</link> specifies a model to import.
+        The import format can be guessed from the file extension or given explicitely using the <cmd>-if format</cmd> switch
+        before the filename.
+        </p>
+        
+        <p>
+        When performing format conversion or saving a modified model, the last part of the command specifies a file in which 
+        the model will be exported. Like in the import case, the export format can be guessed from the file extension or given
+        explicitely using the <cmd>-of format</cmd> switch before the filename.
+        </p>
+
+        <code>java -jar bioLQM.jar model.sbml model.boolsim</code>
+
+        <code>java -jar bioLQM.jar -if sbml model.xml -of boolsim model.net</code>
+
     </section>
+
 
     <section id="script">
         <title>Scripting</title>
         <p>
         In scripts, model loading and saving are available through the <cmd>lqm.load</cmd> and <cmd>lqm.save</cmd> methods respectively.
+        Here as well, the format can be guessed from the file extension, or provided explicitely as last argument of these methods.
+        Conversion with implicit and explicit format specifications are showned in the following sample script:
         </p>
 
 <code>
 model = lqm.load("model.sbml")
 lqm.save(model, "model.boolsim")
+
+model = lqm.load("model.xml", "sbml")
+lqm.save(model, "model.net", "boolsim")
 </code>
 
     </section>
 
+
+    <section id="api">
+        <title>Java API</title>
+        <p>
+        Formats, like other services, are available by name or by type from static methods in the
+        <link href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</link> class.
+        </p>
+    </section>
+
+
     <section id="implementation">
         <title>Implementation</title>
         <p>
-        Under the scene, formats implement the <link href="../apidocs/org/colomoto/biolqm/io/LogicalModelFormat.html">LogicalModelFormat</link> interface.
+        Formats implement the <link href="../apidocs/org/colomoto/biolqm/io/LogicalModelFormat.html">LogicalModelFormat</link> interface.
         Available formats are discovered by using the <code>@ProviderFor(LogicalModelFormat.class)</code> decorator.
-        Formats must declare if they provide import and export filters ad if they handle multivalued models. When extending the
+        Formats must declare if they provide import and export filters and if they handle multivalued models. When extending the
         <link href="../apidocs/org/colomoto/biolqm/io/AbstractFormat.html">AbstractFormat</link> base class, overloading the
-        <code>importFile</code> and <code>export</code> methods is sufficient to declare import and export support.
+        <code>importFile</code> and <code>export</code> methods is sufficient to declare import and export support (however be
+        careful when using multiple layers of inheritance: this relies on introspection and only supports a single layer).
         </p>
     </section>
+
 
     <section id="list">
         <title>Available Formats</title>

@@ -4,26 +4,48 @@
 
     <info>
       <link type="guide" xref="index#start"/>
-      <revision status="draft" date="2017-03-06"/>
+      <revision status="review" date="2017-03-24"/>
       <desc>Model in, modified model out</desc>
     </info>
 
     <title>Model modifiers</title>
 
+    <p>
+    A model modifier takes a model as input (and in some cases some parameters), and constructs a modified version of the model.
+    The parameter string depends on the type of modifier, see the specific documentation of available modifiers for details.
+    The syntax for these parameter string is shared between command line and scripting modes, as well as in the Java API.
+    </p>
+
     <section id="use">
         <title>Command line use</title>
         <p>
-        Model modifiers can be called from the command line after selecting the loaded model, using the <cmd>-m modifier[:parameters]</cmd> switch.
-        The modifier is identified by its name and can be provided with parameters (depending on the specific modifier).
-        For example the arguments <cmd>-m booleanization</cmd> will generate a <link xref="modifier-booleanization">booleanized model</link>
-        (this modifier takes no argument). <cmd>-m perturbation:A%0</cmd> will apply a <link xref="modifier-perturbation">perturbation</link>
+        Model modifiers can be called from the <link xref="cli">command line</link> after selecting the loaded model,
+        using the <cmd>-m modifier[:parameters]</cmd> switch.
+        The modifier is identified by its name and can be provided with parameters, see the documentation of individual modifiers
+        for detail on their parameters (if any).
+        For example the arguments <cmd>-m booleanization</cmd> will generate a
+        <link xref="modifier-booleanization">booleanized model</link> (this modifier takes no argument).
+        The <cmd>-m perturbation:A%0</cmd> arguments will apply a <link xref="modifier-perturbation">perturbation</link>
         corresponding to the knockout of component <cmd>A</cmd> (setting its target value to 0).
+        Some examples are shown below, see the <link xref="cli">command line documentation page</link> for more.
         </p>
-        
+
         <note style="hint">
-        <p>Modifiers ca be chained on the command line.</p>
-        <p>Perturbations are available directly with the <cmd>-p A%0</cmd> shortcut.</p>
+            <list>
+                <item><p>Modifiers can be chained on the command line.</p></item>
+                <item><p>Perturbations are available directly with the <cmd>-p A%0</cmd> shortcut (instead of <cmd>-m perturbation:A%0</cmd>).</p></item>
+            </list>
         </note>
+
+        <p>Apply a knockout perturbation before saving the model:</p>
+        <code>java -jar bioLQM.jar model.sbml -p A%0 modified.sbml</code>
+
+        <p>Booleanize and save a model:</p>
+        <code>java -jar bioLQM.jar model.sbml -m booleanize model_bool.sbml</code>
+
+        <p>Chain the previous modifiers:</p>
+        <code>java -jar bioLQM.jar model.sbml -p A%0 -m booleanize modified.sbml</code>
+
     </section>
 
     <section id="script">
@@ -40,11 +62,31 @@ modified = lqm.modify(model, "perturbation", "A%0")
 
     </section>
 
+    <section id="api">
+        <title>Java API</title>
+        <p>Modifiers, like other services, are available by name or by type from static methods in the
+        <link href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</link> class.
+        While retrieving a modifier by name is convenient in <link xref="cli">command line</link> and <link xref="scripting">scripting</link>
+        modes, using the class is encouraged from java code as it enables compile-time checks and directly returns an object of
+        the right type (without casting).
+        All modifier services have a <cmd>getModifiedModel(LogicalModel model, String parameters)</cmd> method, where the parameters
+        depend on the type of modifier and are the same as on the command line and scripting case. Services can provide additional
+        methods. See the documentation of individual modifiers for details.
+        </p>
+
+<code>
+LogicalModel model = LQMLauncher.loadModel("model.xml", "sbml");
+ModelBooleanizerService boolService = LQMServiceManager.getModifier(ModelBooleanizerService.class);
+LogicalModel modified = boolService.getModifiedModel(model);
+</code>
+    </section>
+
+
     <section id="implementation">
         <title>Implementation</title>
         <p>
-        Under the scene, model modifiers implement the <link href="../apidocs/org/colomoto/biolqm/modifier/ModelModifier.html">ModelModifier</link> interface,
-        and are accessible throught a dedicated <link href="../apidocs/org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</link>.
+        Model modifiers implement the <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifier.html">ModelModifier</link> interface,
+        and are accessible throught a dedicated <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</link>.
         Services are discovered by using the <code>@ProviderFor(ModelModifierService.class)</code> decorator.
         Some implementors may provide additional methods on the service to facilitate the construction of the modifier instance.
         </p>

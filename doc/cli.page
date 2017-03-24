@@ -9,21 +9,29 @@
     </info>
 
     <title>Command-Line Interface</title>
+    
+    <p>
+    The command line interface enables model conversion and simple model analysis (currently only listing the stable states).
+    The arguments start with a file from which to load the model, and end either with a target file (for model conversion) or
+    with a specification of the analysis to perform.
+    Between these required parts, a list of model modifiers can also be specified, allowing to save modified models
+    or to analyse them directly. Some additional optional switches facilitate the selection of input and output formats.
+    </p>
 
-   <p>bioLQM can be launched on the command line using the following command.</p>
+   <p>The command line use of bioLQM use the following pattern:</p>
    <code>java -jar bioLQM-${version}.jar [-if <var>format</var>] <var>input_file</var> [-m <var>model_modifier</var>]* ([-of <var>format</var>] <var>output_file</var>)|(-r <var>action</var>)</code>
 
    <note type="hint"><p>When launched without argument (or with non-recognized ones), a help message is displayed, showing the syntax and available features.</p></note>
 
-    <p>The command line arguments must contain the 3 parts described below (in this order):</p>
+    <p>The command line arguments contain the 3 parts described below (in this order):</p>
     <list>
         <item><p>The loaded file. An import filter will be used to open this file and construct a model.</p>
             <p>The format can be guessed from the file extension or specified explicitly with the <var>-if format</var> optional argument.</p>
         </item>
-        <item><p>List of <link xref="modifiers">model modifications</link> using the <var>-m modifier:parameters</var> switch.</p>
+        <item><p>An optional list of <link xref="modifiers">model modifications</link> using the <var>-m modifier:parameters</var> switch.</p>
             <p>Note that the <cmd>-p argument</cmd> shortcut can be used to apply a <link xref="modifier-perturbation">perturbation</link> directly.</p>
         </item>
-        <item><p>Action to perform on the resulting model: it can be saved to a file or forwarded to a tool.</p>
+        <item><p>The action to perform on the resulting model: it can be saved to a file or used as input for an analysis tool.</p>
             <p>To export the model to a file, provide the output filename. Like when loading a model, the <link xref="formats">format</link> can be guessed from the extension
             or specified with the <var>-of format</var> optional argument.</p>
         </item>

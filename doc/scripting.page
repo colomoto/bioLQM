@@ -3,15 +3,43 @@
       id="scripting">
     <info>
         <link type="guide" xref="index#start"/>
-        <revision status="draft" date="2017-03-06"/>
+        <revision status="review" date="2017-03-24"/>
         <desc>Scripting</desc>
     </info>
 
     <title>Scripting bioLQM</title>
 
+    <p>
+    bioLQM can use scripts to automate more complex actions than on the <link xref="cli">command line</link>.
+    Script mode is triggered with the <cmd>-s</cmd> switch as first argument. It requires the name of a script
+    file to execute. Additional arguments (after the name of the script file) are used as arguments for the script.
+    The following command launches the script in <cmd>script.js</cmd> and provides the name of a model file as
+    script argument:
+    </p>
+
+    <code>java -jar bioLQM.jar -s script.js model.sbml</code>
+
+    <p>
+    In script mode, bioLQM creates an instance of
+    <link href="../apidocs/index.html?org/colomoto/biolqm/LQMScriptLauncher.html">LQMScriptLauncher</link>, which serves as
+    single entry point for the bioLQM API. This object is available as the <cmd>lqm</cmd> variable.
+    bioLQM features which are not available through this object can be used by importing the right java classes,
+    but their API is more likely to change.
+    The core scripting API supports:
+    </p>
+
+    <list>
+        <item><p>Import a model through the <cmd>loadModel</cmd> methods.</p></item>
+        <item><p>Export a model through the <cmd>saveModel</cmd> methods.</p></item>
+        <item><p>Retrieve a <link xref="formats">format</link> with it's specialized import/export methods.</p></item>
+        <item><p>Perform <link xref="modifiers">model modifications</link> with the <cmd>modifyModel</cmd> method.</p></item>
+        <item><p>Run an <link xref="tools">analysis tool</link> on a model through the <cmd>getTool</cmd> method.</p></item>
+    </list>
+
     <section id="javascript">
         <title>Using the built-in javascript engine</title>
-        <p>The following script opens a model given as argument, and generates all single knockout perturbations,
+        <p>bioLQM supports script written in the javascript language, the script file must have a <cmd>.js</cmd> extension.
+        The following example script opens a model given as argument, and generates all single knockout perturbations,
         saving each modified model in a new file.
         </p>
 
@@ -31,8 +59,8 @@ for (i in nodes) {
     <section id="other">
         <title>Using you favorite engine</title>
         <p>
-        While Java supports only scripting with javascript out of the box, it provides a generic
-        <link href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html">scripting API</link>
+        While Java supports only scripting with javascript out of the box, it provides a 
+        <link href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html">generic scripting API</link>
         allowing other languages to be used, through additional script engines. JAR files containing supported engines can be
         placed in the <var>extensions</var> folder: they will be added to the classpath and bioLQM will use the right engine
         dependng on the extension of the script file. This feature has been tested with <link href="http://www.jython.org">Jython</link>
@@ -42,7 +70,7 @@ for (i in nodes) {
         <note type="warning"><p>
             For some reason, loading a python script through this API is much slower than using the Jython API explicitly.
             GINsim uses the same mechanism for scripting but explicitly depends on Jython and provides faster startup of
-            python scripts, including the ones which use only bioLQM API (it will still detect other languages properly).
+            python scripts, including the ones which use only bioLQM API (it also detects other languages properly).
         </p></note>
 
         <p>A python version of the previous example.</p>

@@ -5,7 +5,7 @@
     <info>
         <link type="guide" xref="index#start" group="run"/>
         <desc>Availability, requirements, first run</desc>
-        <revision status="draft" date="2012-11-22"/>
+        <revision status="review" date="2017-03-24"/>
     </info>
 
     <title>Install and Run</title>
@@ -14,7 +14,8 @@
         <title>Availability</title>
 
         <p>bioLQM is freely available without guarantees.
-        The source code is available on (<link href="https://github.com/colomoto/bioLQM"/>)
+        The source code is available on (<link href="https://github.com/colomoto/bioLQM"/>).
+        bioLQM is currently under development, official binaries are not yet available.
         </p>
     </section>
 
