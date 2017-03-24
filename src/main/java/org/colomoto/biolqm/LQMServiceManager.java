@@ -58,6 +58,17 @@ public class LQMServiceManager {
 	}
 
 	/**
+	 * Get the format descriptor instance for a given class.
+	 *
+	 * @param cl the class of the format
+	 * @param <T> the type of the class and returned instance
+	 * @return the format instance or null if not found.
+	 */
+	public static <T extends LogicalModelFormat> T getFormat(Class<T> cl) {
+		return getByClass(getFormats(), cl);
+	}
+
+	/**
 	 * Get the tool declaration for a given ID.
 	 *
 	 * @param name ID of the tool
@@ -68,6 +79,17 @@ public class LQMServiceManager {
 		return id2tool.get(name);
 	}
 
+	/**
+	 * Get the tool service instance for a given class.
+	 *
+	 * @param cl the class of the tool service
+	 * @param <T> the type of the class and returned instance
+	 * @return the tool service instance or null if not found.
+	 */
+	public static <T extends LogicalModelTool> T getTool(Class<T> cl) {
+		return getByClass(getTools(), cl);
+	}
+	
 	/**
 	 * Get the available tools.
 	 *
@@ -88,14 +110,25 @@ public class LQMServiceManager {
 	}
 
 	/**
-	 * Get the service instance for a given class
+	 * Get the service instance for a given class.
 	 *
 	 * @param cl the class of the service
 	 * @param <T> the type of the class and returned instance
 	 * @return the service instance or null if not found.
 	 */
 	public static <T extends ModelModifierService> T getModifier(Class<T> cl) {
-		for (ModelModifierService srv: getModifiers()) {
+		return getByClass(getModifiers(), cl);
+	}
+
+	/**
+	 * Shared code to retrieve an element by class in a list of services.
+	 * 
+	 * @param l
+	 * @param cl
+	 * @return
+	 */
+	private static <S, T extends S> T getByClass(Iterable<S> l, Class<T> cl) {
+		for (S srv: l) {
 			if (cl.isInstance(srv)) {
 				return (T)srv;
 			}
