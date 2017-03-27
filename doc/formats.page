@@ -3,7 +3,7 @@
       type="guide" style="2column">
 
     <info>
-        <link type="guide" xref="index#start"/>
+        <link type="guide" xref="index#core"/>
         <revision status="review" date="2017-03-24"/>
         <desc>Define Import / Export filters</desc>
     </info>
@@ -42,7 +42,7 @@ While some formats natively support multivalued models, many are limited for the
     <section id="script">
         <title>Scripting</title>
         <p>
-        In scripts, model loading and saving are available through the <cmd>lqm.load</cmd> and <cmd>lqm.save</cmd> methods respectively.
+        In scripts, model loading and saving are available through the <code>lqm.load</code> and <code>lqm.save</code> methods respectively.
         Here as well, the format can be guessed from the file extension, or provided explicitely as last argument of these methods.
         Conversion with implicit and explicit format specifications are showned in the following sample script:
         </p>

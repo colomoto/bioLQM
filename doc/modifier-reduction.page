@@ -1,62 +1,91 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       xmlns:gloss="http://projectmallard.org/experimental/gloss/"
-      id="fmodifier-reduction">
+      id="modifier-reduction">
     <info>
       <link type="guide" xref="index#modifiers"/>
       <link type="guide" xref="modifiers#list"/>
-      <revision status="stub" date="2017-03-06"/>
+      <revision status="review" date="2017-03-27"/>
       <desc>Automated reduction of logical models</desc>
       <gloss:term id="Naldi2011" />
     </info>
 
     <title>Model reduction</title>
 
-    <section id="motivation">
-        <title>Motivation</title>
+    <section>
+        <title>Description</title>
         <p>The reduction of regulatory graphs allows to extract a "simplified" regulatory graph where a set of components are hidden.
-        To keep a consistent dynamical behaviour, the logical rules associated with the targets of each hidden component account for
-        the (indirect) effects of its regulators. This construction of reduced models preserves crucial dynamical properties of the
-        original model, including stable states and more complex attractors. Furthermore, the relationship between the attractor
-        configuration of the original model and those of reduced models is formally established.
+           To keep a consistent dynamical behaviour, the logical rules associated with the targets of each hidden component account for
+           the (indirect) effects of its regulators. This construction of reduced models preserves crucial dynamical properties of the
+           original model, including stable states and more complex attractors. Furthermore, the relationship between the attractor
+           configuration of the original model and those of reduced models is formally established.
+           Further information on the algorithm is available in <gloss:term xref="biblio" id="Naldi2011" >Naldi et al. (TCS 2011)</gloss:term>.
         </p>
+
+        <section id="outputs">
+            <title>Output stripping</title>
+            <p>Outputs are components which do not regulate others. As such, these components have no impact on the attractors that will be reached in a simulation.
+               These output components can be automatically removed when performing a simulation or some other actions on a model.
+               Output reduction was introduced in <gloss:term xref="biblio" id="Naldi2012" >Naldi et al. (CMSB 2012)</gloss:term>.
+            </p>
+        </section>
+
+        <section id="fixed">
+            <title>Propagate fixed components</title>
+            <p>The components with a fixed target value can be reduced without affecting the attractors (but their reachability can be compromised depending on
+               the initial state). This reduction is extended automatically to their targets which may become fixed as well.
+            </p>
+            <p>We plan to extend this to input components which are fixed by the initial conditions.</p>
+        </section>
+
+        <section id="duplicates">
+            <title>Eliminate duplicate components</title>
+            <p>If several components share the same logical function, only one is kept, and the others are reduced to mirrors of this reference component.
+               This automated reduction can affect cyclical attractors and rechability properties.
+            </p>
+        </section>
+
     </section>
+
 
     <section id="usage">
         <title>Usage</title>
-        <p>
+
+        <p>This modifier requires some configuration. The supported perturbations and the syntax of the
+           parameter string to use in <link xref="cli">command line</link> or <link xref="cli">scripting</link>
+           mode are described below.
+           We remind that in command line, the parameter string for model reduction is given in the
+           <cmd>-m reduction:parameter</cmd> switch.
+           In scripts, it is the last argument in <code>lqm.modify(model, "reduction", parameter)</code>.
         </p>
 
-        <p>
-        Some reductions are not possible (an auto-regulated component can not be hidden using this method), if a reduction fails, GINsim will
-        show an error message, listing the components that could not be hidden and proposing to continue with the result of the partial reduction.
+        <p>This modifier takes as parameter a comma-separated list of keywords to select the performed reduction.
+           <cmd>fixed</cmd>, <cmd>output</cmd>, and <cmd>duplicate</cmd> respectively enable the propagation of fixed components,
+           output stripping, and elimination of duplicates. <cmd>fixed,output</cmd> enables the two selected actions.
         </p>
+        <p>Future plans include support for additional reduction strategies and the specification of custom lists of reduced components.</p>
 
-        <p>
-        Note that in some cases, the reduction may only be possible in a precise order (but the result does not not change with the order).
-        When blocked, GINsim will try alternate orders for the remaining components, but not for the components which have already been succesfully reduced.
-        In such cases, it may be necessary to provide the list of components to reduce in several steps to force the use of the correct order.
-        </p>
+<!--
+        <note type="warning">
+            <p>Some reductions are not possible (an auto-regulated component can not be hidden using this method), if a reduction fails, bioLQM will
+               show an error message, listing the components that could not be hidden.
+            </p>
+            <p>Note that in some cases, the reduction may only be possible in a precise order (but the result does not not change with the order when several orders are feasible).
+               When blocked, bioLQM will try alternate orders for the remaining components, but not for the components which have already been succesfully reduced.
+               In such cases, it may be necessary to provide the list of components to reduce in several steps to force the use of the correct order.
+               Note that such ordering problems only occur for reductions which show a high risk of modifying the dynamical behaviour.
+            </p>
+        </note>
+-->
+
     </section>
 
-    <section id="outputs">
-        <title>Output stripping</title>
-        <p>
-        Outputs are components which do not regulate others. As such, these components have no impact on the attractors that will be reached in a simulation.
-        These output components can be automatically removed when performing a simulation or some other actions on a model.
-        To instruct GINsim to remove outputs, use the "strip outputs" checkbox next to the perturbation selection box.
+
+    <section>
+        <title>Going further</title>
+        <p>The <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/reduction/ModelReductionService.html">ModelReductionService</link>,
+           instance will provide additional methods to facilitate the definition of custom reduction strategies.
         </p>
-    </section>
-
-    <section id="outputs">
-        <title>Propagate and remove fixed component</title>
-        <p>TODO</p>
-    </section>
-
-    <section id="availability">
-        <title>Availability and further reading</title>
-        <p>This method was implemented in GINsim 2.4. Further information on the algorithm is available in <gloss:term xref="biblio" id="Naldi2011" >Naldi et al. (TCS 2011)</gloss:term>.</p>
-        <p>The support for output stripping was added in GINsim 3.0. Further information is available in <gloss:term xref="biblio" id="Naldi2012" >Naldi et al. (CMSB 2012)</gloss:term>.</p>
     </section>
 
 </page>

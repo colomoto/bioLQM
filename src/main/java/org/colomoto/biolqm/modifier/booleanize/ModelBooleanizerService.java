@@ -14,10 +14,14 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(ModelModifierService.class)
 public class ModelBooleanizerService extends AbstractModelModifierService {
 
+    /** The identifier used to retrieve this service by name */
     public static final String ID = "booleanize";
-    public static final String NAME = "model booleanizer";
-    public static final String DESCR = "(no parameters)";
+    private static final String NAME = "model booleanizer";
+    private static final String DESCR = "(no parameters)";
 
+    /**
+     * Public constructor which should only be used for service discovery.
+     */
     public ModelBooleanizerService() {
         super(ID, NAME, DESCR);
     }

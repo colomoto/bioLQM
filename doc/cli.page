@@ -3,7 +3,7 @@
       id="cli">
 
     <info>
-        <link type="guide" xref="index#start"/>
+        <link type="guide" xref="index"/>
         <desc>Command Line Interface</desc>
         <revision status="review" date="2017-03-06"/>
     </info>

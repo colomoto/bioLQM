@@ -6,25 +6,29 @@
     <info>
         <title type="link" role="trail">Index</title>
         <title type="link">Index</title>
-        <credit type="author"><name>Claudine Chaouiya</name><email>chaouiya@igc.gulbenkian.pt</email></credit>
-        <credit type="author"><name>Pedro Monteiro</name>   <email>ptgm@igc.gulbenkian.pt</email></credit>
+        <revision status="review" date="2017-03-27"/>
         <credit type="author"><name>Aurelien Naldi</name>   <email>aurelien.naldi@gmail.com</email></credit>
-        <credit type="author"><name>Denis Thieffry</name>   <email>thieffry@ens.fr</email></credit>
+        <credit type="editor"><name>Claudine Chaouiya</name><email>chaouiya@igc.gulbenkian.pt</email></credit>
+        <credit type="editor"><name>Pedro Monteiro</name>   <email>ptgm@igc.gulbenkian.pt</email></credit>
+        <credit type="editor"><name>Denis Thieffry</name>   <email>thieffry@ens.fr</email></credit>
         <license><p>Creative Commons Share Alike 3.0</p></license>
     </info>
 
     <title>Documentation for bioLQM</title>
 
-    <p>
-    bioLQM provides a collection of tools for the <link xref="modifiers">modification</link> and <link xref="formats">conversion</link>
-    of <em style="strong">Logical qualitative models of biological networks</em>.
-    It can be used on the <link xref="cli">command line</link>, through <link xref="scripting">scripts</link>, or embded in other tools
-    such as <link href="http://www.ginsim.org">GINsim</link> or <link href="http://epilog-tool.org">Epilog</link> using the
-    <link href="../apidocs/index.html">Java API</link> directly.
+    <p>BioLQM provides a collection of tools for the <link xref="modifiers">modification</link> and <link xref="formats">conversion</link>
+       of <em style="strong">Logical Qualitative Models of biological networks</em>, started as part of the 
+       <link href="http://colomoto.org/">CoLoMoTo consortium</link> to facilitate model exchange.
+    </p>
+    <p>It can be used on the <link xref="cli">command line</link>, through <link xref="scripting">scripts</link>, or embded in other
+       tools such as <link href="http://www.ginsim.org">GINsim</link> or <link href="http://epilog-tool.org">Epilog</link> using the
+       <link xref="api">Java API</link> directly.
     </p>
 
-    <section id="start">
-        <title>Getting started</title>
+    <links type="topic" style="2column"/>
+
+    <section id="core">
+        <title>Core features</title>
         <links type="topic" style="2column"/>
     </section>
     
@@ -33,7 +37,7 @@
             <title type="link" role="trail">Formats</title>
         </info>
         <title>Available Import/Export formats</title>
-        <p>Formats provide import/export filters for a various file formats.</p>
+        <p>Formats provide import/export filters for the following file formats.</p>
         <links type="topic" style="2column"/>
     </section>
 

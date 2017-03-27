@@ -3,7 +3,7 @@
       type="guide" style="2column">
 
     <info>
-      <link type="guide" xref="index#start"/>
+      <link type="guide" xref="index#core"/>
       <revision status="review" date="2017-03-24"/>
       <desc>Model in, modified model out</desc>
     </info>
@@ -51,7 +51,7 @@
     <section id="script">
         <title>Scripting</title>
         <p>
-        In scripts, model modifiers are available through the <cmd>lqm.modify</cmd> method which takes 3 arguments: the model,
+        In scripts, model modifiers are available through the <code>lqm.modify</code> method which takes 3 arguments: the model,
         the name of the modifier, and the parameters.
         </p>
 
@@ -69,7 +69,7 @@ modified = lqm.modify(model, "perturbation", "A%0")
         While retrieving a modifier by name is convenient in <link xref="cli">command line</link> and <link xref="scripting">scripting</link>
         modes, using the class is encouraged from java code as it enables compile-time checks and directly returns an object of
         the right type (without casting).
-        All modifier services have a <cmd>getModifiedModel(LogicalModel model, String parameters)</cmd> method, where the parameters
+        All modifier services have a <code>getModifiedModel(LogicalModel model, String parameters)</code> method, where the parameters
         depend on the type of modifier and are the same as on the command line and scripting case. Services can provide additional
         methods. See the documentation of individual modifiers for details.
         </p>

@@ -30,7 +30,7 @@
         mode are described below.
         We remind that in command line, the parameter string for perturbations is given in the
         <cmd>-m perturbation:parameter</cmd>, or <cmd>-p parameter</cmd> switches.
-        In scripts, it is the last argument in <cmd>lqm.modify(model, "perturbation", parameter)</cmd>.
+        In scripts, it is the last argument in <code>lqm.modify(model, "perturbation", parameter)</code>.
         </p>
 
         <p>Simple perturbations are described as <cmd>target%restriction</cmd>, where the target can be a
@@ -68,6 +68,13 @@
             </item>
         </terms>
 
+    </section>
+
+    <section>
+        <title>Going further</title>
+        <p>The <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/perturbation/PerturbationService.html">PerturbationService</link>,
+           instance will provide additional methods to facilitate the manipulation of perturbations from scripts and java code.
+        </p>
     </section>
 
 </page>

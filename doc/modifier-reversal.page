@@ -4,13 +4,34 @@
     <info>
       <link type="guide" xref="index#modifiers"/>
       <link type="guide" xref="modifiers#list"/>
-      <revision status="stub" date="2017-03-06"/>
+      <revision status="review" date="2017-03-27"/>
       <desc>Models with reversed asynchronous dynamics</desc>
     </info>
 
     <title>Model reversal</title>
 
-    <p>TODO</p>
+    <section>
+        <title>Description</title>
+        <p>The model reversal modifier constructs a model with a reversed asynchronous dynamics: the successors of a state
+           in the reversed model correspond to it's predecessors in the original model.
+           Multivalued models are supported through <link xref="modifier-booleanization">model booleanization</link>,
+           with some changes to handle non-admissible states.
+        </p>
+    </section>
+
+    <section>
+        <title>Usage</title>
+        <p>The reversal is a simple modifier without parameters: just use the <cmd>-m reverse</cmd> switch on the 
+        <link xref="cli">command line</link> or <code>lqm.modify(model, "reverse")</code> in <link xref="scripting">scripts</link>.
+        </p>
+    </section>
+
+    <section>
+        <title>Going further</title>
+        <p>This service is provided by <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/reverse/ModelReverserService.html">ModelReverserService</link>.
+        </p>
+    </section>
+
 
 </page>
 

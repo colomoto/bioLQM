@@ -14,10 +14,14 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(ModelModifierService.class)
 public class ModelReverserService extends AbstractModelModifierService {
 
+    /** The identifier used to retrieve this service by name */
     public static final String ID = "reverse";
-    public static final String NAME = "model reverser";
-    public static final String DESCR = "(no parameters)";
+    private static final String NAME = "model reverser";
+    private static final String DESCR = "(no parameters)";
 
+    /**
+     * Public constructor which should only be used for service discovery.
+     */
     public ModelReverserService() {
         super(ID, NAME, DESCR);
     }

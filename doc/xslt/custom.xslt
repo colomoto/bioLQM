@@ -38,6 +38,9 @@ span.media-image {
 p {
     overflow: auto;
 }
+dl.terms dt.terms {
+    font-weight: bold;
+}
 
 </xsl:text>
 </xsl:template>

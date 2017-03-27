@@ -14,10 +14,14 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(ModelModifierService.class)
 public class ModelReductionService extends AbstractModelModifierService {
 
+    /** The identifier used to retrieve this service by name */
     public static final String ID = "reduce";
-    public static final String NAME = "model reduction";
-    public static final String DESCR = "[TODO: flags for fixed,duplicates,outputs]";
+    private static final String NAME = "model reduction";
+    private static final String DESCR = "[TODO: flags for fixed,duplicates,outputs]";
 
+    /**
+     * Public constructor which should only be used for service discovery.
+     */
     public ModelReductionService() {
         super(ID, NAME, DESCR);
     }

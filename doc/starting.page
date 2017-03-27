@@ -3,7 +3,7 @@
       id="starting">
 
     <info>
-        <link type="guide" xref="index#start" group="run"/>
+        <link type="guide" xref="index" group="run"/>
         <desc>Availability, requirements, first run</desc>
         <revision status="review" date="2017-03-24"/>
     </info>

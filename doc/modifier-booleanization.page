@@ -4,23 +4,46 @@
     <info>
       <link type="guide" xref="index#modifiers"/>
       <link type="guide" xref="modifiers#list"/>
-      <revision status="stub" date="2017-03-06"/>
+      <revision status="review" date="2017-03-27"/>
       <desc>Boolean mapping for multivalued models</desc>
     </info>
 
     <title>Model booleanization</title>
 
-    <p>
-    </p>
+    <section>
+        <title>Description</title>
+        <p>Model booleanization consists in mapping a multivalued model on Boolean variables.
+        </p>
+        <p>bioLQM uses the mapping originaly proposed by van Ham, in which a component associated with the maximal value
+           <var>m</var> will be mapped on <var>m</var> Boolean components. For example, a component taking the values
+           <var>0</var>, <var>1</var>, <var>2</var>, and <var>3</var> will be encoded as <var>000</var>, <var>100</var>,
+           <var>110</var>, and <var>111</var>.</p>
+
+        <section>
+            <title>Handling non-admissible states</title>
+            <p>The booleanization introduces many non-admissible states, which may require special care depending on the analysis
+               applied on the booleanized model. This modifier makes sure that a simulation which start with an admissible state
+               will not explore non-admissible states. It also prevents the introduction of non-admissible attractors by making
+               sure that at least one admissible state is reachable from any non-admissible.
+            </p>
+        </section>
+
+    </section>
+
 
     <section>
-        <title>The mapping</title>
-        <p>bioLQM uses the mapping originaly proposed by </p>
+        <title>Usage</title>
+        <p>The booleanization is a simple modifier without parameters: just use the <cmd>-m booleanize</cmd> switch on the 
+           <link xref="cli">command line</link> or <code>lqm.modify(model, "booleanize")</code> in <link xref="scripting">scripts</link>.
+        </p>
+        <p>Note that booleanization can also be used automatically to export multivalued models in formats supporting only Boolean components.
+        </p>
     </section>
 
     <section>
-        <title>Handling non-admissible states</title>
-        <p>TODO</p>
+        <title>Going further</title>
+        <p>This service is provided by <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/booleanize/ModelBooleanizerService.html">ModelBooleanizerService</link>.
+        </p>
     </section>
 
 </page>

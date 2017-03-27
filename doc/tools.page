@@ -3,24 +3,34 @@
       type="guide" style="2column">
 
     <info>
-        <link type="guide" xref="index#start"/>
-        <revision status="stub" date="2017-03-06"/>
+        <link type="guide" xref="index#core"/>
+        <revision status="review" date="2017-03-27"/>
         <desc>Tools applied to models</desc>
     </info>
 
     <title>Tools</title>
 
-    <p>TODO</p>
+    <p>Tools correspond to actions that can be performed on logical models.</p>
+
+    <note style="warning">
+    <p>Support for tools is currently in flux: the API will change before more tools are added.</p>
+    </note>
 
     <section id="cli">
         <title>Command line use</title>
-        <p>TODO</p>
+        <p>A tool can be specified at the end of the <link xref="cli">command line</link>
+           using the <cmd>-r toolName</cmd> switch.
+        </p>
+        
+        <p>For example, the following command will show the stable states for a model:</p>
+        <code>java -jar bioLQM.jar model.sbml -r stable</code>
+        
     </section>
 
     <section id="script">
         <title>Scripting</title>
-        <p>
-        TODO
+        <p>In scripts, tools are available through the <code>lqm.getTool(name)</code> method.
+           The returned object provides at least the <code>run(model)</code> method.
         </p>
 
 <code>
@@ -30,10 +40,29 @@ lqm.getTool("stable").run(model)
 
     </section>
 
+
+    <section id="api">
+        <title>Java API</title>
+        <p>Tools, like other services, are available by name or by type from static methods in the
+        <link href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</link> class.
+        Currently, all tool services have a <code>run(LogicalModel model)</code> method, this minimalistic API will
+        be extended in the future.
+        </p>
+
+<code>
+LogicalModel model = LQMLauncher.loadModel("model.xml", "sbml");
+StableStateTool stableService = LQMServiceManager.getTool(StableStateTool.class);
+stableService.run(model);
+</code>
+    </section>
+
+
     <section id="implementation">
         <title>Implementation</title>
         <p>
-        TODO
+        Tool services implement the <link href="../apidocs/index.html?org/colomoto/biolqm/tool/LogicalModelTool.html">LogicalModelTool</link> interface,
+        and are accessible throught a dedicated <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</link>.
+        Services are discovered by using the <code>@ProviderFor(LogicalModelTool.class)</code> decorator.
         </p>
     </section>
 
