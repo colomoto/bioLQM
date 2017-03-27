@@ -1,0 +1,52 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-gna">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-27"/>
+      <desc>Export to the GNA text format</desc>
+    </info>
+
+    <title>GNA format</title>
+
+    <p>The old text format used by the <link href="https://team.inria.fr/ibis/genetic-network-analyzer-gna/">GNA</link> tool.</p>
+
+<code><![CDATA[
+state-variable: A
+  zero-parameter: zero_A
+  box-parameter: max_A
+  threshold-parameters: t1_A
+  synthesis-parameters: k1_A
+  degradation-parameters: g_A
+  state-equation:
+    d/dt A = k1_A * s+(A,t1_A)
+        - g_A * A
+  parameter-inequalities:
+    zero_A < t1_A < k1_A / g_A < max_A
+state-variable: B
+  zero-parameter: zero_B
+  box-parameter: max_B
+  threshold-parameters: t1_B
+  synthesis-parameters: k1_B
+  degradation-parameters: g_B
+  state-equation:
+    d/dt B = k1_B * s-(A,t1_A)
+        - g_B * B
+  parameter-inequalities:
+    zero_B < t1_B < k1_B / g_B < max_B
+state-variable: D
+  zero-parameter: zero_D
+  box-parameter: max_D
+  threshold-parameters: t1_D
+  synthesis-parameters: k1_D
+  degradation-parameters: g_D
+  state-equation:
+    d/dt D = k1_D * s+(A,t1_A)
+        - g_D * D
+  parameter-inequalities:
+    zero_D < t1_D < k1_D / g_D < max_D
+]]></code>
+
+</page>
+

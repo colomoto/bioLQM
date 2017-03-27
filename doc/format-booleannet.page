@@ -1,0 +1,25 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-booleannet">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-27"/>
+      <desc>Import/Export to the boolean format</desc>
+    </info>
+
+    <title>Booleannet format</title>
+
+    <p>Format used by <link href="https://github.com/ialbert/booleannet">booleannet</link> tool.
+       Models are represented as a list of functions in a text file.
+    </p>
+
+<code>
+#BOOLEAN RULES
+A *= A
+B *= not A
+D *= A
+</code>
+
+</page>
+

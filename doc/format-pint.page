@@ -1,0 +1,29 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-pint">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-27"/>
+      <desc>Export to the pint format</desc>
+    </info>
+
+    <title>Pint format</title>
+
+    <p>The format used by the <link href="https://loicpauleve.name/pint/">Pint</link> static analysis tool.</p>
+
+<code>
+"A" [0, 1]
+"B" [0, 1]
+"C" [0, 1]
+
+
+"B" 0 -> 1 when "A"=0
+"B" 1 -> 0 when "A"=1
+
+"C" 1 -> 0 when "A"=0
+"C" 0 -> 1 when "A"=1
+</code>
+
+</page>
+

@@ -4,14 +4,14 @@
     <info>
       <link type="guide" xref="index#formats"/>
         <link type="guide" xref="formats#list"/>
-      <revision status="draft" date="2017-03-06"/>
-      <desc>Import/Export BoolSim models</desc>
+      <revision status="review" date="2017-03-27"/>
+      <desc>Import/Export boolSim models</desc>
     </info>
 
-    <title>BoolSim</title>
+    <title>BoolSim format</title>
 
-    <p>bioLQM supports import and export of Boolean models in boolsim formats, used by
-    <link href="https://www.vital-it.ch/research/software/boolSim">boolsin/genYsis</link> and
+    <p>bioLQM supports import and export of Boolean models in boolSim format, used by
+    <link href="https://www.vital-it.ch/research/software/boolSim">boolSim/genYsis</link> and
     <link href="https://www.vital-it.ch/research/software/SQUAD">SQUAD</link>.</p>
 
     <p>This format defines a model as a list of activating and inhibiting conditions of its components.</p>
@@ -19,7 +19,7 @@
         <item><p>The conditions use the <code>&amp;</code> operator for AND, and <code>^</code> for NOT</p></item>
         <item><p>Activations are defined as: <code>condition -> target</code></p></item>
         <item><p>Inhibitions are defined as: <code>condition -| target</code></p></item>
-        <item><p>The complete function will be: <code>(activation1 OR activation2) &amp; !(inhibition1 OR inhibition2)</code></p></item>
+        <item><p>The complete function will be: <code>(activation1 OR activation2) &amp; !(inhibition1 OR inhibition2)</code>.</p></item>
     </list>
 
 <code>

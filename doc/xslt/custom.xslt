@@ -42,6 +42,13 @@ dl.terms dt.terms {
     font-weight: bold;
 }
 
+div.sect div.hgroup {
+    border-bottom: solid 2px #babdb6;
+}
+
+div.sect div.sect div.hgroup {
+    border-bottom: solid 1px #babdb6;
+}
 </xsl:text>
 </xsl:template>
 

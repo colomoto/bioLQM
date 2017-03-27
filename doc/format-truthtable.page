@@ -4,33 +4,27 @@
     <info>
         <link type="guide" xref="index#formats"/>
         <link type="guide" xref="formats#list"/>
-        <revision status="stub" date="2017-03-06"/>
-        <desc>Import regulatory graph from a truth table</desc>
+        <revision status="draft" date="2017-03-27"/>
+        <desc>Import/Export logical models as truth tables</desc>
     </info>
 
-    <title>Truth table</title>
+    <title>Truth table format</title>
 
-    <p>A model can be imported into GINsim from a truth table, and vice-versa, representing the its synchronouns dynamics formated as a two-column text file.</p>
+    <p>The truth table format supports importing and exporting models as truth table formated as a two-column text file.
+       Each line of this table contains the source and target states under a synchronous updating.
+    </p>
 
-    <p>The complete synchronous dynamics of a system can be imported into GINsim automatically generating (one of) the corresponding model.
-    This can be achieved through the import of a Truth Table, where each line of this table contains the source source and target state under a synchronous update.</p>
+    <p>This file may not describe a complete truth table, i.e., it may not have information regarding some of the source states
+       of the corresponding state transition graph.
+       The first line of the table can be an optional list of node identifiers to be used.
+       Between each source and target state it is accepted any number of spaces and/or tabs.
+       Also, every line starting with character '#' will be considered as a comment.
+       The description of each state must be characterized by the valuations of their composing components without any space
+       (consequently, multivalued components can not take values higher than 9).
+    </p>
 
-    <note style="tip">
-        <p>The dynamics represented in a multivalued truth table file, can have more than one corresponding model.</p>
-    </note>
+    <p>Example of a truth table, for a boolean system with three components:</p>
 
-    <terms>
-        <item>
-            <title>Truth Table format</title>
-            <p>
-            A truth table is represented as a two-column file where each line contains a source state followed by its corresponding target state.
-            This file may not describe a complete truth table, i.e., it may not have information regarding some of the source states of the corresponding state transition graph.
-            The first line of the table can have a non-mandatory list of node identifiers to be used.
-            Between each source and target state it is accepted any number of spaces and/or tabs.
-            Also, every line starting with character '#' will be considered as a comment.
-            The description of each state must be characterized by the valuations of their composing components without any space in between (and consequently, the maximum value allowed for each component is 9).
-            An example of a truth table, for a boolean system with three dimensions is the following:
-            </p>
 <code>
 GeneA GeneB GeneC
 000 100
@@ -44,13 +38,15 @@ GeneA GeneB GeneC
 110 110
 111 110
 </code>
-        <p>The importer performs two file reads.
-        During the first read, it reads the node identifiers (if available) and records the maximum value for each of component.
-        During the second read, it creates the model and the logical functions associated to each component.
-        </p>
-        </item>
 
-    </terms>
+    <p>The importer performs two file reads.
+       During the first read, it reads the node identifiers (if available) and records the maximum value for each of component.
+       During the second read, it creates the model and the logical functions associated to each component.
+    </p>
+
+    <p>Future plans include support for a folder of truth tables representing the functions of individual components,
+       which would scale to larger models.
+    </p>
 
 </page>
 

@@ -1,0 +1,39 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-maboss">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-27"/>
+      <desc>Export logical models for a Markovian Boolean Stochastic Simulator</desc>
+    </info>
+
+    <title>MaBoSS format</title>
+
+    <p>Format used by the <link href="https://maboss.curie.fr/">MaBoSS</link> tool.
+       This format generates a <cmd>.bnd</cmd> file with the model itself, and a <cmd>.cfg</cmd>
+       file to define parameter values.
+    </p>
+
+<code>
+Node A {
+  logic = (A);
+  rate_up = @logic ? $u_A : 0;
+  rate_down = @logic ? 0 : $d_A;
+}
+
+Node B {
+  logic = (!A);
+  rate_up = @logic ? $u_B : 0;
+  rate_down = @logic ? 0 : $d_B;
+}
+
+Node C {
+  logic = (A);
+  rate_up = @logic ? $u_C : 0;
+  rate_down = @logic ? 0 : $d_C;
+}
+</code>
+
+</page>
+

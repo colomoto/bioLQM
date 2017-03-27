@@ -5,16 +5,22 @@
     <info>
       <link type="guide" xref="index#formats"/>
       <link type="guide" xref="formats#list"/>
-      <revision status="stub" date="2017-03-06"/>
+      <revision status="draft" date="2017-03-27"/>
       <desc>Export logical models as Petri net</desc>
       <gloss:term id="Chaouiya2006" />
     </info>
 
     <title>Petri Net Export</title>
-    <p>
-        Regulatory graphs can be exported into discrete <!-- TODO: check nomenclature with claudine -->
-        Petri net using the rewriting method described in <gloss:term xref="biblio" id="Chaouiya2006" >Chaouiya 2006</gloss:term>.
+
+    <p>Regulatory graphs can be exported into standard Petri net <!-- TODO: check nomenclature with Claudine -->
+       using the rewriting method described in <gloss:term xref="biblio" id="Chaouiya2006" >Chaouiya 2006</gloss:term>.
+       In this translation, each component is mapped on two places: one holding as many tokens as the current level
+       of the components, and a complementary place, such that the sum of their tokens is the max level of the components.
+       Each transition in the resulting Petri net will move one token between pairs of complementary places, with test
+       arcs to other places representing the logical functions.
     </p>
+    
+    <p>Several Petri net formats are supported: <var>INA</var>, <var>PNML</var>, and <var>APNN</var>.</p>
 
 </page>
 
