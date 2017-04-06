@@ -93,11 +93,10 @@ public class ImplicantSearcher implements Iterable<Integer> {
 			nextInPattern = -1;
 			return returnedValue;
 		}
-	}
-
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 }
