@@ -177,18 +177,19 @@ public class Booleanizer {
                 }
             }
             int bf = functions[idx];
-            if (i > 0) {
-                // a subvariable can not be activated if the previous one is not active
-                MDDVariable prevVar = newDDM.getVariableForKey(bnodes[i - 1]);
-                int prev = prevVar.getNode(0, 1);
-                bf = MDDBaseOperators.AND.combine(newDDM, bf, prev);
+            // check if all the previous subvariables are active
+            int restriction = 1;
+            for ( int j=i ; j>0 ; j--) {
+                int prev = newDDM.getVariableForKey(bnodes[j-1]).getNode(0,1);
+                restriction = MDDBaseOperators.AND.combine(newDDM, restriction, prev);
             }
             if (i < bnodes.length - 1) {
                 // a subvariable can not be disabled if the next one is active
-                MDDVariable nextVar = newDDM.getVariableForKey(bnodes[i + 1]);
+                MDDVariable nextVar = newDDM.getVariableForKey(bnodes[i+1]);
                 int next = nextVar.getNode(0, 1);
                 bf = MDDBaseOperators.OR.combine(newDDM, bf, next);
             }
+            bf = MDDBaseOperators.AND.combine(newDDM, restriction, bf);
             functions[idx] = bf;
             idx++;
         }
