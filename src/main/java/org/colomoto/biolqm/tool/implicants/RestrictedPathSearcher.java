@@ -82,6 +82,11 @@ public class RestrictedPathSearcher implements Iterable<Integer> {
 		}
 		
 		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public boolean hasNext() {
 			return parentIterator.hasNext();
 		}

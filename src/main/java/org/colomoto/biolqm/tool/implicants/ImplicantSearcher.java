@@ -94,5 +94,11 @@ public class ImplicantSearcher implements Iterable<Integer> {
 			return returnedValue;
 		}
 	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
+
 }
 
