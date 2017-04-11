@@ -1,37 +1,29 @@
 grammar BNet;
 
 // a model can start with comments and contain empty lines anywhere
-model: comment* assign+ ;
-comment: '#' ~NEWLINE*? NEWLINE+ ;
-assign: var ',' expr NEWLINE+ ;
+header:     'targets, factors' NEWLINE+;
+comment:    '#' ~NEWLINE* NEWLINE+;
+assign:     var ',' expr NEWLINE+;
+model:      NEWLINE* comment* header comment* assign (assign | comment)*;
 
-expr:  expr AND expr                      #andExpr
-    | expr OR expr                        #orExpr
-    | not* ( '(' expr ')' | var | val )   #simpleExpr
+expr:       expr and expr                        # andExpr
+          | expr or expr                         # orExpr
+          | not* ( '(' expr ')' | var | val)     # simpleExpr
 ;
 
-not: NOT;
-var: ID ;
-val: VALUE ;
+and: '&';
+or:  '|';
+not: '!';
+var: ID;
+val: VALUE;
 
-// spaces and line breaks
-WS : [' ' '\t' '\r' ]+ -> channel(HIDDEN);
+// to avoid "implicit token definition in parser" errors
+ID: IDENT;
+
+WS : [' ' '\t' '\r']+ -> channel(HIDDEN);
 NEWLINE : '\r'? ('\n' | EOF) ;
+VALUE: '0' | '1';
 
 fragment LETTER: [a-zA-Z_];
-fragment ALPHA: LETTER|'_';
 fragment DIGIT: [0-9];
-fragment IDENT: ALPHA (ALPHA|DIGIT)* ;
-
-
-// token definitions
-AND: '&';
-OR: '|';
-NOT: '!';
-ID: IDENT ;
-VALUE: DIGIT;
-
-
-
-
-
+fragment IDENT: LETTER (LETTER|DIGIT)*;

@@ -57,6 +57,7 @@ public class BNetImport {
 
 		// first collect all valid variables
 		for (BNetParser.AssignContext actx: mctx.assign()) {
+
 			String id = actx.var().ID().getText();
 			if ( id2var.containsKey(id)) {
 				continue;
@@ -66,19 +67,24 @@ public class BNetImport {
 			id2var.put(id, ni);
 			variables.add( ni);
 		}
+      
 
 		// create the operand factory to assist the parser
 		OperandFactory operandFactory = new SimpleOperandFactory<NodeInfo>(variables);
-		BNetParserListener listener = new BNetParserListener( operandFactory);
+		BNetParserListener listener = new BNetParserListener(operandFactory);
+		
+		// System.out.println("HANNES: "+variables);
 
 		// then load the actual functions
 		Map<NodeInfo, FunctionNode> var2function = new HashMap<NodeInfo, FunctionNode>();
 		for (BNetParser.AssignContext actx: mctx.assign()) {
+		   
 			String id = actx.var().ID().getText();
-			NodeInfo ni = id2var.get( id);
+			
+			NodeInfo ni = id2var.get(id);
 			FunctionNode node = listener.loadExpr(actx.expr());
-
-			FunctionNode curNode = var2function.get( ni);
+			FunctionNode curNode = var2function.get(ni);
+			
 			if (curNode != null) {
 				node = OrOperatorFactory.FACTORY.getNode(curNode, node);
 			}

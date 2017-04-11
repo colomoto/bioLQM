@@ -29,11 +29,13 @@ public class BNetExport {
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);
 		
+
 		Writer writer = new OutputStreamWriter(out);
-      //writer.write("# model in BoolNet format\r\n");
-      //writer.write("# the header \"targets, factors\" is mandatory to be importable in the R package BoolNet.\r\n");
-      //writer.write("\r\n");
-      //writer.write("targets, factors\r\n");
+      writer.write("# model in BoolNet format\n");
+      //writer.write(System.getProperty("line.separator"));
+      writer.write("# the header targets, factors is mandatory to be importable in the R package BoolNet\n");
+      writer.write("\n");
+      writer.write("targets, factors\n");
 		int[] functions = model.getLogicalFunctions();
 		for (int idx=0 ; idx<functions.length ; idx++) {
 			MDDVariable var = variables[idx];
