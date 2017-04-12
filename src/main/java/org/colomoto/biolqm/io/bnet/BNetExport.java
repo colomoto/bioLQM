@@ -10,10 +10,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+// for pretty exports
+import java.util.Arrays;
+
+
 /**
  * Export logical model into a raw list of functions.
  * 
- * @author Aurelien Naldi
+ * @author Hannes Klarner (minor modifications to a file of Aurelien Naldi)
  */
 public class BNetExport {
 
@@ -32,14 +36,38 @@ public class BNetExport {
 
 		Writer writer = new OutputStreamWriter(out);
       writer.write("# model in BoolNet format\n");
-      //writer.write(System.getProperty("line.separator"));
       writer.write("# the header targets, factors is mandatory to be importable in the R package BoolNet\n");
       writer.write("\n");
       writer.write("targets, factors\n");
+            
 		int[] functions = model.getLogicalFunctions();
-		for (int idx=0 ; idx<functions.length ; idx++) {
+		
+      String[] names = new String[variables.length];
+      
+      for (int i=0; i<variables.length; i++) {
+         names[i] = variables[i].key.toString();
+      }
+      
+      
+      // detect the longest format name to generate a nice output
+		int width = 5;
+		for (int i=0; i<names.length; i++) {
+			if (names[i].length() > width) {
+				width = names[i].length();
+			}
+		}
+      
+      String[] names_sorted = Arrays.copyOf(names, names.length);
+      Arrays.sort(names_sorted);
+		
+		for (int i=0; i<names_sorted.length; i++) {
+		
+		   int idx = Arrays.asList(names).indexOf(names_sorted[i]);
+		   
 			MDDVariable var = variables[idx];
-			writer.write(var+", ");
+			int length = width - names[idx].length();
+			String gap = new String(new char[length]).replace("\0", " ");
+			writer.write(var+", "+gap);
 			
 			int function = functions[idx];
 			
@@ -68,8 +96,8 @@ public class BNetExport {
 				
 				// write each constraint
 				boolean andFirst = true;
-				for (int i=0 ; i<path.length ; i++) {
-					int cst = path[i];
+				for (int j=0 ; j<path.length ; j++) {
+					int cst = path[j];
 					if (cst < 0) {
 						continue;
 					}
@@ -79,10 +107,10 @@ public class BNetExport {
 					}
 					
 					if (cst == 0) {
-						funcBuffer.append("!"+variables[i].key);
+						funcBuffer.append("!"+variables[j].key);
 					} else {
 						// FIXME: adapt for multivalued
-						funcBuffer.append(variables[i].key.toString());
+						funcBuffer.append(variables[j].key.toString());
 					}
 					andFirst = false;
 				}
