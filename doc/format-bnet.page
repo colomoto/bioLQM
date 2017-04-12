@@ -1,0 +1,27 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-bnet">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-03-27"/>
+      <desc>Import/Export to the BoolNet format</desc>
+    </info>
+
+    <title>BoolNet format</title>
+
+    <p>Format used by <link href="http://sysbio.uni-ulm.de/?Software:BoolNet">BoolNet</link> and 
+       <link href="https://github.com/hklarner/PyBoolNet">PyBoolNet</link> tools.
+       Models are represented as a list of functions in a text file with a header line and comments.
+    </p>
+
+<code><![CDATA[
+targets, factors
+# comment line
+A, A
+B, !A
+D, A & B
+]]></code>
+
+</page>
+
