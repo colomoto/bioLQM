@@ -4,7 +4,7 @@ grammar BNet;
 header:     'targets, factors' NEWLINE+;
 comment:    '#' ~NEWLINE* NEWLINE+;
 assign:     var ',' expr NEWLINE+;
-model:      NEWLINE* comment* header comment* assign (assign | comment)*;
+model:      NEWLINE* comment* header? comment* assign (assign | comment)*;
 
 expr:       expr and expr                        # andExpr
           | expr or expr                         # orExpr
