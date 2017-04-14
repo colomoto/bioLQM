@@ -1,8 +1,7 @@
 grammar BooleanFunction;
 
 // a model can start with comments and contain empty lines anywhere
-model: comment* assign+ ;
-comment: '#' ~NEWLINE*? NEWLINE+ ;
+model: NEWLINE* assign+ ;
 assign: var ':' expr NEWLINE+ ;
 
 expr:  expr AND expr                      #andExpr
@@ -16,7 +15,8 @@ val: VALUE ;
 
 // spaces and line breaks
 WS : [' ' '\t' '\r' ]+ -> channel(HIDDEN);
-NEWLINE : '\r'? ('\n' | EOF) ;
+NEWLINE : COMMENT? '\r'? ('\n' | EOF) ;
+COMMENT: '#' ~('\r' | '\n')+;
 
 fragment LETTER: [a-zA-Z_];
 fragment ALPHA: LETTER|'_';
