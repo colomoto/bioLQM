@@ -60,16 +60,18 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 				+ "% stability constraint: a fixed node must be target in a selected prime\n"
 				+ ":- in_set(ID1), source(V,S,ID1), not in_set(ID2) : target(V,S,ID2).\n\n"
 
-				+ "% bijection constraint (bijection between solutions and trap spaces)\n"
-				+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID); hit(V2,S2) : target(V2,S2,ID).\n\n"
-
 				+ "% \"hit\" captures the stable variables and their activities.\n"
 				+ "hit(V,S) :- in_set(ID), target(V,S,ID).\n\n"
 				
 
 				+ "% Aurelien: enforce propagation\n"
-				+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID)."
+				+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID).\n\n"
 
+				
+				+ "% Detect percolated: nodes which are not part of a selected circuit\n"
+				+ "upstream(V1,V2) :- in_set(ID), target(V1,S1,ID), source(V2,S2,ID).\n"
+				+ "upstream(V1,V2) :- upstream(V1,V3), upstream(V3,V2).\n"
+				+ "percolated(V1) :- hit(V1,S), not upstream(V1,V1).\n\n"
 				
 //				+ "% cardinality constraint (enforced by \"Bounds=(1, 1)\")\n"
 //				+ ":- {hit(V,S)} 0.\n"
@@ -77,6 +79,7 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 				
 				+ "% show all (default)\n"
 				+ "#show hit/2.\n"
+				+ "#show percolated/1.\n"
 		);
 	}
 }
