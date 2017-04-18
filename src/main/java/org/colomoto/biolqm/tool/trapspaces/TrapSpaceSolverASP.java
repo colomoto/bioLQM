@@ -1,9 +1,11 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.helper.clingo.ClingoLauncher;
 import org.colomoto.biolqm.tool.implicants.Formula;
 
 public class TrapSpaceSolverASP implements TrapSpaceSolver {
@@ -12,12 +14,14 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 	private final List<NodeInfo> components;
 	private int curprime = 0;
 	
+	private final StringBuffer program = new StringBuffer();
+	
 	public TrapSpaceSolverASP(LogicalModel model) {
 		this.model = model;
 		this.components = model.getComponents();
 		
-		System.out.print("% encoding of prime implicants as hyper-arcs that consist of a unique \"target\" and (possibly) several \"sources\".\n");
-		System.out.print("% \"target\" and \"source\" are triplets that consist of a variable name, an activity and a unique arc-identifier.\n");
+		program.append("% encoding of prime implicants as hyper-arcs that consist of a unique \"target\" and (possibly) several \"sources\".\n");
+		program.append("% \"target\" and \"source\" are triplets that consist of a variable name, an activity and a unique arc-identifier.\n");
 	}
 
 	public void add_variable(int idx, Formula formula, Formula not_formula) {
@@ -35,22 +39,22 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 		int idx = formula.regulators[0];
 
 		for (int[] t: formula.toArray()) {
-			System.out.print("target(\""+target+"\", "+value+", a"+curprime + ").");
+			program.append("target(\""+target+"\", "+value+", a"+curprime + ").");
 			for (int i=0 ; i<t.length ; i++) {
 				int v = t[i];
 				if (v < 0) {
 					continue;
 				}
 				String cur = components.get( formula.regulators[i] ).getNodeID();
-				System.out.print(" source(\""+cur+"\", "+v+", a"+curprime+").");
+				program.append(" source(\""+cur+"\", "+v+", a"+curprime+").");
 			}
-			System.out.println();
+			program.append("\n");
 			curprime++;
 		}
 	}
 	
 	public void solve() {
-		System.out.print("\n\n"
+		program.append("\n\n"
 				+ "% generator: \"in_set(ID)\" specifies which arcs are chosen for a trap set (ID is unique for target(_,_,_)).\n"
 				+ "{in_set(ID) : target(V,S,ID)}.\n\n"
 
@@ -81,5 +85,12 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 				+ "#show hit/2.\n"
 				+ "#show percolated/1.\n"
 		);
+
+		ClingoLauncher launcher = new ClingoLauncher(program.toString());
+		try {
+			launcher.run();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
