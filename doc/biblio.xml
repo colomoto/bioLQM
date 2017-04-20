@@ -58,4 +58,29 @@
 		<pagenums>288-306</pagenums>
 		<biblioid class="doi">10.1007/978-3-642-33636-2_17</biblioid>
 	</biblioentry>
+	<biblioentry id="Zanudo2013">
+		<authorgroup>
+			<author><firstname>Jorge</firstname><surname>Zañudo</surname></author>
+			<author><firstname>Reka</firstname><surname>Albert</surname></author>
+		</authorgroup>
+		<title>An effective network reduction approach to find the dynamical repertoire of discrete dynamic networks</title>
+		<publisher><publishername>Chaos</publishername></publisher>
+		<volumenum>23</volumenum>
+		<pubdate>2013</pubdate>
+		<pagenums>025111</pagenums>
+		<biblioid class="doi">10.1063/1.4809777</biblioid>
+	</biblioentry>
+	<biblioentry id="Klarner2014">
+		<authorgroup>
+			<author><firstname>Hannes</firstname><surname>Klarner</surname></author>
+			<author><firstname>Alexander</firstname><surname>Bockmayr</surname></author>
+			<author><firstname>Heike</firstname><surname>Siebert</surname></author>
+		</authorgroup>
+		<title>Computing Symbolic Steady States of Boolean Networks</title>
+		<publisher><publishername>Lecture Notes in Computer Science</publishername></publisher>
+		<volumenum>Proceedings of ACRI 2014</volumenum>
+		<pubdate>2014</pubdate>
+		<pagenums>561-570</pagenums>
+		<biblioid class="doi">10.1007/978-3-319-11520-7</biblioid>
+	</biblioentry>
 </bibliography>

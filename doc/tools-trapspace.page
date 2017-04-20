@@ -1,0 +1,37 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:gloss="http://projectmallard.org/experimental/gloss/"
+      type="topic"
+      id="tools-trapspace">
+    <info>
+        <link type="guide" xref="index#tools"/>
+        <link type="guide" xref="tools#list"/>
+        <revision status="stub" date="2012-04-20"/>
+        <desc>Finding trap spaces of a logical model</desc>
+        <gloss:term id="Naldi2007" />
+    </info>
+
+    <title>Identification of trap spaces</title>
+
+    <section id="motivation">
+        <title>Motivation</title>
+        <p>Trap spaces, also called stable motifs or symbolic steady states, are parts of the dynamics from which the system can not escape,
+        (see <gloss:term xref="biblio" id="Zanudo2013">Zanudo 2013</gloss:term> and <gloss:term xref="biblio" id="klarner2014">Klarner 2014</gloss:term>).
+        Each trapspace is defined as a pattern, where some components are fixed, and others are free, such that the images of all matching states
+        also match the pattern. Each trap space contains at least one attractor, and a trap space can contain one or several smaller trap spaces.
+        The number of "terminal" trap spaces, which do not contain smaller trap spaces, is a minimal bound for the number of attractor.
+        Every model contain at least one trap space where all variables are free (the whole state space).
+        
+        The computation of trap spaces relies on the identification of positive and negative prime implicants for the functions of each component,
+        and amounts to the identification of consistent, stable groups of prime implicants, such that all fixed components are stable together.
+        
+        In bioLQM, trap spaces can be identified using ASP (relying on clingo as external solver) or directly using decision diagrams.
+        </p>
+    </section>
+
+    <section id="usage">
+        <title>Usage</title>
+        <p>TODO</p>
+    </section>
+
+</page>
+
