@@ -160,6 +160,36 @@ public class Term {
         }
         return null;
     }
+    
+    
+    public int findNextRequiredNegation(int minidx, byte[] values) {
+    	if (minidx > 0) {
+    		// remove previously set value
+    		values[minidx-1] = DontCare;
+    	} else {
+	    	// First check if this term actually needs to be negated
+	    	for (int i=0 ; i<values.length ; i++) {
+	    		if (values[i] != DontCare && values[i] != this.varVals[i] && varVals[i] != DontCare) {
+	    			// The term is already negated, just skip it
+	    			return -1;
+	    		}
+	    	}
+    	}    	
+    	// Then look for the next fixed element
+    	for (int i=minidx ; i<values.length ; i++) {
+    		if (varVals[i] != DontCare && values[i] == DontCare) {
+    			if (varVals[i] == 0) {
+    				values[i] = 1;
+    			} else {
+    				values[i] = 0;
+    			}
+    			return i;
+    		}
+    	}
+    	
+    	// No other valid negation was found
+    	return -2;
+    }
 
 
     private byte[] varVals;

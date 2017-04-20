@@ -212,5 +212,104 @@ public class Formula {
         return -1;
     }
 
+    public Formula negatePrimes() {
+    	int k = termList.size();
+    	if (k < 1) {
+    		List<Term> nterms = new ArrayList<Term>();
+    		nterms.add( new Term(new byte[] {}) );
+    		System.out.println("Negate empty formula");
+    		return new Formula(nterms);
+    	}
+    	int[] minindices = new int[k];
+    	for (int i=0 ; i<k ; i++) {
+    		minindices[i] = 0;
+    	}
+
+    	int n = termList.get(0).getNumVars();
+    	byte[] values = new byte[n];
+    	for (int i=0 ; i<n ; i++) {
+    		values[i] = Term.DontCare;
+    	}
+    	
+    	List<Term> nterms = new ArrayList<Term>();
+    	int idx = 0;
+    	while (idx < k && idx>=0) {
+    		int minidx = minindices[idx];
+    		if (minidx < 0) {
+    			// nothing more to do at this level, reset and backtrack
+				minindices[idx--] = 0;
+    			continue;
+    		}
+    		
+    		Term t = termList.get(idx);
+    		minidx = t.findNextRequiredNegation(minidx, values);
+			minindices[idx] = minidx;
+    		if (minidx >= 0) {
+    			minindices[idx]++;
+    		}
+    		if (minidx == -2) {
+    			// nothing more to do at this level, reset and backtrack
+				minindices[idx--] = 0;
+    			continue;
+    		}
+    		idx++;
+    		if (idx == k) {
+    			Term nt = new Term(values.clone());
+    			boolean isnew = true;
+    			for (int pos=0 ; pos< nterms.size() ; pos++) {
+    				Term curt = nterms.get(pos);
+    				if (isnew) {
+	    				if (curt.equals(nt)) {
+	    					isnew = false;
+	    					break;
+	    				}
+	    				if (curt.implies(nt)) {
+	    					isnew = false;
+	    					break;
+	    				}
+	    				if (nt.implies(curt)) {
+    						nterms.set(pos, nt);
+        					isnew = false;
+	    				}
+    				} else if (nt.implies(curt)) {
+    					// this term was already added, removing other covered terms
+    					nterms.remove(pos);
+    					pos--;
+    				}
+    			}
+    			if (isnew) {
+    				nterms.add(nt);
+    			}
+    			idx--;
+    		}
+    	}
+    	Formula f = new Formula(nterms, regulators);
+    	return f;
+    }
+    
+    public boolean equals(Formula f) {
+    	if (termList.size() != f.termList.size()) {
+    		return false;
+    	}
+    	return termList.containsAll(f.termList);
+    }
+    
+    
+    public static void main(String[] args) {
+    	System.out.println("Go primes");
+    	int[][] states = {
+    			{1,1,0},	
+    			{1,1,1},	
+    			{0,1,1},	
+    			{1,0,1},	
+    	};
+    	Formula f = readintArray(states);
+    	f.reduceToPrimeImplicants();
+    	System.out.println(f);
+    	
+    	Formula nf = f.negatePrimes();
+    	System.out.println(nf);
+    	
+    }
 }
 

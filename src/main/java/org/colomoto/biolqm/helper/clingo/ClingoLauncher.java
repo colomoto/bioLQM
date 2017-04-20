@@ -54,17 +54,5 @@ public class ClingoLauncher {
 			}
 		}
 	}
-	
-//	private static ClingoParser getParser(CharStream input, ErrorListener errors) {
-//		ClingoLexer lexer = new ClingoLexer(input);
-//		TokenStream tokens = new CommonTokenStream(lexer);
-//		ClingoParser parser = new ClingoParser(tokens);
-//
-//		parser.removeErrorListeners();
-//		parser.addErrorListener(errors);
-//
-//		return parser;
-//	}
-
 }
 

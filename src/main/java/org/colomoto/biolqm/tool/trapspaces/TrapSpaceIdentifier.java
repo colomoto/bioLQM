@@ -31,6 +31,7 @@ public class TrapSpaceIdentifier {
 	        ReductionSettings settings = reduceService.getSettings();
 	        settings.handleFixed = true;
 	        settings.purgeFixed = true;
+	        settings.handleOutputs = false;
 	    	model = reduceService.getModifier(model, settings).getModifiedModel();
         }
     	this.model = model;
@@ -53,10 +54,14 @@ public class TrapSpaceIdentifier {
         		continue;
         	}
         	Formula formula = primer.getPrimes(f, 1);
-        	Formula not_formula = primer.getPrimes(f, 0);
-//        	Formula not_formula = null;
+        	Formula not_formula = formula.negatePrimes();
+//        	Formula not_formula2 = primer.getPrimes(f, 0);
+//        	if (!not_formula.equals(not_formula2)) {
+//        		System.err.println("negative prime problem\n"+ not_formula + not_formula2);
+//        	}
         	solver.add_variable(i, formula, not_formula);
         }
+        
         solver.solve();
 	}
 

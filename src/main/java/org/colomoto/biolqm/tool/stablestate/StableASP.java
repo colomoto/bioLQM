@@ -1,9 +1,11 @@
 package org.colomoto.biolqm.tool.stablestate;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.helper.clingo.ClingoLauncher;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -16,7 +18,7 @@ public class StableASP {
 		this.model = model;
 	}
 	
-	public void run() {
+	public String getProgram() {
 		StableOperation sop = new StableOperation();
 		MDDManager ddmanager = model.getMDDManager();
 		int[] functions = model.getLogicalFunctions();
@@ -27,36 +29,47 @@ public class StableASP {
 			stabilities[i] = sop.getStable(ddmanager, 1, functions[i], vars[i]);
 		}
 		
-		System.out.print("{");
+		StringBuffer program = new StringBuffer("{");
 		String prefix="v";
 		for (MDDVariable v: vars) {
-			System.out.print(prefix+v.key);
+			program.append(prefix+v.key);
 			prefix=";v";
 		}
-		System.out.println("}.\n");
+		program.append("}.\n\n");
 		
 		PathSearcher searcher = new PathSearcher(ddmanager, 0);
 		for (int i=0 ; i<functions.length ; i++) {
 			int[] path = searcher.setNode(stabilities[i]);
 
-			System.out.println("% Constraints for "+vars[i].key);
+			program.append("% Constraints for "+vars[i].key + "\n");
 			for (int v: searcher) {
-				System.out.print(":-");
+				program.append(":-");
 				prefix=" ";
 				for (int j=0 ; j<path.length ; j++) {
 					int k = path[j];
 					if (k<0) {
 						continue;
 					}
-					System.out.print(prefix);
+					program.append(prefix);
 					prefix = ", ";
 					if (k==0) {
-						System.out.print("not ");
+						program.append("not ");
 					}
-					System.out.print("v"+vars[j].key);
+					program.append("v"+vars[j].key);
 				}
-				System.out.println(".");
+				program.append(".\n");
 			}
+		}
+		return program.toString();
+	}
+	
+	public void run() {
+		String program = getProgram();
+		ClingoLauncher launcher = new ClingoLauncher(program);
+		try {
+			launcher.run();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
