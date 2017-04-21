@@ -23,11 +23,19 @@ public class RestrictedPathSearcher implements Iterable<Integer> {
 	
 	byte[] term;
 	
+	public RestrictedPathSearcher(MDDManager ddmanager) {
+		this.ddmanager = ddmanager;
+		this.searcher = new PathSearcher(ddmanager);
+		this.path = searcher.getPath();
+	}
+	
+	
 	public RestrictedPathSearcher(MDDManager ddmanager, int value) {
 		this.ddmanager = ddmanager;
 		this.searcher = new PathSearcher(ddmanager, value);
 		this.path = searcher.getPath();
 	}
+	
 	
 	/**
 	 * Retrieve the list of regulators on which this searcher is restricted.
