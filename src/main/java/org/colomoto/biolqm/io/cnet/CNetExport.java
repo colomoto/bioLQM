@@ -40,17 +40,16 @@ public class CNetExport {
 
 		Writer writer = new OutputStreamWriter(out);
       writer.write("# model in CNET format, used by the tool BNS of E. Dubrova\n");
-      writer.write("# see https://people.kth.se/~dubrova/bns.html");
+      writer.write("# see https://people.kth.se/~dubrova/bns.html\n");
       writer.write("\n");
       
 		int[] functions = model.getLogicalFunctions();     
       
       List<NodeInfo> components = model.getComponents();
       
+      writer.write(".v "+components.size()+"\n");
       writer.write("# component order:\n");
       writer.write("# "+components+"\n");
-      writer.write("\n");
-      writer.write(".v "+components.size());
       writer.write("\n");
       
       RestrictedPathSearcher implicants = new RestrictedPathSearcher(ddmanager);
