@@ -1,15 +1,28 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.helper.clingo.ClingoLauncher;
+import org.colomoto.biolqm.helper.clingo.ClingoResult;
+import org.colomoto.biolqm.helper.clingo.ClingoResultHandler;
 import org.colomoto.biolqm.tool.implicants.Formula;
 
-public class TrapSpaceSolverASP implements TrapSpaceSolver {
+/**
+ * Use the clingo ASP solver to identify trap spaces.
+ * 
+ * @author Aurelien Naldi
+ */
+public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler {
 
+	private static boolean showPercolations = true;
+	
 	private final LogicalModel model;
 	private final List<NodeInfo> components;
 	private int curprime = 0;
@@ -68,7 +81,7 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 				+ "hit(V,S) :- in_set(ID), target(V,S,ID).\n\n"
 				
 
-				+ "% Aurelien: enforce propagation\n"
+				+ "% Enforce propagation\n"
 				+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID).\n\n"
 
 				
@@ -86,11 +99,67 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver {
 				+ "#show percolated/1.\n"
 		);
 
-		ClingoLauncher launcher = new ClingoLauncher(program.toString());
+		ClingoLauncher launcher = new ClingoLauncher(this, program.toString());
 		try {
 			launcher.run();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void handle(ClingoResult r) {
+		if (r == null) {
+			return;
+		}
+		
+		Set<String> percolated = new HashSet<String>();
+		Map<String,Integer> hit = new HashMap<String,Integer>();
+		List<String[]> lmatches = r.get("percolated");
+		if (lmatches != null) {
+			for (String[] t: lmatches) {
+				percolated.add(t[0]);
+			}
+		}
+		lmatches = r.get("hit");
+		if (lmatches != null) {
+			for (String[] t: lmatches) {
+				hit.put(t[0], Integer.parseInt(t[1]));
+			}
+		}
+		
+		int[] pattern = new int[components.size()];
+		boolean[] isPercolated = new boolean[pattern.length];
+		for (int idx=0 ; idx<pattern.length ; idx++) {
+			String uid = components.get(idx).getNodeID();
+			
+			if (hit.containsKey(uid)) {
+				pattern[idx] = hit.get(uid);
+				isPercolated[idx] = percolated != null && percolated.contains(uid);
+			} else {
+				pattern[idx] = -1;
+				isPercolated[idx] = false;
+			}
+		}
+		
+		// print the result
+		int idx = 0;
+		for (int v: pattern) {
+			if (v < 0) {
+				System.out.print("-");
+			} else {
+				System.out.print(v);
+			}
+			if (showPercolations) {
+				if (isPercolated[idx]) {
+					System.out.print("'");
+				} else {
+					System.out.print(" ");
+				}
+			}
+			idx++;
+		}
+		System.out.println();
+	}
+	
 }

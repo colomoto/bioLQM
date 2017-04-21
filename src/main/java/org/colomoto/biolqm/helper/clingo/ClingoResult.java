@@ -61,6 +61,10 @@ public class ClingoResult {
 		content.get(key).add(args);
 	}
 	
+	public List<String[]> get(String group) {
+		return content.get(group);
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for (String key: content.keySet()) {

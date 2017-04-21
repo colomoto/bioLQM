@@ -32,7 +32,11 @@ public class StableStateTool extends AbstractTool {
             }
             for (int v: psearcher) {
                 for (int i: path) {
-                    System.out.print(i+" ");
+                	if (i<0) {
+                		System.out.print("-");
+                	} else {
+                		System.out.print(i);
+                	}
                 }
                 System.out.println();
             }

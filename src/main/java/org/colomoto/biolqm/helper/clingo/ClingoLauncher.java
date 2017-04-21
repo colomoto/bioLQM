@@ -17,9 +17,11 @@ public class ClingoLauncher {
 	ProcessBuilder pb = new ProcessBuilder(CLINGO, "-n", "0");
 	
 	private final String program;
+	private final ClingoResultHandler handler;
 	
-	public ClingoLauncher(String program) {
+	public ClingoLauncher(ClingoResultHandler handler, String program) {
 		this.program = program;
+		this.handler = handler;
 	}
 
 	public void run() throws IOException {
@@ -46,7 +48,7 @@ public class ClingoLauncher {
 			if (next_is_solution) {
 				next_is_solution = false;
 				ClingoResult result = new ClingoResult(line);
-				System.out.println(result);
+				handler.handle(result);
 				continue;
 			}
 			if (line.startsWith("Answer:")) {

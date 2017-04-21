@@ -10,6 +10,11 @@ import org.colomoto.biolqm.tool.stablestate.StructuralNodeOrderer;
 import net.sf.javabdd.BDD;
 import net.sf.javabdd.BDDFactory;
 
+/**
+ * Use BDDs to identify trapspaces.
+ * 
+ * @author Aurelien Naldi
+ */
 public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 
 	
@@ -18,9 +23,6 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	private StructuralNodeOrderer order;
 	private List<NodeInfo> components;
 
-
-	private boolean toasp = false;
-	
 	public TrapSpaceSolverBDD(LogicalModel model) {
 		int nvar = model.getComponents().size();
 		jbdd = BDDFactory.init("java", 50000, 500);
@@ -63,58 +65,34 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	}
 	
 	public void solve() {
-		if (toasp) {
-			solveASP();
-			return;
-		}
 		BDD result = jbdd.one();
 		for (int idx: order) {
 			BDD next = constraints[idx];
 			result.andWith(next);
 		}
-		
 		List<byte[]> l = result.allsat();
 		for (byte[] b: l) {
 			for (int idx=0 ; idx<components.size() ; idx++) {
 				int vidx = 2*idx;
 				if (b[vidx] > 0) {
-					if (b[vidx+1] > 0) {
-						System.out.println("ERROR("+components.get(idx)+") ");
-					} else {
-						System.out.print(components.get(idx)+":1 ");
-					}
+					System.out.print(1);
 				} else if (b[vidx+1] > 0) {
-					System.out.print(components.get(idx)+":0 ");
+					System.out.print(0);
 					
+				} else if (b[vidx] < 0) {
+					if (b[vidx+1] < 0) {
+						System.out.print("*");
+					} else {
+						System.out.print("+");
+					}
+				} else if (b[vidx+1] < 0) {
+ 					System.out.print("/");
+				} else {
+ 					System.out.print("-");
 				}
 			}
 			System.out.println();
 		}
 	}
-	
-	private void solveASP() {
-		
-		System.out.print("{");
-		String prefix="";
-		for (NodeInfo ni: components) {
-			System.out.print(prefix+"t_"+ni.getNodeID());
-			prefix=";";
-			System.out.print(prefix+"f_"+ni.getNodeID());
-		}
-		System.out.println("}.\n");
 
-		
-		for (int idx: order) {
-			BDD next = constraints[idx].not();
-			
-			List<byte[]> l = next.allsat();
-			for (byte[] b: l) {
-				for (byte v: b) {
-					System.out.print(v);
-				}
-				System.out.println();
-			}
-		}
-		
-	}
 }
