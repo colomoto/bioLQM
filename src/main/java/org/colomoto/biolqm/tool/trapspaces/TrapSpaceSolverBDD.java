@@ -56,6 +56,26 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	@Override
 	public void add_fixed(int idx, int value) {
 		// TODO: add BDD for fixed components
+		int vidx = 2*idx;
+		BDD free = jbdd.nithVar(vidx).andWith(jbdd.nithVar(vidx+1));
+		BDD active = jbdd.ithVar(vidx).andWith(jbdd.nithVar(vidx+1));
+		BDD inactive = jbdd.nithVar(vidx).andWith(jbdd.ithVar(vidx+1));
+
+		BDD f_active, f_inactive;
+		if (value == 0) {
+			f_active = jbdd.zero();
+			f_inactive = jbdd.one();
+		} else {
+			f_active = jbdd.one();
+			f_inactive = jbdd.zero();
+		}
+		
+		if (percolate) {
+			free.andWith(f_inactive.not()).andWith(f_active.not());
+		}
+		active.andWith(f_active);
+		inactive.andWith( f_inactive );
+		constraints[idx] = free.orWith(active).orWith(inactive);
 	}
 	
 	
@@ -86,6 +106,7 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 		List<byte[]> l = result.allsat();
 		for (byte[] b: l) {
 			byte[] s = new byte[nvar];
+			boolean[] variants = new boolean[nvar];
 			for (int idx=0 ; idx<nvar ; idx++) {
 				int vidx = 2*idx;
 				if (b[vidx] > 0) {
@@ -94,18 +115,21 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 					s[idx] = 0;
 				} else if (b[vidx] < 0) {
 					if (b[vidx+1] < 0) {
-						s[idx] = -20;
+						s[idx] = -1;
+						variants[idx] = true;
 					} else {
-						s[idx] = -11;
+						s[idx] = 1;
+						variants[idx] = true;
 					}
 				} else if (b[vidx+1] < 0) {
-					s[idx] = -10;
+					s[idx] = 0;
+					variants[idx] = true;
 				} else {
 					s[idx] = -1;
 				}
 			}
 			
-			solutions.add(new TrapSpace(s));
+			solutions.add(new TrapSpace(s, null, variants));
 		}
 	}
 

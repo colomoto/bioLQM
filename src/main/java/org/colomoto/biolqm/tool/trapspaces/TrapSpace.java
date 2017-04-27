@@ -16,10 +16,10 @@ public class TrapSpace {
 		this.length = pattern.length;
 		this.pattern = pattern;
 		if (percolated == null) {
-			this.percolated = new boolean[length];
-		} else {
-			this.percolated = percolated;
+			percolated = new boolean[length];
 		}
+		this.percolated = percolated;
+		
 		if (variants == null) {
 			this.variants = new boolean[length];
 		} else {
@@ -31,7 +31,7 @@ public class TrapSpace {
 			if (pattern[i] < 0) {
 				nfree++;
 			} else if (percolated[i]) {
-				
+				npercolated++;
 			}
 		}
 		this.nfree = nfree;
@@ -43,7 +43,11 @@ public class TrapSpace {
     	for (int i=0 ; i<length ; i++) {
     		byte v = pattern[i];
     		if (v < 0) {
-    			s += "- ";
+    			if (variants[i]) {
+    				s += "-~";
+    			} else {
+    				s += "- ";
+    			}
     		} else {
     			s += v;
     			if (percolated[i]) {
