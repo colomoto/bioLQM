@@ -11,12 +11,26 @@ import org.mangosdk.spi.ProviderFor;
 @ProviderFor(LogicalModelTool.class)
 public class StableStateTool extends AbstractTool {
 
+	public static final String HELP_LINE = "Search stable states";
+	public static final String HELP_MESSAGE = "arguments: asp";
+
 	public StableStateTool() {
-		super("stable", "Search stable states", true);
+		super("stable", HELP_LINE, HELP_MESSAGE, true);
 	}
 
 	@Override
-	public void run(LogicalModel model) {
+	public void run(LogicalModel model, String[] parameters) {
+		for (String s: parameters) {
+			if ("asp".equalsIgnoreCase(s)) {
+				runASP(model);
+				return;
+			}
+		}
+		
+		runMDD(model);
+	}
+	
+	public void runMDD(LogicalModel model) {
 		StableStateSearcher ssearcher = new StableStateSearcher(model);
         try {
             int stable = ssearcher.call();
@@ -45,4 +59,8 @@ public class StableStateTool extends AbstractTool {
         }
 	}
 
+	private void runASP(LogicalModel model) {
+		StableASP asp = new StableASP(model);
+		asp.run();
+	}
 }

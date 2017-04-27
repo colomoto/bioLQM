@@ -107,7 +107,9 @@ public class LQMLauncher {
 			if (tool == null) {
 				throw new RuntimeException("Unknown tool: "+toolID);
 			}
-			tool.run(model);
+			String[] parameters = new String[args.length - argIdx];
+			System.arraycopy(args, argIdx, parameters, 0, parameters.length);
+			tool.run(model, parameters);
 			return;
 		}
 

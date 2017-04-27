@@ -16,11 +16,11 @@ import org.mangosdk.spi.ProviderFor;
 public class AttractorTool extends AbstractTool {
 
 	public AttractorTool() {
-		super("attractor", "Find synchronous attractors using SAT", false);
+		super("attractor", "Find synchronous attractors using SAT", "", false);
 	}
 	
 	@Override
-	public void run(LogicalModel model) {
+	public void run(LogicalModel model, String[] parameters) {
 		SATAttractorFinder finder = new SATAttractorFinder(model);
 		finder.run();
 	}

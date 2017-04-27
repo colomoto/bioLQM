@@ -1,5 +1,8 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.booleanize.ModelBooleanizerService;
@@ -19,8 +22,12 @@ public class TrapSpaceIdentifier {
 	private final MDDManager ddmanager;
 	private final MDD2PrimeImplicants primer;
 	private TrapSpaceSolver solver;
-
-	public TrapSpaceIdentifier(LogicalModel model, boolean bdd) {
+	
+	private final TrapSpaceSettings settings;
+	
+	public TrapSpaceIdentifier(LogicalModel model, TrapSpaceSettings settings) {
+		this.settings = settings;
+		
 		// Ensure that the model is booleanized
         if (!model.isBoolean()) {
         	model = boolService.getModifiedModel(model);
@@ -28,29 +35,30 @@ public class TrapSpaceIdentifier {
         
         if (reduce) {
 	        // reduce boring fixed components
-	        ReductionSettings settings = reduceService.getSettings();
-	        settings.handleFixed = true;
-	        settings.purgeFixed = true;
-	        settings.handleOutputs = false;
-	    	model = reduceService.getModifier(model, settings).getModifiedModel();
+	        ReductionSettings rsettings = reduceService.getSettings();
+	        rsettings.handleFixed = true;
+	        rsettings.purgeFixed = true;
+	        rsettings.handleOutputs = false;
+	    	model = reduceService.getModifier(model, rsettings).getModifiedModel();
         }
     	this.model = model;
         
         this.ddmanager = model.getMDDManager();
         this.primer = new MDD2PrimeImplicants(ddmanager);
-        if (bdd) {
-            this.solver = new TrapSpaceSolverBDD(model);
+        if (settings.bdd) {
+            this.solver = new TrapSpaceSolverBDD(model, settings);
         } else {
-        	this.solver = new TrapSpaceSolverASP(model);
+        	this.solver = new TrapSpaceSolverASP(model, settings);
         }
 	}
 	
-	public void run() {
+	public void loadModel() {
 		int[] functions = model.getLogicalFunctions();
         for (int i=0 ; i<functions.length ; i++ ) {
         	int f = functions[i];
         	if (f < ddmanager.getLeafCount()) {
-        		// TODO: handle fixed nodes
+        		// special handling for fixed nodes
+            	solver.add_fixed(i, f);
         		continue;
         	}
         	Formula formula = primer.getPrimes(f, 1);
@@ -61,8 +69,50 @@ public class TrapSpaceIdentifier {
 //        	}
         	solver.add_variable(i, formula, not_formula);
         }
+	}
+
+	public List<TrapSpace> getSolutions() {
+		loadModel();
+        TrapSpaceList solutions = new TrapSpaceList(settings);
+        solver.solve(solutions);
         
-        solver.solve();
+        return solutions;
+	}
+
+	public static List<TrapSpace> selectAttractors(List<TrapSpace> solutions) {
+
+		List<TrapSpace> selected = new ArrayList<TrapSpace>();
+		int n = solutions.size();
+		for (int i=0 ; i<n ; i++) {
+			boolean keep = true;
+			TrapSpace s1 = solutions.get(i);
+			for (int j=0 ; j<n ; j++) {
+				if (i==j) {
+					continue;
+				}
+				if (s1.contains(solutions.get(j))) {
+					keep = false;
+					break;
+				}
+			}
+			if (keep) {
+				selected.add(s1);
+			}
+		}
+		return selected;
+	}
+	
+	public void run() {
+		if (settings.showasp) {
+			loadModel();
+			System.out.println( ((TrapSpaceSolverASP)solver).getASP() );
+			return;
+		}
+		
+		List<TrapSpace> solutions = getSolutions();
+        for (TrapSpace s: solutions) {
+        	System.out.println(s);
+        }
 	}
 
 }

@@ -9,15 +9,17 @@ abstract public class AbstractTool implements LogicalModelTool {
 
 	private final String formatID;
 	private final String formatName;
+	private final String helpMessage;
 	private final boolean supportsMultivalued;
 	
 	protected AbstractTool(String id, String name) {
-		this(id, name, false);
+		this(id, name, "", false);
 	}
 	
-	protected AbstractTool(String id, String name, boolean supportsMultivalued) {
+	protected AbstractTool(String id, String name, String helpMessage, boolean supportsMultivalued) {
 		this.formatID = id;
 		this.formatName = name;
+		this.helpMessage = helpMessage;
 		this.supportsMultivalued = supportsMultivalued;
 	}
 	
@@ -29,6 +31,10 @@ abstract public class AbstractTool implements LogicalModelTool {
 	@Override
 	public String getName() {
 		return formatName;
+	}
+	
+	public String getHelp() {
+		return helpMessage;
 	}
 
 	@Override

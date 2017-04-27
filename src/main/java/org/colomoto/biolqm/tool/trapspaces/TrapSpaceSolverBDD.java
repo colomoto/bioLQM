@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
@@ -17,14 +18,16 @@ import net.sf.javabdd.BDDFactory;
  */
 public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 
-	
+	private final int nvar;
 	private final BDDFactory jbdd;
 	private final BDD[] constraints;
 	private StructuralNodeOrderer order;
 	private List<NodeInfo> components;
+	private boolean percolate;
 
-	public TrapSpaceSolverBDD(LogicalModel model) {
-		int nvar = model.getComponents().size();
+	public TrapSpaceSolverBDD(LogicalModel model, TrapSpaceSettings settings) {
+		this.percolate = settings.percolate;
+		nvar = model.getComponents().size();
 		jbdd = BDDFactory.init("java", 50000, 500);
 		jbdd.setVarNum(nvar*2);
 		constraints = new BDD[nvar];
@@ -32,6 +35,7 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 		components = model.getComponents();
 	}
 	
+	@Override
 	public void add_variable(int idx, Formula formula, Formula not_formula) {
 		
 		int[] regulators = formula.regulators;
@@ -41,11 +45,19 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 		BDD inactive = jbdd.nithVar(vidx).andWith(jbdd.ithVar(vidx+1));
 		BDD f_active = formula2BDD(regulators, formula.toArray());
 		BDD f_inactive = formula2BDD(regulators, not_formula.toArray());
-		free.andWith(f_inactive.not()).andWith(f_active.not());
+		if (percolate) {
+			free.andWith(f_inactive.not()).andWith(f_active.not());
+		}
 		active.andWith(f_active);
 		inactive.andWith( f_inactive );
 		constraints[idx] = free.orWith(active).orWith(inactive);
 	}
+	
+	@Override
+	public void add_fixed(int idx, int value) {
+		// TODO: add BDD for fixed components
+	}
+	
 	
 	private BDD formula2BDD(int[] regulators, int[][] terms) {
 		BDD cst = jbdd.zero();
@@ -64,7 +76,8 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 		return cst;
 	}
 	
-	public void solve() {
+	@Override
+	public void solve(TrapSpaceList solutions) {
 		BDD result = jbdd.one();
 		for (int idx: order) {
 			BDD next = constraints[idx];
@@ -72,26 +85,27 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 		}
 		List<byte[]> l = result.allsat();
 		for (byte[] b: l) {
-			for (int idx=0 ; idx<components.size() ; idx++) {
+			byte[] s = new byte[nvar];
+			for (int idx=0 ; idx<nvar ; idx++) {
 				int vidx = 2*idx;
 				if (b[vidx] > 0) {
-					System.out.print(1);
+					s[idx] = 1;
 				} else if (b[vidx+1] > 0) {
-					System.out.print(0);
-					
+					s[idx] = 0;
 				} else if (b[vidx] < 0) {
 					if (b[vidx+1] < 0) {
-						System.out.print("*");
+						s[idx] = -20;
 					} else {
-						System.out.print("+");
+						s[idx] = -11;
 					}
 				} else if (b[vidx+1] < 0) {
- 					System.out.print("/");
+					s[idx] = -10;
 				} else {
- 					System.out.print("-");
+					s[idx] = -1;
 				}
 			}
-			System.out.println();
+			
+			solutions.add(new TrapSpace(s));
 		}
 	}
 

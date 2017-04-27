@@ -21,35 +21,38 @@ import org.colomoto.biolqm.tool.implicants.Formula;
  */
 public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler {
 
-	private static boolean showPercolations = true;
-	
 	private final LogicalModel model;
 	private final List<NodeInfo> components;
 	private int curprime = 0;
+	private TrapSpaceList solutions;
+	TrapSpaceSettings settings;
 	
 	private final StringBuffer program = new StringBuffer();
 	
-	public TrapSpaceSolverASP(LogicalModel model) {
+	public TrapSpaceSolverASP(LogicalModel model, TrapSpaceSettings settings) {
 		this.model = model;
+		this.settings = settings;
 		this.components = model.getComponents();
 		
 		program.append("% encoding of prime implicants as hyper-arcs that consist of a unique \"target\" and (possibly) several \"sources\".\n");
 		program.append("% \"target\" and \"source\" are triplets that consist of a variable name, an activity and a unique arc-identifier.\n");
 	}
 
+	@Override
 	public void add_variable(int idx, Formula formula, Formula not_formula) {
 		String s_target = components.get(idx).getNodeID();
 		add_prime(s_target, 1, formula);
 		add_prime(s_target, 0, not_formula);
-		
-//		System.out.println(idx);
-//		System.out.println(formula);
-//		System.out.println(not_formula);
-//		System.out.println();
+	}
+
+	@Override
+	public void add_fixed(int idx, int value) {
+		String s_target = components.get(idx).getNodeID();
+		program.append("target(\""+s_target+"\", "+value+", a"+curprime + ").\n");
+		curprime++;
 	}
 	
 	private void add_prime(String target, int value, Formula formula) {
-		int idx = formula.regulators[0];
 
 		for (int[] t: formula.toArray()) {
 			program.append("target(\""+target+"\", "+value+", a"+curprime + ").");
@@ -66,7 +69,7 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 		}
 	}
 	
-	public void solve() {
+	public String getASP() {
 		program.append("\n\n"
 				+ "% generator: \"in_set(ID)\" specifies which arcs are chosen for a trap set (ID is unique for target(_,_,_)).\n"
 				+ "{in_set(ID) : target(V,S,ID)}.\n\n"
@@ -79,27 +82,48 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 
 				+ "% \"hit\" captures the stable variables and their activities.\n"
 				+ "hit(V,S) :- in_set(ID), target(V,S,ID).\n\n"
-				
+				);
 
-				+ "% Enforce propagation\n"
-				+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID).\n\n"
+		if (settings.percolate) {
+			program.append(
+					"% Enforce propagation\n"
+					+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID).\n\n"
+	
+					+ "% Detect percolated: nodes which are not part of a selected circuit\n"
+					+ "upstream(V1,V2) :- in_set(ID), target(V1,S1,ID), source(V2,S2,ID).\n"
+					+ "upstream(V1,V2) :- upstream(V1,V3), upstream(V3,V2).\n"
+					+ "percolated(V1) :- hit(V1,S), not upstream(V1,V1).\n\n"
+					
+					
+					);
+		} else {
+			program.append(
+					"% bijection constraint (bijection between solutions and trap spaces), avoids duplicate results\n"
+				  + "in_set(ID) :- target(V,S,ID), hit(V,S), hit(V1,S1) : source(V1,S1,ID).\n\n"
+			);
+		}
+		
+//		+ "% cardinality constraint (enforced by \"Bounds=(1, 1)\")\n"
+//		+ ":- {hit(V,S)} 0.\n"
+//		+ ":- 25 {hit(V,S)}.\n\n"
 
-				
-				+ "% Detect percolated: nodes which are not part of a selected circuit\n"
-				+ "upstream(V1,V2) :- in_set(ID), target(V1,S1,ID), source(V2,S2,ID).\n"
-				+ "upstream(V1,V2) :- upstream(V1,V3), upstream(V3,V2).\n"
-				+ "percolated(V1) :- hit(V1,S), not upstream(V1,V1).\n\n"
-				
-//				+ "% cardinality constraint (enforced by \"Bounds=(1, 1)\")\n"
-//				+ ":- {hit(V,S)} 0.\n"
-//				+ ":- 25 {hit(V,S)}.\n\n"
-				
-				+ "% show all (default)\n"
+		program.append(
+				"% show all (default)\n"
 				+ "#show hit/2.\n"
-				+ "#show percolated/1.\n"
-		);
+				);
 
-		ClingoLauncher launcher = new ClingoLauncher(this, program.toString());
+		if (settings.percolate) {
+			program.append("#show percolated/1.\n");
+		}
+		
+		return program.toString();
+	}
+	
+	@Override
+	public void solve(TrapSpaceList solutions) {
+		String asp = getASP();
+		this.solutions = solutions;
+		ClingoLauncher launcher = new ClingoLauncher(this, asp);
 		try {
 			launcher.run();
 		} catch (IOException e) {
@@ -128,38 +152,25 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 			}
 		}
 		
-		int[] pattern = new int[components.size()];
+		byte[] pattern = new byte[components.size()];
 		boolean[] isPercolated = new boolean[pattern.length];
 		for (int idx=0 ; idx<pattern.length ; idx++) {
 			String uid = components.get(idx).getNodeID();
 			
 			if (hit.containsKey(uid)) {
-				pattern[idx] = hit.get(uid);
-				isPercolated[idx] = percolated != null && percolated.contains(uid);
+				pattern[idx] = hit.get(uid).byteValue();
+				if (percolated != null && percolated.contains(uid)) {
+					isPercolated[idx] = true;
+				} else {
+					isPercolated[idx] = false;
+				}
 			} else {
 				pattern[idx] = -1;
 				isPercolated[idx] = false;
 			}
 		}
 		
-		// print the result
-		int idx = 0;
-		for (int v: pattern) {
-			if (v < 0) {
-				System.out.print("-");
-			} else {
-				System.out.print(v);
-			}
-			if (showPercolations) {
-				if (isPercolated[idx]) {
-					System.out.print("'");
-				} else {
-					System.out.print(" ");
-				}
-			}
-			idx++;
-		}
-		System.out.println();
+		solutions.add(new TrapSpace(pattern, isPercolated, null));
 	}
 	
 }

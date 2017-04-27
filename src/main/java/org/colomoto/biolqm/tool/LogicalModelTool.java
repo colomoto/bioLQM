@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.tool;
 
-import java.io.IOException;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.Service;
 
@@ -25,6 +23,6 @@ public interface LogicalModelTool extends Service {
 	 * 
 	 * @param model the model to use
 	 */
-	void run(LogicalModel model);
+	void run(LogicalModel model, String[] parameters);
 
 }
