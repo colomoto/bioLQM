@@ -170,7 +170,7 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 			}
 		}
 		
-		solutions.add(new TrapSpace(pattern, isPercolated, null));
+		solutions.add(new TrapSpace(pattern, isPercolated));
 	}
 	
 }

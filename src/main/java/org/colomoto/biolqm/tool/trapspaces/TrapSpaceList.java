@@ -1,16 +1,80 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class TrapSpaceList extends ArrayList<TrapSpace> {
 
 	public final boolean terminal;
-	public final boolean tree;
 	
 	public TrapSpaceList(TrapSpaceSettings settings) {
 		this.terminal = settings.terminal;
-		this.tree = settings.tree;
+	}
+
+	public boolean addPattern(byte[] pattern, boolean[] variant) {
+		if (terminal) {
+			// FIXME: in fact this case may deserve some unfolding
+			return add( new TrapSpace(pattern));
+		}
+		
+		if (variant != null) {
+			int nvariants = 0;
+			for (boolean b: variant) {
+				if (b) {
+					nvariants++;
+				}
+			}
+			if (nvariants > 0) {
+				return unfold(pattern, variant, nvariants);
+			}
+		}
+		return add( new TrapSpace(pattern));
+	}
+	
+	private boolean unfold(byte[] pattern, boolean[] variant, int nvariants) {
+		byte[] cur = pattern.clone();
+		int[] jokers = new int[nvariants];
+		int k = 0;
+		for (int i=0 ; i<variant.length ; i++) {
+			if (variant[i]) {
+				jokers[k++] = i;
+				cur[i] = -1;
+			}
+		}
+
+		add( new TrapSpace(cur.clone()));
+
+		int curj = 0;
+		while (curj < nvariants) {
+			int pos = jokers[curj];
+			byte curv = cur[pos];
+			byte target = pattern[pos];
+			boolean changed = false;
+			if (target < 0) {
+				if (curv == -1 ) {
+					cur[pos] = 0;
+					changed = true;
+				} else if (curv == 0) {
+					cur[pos] = 1;
+					changed = true;
+				}
+			} else if (curv != target) {
+				cur[pos] = target;
+				changed = true;
+			}
+
+			if (changed) {
+				for (int j=0 ; j<curj ; j++) {
+					cur[jokers[j]] = -1;
+				}
+				add( new TrapSpace(cur.clone()));
+				curj = 0;
+			} else {
+				curj++;
+			}
+		}
+		return true;
 	}
 	
 	public boolean add(TrapSpace t) {
@@ -43,13 +107,104 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 			return super.add(t);
 		}
 		
+		return super.add(t);
+	}
+	
+	public List<Integer>[] getInclusiontree() {
 		
-		if (tree) {
-			// TODO: build inclusion tree as we go
-			return super.add(t);
+		int n = size();
+		List<Integer> roots = new ArrayList<Integer>();
+		List<Integer>[] inclusions = new List[n];
+		for (int i=0 ; i<n ; i++) {
+			TrapSpace t = get(i);
+			place(t,i, roots, inclusions);
+		}
+		return inclusions;
+	}
+
+	/**
+	 * The current trapspace is not included in the parent, but may include one of the children.
+	 * TODO: detect incompatibilities to avoid visiting all branches
+	 */
+	private void lookup(TrapSpace t, int idx, List<Integer> roots, List<Integer>[] inclusions) {
+		List<Integer> children = inclusions[idx];
+		for (Integer i: roots) {
+			TrapSpace o = get(i);
+			if (t.contains(o)) {
+				if (children == null) {
+					children = new ArrayList<Integer>();
+					inclusions[idx] = children;
+				}
+				if (!children.contains(i)) {
+					children.add(i);
+				}
+			} else {
+				List<Integer> nexts = inclusions[i];
+				if (nexts != null) {
+					lookup(t, idx, nexts, inclusions);
+				}
+			}
+		}
+	}
+
+	private void place(TrapSpace t, int idx, List<Integer> roots, List<Integer>[] inclusions) {
+		if (roots.contains(idx)) {
+			return;
 		}
 		
-		return super.add(t);
+		boolean included = false;
+		for (Integer i: roots) {
+			TrapSpace o = get(i);
+			List<Integer> nexts = inclusions[i];
+			if (o.contains(t)) {
+				included = true;
+				if (nexts == null) {
+					nexts = new ArrayList<Integer>();
+					inclusions[i] = nexts;
+				}
+				place(t, idx, nexts, inclusions);
+			} else if (nexts != null) {
+				lookup(t, idx, nexts, inclusions);
+			}
+		}
+		
+		if (included) {
+			return;
+		}
+		
+		int n = roots.size();
+		int s = n;
+		for (int ii=0 ; ii<n ; ii++) {
+			Integer i = roots.get(ii);
+			TrapSpace o = get(i);
+			List<Integer> nexts = inclusions[idx];
+			if (t.contains(o)) {
+				if (nexts == null) {
+					nexts = new ArrayList<Integer>();
+					inclusions[idx] = nexts;
+				}
+				place(o, i, nexts, inclusions);
+				n--;
+				roots.set(ii, roots.get(n));
+				ii--;
+			} else if (nexts != null) {
+				lookup(t, idx, nexts, inclusions);
+			}
+		}
+		
+		if (s < n) {
+			// triggered the removal of at least one solution
+			roots.set(n, idx);
+			n++;
+			if (n < s) {
+				removeRange(n, s);
+			}
+			return;
+		}
+		
+		if (!roots.contains(idx)) {
+			roots.add(idx);
+		}
 	}
 	
 	public boolean[][] inclusion() {

@@ -1,6 +1,5 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
@@ -37,30 +36,14 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	
 	@Override
 	public void add_variable(int idx, Formula formula, Formula not_formula) {
-		
 		int[] regulators = formula.regulators;
-		int vidx = 2*idx;
-		BDD free = jbdd.nithVar(vidx).andWith(jbdd.nithVar(vidx+1));
-		BDD active = jbdd.ithVar(vidx).andWith(jbdd.nithVar(vidx+1));
-		BDD inactive = jbdd.nithVar(vidx).andWith(jbdd.ithVar(vidx+1));
 		BDD f_active = formula2BDD(regulators, formula.toArray());
 		BDD f_inactive = formula2BDD(regulators, not_formula.toArray());
-		if (percolate) {
-			free.andWith(f_inactive.not()).andWith(f_active.not());
-		}
-		active.andWith(f_active);
-		inactive.andWith( f_inactive );
-		constraints[idx] = free.orWith(active).orWith(inactive);
+		addConstraint(idx, f_active, f_inactive);
 	}
 	
 	@Override
 	public void add_fixed(int idx, int value) {
-		// TODO: add BDD for fixed components
-		int vidx = 2*idx;
-		BDD free = jbdd.nithVar(vidx).andWith(jbdd.nithVar(vidx+1));
-		BDD active = jbdd.ithVar(vidx).andWith(jbdd.nithVar(vidx+1));
-		BDD inactive = jbdd.nithVar(vidx).andWith(jbdd.ithVar(vidx+1));
-
 		BDD f_active, f_inactive;
 		if (value == 0) {
 			f_active = jbdd.zero();
@@ -69,15 +52,23 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 			f_active = jbdd.one();
 			f_inactive = jbdd.zero();
 		}
-		
+		addConstraint(idx, f_active, f_inactive);
+	}
+
+	private void addConstraint(int idx, BDD f_active, BDD f_inactive) {
+		int vidx = 2*idx;
+		BDD free = jbdd.nithVar(vidx).andWith(jbdd.nithVar(vidx+1));
+		BDD active = jbdd.ithVar(vidx).andWith(jbdd.nithVar(vidx+1));
+		BDD inactive = jbdd.nithVar(vidx).andWith(jbdd.ithVar(vidx+1));
+
 		if (percolate) {
 			free.andWith(f_inactive.not()).andWith(f_active.not());
 		}
 		active.andWith(f_active);
 		inactive.andWith( f_inactive );
 		constraints[idx] = free.orWith(active).orWith(inactive);
+		
 	}
-	
 	
 	private BDD formula2BDD(int[] regulators, int[][] terms) {
 		BDD cst = jbdd.zero();
@@ -129,7 +120,7 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 				}
 			}
 			
-			solutions.add(new TrapSpace(s, null, variants));
+			solutions.addPattern(s, variants);
 		}
 	}
 

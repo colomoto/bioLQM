@@ -25,6 +25,8 @@ public class TrapSpaceIdentifier {
 	
 	private final TrapSpaceSettings settings;
 	
+	private static boolean SMART_TREE = false;
+	
 	public TrapSpaceIdentifier(LogicalModel model, TrapSpaceSettings settings) {
 		this.settings = settings;
 		
@@ -71,7 +73,7 @@ public class TrapSpaceIdentifier {
         }
 	}
 
-	public List<TrapSpace> getSolutions() {
+	public TrapSpaceList getSolutions() {
 		loadModel();
         TrapSpaceList solutions = new TrapSpaceList(settings);
         solver.solve(solutions);
@@ -109,7 +111,48 @@ public class TrapSpaceIdentifier {
 			return;
 		}
 		
-		List<TrapSpace> solutions = getSolutions();
+		TrapSpaceList solutions = getSolutions();
+		if (settings.tree) {
+			int n = solutions.size();
+			int k = (int)Math.log10(n) + 1;
+
+			if (SMART_TREE) {
+				List<Integer>[] tree = solutions.getInclusiontree();
+		        for (int i=0 ; i<n ; i++) {
+		        	TrapSpace s = solutions.get(i);
+		        	List<Integer> children = tree[i];
+		        	String incl = " ";
+		        	if (children == null) {
+		        		incl = "@";
+		        	} else {
+		        		for (int c: children) {
+		        			incl += " "+c;
+		        		}
+		        	}
+		        	System.out.format("%"+k+"d:  %s   | %s\n", i, s, incl);
+		        }
+		        
+		        System.out.println();
+		        System.out.println();
+			}
+			
+	        boolean[][] btree = solutions.inclusion();
+	        for (int i=0 ; i<n ; i++) {
+	        	TrapSpace s = solutions.get(i);
+	        	String incl = " ";
+	        	for (int j=0 ; j<n ; j++) {
+	        		if (btree[i][j]) {
+	        			incl += " "+j;
+	        		}
+	        	}
+	        	if (incl.length() < 2) {
+	        		incl = "@";
+	        	}
+	        	System.out.format("%"+k+"d:  %s   | %s\n", i, s, incl);
+	        }
+	        return;
+		}
+		
         for (TrapSpace s: solutions) {
         	System.out.println(s);
         }
