@@ -14,7 +14,18 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 
 	public boolean addPattern(byte[] pattern, boolean[] variant) {
 		if (terminal) {
-			// FIXME: in fact this case may deserve some unfolding
+			if (variant != null) {
+				int nvariant = 0;
+				for (int i=0 ; i<variant.length ; i++) {
+					if (pattern[i] < 0 && variant[i]) {
+						nvariant++;
+					}
+				}
+				if (nvariant > 0) {
+					// This pattern contains several terminals
+					return unfoldTerminal(pattern, variant, nvariant);
+				}
+			}
 			return add( new TrapSpace(pattern));
 		}
 		
@@ -31,6 +42,43 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 		}
 		return add( new TrapSpace(pattern));
 	}
+	
+	private boolean unfoldTerminal(byte[] pattern, boolean[] variant, int nvariants) {
+		byte[] cur = pattern.clone();
+		int[] jokers = new int[nvariants];
+		int k = 0;
+		for (int i=0 ; i<variant.length ; i++) {
+			if (pattern[i] < 0 && variant[i]) {
+				jokers[k++] = i;
+				cur[i] = 0;
+			}
+		}
+
+		add( new TrapSpace(cur.clone()));
+
+		int curj = 0;
+		while (curj < nvariants) {
+			int pos = jokers[curj];
+			byte curv = cur[pos];
+			boolean changed = false;
+			if (curv != 1) {
+				cur[pos] = 1;
+				changed = true;
+			}
+
+			if (changed) {
+				for (int j=0 ; j<curj ; j++) {
+					cur[jokers[j]] = 0;
+				}
+				add( new TrapSpace(cur.clone()));
+				curj = 0;
+			} else {
+				curj++;
+			}
+		}
+		return true;
+	}
+	
 	
 	private boolean unfold(byte[] pattern, boolean[] variant, int nvariants) {
 		byte[] cur = pattern.clone();

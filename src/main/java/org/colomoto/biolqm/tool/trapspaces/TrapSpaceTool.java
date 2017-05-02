@@ -44,6 +44,9 @@ public class TrapSpaceTool extends AbstractTool {
 				} else if ("all".equalsIgnoreCase(s)) {
 					settings.percolate = false;
 					
+				} else if ("reduce".equalsIgnoreCase(s)) {
+					settings.reduce = true;
+
 				} else if ("bdd".equalsIgnoreCase(s)) {
 					settings.bdd = true;
 				} else if ("asp".equalsIgnoreCase(s)) {
@@ -60,7 +63,7 @@ public class TrapSpaceTool extends AbstractTool {
 		return settings;
 	}
 	
-	public List<TrapSpace> getSolutions(LogicalModel model, TrapSpaceSettings settings) {
+	public TrapSpaceList getSolutions(LogicalModel model, TrapSpaceSettings settings) {
 		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(model, settings);
 		return identifier.getSolutions();
 	}

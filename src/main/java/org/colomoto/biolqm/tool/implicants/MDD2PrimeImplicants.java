@@ -23,8 +23,8 @@ public class MDD2PrimeImplicants {
 	 * The prime implicants are extracted from this list.
 	 * Finally, these prime implicants are converted back into the space with all variables.
 	 *
-	 * @param f
-	 * @param isearcher
+	 * @param f the MDD identifier for the logical function
+	 * @param t the target value
 	 * @return a Formula representing the prime implicants
 	 */
     public Formula getPrimes(int f, int t) {

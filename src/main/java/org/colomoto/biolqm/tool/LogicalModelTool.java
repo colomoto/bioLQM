@@ -22,6 +22,7 @@ public interface LogicalModelTool extends Service {
 	 * Run the tool on a logical model.
 	 * 
 	 * @param model the model to use
+	 * @param parameters the list of provided command line parameters
 	 */
 	void run(LogicalModel model, String[] parameters);
 

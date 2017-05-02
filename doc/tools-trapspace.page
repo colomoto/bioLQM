@@ -30,7 +30,7 @@
     </section>
 
     <section id="usage">
-        <title>Usage</title>
+        <title>Comand-line use</title>
 
         <p>List the trap-spaces of a model using the <code>trapspace</code> tool:</p>
         <code>java -jar bioLQM.jar model.sbml -r trapspace</code>
@@ -43,15 +43,20 @@
         
         <p>It does not print all trapspaces: if some variables are downstream of fixed variables, many related trapspaces may exist but only the
            fully percolated ones are listed (such that all free variables can still change value). The percolated variables appear with a mark
-           next to their value (i.e. 0' instead of just 0).
+           next to their value (i.e. 0' instead of just 0). The <code>all</code> parameter can be used to list all trapspaces without percolation.
         </p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace all</code>
+        
+        <p>The model can be reduced before computing trap-spaces by removing fixed and output components, which is known to preserve percolated trap-spaces.</p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace reduce</code>
         
         <p>Trap-spaces may overlap or include each other, attractors are usually part of <em>terminal</em> trap-spaces.
-           The result can be filtered usng the <code>terminal</code> parameter:
+           The result can be filtered using the <code>terminal</code> parameter:
         </p>
         <code>java -jar bioLQM.jar model.sbml -r trapspace terminal</code>
         
-        <p>If you are interested in all trap-spaces, it is also possible to compute an inclusion tree:</p>
+        <p>If you are interested in all trap-spaces, it is also possible to compute an inclusion <code>tree</code>. When using this parameter,
+        patterns are numbered and associated to the list of their directly included sub-trap-spaces:</p>
         <code>java -jar bioLQM.jar model.sbml -r trapspace tree</code>
         
         <p>Finally, if you are curious about the ASP encoding, or if you want to launch clingo outside of bioLQM, you can ask for the ASP code:</p>
@@ -65,8 +70,16 @@
         <code>java -jar bioLQM.jar model.sbml -r trapspace BDD</code>
         
         
-        <p>While usually faster, the BDD-based solver requires the computation of all solutions where the ASP solver can start enumerating them as they
+        <p>The BDD-based solver is usually faster but requires the computation of all solutions, while the ASP solver can start enumerating them as they
            are found, enabling partial analysis of highly complex models by launching clingo outside of bioLQM.
+        </p>
+    </section>
+
+    <section id="api">
+        <title>API use</title>
+        
+        <p>The <link href="../apidocs/index.html?org/colomoto/biolqm/tool/trapspaces/TrapSpaceTool.html">TrapSpaceTool</link>,
+           instance provides additional methods to retrieve the list of trap-spaces instead of printing them out.
         </p>
     </section>
 

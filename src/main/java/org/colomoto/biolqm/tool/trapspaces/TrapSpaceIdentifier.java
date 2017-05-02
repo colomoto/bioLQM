@@ -17,7 +17,6 @@ public class TrapSpaceIdentifier {
     private static final ModelBooleanizerService boolService = LQMServiceManager.getModifier(ModelBooleanizerService.class);
     private static final ModelReductionService reduceService = LQMServiceManager.getModifier(ModelReductionService.class);
 
-    private boolean reduce = false;
 	private final LogicalModel model;
 	private final MDDManager ddmanager;
 	private final MDD2PrimeImplicants primer;
@@ -35,7 +34,7 @@ public class TrapSpaceIdentifier {
         	model = boolService.getModifiedModel(model);
         }
         
-        if (reduce) {
+        if (settings.reduce) {
 	        // reduce boring fixed components
 	        ReductionSettings rsettings = reduceService.getSettings();
 	        rsettings.handleFixed = true;
