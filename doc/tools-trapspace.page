@@ -5,7 +5,7 @@
     <info>
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
-        <revision status="stub" date="2012-04-20"/>
+        <revision status="review" date="2017-05-02"/>
         <desc>Finding trap-spaces of a logical model</desc>
         <gloss:term id="Zanudo2013" />
         <gloss:term id="Klarner2014" />
@@ -36,8 +36,10 @@
         <code>java -jar bioLQM.jar model.sbml -r trapspace</code>
 
         <note>
-            <p>The identification of trap-spaces relies on the <cmd>clingo</cmd> ASP solver: it generates ASP code, launches clingo, and parses the output.
-               It currently requires <code>/opt/bin/clingo</code> explicitly, but will be adapted to facilitate the setup.</p>
+            <p>The identification of trap-spaces relies on the <link href="https://potassco.org/"><cmd>clingo</cmd> ASP solver</link>: 
+               it generates ASP code, launches clingo, and parses the output. It currently looks for <code>clingo</code> in the executable
+               <code>PATH</code>.
+            </p>
             <p>It can also use a BDD-based solver if clingo is not available (see below).</p>
         </note>
         
