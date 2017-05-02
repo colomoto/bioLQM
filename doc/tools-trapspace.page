@@ -6,31 +6,68 @@
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
         <revision status="stub" date="2012-04-20"/>
-        <desc>Finding trap spaces of a logical model</desc>
-        <gloss:term id="Naldi2007" />
+        <desc>Finding trap-spaces of a logical model</desc>
+        <gloss:term id="Zanudo2013" />
+        <gloss:term id="Klarner2014" />
     </info>
 
-    <title>Identification of trap spaces</title>
+    <title>Identification of trap-spaces</title>
 
     <section id="motivation">
         <title>Motivation</title>
-        <p>Trap spaces, also called stable motifs or symbolic steady states, are parts of the dynamics from which the system can not escape,
-        (see <gloss:term xref="biblio" id="Zanudo2013">Zanudo 2013</gloss:term> and <gloss:term xref="biblio" id="klarner2014">Klarner 2014</gloss:term>).
-        Each trapspace is defined as a pattern, where some components are fixed, and others are free, such that the images of all matching states
-        also match the pattern. Each trap space contains at least one attractor, and a trap space can contain one or several smaller trap spaces.
-        The number of "terminal" trap spaces, which do not contain smaller trap spaces, is a minimal bound for the number of attractor.
-        Every model contain at least one trap space where all variables are free (the whole state space).
+        <p>Trap-spaces, also called stable motifs or symbolic steady states, are parts of the dynamics from which the system can not escape,
+        (see <gloss:term xref="biblio" id="Zanudo2013">Zanudo 2013</gloss:term> and <gloss:term xref="biblio" id="Klarner2014">Klarner 2014</gloss:term>).
+        Each trap-space is defined as a pattern, where some components are fixed, and others are free, such that the images of all matching states
+        also match the pattern. Each trap-space contains at least one attractor, and a trap-space can contain one or several smaller trap-spaces.
+        The number of "terminal" trap-spaces, which do not include smaller trap-spaces, is a minimal bound for the number of attractor.
+        Every model contains at least one trap-space where all variables are free (the whole state space).
         
-        The computation of trap spaces relies on the identification of positive and negative prime implicants for the functions of each component,
+        The computation of trap-spaces relies on the identification of positive and negative prime implicants for the functions of each component,
         and amounts to the identification of consistent, stable groups of prime implicants, such that all fixed components are stable together.
         
-        In bioLQM, trap spaces can be identified using ASP (relying on clingo as external solver) or directly using decision diagrams.
+        In bioLQM, trap-spaces can be identified using ASP (relying on clingo as external solver) or directly using decision diagrams.
         </p>
     </section>
 
     <section id="usage">
         <title>Usage</title>
-        <p>TODO</p>
+
+        <p>List the trap-spaces of a model using the <code>trapspace</code> tool:</p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace</code>
+
+        <note>
+            <p>The identification of trap-spaces relies on the <cmd>clingo</cmd> ASP solver: it generates ASP code, launches clingo, and parses the output.
+               It currently requires <code>/opt/bin/clingo</code> explicitly, but will be adapted to facilitate the setup.</p>
+            <p>It can also use a BDD-based solver if clingo is not available (see below).</p>
+        </note>
+        
+        <p>It does not print all trapspaces: if some variables are downstream of fixed variables, many related trapspaces may exist but only the
+           fully percolated ones are listed (such that all free variables can still change value). The percolated variables appear with a mark
+           next to their value (i.e. 0' instead of just 0).
+        </p>
+        
+        <p>Trap-spaces may overlap or include each other, attractors are usually part of <em>terminal</em> trap-spaces.
+           The result can be filtered usng the <code>terminal</code> parameter:
+        </p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace terminal</code>
+        
+        <p>If you are interested in all trap-spaces, it is also possible to compute an inclusion tree:</p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace tree</code>
+        
+        <p>Finally, if you are curious about the ASP encoding, or if you want to launch clingo outside of bioLQM, you can ask for the ASP code:</p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace showASP</code>
+        
+        <p>Beside the ASP-based solver, trap-spaces can also be computed using BDDs, without requiring external tools. This approach is often faster,
+           and also computes percolated trap-spaces, but does not identify the percolated components (i.e. we loose the information that this is an
+           attractive trapspace embded inside a bigger one). You can select the BDD solver using the <code>BDD</code> parameter (which can be combined
+           with the other parameters listed above).
+        </p>
+        <code>java -jar bioLQM.jar model.sbml -r trapspace BDD</code>
+        
+        
+        <p>While usually faster, the BDD-based solver requires the computation of all solutions where the ASP solver can start enumerating them as they
+           are found, enabling partial analysis of highly complex models by launching clingo outside of bioLQM.
+        </p>
     </section>
 
 </page>

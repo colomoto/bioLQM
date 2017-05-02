@@ -19,12 +19,15 @@
     <section id="cli">
         <title>Command line use</title>
         <p>A tool can be specified at the end of the <link xref="cli">command line</link>
-           using the <cmd>-r toolName</cmd> switch.
+           using the <cmd>-r toolName [parameters]</cmd> switch.
         </p>
         
         <p>For example, the following command will show the stable states for a model:</p>
         <code>java -jar bioLQM.jar model.sbml -r stable</code>
         
+        <p>all arguments following the name of the selected tool are considered as tool parameters.
+        See the documentation of specific tools for available arguments.
+        </p>
     </section>
 
     <section id="script">

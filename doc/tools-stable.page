@@ -22,7 +22,13 @@
 
     <section id="usage">
         <title>Usage</title>
-        <p>TODO</p>
+
+        <p>The following command shows the stable states for a model:</p>
+        <code>java -jar bioLQM.jar model.sbml -r stable</code>
+        
+        <p>The output is a list of stabe state patterns: some components do not have an assigned value,
+           meaning that all states states matching the pattern are stable.
+        </p>
     </section>
 
 </page>
