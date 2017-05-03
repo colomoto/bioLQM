@@ -286,4 +286,11 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 		return fincl;
 	}
 
+	public int getNVars() {
+		if (size() == 0) {
+			return 0;
+		}
+		return get(0).length;
+	}
+
 }
