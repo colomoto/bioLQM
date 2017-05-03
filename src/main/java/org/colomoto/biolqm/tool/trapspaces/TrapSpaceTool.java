@@ -20,7 +20,7 @@ public class TrapSpaceTool extends AbstractTool {
 	public void run(LogicalModel model, String[] parameters) {
 		TrapSpaceSettings settings = getSettings(parameters);
 		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(model, settings);
-		identifier.run();
+		identifier.runCLI();
 	}
 	
 	public TrapSpaceSettings getSettings(String[] parameters) {

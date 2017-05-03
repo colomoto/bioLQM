@@ -96,14 +96,14 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 		return selected;
 	}
 	
-	public void run() {
+	public void runCLI() {
 		if (settings.showasp) {
 			loadModel();
 			System.out.println( ((TrapSpaceSolverASP)solver).getASP() );
 			return;
 		}
 		
-		TrapSpaceList solutions = getResult();
+		TrapSpaceList solutions = doGetResult();
 		if (settings.tree) {
 			int n = solutions.size();
 			int k = (int)Math.log10(n) + 1;
@@ -151,7 +151,7 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 	}
 
 	@Override
-	protected TrapSpaceList doGetResult() throws Exception {
+	protected TrapSpaceList doGetResult() {
 		loadModel();
         TrapSpaceList solutions = new TrapSpaceList(settings);
         solver.solve(solutions);
