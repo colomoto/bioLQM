@@ -10,9 +10,10 @@ import org.colomoto.biolqm.modifier.reduction.ModelReductionService;
 import org.colomoto.biolqm.modifier.reduction.ReductionSettings;
 import org.colomoto.biolqm.tool.implicants.Formula;
 import org.colomoto.biolqm.tool.implicants.MDD2PrimeImplicants;
+import org.colomoto.common.task.AbstractTask;
 import org.colomoto.mddlib.MDDManager;
 
-public class TrapSpaceIdentifier {
+public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 
     private static final ModelBooleanizerService boolService = LQMServiceManager.getModifier(ModelBooleanizerService.class);
     private static final ModelReductionService reduceService = LQMServiceManager.getModifier(ModelReductionService.class);
@@ -72,14 +73,6 @@ public class TrapSpaceIdentifier {
         }
 	}
 
-	public TrapSpaceList getSolutions() {
-		loadModel();
-        TrapSpaceList solutions = new TrapSpaceList(settings);
-        solver.solve(solutions);
-        
-        return solutions;
-	}
-
 	public static List<TrapSpace> selectAttractors(List<TrapSpace> solutions) {
 
 		List<TrapSpace> selected = new ArrayList<TrapSpace>();
@@ -110,7 +103,7 @@ public class TrapSpaceIdentifier {
 			return;
 		}
 		
-		TrapSpaceList solutions = getSolutions();
+		TrapSpaceList solutions = getResult();
 		if (settings.tree) {
 			int n = solutions.size();
 			int k = (int)Math.log10(n) + 1;
@@ -155,6 +148,15 @@ public class TrapSpaceIdentifier {
         for (TrapSpace s: solutions) {
         	System.out.println(s);
         }
+	}
+
+	@Override
+	protected TrapSpaceList doGetResult() throws Exception {
+		loadModel();
+        TrapSpaceList solutions = new TrapSpaceList(settings);
+        solver.solve(solutions);
+        
+        return solutions;
 	}
 
 }

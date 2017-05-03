@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
-import java.util.List;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractTool;
 import org.colomoto.biolqm.tool.LogicalModelTool;
@@ -63,9 +61,12 @@ public class TrapSpaceTool extends AbstractTool {
 		return settings;
 	}
 	
-	public TrapSpaceList getSolutions(LogicalModel model, TrapSpaceSettings settings) {
-		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(model, settings);
-		return identifier.getSolutions();
+	public TrapSpaceIdentifier getIdentifier(LogicalModel model, TrapSpaceSettings settings) {
+		return new TrapSpaceIdentifier(model, settings);
 	}
 	
+	public TrapSpaceList getSolutions(LogicalModel model, TrapSpaceSettings settings) {
+		return getIdentifier(model, settings).getResult();
+	}
+
 }
