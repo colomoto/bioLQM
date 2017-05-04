@@ -66,4 +66,17 @@ public class TrapSpace {
 		return true;
 
 	}
+	
+	@Override
+	public int hashCode() {
+		return pattern.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof TrapSpace) {
+			return pattern.equals(((TrapSpace)other).pattern);
+		}
+		return false;
+	}
 }
