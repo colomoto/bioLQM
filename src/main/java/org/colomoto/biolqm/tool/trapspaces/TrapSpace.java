@@ -50,6 +50,19 @@ public class TrapSpace {
     	return s;
 	}
 	
+	public String shortString() {
+		String s = "";
+    	for (int i=0 ; i<length ; i++) {
+    		byte v = pattern[i];
+    		if (v < 0) {
+				s += "-";
+    		} else {
+    			s += v;
+    		}
+    	}
+    	return s;
+	}
+	
 	public boolean contains(TrapSpace t) {
 		if (t.nfree >= this.nfree) {
 			return false;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.modifier.booleanize.ModelBooleanizerService;
 import org.colomoto.biolqm.modifier.reduction.ModelReductionService;
 import org.colomoto.biolqm.modifier.reduction.ReductionSettings;
@@ -145,6 +146,10 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 	        return;
 		}
 		
+		for (NodeInfo ni: solutions.nodes) {
+			System.out.print(ni+" ");
+		}
+		System.out.println();
         for (TrapSpace s: solutions) {
         	System.out.println(s);
         }
@@ -153,7 +158,7 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 	@Override
 	protected TrapSpaceList doGetResult() {
 		loadModel();
-        TrapSpaceList solutions = new TrapSpaceList(settings);
+        TrapSpaceList solutions = new TrapSpaceList(settings, model);
         solver.solve(solutions);
         
         return solutions;
