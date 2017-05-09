@@ -46,6 +46,10 @@ public class HelperTool {
 		return null;
 	}
 	
+	public boolean isAvailable() {
+		return binary != null && binary.canExecute();
+	}
+	
 	public HelperTool(String command) {
 		this.binary = lookup(command);
 	}

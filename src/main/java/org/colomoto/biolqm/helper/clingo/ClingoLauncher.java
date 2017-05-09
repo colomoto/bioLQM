@@ -9,11 +9,15 @@ import org.colomoto.biolqm.HelperTool;
 
 public class ClingoLauncher {
 
-	private static final HelperTool CLINGO = new HelperTool("clingo");
+	public static final HelperTool CLINGO = new HelperTool("clingo");
 	ProcessBuilder pb = CLINGO.getProcessBuilder("-n", "0");
 	
 	private final String program;
 	private final ClingoResultHandler handler;
+	
+	public static boolean isAvailable() {
+		return CLINGO.isAvailable();
+	}
 	
 	public ClingoLauncher(ClingoResultHandler handler, String program) {
 		this.program = program;
