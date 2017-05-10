@@ -22,7 +22,7 @@
     <section>
         <title>Usage</title>
         <p>The reversal is a simple modifier without parameters: just use the <cmd>-m reverse</cmd> switch on the 
-        <link xref="cli">command line</link> or <code>lqm.modify(model, "reverse")</code> in <link xref="scripting">scripts</link>.
+        <link xref="cli">command line</link> or <code>lqm.modifyModel(model, "reverse")</code> in <link xref="scripting">scripts</link>.
         </p>
     </section>
 

@@ -56,7 +56,7 @@
            mode are described below.
            We remind that in command line, the parameter string for model reduction is given in the
            <cmd>-m reduction:parameter</cmd> switch.
-           In scripts, it is the last argument in <code>lqm.modify(model, "reduction", parameter)</code>.
+           In scripts, it is the last argument in <code>lqm.modifyModel(model, "reduction", parameter)</code>.
         </p>
 
         <p>This modifier takes as parameter a comma-separated list of keywords to select the performed reduction.

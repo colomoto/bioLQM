@@ -51,13 +51,13 @@
     <section id="script">
         <title>Scripting</title>
         <p>
-        In scripts, model modifiers are available through the <code>lqm.modify</code> method which takes 3 arguments: the model,
+        In scripts, model modifiers are available through the <code>lqm.modifyModel</code> method which takes 3 arguments: the model,
         the name of the modifier, and the parameters.
         </p>
 
 <code>
-model = lqm.load("model.sbml")
-modified = lqm.modify(model, "perturbation", "A%0")
+model = lqm.loadModel("model.sbml")
+modified = lqm.modifyModel(model, "perturbation", "A%0")
 </code>
 
     </section>

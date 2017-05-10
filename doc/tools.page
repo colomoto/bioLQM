@@ -37,7 +37,7 @@
         </p>
 
 <code>
-model = lqm.load("model.sbml")
+model = lqm.loadModel("model.sbml")
 lqm.getTool("stable").run(model)
 </code>
 

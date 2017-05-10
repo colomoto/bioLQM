@@ -42,17 +42,17 @@ While some formats natively support multivalued models, many are limited for the
     <section id="script">
         <title>Scripting</title>
         <p>
-        In scripts, model loading and saving are available through the <code>lqm.load</code> and <code>lqm.save</code> methods respectively.
+        In scripts, model loading and saving are available through the <code>lqm.loadModel</code> and <code>lqm.saveModel</code> methods respectively.
         Here as well, the format can be guessed from the file extension, or provided explicitely as last argument of these methods.
         Conversion with implicit and explicit format specifications are showned in the following sample script:
         </p>
 
 <code>
-model = lqm.load("model.sbml")
-lqm.save(model, "model.boolsim")
+model = lqm.loadModel("model.sbml")
+lqm.saveModel(model, "model.boolsim")
 
-model = lqm.load("model.xml", "sbml")
-lqm.save(model, "model.net", "boolsim")
+model = lqm.loadModel("model.xml", "sbml")
+lqm.saveModel(model, "model.net", "boolsim")
 </code>
 
     </section>

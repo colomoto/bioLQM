@@ -34,7 +34,7 @@
     <section>
         <title>Usage</title>
         <p>The booleanization is a simple modifier without parameters: just use the <cmd>-m booleanize</cmd> switch on the 
-           <link xref="cli">command line</link> or <code>lqm.modify(model, "booleanize")</code> in <link xref="scripting">scripts</link>.
+           <link xref="cli">command line</link> or <code>lqm.modifyModel(model, "booleanize")</code> in <link xref="scripting">scripts</link>.
         </p>
         <p>Note that booleanization can also be used automatically to export multivalued models in formats supporting only Boolean components.
         </p>
