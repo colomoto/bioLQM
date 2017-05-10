@@ -65,8 +65,8 @@ public class TrapSpaceTool extends AbstractTool {
 		return new TrapSpaceIdentifier(model, settings);
 	}
 	
-	public TrapSpaceList getSolutions(LogicalModel model, TrapSpaceSettings settings) {
-		return getIdentifier(model, settings).getResult();
+	public TrapSpaceList getSolutions(LogicalModel model, TrapSpaceSettings settings) throws Exception {
+		return getIdentifier(model, settings).call();
 	}
 
 }
