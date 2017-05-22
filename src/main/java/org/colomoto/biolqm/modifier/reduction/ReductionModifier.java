@@ -15,6 +15,10 @@ public class ReductionModifier implements ModelModifier {
 
     @Override
     public LogicalModel getModifiedModel() {
+    	if (!settings.hasReduction()) {
+    		return model;
+    	}
+    	
         ModelReducer reducer = new ModelReducer(model);
         if (settings.handleOutputs) {
             reducer.removePseudoOutputs();

@@ -28,4 +28,7 @@ public class ReductionSettings {
         }
     }
 
+    public boolean hasReduction() {
+    	return (handleFixed || purgeFixed || handleDuplicates || handleOutputs);
+    }
 }
