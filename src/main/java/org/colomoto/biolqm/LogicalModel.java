@@ -1,6 +1,7 @@
 package org.colomoto.biolqm;
 
 import java.util.List;
+import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
 
@@ -116,4 +117,11 @@ public interface LogicalModel {
      * @return the component or null if not found
      */
 	NodeInfo getComponent(String s_source);
+	
+	/**
+	 * Get the Boolean - multi-valued mapping information for booleanized models.
+	 * 
+	 * @return a list of booleanized groups
+	 */
+	Map<String, NodeInfo[]> getBooleanizedMap();
 }

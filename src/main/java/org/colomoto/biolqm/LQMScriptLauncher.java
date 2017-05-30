@@ -1,6 +1,8 @@
 package org.colomoto.biolqm;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -147,5 +149,17 @@ public class LQMScriptLauncher {
      */
     public LogicalModelTool getTool(String name) {
     	return LQMServiceManager.getTool(name);
+    }
+
+    /**
+     * Open a file for writing.
+     * A simple wrapper for FileWrapper constructor, to be used in scripts
+     * 
+     * @param path the path to the file to open
+     * @return a FileWriter object
+     * @throws IOException
+     */
+    public FileWriter fileWriter(String path) throws IOException {
+		return new FileWriter(path);
     }
 }

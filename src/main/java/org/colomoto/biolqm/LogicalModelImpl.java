@@ -1,7 +1,11 @@
 package org.colomoto.biolqm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.colomoto.mddlib.MDDManager;
 
@@ -141,5 +145,26 @@ public class LogicalModelImpl implements LogicalModel {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public Map<String, NodeInfo[]> getBooleanizedMap() {
+		
+		Map<String, NodeInfo[]> bmap = null;
+		
+		for (NodeInfo ni: getComponents()) {
+			NodeInfo[] group = ni.getBooleanizedGroup();
+			if (group != null && group[0] == ni) {
+				if (bmap == null) {
+					bmap = new HashMap<String, NodeInfo[]>();
+				}
+				String key = ni.getNodeID();
+				if (key.endsWith("_b1")) {
+					key = key.substring(0, key.length()-3);
+				}
+				bmap.put(key, group);
+			}
+		}
+		return bmap;
 	}
 }
