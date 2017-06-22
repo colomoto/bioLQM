@@ -28,6 +28,7 @@ public class ModelReducer {
 	private final MDDVariable[] variables;
 	private final int[] allFunctions;
     private final int coreSize;
+    private final boolean[] removed;
 	private final Map<MDDVariable, Set<Integer>> targets;
 	
 	public ModelReducer(LogicalModel model) {
@@ -56,6 +57,9 @@ public class ModelReducer {
 			ddmanager.use(f);
 			curIdx++;
 		}
+		
+		// track removed components
+		removed = new boolean[functions.length];
 	}
 
 	/**
@@ -134,6 +138,9 @@ public class ModelReducer {
 		}
 		
 		// actual removal
+		for (int idx: outputs) {
+			remove(idx);
+		}
 		for (int idx: pseudoOutputs) {
 			remove(idx);
 		}
@@ -149,6 +156,7 @@ public class ModelReducer {
 	public void remove(int varIdx) {
 		MDDVariable var = variables[varIdx];
 		Set<Integer> varTargets = targets.get(var);
+		removed[varIdx] = true;
 		if (varTargets == null) {
 			return;
 		}
@@ -208,13 +216,10 @@ public class ModelReducer {
 		for (int i=0 ; i<variables.length ; i++) {
 			MDDVariable var = variables[i];
 			Set<Integer> varTargets = targets.get(var);
-			if (varTargets != null && varTargets.size() > 0) {
+			if (!removed[i] || (preserveFixedInputs && ddmanager.isleaf(allFunctions[i]))) {
 				inCore[i] = true;
 				countCore++;
-			} else if (preserveFixedInputs && ddmanager.isleaf(allFunctions[i])) {
-                inCore[i] = true;
-                countCore++;
-            }
+			}
 		}
 		
 		// prepare the content of the new model
