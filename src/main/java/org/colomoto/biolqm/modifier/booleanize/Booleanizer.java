@@ -16,6 +16,7 @@ import java.util.*;
  * Otherwise, each multivalued component will be replaced by multiple Boolean components.
  *
  * It implements the Van Ham Boolean mapping to ensure the construction of a compatible model.
+ * The extension to non-admissible states ensures that they are gardens of Eden.
  *
  * @author Aurelien Naldi
  */
@@ -135,24 +136,50 @@ public class Booleanizer {
             } else {
                 for (int i=0 ; i<bnodes.length ; i++) {
                     int bf = transform(f, i+1);
-                    if (i>0) {transform(f, i+1);
-                        // a subvariable can not be activated if the previous one is not active
-                        MDDVariable prevVar = newDDM.getVariableForKey( bnodes[i-1]);
-                        int prev = prevVar.getNode(0,1);
-                        bf = MDDBaseOperators.AND.combine(newDDM, bf, prev);
-                    }
-                    if (i < bnodes.length-1) {
-                        // a subvariable can not be disabled if the next one is active
-                        MDDVariable nextVar = newDDM.getVariableForKey( bnodes[i+1]);
-                        int next = nextVar.getNode(0,1);
-                        bf = MDDBaseOperators.OR.combine(newDDM, bf, next);
-                    }
+                    // The generated function should already be properly restricted, but let's make sure of it
+                    bf = restrictFunction(newDDM, bnodes, bf, i);
                     targetFunctions[t++] = bf;
                 }
             }
         }
     }
 
+    static private int restrictFunction(MDDManager newDDM, NodeInfo[] bnodes, int bf, int i) {
+        if (i < bnodes.length-1) {
+            // a subvariable can not be disabled if the next one is active
+            MDDVariable nextVar = newDDM.getVariableForKey( bnodes[i+1]);
+            MDDVariable curVar = newDDM.getVariableForKey( bnodes[i]);
+            int next = nextVar.getNode(0,1);
+            int cur = curVar.getNode(0,1);
+            int tmp = MDDBaseOperators.AND.combine(newDDM, cur, next);
+            newDDM.free(cur);
+            newDDM.free(next);
+            cur = bf;
+            bf = MDDBaseOperators.OR.combine(newDDM, bf, tmp);
+            newDDM.free(cur);
+            newDDM.free(tmp);
+        }
+        int restriction = 1;
+        for ( int j=0 ; j<i ; j++) {
+            // a subvariable can not be activated if the previous ones are not active
+            MDDVariable prevVar = newDDM.getVariableForKey( bnodes[j]);
+            int prev = prevVar.getNode(0,1);
+            int tmp = restriction;
+            restriction = MDDBaseOperators.AND.combine(newDDM, restriction, prev);
+            newDDM.free(prev);
+            newDDM.free(tmp);
+        }
+        
+        if (restriction != 1) {
+	        int tmp = bf;
+	        bf = MDDBaseOperators.AND.combine(newDDM, bf, restriction);
+	        newDDM.free(restriction);
+	        newDDM.free(tmp);
+        }
+        
+        return bf;
+    }
+    
     /**
      * Ensure that a booleanized model has no transition leading to forbidden states.
      * The functions will be modified in place.
@@ -162,7 +189,6 @@ public class Booleanizer {
      * @param functions the functions associated to these components
      */
     public static void preventForbiddenStates(MDDManager newDDM, List<NodeInfo> components, int[] functions) {
-
         int idx = 0;
         for (NodeInfo ni: components) {
             NodeInfo[] bnodes = ni.getBooleanizedGroup();
@@ -176,39 +202,12 @@ public class Booleanizer {
                     break;
                 }
             }
-            int bf = functions[idx];
-            // check if all the previous subvariables are active
-            int restriction = 1;
-            int tmp = 1;
-            for ( int j=i ; j>0 ; j--) {
-                int prev = newDDM.getVariableForKey(bnodes[j-1]).getNode(0,1);
-                tmp = restriction;
-                restriction = MDDBaseOperators.AND.combine(newDDM, restriction, prev);
-                newDDM.free(tmp);
-                newDDM.free(prev);
-            }
-            if (i < bnodes.length - 1) {
-                // a subvariable can not be disabled if the next one is active
-                MDDVariable curVar = newDDM.getVariableForKey(bnodes[i]);
-                MDDVariable nextVar = newDDM.getVariableForKey(bnodes[i+1]);
-                int cur = curVar.getNode(0, 1);
-                tmp = nextVar.getNode(0, 1);
-                int next = MDDBaseOperators.AND.combine(newDDM, cur, tmp);
-                newDDM.free(cur);
-                newDDM.free(tmp);
-                tmp = bf;
-                bf = MDDBaseOperators.OR.combine(newDDM, bf, next);
-                newDDM.free(tmp);
-                newDDM.free(next);
-            }
-            tmp = bf;
-            bf = MDDBaseOperators.AND.combine(newDDM, restriction, bf);
-            newDDM.free(tmp);
-            newDDM.free(restriction);
+            int bf = restrictFunction(newDDM, bnodes, functions[idx], i);
             functions[idx] = bf;
             idx++;
-        }
+        }    	
     }
+    
 
     /**
      * Take a Boolean function and transfer it into the new MDDManager,
