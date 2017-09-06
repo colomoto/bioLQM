@@ -67,7 +67,7 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 		return getTask(model, settings).call();
 	}
 
-	public Task<TrapSpaceList> getTask(LogicalModel model, TrapSpaceSettings settings) throws Exception {
+	public Task<TrapSpaceList> getTask(LogicalModel model, TrapSpaceSettings settings) {
 		return new TrapSpaceIdentifier(model, settings);
 	}
 
