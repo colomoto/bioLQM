@@ -26,8 +26,28 @@ abstract public class AbstractTool<R,S> implements LogicalModelTool<R,S> {
 	}
 	
 	@Override
+	public S getSettings() {
+		return getSettings(new String[0]);
+	}
+	
+	@Override
+	public S getSettings(String s) {
+		return getSettings(s.split(" "));
+	}
+	
+	@Override
 	public S getSettings(String ... parameters) {
 		return null;
+	}
+	
+	@Override
+	public R getResult(LogicalModel model) throws Exception {
+		return getResult(model, getSettings());
+	}
+	
+	@Override
+	public R getResult(LogicalModel model, String parameters) throws Exception {
+		return getResult(model, getSettings(parameters));
 	}
 	
 	@Override

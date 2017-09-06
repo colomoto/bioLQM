@@ -23,6 +23,10 @@ public interface LogicalModelTool<R,S> extends Service {
 	 * @param parameters optional command line settings
 	 * @return the custom setting object
 	 */
+	S getSettings();
+	
+	S getSettings(String parameters);
+	
 	S getSettings(String ... parameters);
 	
 	/**
@@ -43,6 +47,8 @@ public interface LogicalModelTool<R,S> extends Service {
 	 * @return the result object
 	 * @throws Exception
 	 */
+	R getResult(LogicalModel model) throws Exception;
+	R getResult(LogicalModel model, String parameters) throws Exception;
 	R getResult(LogicalModel model, String ... parameters) throws Exception;
 	
 	/**
