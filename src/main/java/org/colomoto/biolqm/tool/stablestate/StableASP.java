@@ -24,6 +24,8 @@ public class StableASP implements ClingoResultHandler {
 	private final LogicalModel model;
 	private final List<NodeInfo> components;
 	
+	private StableStateList result = null; 
+	
 	public StableASP(LogicalModel model) {
 		this.model = model;
 		this.components = model.getComponents();
@@ -73,7 +75,8 @@ public class StableASP implements ClingoResultHandler {
 		return program.toString();
 	}
 	
-	public void run() {
+	public StableStateList get() {
+		result = new StableStateList(model);
 		String program = getProgram();
 		ClingoLauncher launcher = new ClingoLauncher(this, program);
 		try {
@@ -81,6 +84,7 @@ public class StableASP implements ClingoResultHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 	@Override
@@ -107,11 +111,7 @@ public class StableASP implements ClingoResultHandler {
 			}
 		}
 		
-		// print the result
-		for (int v: pattern) {
-			System.out.print(v);
-		}
-		System.out.println();
+		result.add(pattern);
 	}
 }
 

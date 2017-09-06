@@ -20,8 +20,14 @@ public class AttractorTool extends AbstractTool {
 	}
 	
 	@Override
-	public void run(LogicalModel model, String[] parameters) {
+	public void run(LogicalModel model, String ... parameters) {
 		SATAttractorFinder finder = new SATAttractorFinder(model);
 		finder.run();
+	}
+
+	@Override
+	public Object getResult(LogicalModel model, Object settings) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

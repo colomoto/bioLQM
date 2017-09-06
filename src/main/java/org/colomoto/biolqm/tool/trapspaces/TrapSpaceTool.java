@@ -7,7 +7,7 @@ import org.mangosdk.spi.ProviderFor;
 
 
 @ProviderFor(LogicalModelTool.class)
-public class TrapSpaceTool extends AbstractTool {
+public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings> {
 
 	public static final String HELP_LINE = "Search trap spaces using ASP or BDDs";
 	public static final String HELP_MESSAGE = "arguments: (all,percolate) ; (BDD,ASP,showASP) ; (raw,terminal,tree)";
@@ -17,15 +17,10 @@ public class TrapSpaceTool extends AbstractTool {
 	}
 
 	@Override
-	public void run(LogicalModel model, String[] parameters) {
+	public void run(LogicalModel model, String ... parameters) {
 		TrapSpaceSettings settings = getSettings(parameters);
 		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(model, settings);
 		identifier.runCLI();
-	}
-
-	public TrapSpaceSettings getSettings(String parameters) {
-		String[] parameterArray = parameters.split(" ");
-		return getSettings(parameterArray);
 	}
 	
 	public TrapSpaceSettings getSettings(String[] parameters) {
@@ -66,12 +61,9 @@ public class TrapSpaceTool extends AbstractTool {
 		return settings;
 	}
 	
-	public TrapSpaceIdentifier getIdentifier(LogicalModel model, TrapSpaceSettings settings) {
-		return new TrapSpaceIdentifier(model, settings);
-	}
-	
-	public TrapSpaceList getSolutions(LogicalModel model, TrapSpaceSettings settings) throws Exception {
-		return getIdentifier(model, settings).call();
+	@Override
+	public TrapSpaceList getResult(LogicalModel model, TrapSpaceSettings settings) throws Exception {
+		return new TrapSpaceIdentifier(model, settings).call();
 	}
 
 }
