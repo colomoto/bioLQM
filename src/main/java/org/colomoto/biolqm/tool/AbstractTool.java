@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.tool;
 
+import org.colomoto.biolqm.LogicalModel;
+
 /**
  * Base class for the boring parts of tool declaration classes.
  * 
@@ -45,5 +47,16 @@ abstract public class AbstractTool implements LogicalModelTool {
 	@Override
 	public String toString() {
 		return getID() +"\t"+ getName();
+	}
+
+	@Override
+	public void run(LogicalModel model) {
+		run(model, "");
+	}
+	
+	@Override
+	public void run(LogicalModel model, String parameters) {
+		String[] parameterArray = parameters.split(" ");
+		run(model, parameterArray);
 	}
 }

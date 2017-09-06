@@ -22,6 +22,11 @@ public class TrapSpaceTool extends AbstractTool {
 		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(model, settings);
 		identifier.runCLI();
 	}
+
+	public TrapSpaceSettings getSettings(String parameters) {
+		String[] parameterArray = parameters.split(" ");
+		return getSettings(parameterArray);
+	}
 	
 	public TrapSpaceSettings getSettings(String[] parameters) {
 		TrapSpaceSettings settings = new TrapSpaceSettings();
