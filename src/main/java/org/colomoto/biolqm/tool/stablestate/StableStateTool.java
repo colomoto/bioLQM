@@ -65,7 +65,7 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateMe
 	        System.out.println();
     	}
 	}
-	
+
 	public StableStateList getMDD(LogicalModel model) {
 		StableStateSearcher ssearcher = new StableStateSearcher(model);
 		StableStateList result = new StableStateList(model);

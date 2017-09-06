@@ -3,6 +3,7 @@ package org.colomoto.biolqm.tool.trapspaces;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractTool;
 import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.common.task.Task;
 import org.mangosdk.spi.ProviderFor;
 
 
@@ -63,7 +64,11 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 	
 	@Override
 	public TrapSpaceList getResult(LogicalModel model, TrapSpaceSettings settings) throws Exception {
-		return new TrapSpaceIdentifier(model, settings).call();
+		return getTask(model, settings).call();
+	}
+
+	public Task<TrapSpaceList> getTask(LogicalModel model, TrapSpaceSettings settings) throws Exception {
+		return new TrapSpaceIdentifier(model, settings);
 	}
 
 }
