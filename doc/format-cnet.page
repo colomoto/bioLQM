@@ -1,0 +1,41 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-cnet">
+    <info>
+      <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+      <revision status="stub" date="2017-09-20"/>
+      <desc>Import/Export to the cnet format (for BNS)</desc>
+    </info>
+
+    <title>CNET format</title>
+
+    <p>Format used by <link href="https://people.kth.se/~dubrova/bns.html">BNS</link>, a tool for the
+	identification of synchronous attractors. 
+       Models are represented as a list of partial truth tables, similar to the Berkeley Logic Interchange Format.
+    </p>
+
+<code><![CDATA[
+.v 3
+# component order:
+# [A, B, D]
+
+# A
+.n 1 1 1
+0 0
+1 1
+
+# B
+.n 2 1 1
+0 1
+1 0
+
+# D
+.n 3 2 1 2
+0- 0
+10 0
+11 1
+]]></code>
+
+</page>
+
