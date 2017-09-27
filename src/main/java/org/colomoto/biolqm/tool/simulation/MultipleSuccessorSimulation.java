@@ -30,8 +30,14 @@ public abstract class MultipleSuccessorSimulation {
 		queue = new LinkedList<QueuedState>();
 	}
 
+	public void runSimulation(Iterator<byte[]> initialStates) {
+		while (initialStates.hasNext()) {
+			addState(initialStates.next());
+			runSimulation();
+		}
+	}
+	
 	public void runSimulation() {
-
 		while (!queue.isEmpty()) {
 			QueuedState queued;
 			if (this.strategy == SimulationStrategy.BREADTH_FIRST) {
