@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Scripting bioLQM</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation"><div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Scripting bioLQM</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">
+    bioLQM can use scripts to automate more complex actions than on the <span class="link"><a href="cli.html" title="Command-Line Interface">command line</a></span>.
+    Script mode is triggered with the <span class="cmd">-s</span> switch as first argument. It requires the name of a script
+    file to execute. Additional arguments (after the name of the script file) are used as arguments for the script.
+    The following command launches the script in <span class="cmd">script.js</span> and provides the name of a model file as
+    script argument:
+    </p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar -s script.js model.sbml</pre></div>
+<p class="p">
+    In script mode, bioLQM creates an instance of
+    <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/LQMScriptLauncher.html" title="../apidocs/index.html?org/colomoto/biolqm/LQMScriptLauncher.html">LQMScriptLauncher</a></span>, which serves as
+    single entry point for the bioLQM API. This object is available as the <span class="code">lqm</span> variable.
+    bioLQM features which are not available through this object can be used by importing the right java classes,
+    but their API is more likely to change.
+    The script launcher provides the following methods wrapping the core features:
+    </p>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list"><p class="p">Retrieve a <span class="link"><a href="formats.html" title="I/O formats">format</a></span> with it's specialized import/export methods, using the
+              <span class="code">getFormat</span> method. Models can also be imported or exported directly from the script launcher
+              using the <span class="code">loadModel</span> and <span class="code">saveModel</span> methods respectively.
+            </p></li>
+<li class="list"><p class="p">Perform <span class="link"><a href="modifiers.html" title="Model modifiers">model modifications</a></span> with the <span class="code">modifyModel</span> method.</p></li>
+<li class="list"><p class="p">Run an <span class="link"><a href="tools.html" title="Tools">analysis tool</a></span> on a model through the <span class="code">getTool</span> method.</p></li>
+<li class="list"><p class="p">Command line arguments are available in the <span class="code">lqm.args</span> array</p></li>
+</ul></div></div></div>
+</div>
+<div id="javascript" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Using the built-in javascript engine</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">bioLQM supports script written in the javascript language, the script file must have a <span class="cmd">.js</span> extension.
+        The following example script opens a model given as argument, and generates all single knockout perturbations,
+        saving each modified model in a new file.
+        </p>
+<div class="code"><pre class="contents ">filename = lqm.args[0]
+model = lqm.loadModel(filename)
+nodes = model.getComponents()
+for (i in nodes) {
+    node = nodes[i]
+    perturbed = lqm.modifyModel(model, 'perturbation', node+'%0')
+    lqm.saveModel(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
+}</pre></div>
+</div></div>
+</div></div>
+<div id="other" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Using you favorite engine</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">
+        While Java supports only scripting with javascript out of the box, it provides a 
+        <span class="link"><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html" title="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html">generic scripting API</a></span>
+        allowing other languages to be used, through additional script engines. JAR files containing supported engines can be
+        placed in the <span class="var">extensions</span> folder: they will be added to the classpath and bioLQM will use the right engine
+        dependng on the extension of the script file. This feature has been tested with <span class="link"><a href="http://www.jython.org" title="http://www.jython.org">Jython</a></span>
+        but other engines should work as well.
+        </p>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">
+            For some reason, loading a python script through this API is much slower than using the Jython API explicitly.
+            GINsim uses the same mechanism for scripting but explicitly depends on Jython and provides faster startup of
+            python scripts, including the ones which use only bioLQM API (it also detects other languages properly).
+        </p></div></div></div></div>
+<p class="p">A python version of the previous example.</p>
+<div class="code"><pre class="contents ">filename = lqm.args[0]
+model = lqm.loadModel(filename)
+for node in model.getComponents():
+    perturbed = lqm.modifyModel(model, 'perturbation', node+'%0')
+    lqm.saveModel(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")</pre></div>
+</div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links "><a href="index.html#core" title="Core features">Core features</a></li></ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

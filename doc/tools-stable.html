@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Stable state search</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="tools.html" title="Tools">Tools</a> › <a class="trail" href="tools.html#list" title="Available Tools">Available Tools</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#tools" title="Tools">Tools</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Stable state search</span></h1></div>
+<div class="region">
+<div class="contents"></div>
+<div id="motivation" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Motivation</span></h2></div>
+<div class="region"><div class="contents"><p class="p">This tool provides the analytic (i.e. without running a simulation) determination of stable states
+        of the model. All stable states are determined, regardless of their reachability, using the algorithm
+        described in <a class="gloss-term" href="biblio.html">Naldi2007</a>.
+        </p></div></div>
+</div></div>
+<div id="usage" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Usage</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">The following command shows the stable states for a model:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r stable</pre></div>
+<p class="p">The output is a list of stabe state patterns: some components do not have an assigned value,
+           meaning that all states states matching the pattern are stable.
+        </p>
+</div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="tools.html#list" title="Available Tools">Available Tools</a></li>
+<li class="links "><a href="index.html#tools" title="Tools">Tools</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

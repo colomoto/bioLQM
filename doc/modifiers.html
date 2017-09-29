@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Model modifiers</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation"><div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Model modifiers</span></h1></div>
+<div class="region">
+<div class="contents"><p class="p">
+    A model modifier takes a model as input (and in some cases some parameters), and constructs a modified version of the model.
+    The parameter string depends on the type of modifier, see the specific documentation of available modifiers for details.
+    The syntax for these parameter string is shared between command line and scripting modes, as well as in the Java API.
+    </p></div>
+<div id="use" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Command line use</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">
+        Model modifiers can be called from the <span class="link"><a href="cli.html" title="Command-Line Interface">command line</a></span> after selecting the loaded model,
+        using the <span class="cmd">-m modifier[:parameters]</span> switch.
+        The modifier is identified by its name and can be provided with parameters, see the documentation of individual modifiers
+        for detail on their parameters (if any).
+        For example the arguments <span class="cmd">-m booleanization</span> will generate a
+        <span class="link"><a href="modifier-booleanization.html" title="Model booleanization">booleanized model</a></span> (this modifier takes no argument).
+        The <span class="cmd">-m perturbation:A%0</span> arguments will apply a <span class="link"><a href="modifier-perturbation.html" title="Model Perturbations (mutants)">perturbation</a></span>
+        corresponding to the knockout of component <span class="cmd">A</span> (setting its target value to 0).
+        Some examples are shown below, see the <span class="link"><a href="cli.html" title="Command-Line Interface">command line documentation page</a></span> for more.
+        </p>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list"><p class="p">Modifiers can be chained on the command line.</p></li>
+<li class="list"><p class="p">Perturbations are available directly with the <span class="cmd">-p A%0</span> shortcut (instead of <span class="cmd">-m perturbation:A%0</span>).</p></li>
+</ul></div></div></div></div></div></div></div>
+<p class="p">Apply a knockout perturbation before saving the model:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -p A%0 modified.sbml</pre></div>
+<p class="p">Booleanize and save a model:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -m booleanize model_bool.sbml</pre></div>
+<p class="p">Chain the previous modifiers:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -p A%0 -m booleanize modified.sbml</pre></div>
+</div></div>
+</div></div>
+<div id="script" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Scripting</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">
+        In scripts, model modifiers are available through the <span class="code">lqm.modifyModel</span> method which takes 3 arguments: the model,
+        the name of the modifier, and the parameters.
+        </p>
+<div class="code"><pre class="contents ">model = lqm.loadModel("model.sbml")
+modified = lqm.modifyModel(model, "perturbation", "A%0")</pre></div>
+</div></div>
+</div></div>
+<div id="api" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Java API</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Modifiers, like other services, are available by name or by type from static methods in the
+        <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html" title="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</a></span> class.
+        While retrieving a modifier by name is convenient in <span class="link"><a href="cli.html" title="Command-Line Interface">command line</a></span> and <span class="link"><a href="scripting.html" title="Scripting bioLQM">scripting</a></span>
+        modes, using the class is encouraged from java code as it enables compile-time checks and directly returns an object of
+        the right type (without casting).
+        All modifier services have a <span class="code">getModifiedModel(LogicalModel model, String parameters)</span> method, where the parameters
+        depend on the type of modifier and are the same as on the command line and scripting case. Services can provide additional
+        methods. See the documentation of individual modifiers for details.
+        </p>
+<div class="code"><pre class="contents ">LogicalModel model = LQMLauncher.loadModel("model.xml", "sbml");
+ModelBooleanizerService boolService = LQMServiceManager.getModifier(ModelBooleanizerService.class);
+LogicalModel modified = boolService.getModifiedModel(model);</pre></div>
+</div></div>
+</div></div>
+<div id="implementation" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Implementation</span></h2></div>
+<div class="region"><div class="contents"><p class="p">
+        Model modifiers implement the <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifier.html" title="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifier.html">ModelModifier</a></span> interface,
+        and are accessible throught a dedicated <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html" title="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</a></span>.
+        Services are discovered by using the <span class="code">@ProviderFor(ModelModifierService.class)</span> decorator.
+        Some implementors may provide additional methods on the service to facilitate the construction of the modifier instance.
+        </p></div></div>
+</div></div>
+<div id="list" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Available Modifiers</span></h2></div>
+<div class="region"><div class="contents"><div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="modifier-perturbation.html" title="Model Perturbations (mutants)"><span class="title">Model Perturbations (mutants)</span><span class="linkdiv-dash"> — </span><span class="desc">Define perturbations of logical models</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="modifier-booleanization.html" title="Model booleanization"><span class="title">Model booleanization</span><span class="linkdiv-dash"> — </span><span class="desc">Boolean mapping for multivalued models</span></a></div>
+</div>
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="modifier-reduction.html" title="Model reduction"><span class="title">Model reduction</span><span class="linkdiv-dash"> — </span><span class="desc">Automated reduction of logical models</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="fmodifier-reversal.html" title="Model reversal"><span class="title">Model reversal</span><span class="linkdiv-dash"> — </span><span class="desc">Models with reversed asynchronous dynamics</span></a></div>
+</div>
+</div></div></div></div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links "><a href="index.html#core" title="Core features">Core features</a></li></ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

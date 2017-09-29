@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>BoolSim format</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">BoolSim format</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">bioLQM supports import and export of Boolean models in boolSim format, used by
+    <span class="link"><a href="https://www.vital-it.ch/research/software/boolSim" title="https://www.vital-it.ch/research/software/boolSim">boolSim/genYsis</a></span> and
+    <span class="link"><a href="https://www.vital-it.ch/research/software/SQUAD" title="https://www.vital-it.ch/research/software/SQUAD">SQUAD</a></span>.</p>
+<p class="p">This format defines a model as a list of activating and inhibiting conditions of its components.</p>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list"><p class="p">The conditions use the <span class="code">&amp;</span> operator for AND, and <span class="code">^</span> for NOT</p></li>
+<li class="list"><p class="p">Activations are defined as: <span class="code">condition -&gt; target</span></p></li>
+<li class="list"><p class="p">Inhibitions are defined as: <span class="code">condition -| target</span></p></li>
+<li class="list"><p class="p">The complete function will be: <span class="code">(activation1 OR activation2) &amp; !(inhibition1 OR inhibition2)</span>.</p></li>
+</ul></div></div></div>
+<div class="code"><pre class="contents ">A&amp;^C -&gt; A
+A&amp;C -| B
+B -&gt; B
+^A -&gt; C</pre></div>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

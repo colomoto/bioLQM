@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Java API</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation"><div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Java API</span></h1></div>
+<div class="region">
+<div class="contents"><p class="p">
+    bioLQM is written in Java and can be used as a Java library. This is currently the case for the
+    <span class="link"><a href="http://www.ginsim.org" title="http://www.ginsim.org">GINsim</a></span> and <span class="link"><a href="http://epilog-tool.org" title="http://epilog-tool.org">Epilog</a></span> tools.
+    </p></div>
+<div id="setup" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Setup using maven</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">BioLQM snapshots are currently hosted on a maven repository on the GINsim website,
+        you will need to integrate the following in your pom.xml:
+        </p>
+<div class="code"><pre class="contents ">  &lt;repositories&gt;
+    &lt;repository&gt;
+       &lt;id&gt;ginsim_snapshot&lt;/id&gt;
+       &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
+       &lt;releases&gt;&lt;enabled&gt;false&lt;/enabled&gt;&lt;/releases&gt;
+       &lt;name&gt;GINsim snapshot repository&lt;/name&gt;
+       &lt;url&gt;http://ginsim.org/maven/snapshot&lt;/url&gt;
+    &lt;/repository&gt;
+  &lt;/repositories&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.colomoto&lt;/groupId&gt;
+      &lt;artifactId&gt;bioLQM&lt;/artifactId&gt;
+      &lt;version&gt;0.4-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;</pre></div>
+</div></div>
+</div></div>
+<div id="use" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Using the API</span></h2></div>
+<div class="region"><div class="contents"><p class="p">
+    The main entry point for the Java API is the
+    <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html" title="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</a></span>,
+    which provides static methods to access the registered formats, modifiers and tools.
+    Some bioLQM features which are not available through this object can be used by importing the right java classes,
+    but their API is more likely to change (see the <span class="link"><a href="../apidocs/index.html" title="../apidocs/index.html">full javadoc</a></span>).
+    </p></div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links "><a href="index.html#core" title="Core features">Core features</a></li></ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

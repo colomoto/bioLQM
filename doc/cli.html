@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Command-Line Interface</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation"><div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Command-Line Interface</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">
+    The command line interface enables model conversion and simple model analysis (currently only listing the stable states).
+    The arguments start with a file from which to load the model, and end either with a target file (for model conversion) or
+    with a specification of the analysis to perform.
+    Between these required parts, a list of model modifiers can also be specified, allowing to save modified models
+    or to analyse them directly. Some additional optional switches facilitate the selection of input and output formats.
+    </p>
+<p class="p">The command line use of bioLQM use the following pattern:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM-${version}.jar [-if <span class="var">format</span>] <span class="var">input_file</span> [-m <span class="var">model_modifier</span>]* ([-of <span class="var">format</span>] <span class="var">output_file</span>)|(-r <span class="var">action</span>)</pre></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">When launched without argument (or with non-recognized ones), a help message is displayed, showing the syntax and available features.</p></div></div></div></div>
+<p class="p">The command line arguments contain the 3 parts described below (in this order):</p>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<p class="p">The loaded file. An import filter will be used to open this file and construct a model.</p>
+<p class="p">The format can be guessed from the file extension or specified explicitly with the <span class="var">-if format</span> optional argument.</p>
+</li>
+<li class="list">
+<p class="p">An optional list of <span class="link"><a href="modifiers.html" title="Model modifiers">model modifications</a></span> using the <span class="var">-m modifier:parameters</span> switch.</p>
+<p class="p">Note that the <span class="cmd">-p argument</span> shortcut can be used to apply a <span class="link"><a href="modifier-perturbation.html" title="Model Perturbations (mutants)">perturbation</a></span> directly.</p>
+</li>
+<li class="list">
+<p class="p">The action to perform on the resulting model: it can be saved to a file or used as input for an analysis tool.</p>
+<p class="p">To export the model to a file, provide the output filename. Like when loading a model, the <span class="link"><a href="formats.html" title="I/O formats">format</a></span> can be guessed from the extension
+            or specified with the <span class="var">-of format</span> optional argument.</p>
+</li>
+</ul></div></div></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">The <span class="cmd">-s</span> switch is used to run bioLQM in <span class="link"><a href="scripting.html" title="Scripting bioLQM">script mode</a></span>.</p></div></div></div></div>
+</div>
+<div id="examples" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Examples</span></h2></div>
+<div class="region"><div class="contents"><div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list">
+<p class="p">Convert a model from <span class="link"><a href="format-sbml.html" title="SBML-qual">SBML qual</a></span> to <span class="link"><a href="format-boolsim.html" title="BoolSim format">boolsim</a></span>:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml model.boolsim</pre></div>
+</li>
+<li class="list">
+<p class="p">Apply a knockout perturbation before saving the model:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -p A%0 modified.boolsim</pre></div>
+</li>
+<li class="list">
+<p class="p">Booleanize and save a model:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -m booleanize model_bool.sbml</pre></div>
+</li>
+<li class="list">
+<p class="p">More complex conversion syntax, specifying input and output formats:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar -if sbml model.xml -of ina model.pnt</pre></div>
+</li>
+</ul></div></div></div></div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links "><a href="index.html" title="BioLQM Documentation">Index</a></li></ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Identification of trap-spaces</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="tools.html" title="Tools">Tools</a> › <a class="trail" href="tools.html#list" title="Available Tools">Available Tools</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#tools" title="Tools">Tools</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Identification of trap-spaces</span></h1></div>
+<div class="region">
+<div class="contents"></div>
+<div id="motivation" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Motivation</span></h2></div>
+<div class="region"><div class="contents"><p class="p">Trap-spaces, also called stable motifs or symbolic steady states, are parts of the dynamics from which the system can not escape,
+        (see <a class="gloss-term" href="biblio.html">Zanudo 2013</a> and <a class="gloss-term" href="biblio.html">Klarner 2014</a>).
+        Each trap-space is defined as a pattern, where some components are fixed, and others are free, such that the images of all matching states
+        also match the pattern. Each trap-space contains at least one attractor, and a trap-space can contain one or several smaller trap-spaces.
+        The number of "terminal" trap-spaces, which do not include smaller trap-spaces, is a minimal bound for the number of attractor.
+        Every model contains at least one trap-space where all variables are free (the whole state space).
+        
+        The computation of trap-spaces relies on the identification of positive and negative prime implicants for the functions of each component,
+        and amounts to the identification of consistent, stable groups of prime implicants, such that all fixed components are stable together.
+        
+        In bioLQM, trap-spaces can be identified using ASP (relying on clingo as external solver) or directly using decision diagrams.
+        </p></div></div>
+</div></div>
+<div id="usage" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Comand-line use</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">List the trap-spaces of a model using the <span class="code">trapspace</span> tool:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace</pre></div>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents">
+<p class="p">The identification of trap-spaces relies on the <span class="link"><a href="https://potassco.org/" title="https://potassco.org/"><span class="cmd">clingo</span> ASP solver</a></span>: 
+               it generates ASP code, launches clingo, and parses the output. It currently looks for <span class="code">clingo</span> in the executable
+               <span class="code">PATH</span>.
+            </p>
+<p class="p">It can also use a BDD-based solver if clingo is not available (see below).</p>
+</div></div></div></div>
+<p class="p">It does not print all trapspaces: if some variables are downstream of fixed variables, many related trapspaces may exist but only the
+           fully percolated ones are listed (such that all free variables can still change value). The percolated variables appear with a mark
+           next to their value (i.e. 0' instead of just 0). The <span class="code">all</span> parameter can be used to list all trapspaces without percolation.
+        </p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace all</pre></div>
+<p class="p">The model can be reduced before computing trap-spaces by removing fixed and output components, which is known to preserve percolated trap-spaces.</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace reduce</pre></div>
+<p class="p">Trap-spaces may overlap or include each other, attractors are usually part of <span class="em">terminal</span> trap-spaces.
+           The result can be filtered using the <span class="code">terminal</span> parameter:
+        </p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace terminal</pre></div>
+<p class="p">If you are interested in all trap-spaces, it is also possible to compute an inclusion <span class="code">tree</span>. When using this parameter,
+        patterns are numbered and associated to the list of their directly included sub-trap-spaces:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace tree</pre></div>
+<p class="p">Finally, if you are curious about the ASP encoding, or if you want to launch clingo outside of bioLQM, you can ask for the ASP code:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace showASP</pre></div>
+<p class="p">Beside the ASP-based solver, trap-spaces can also be computed using BDDs, without requiring external tools. This approach is often faster,
+           and also computes percolated trap-spaces, but does not identify the percolated components (i.e. we loose the information that this is an
+           attractive trapspace embded inside a bigger one). You can select the BDD solver using the <span class="code">BDD</span> parameter (which can be combined
+           with the other parameters listed above).
+        </p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r trapspace BDD</pre></div>
+<p class="p">The BDD-based solver is usually faster but requires the computation of all solutions, while the ASP solver can start enumerating them as they
+           are found, enabling partial analysis of highly complex models by launching clingo outside of bioLQM.
+        </p>
+</div></div>
+</div></div>
+<div id="api" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">API use</span></h2></div>
+<div class="region"><div class="contents"><p class="p">The <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/tool/trapspaces/TrapSpaceTool.html" title="../apidocs/index.html?org/colomoto/biolqm/tool/trapspaces/TrapSpaceTool.html">TrapSpaceTool</a></span>,
+           instance provides additional methods to retrieve the list of trap-spaces instead of printing them out.
+        </p></div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="tools.html#list" title="Available Tools">Available Tools</a></li>
+<li class="links "><a href="index.html#tools" title="Tools">Tools</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

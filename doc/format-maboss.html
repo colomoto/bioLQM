@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>MaBoSS format</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">MaBoSS format</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">Format used by the <span class="link"><a href="https://maboss.curie.fr/" title="https://maboss.curie.fr/">MaBoSS</a></span> tool.
+       This format generates a <span class="cmd">.bnd</span> file with the model itself, and a <span class="cmd">.cfg</span>
+       file to define parameter values.
+    </p>
+<div class="code"><pre class="contents ">Node A {
+  logic = (A);
+  rate_up = @logic ? $u_A : 0;
+  rate_down = @logic ? 0 : $d_A;
+}
+
+Node B {
+  logic = (!A);
+  rate_up = @logic ? $u_B : 0;
+  rate_down = @logic ? 0 : $d_B;
+}
+
+Node C {
+  logic = (A);
+  rate_up = @logic ? $u_C : 0;
+  rate_down = @logic ? 0 : $d_C;
+}</pre></div>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

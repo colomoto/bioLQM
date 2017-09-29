@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Model booleanization</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="modifiers.html" title="Model modifiers">Model modifiers</a> › <a class="trail" href="modifiers.html#list" title="Available Modifiers">Available Modifiers</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#modifiers" title="Model modifiers">Modifiers</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Model booleanization</span></h1></div>
+<div class="region">
+<div class="contents"></div>
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Description</span></h2></div>
+<div class="region">
+<div class="contents">
+<p class="p">Model booleanization consists in mapping a multivalued model on Boolean variables.
+        </p>
+<p class="p">bioLQM uses the mapping originaly proposed by van Ham, in which a component associated with the maximal value
+           <span class="var">m</span> will be mapped on <span class="var">m</span> Boolean components. For example, a component taking the values
+           <span class="var">0</span>, <span class="var">1</span>, <span class="var">2</span>, and <span class="var">3</span> will be encoded as <span class="var">000</span>, <span class="var">100</span>,
+           <span class="var">110</span>, and <span class="var">111</span>.</p>
+</div>
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h3 class="title"><span class="title">Handling non-admissible states</span></h3></div>
+<div class="region"><div class="contents"><p class="p">The booleanization introduces many non-admissible states, which may require special care depending on the analysis
+               applied on the booleanized model. This modifier makes sure that a simulation which start with an admissible state
+               will not explore non-admissible states. It also prevents the introduction of non-admissible attractors by making
+               sure that at least one admissible state is reachable from any non-admissible.
+            </p></div></div>
+</div></div>
+</div>
+</div></div>
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Usage</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">The booleanization is a simple modifier without parameters: just use the <span class="cmd">-m booleanize</span> switch on the 
+           <span class="link"><a href="cli.html" title="Command-Line Interface">command line</a></span> or <span class="code">lqm.modifyModel(model, "booleanize")</span> in <span class="link"><a href="scripting.html" title="Scripting bioLQM">scripts</a></span>.
+        </p>
+<p class="p">Note that booleanization can also be used automatically to export multivalued models in formats supporting only Boolean components.
+        </p>
+</div></div>
+</div></div>
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Going further</span></h2></div>
+<div class="region"><div class="contents"><p class="p">This service is provided by <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/modifier/booleanize/ModelBooleanizerService.html" title="../apidocs/index.html?org/colomoto/biolqm/modifier/booleanize/ModelBooleanizerService.html">ModelBooleanizerService</a></span>.
+        </p></div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="modifiers.html#list" title="Available Modifiers">Available Modifiers</a></li>
+<li class="links "><a href="index.html#modifiers" title="Model modifiers">Model modifiers</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

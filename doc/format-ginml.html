@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>The GINML format</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">The GINML format</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">The <span class="em">GINML</span> format is used by <span class="link"><a href="http://ginsim.org" title="http://ginsim.org">GINsim</a></span>. It extends the
+       <span class="link"><a href="http://www.gupro.de/GXL" title="http://www.gupro.de/GXL">GXL (Graph eXchange Language)</a></span> format to integrate an encoding of
+       the logical functions as <span class="em">logical parameters</span> in the <span class="code">node</span> elements.
+       GINML supports documentation, as well as layout information and styles.
+       Note that in GINsim, the GINML file is usually part of a ZGINML archive, which can contain separate files for
+       associated information, such as perturbations or simulation parameters.
+    </p>
+<p class="p">BioLQM supports only export of the GINML format, but GINsim now uses bioLQM internally, and can 
+       export its models to SBML-qual or other bioLQM-supported format directly.
+    </p>
+<div class="code"><pre class="contents ">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE gxl SYSTEM "http://ginsim.org/GINML_2_2.dtd"&gt;
+&lt;gxl xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+  &lt;graph class="regulatory" id="toy_3" nodeorder="G0 G1 G2"&gt;
+
+    &lt;nodestyle background="#ffffff" foreground="#000000" text="#000000" shape="RECTANGLE" width="45" height="25"/&gt;
+    &lt;edgestyle color="#000000" pattern="SIMPLE" line_width="1" properties="positive:#00c800 negative:#c80000 dual:#0000c8"/&gt;
+
+    &lt;node id="G0" maxvalue="1" input="true"&gt;
+      &lt;nodevisualsetting x="297" y="138" style=""/&gt;
+    &lt;/node&gt;
+    &lt;node id="G1" maxvalue="1"&gt;
+      &lt;parameter idActiveInteractions=" G0:G1" val="1"/&gt;
+      &lt;nodevisualsetting x="250" y="270" style=""/&gt;
+    &lt;/node&gt;
+    &lt;node id="G2" maxvalue="1"&gt;
+      &lt;parameter idActiveInteractions=" G1:G2" val="1"/&gt;
+      &lt;nodevisualsetting x="439" y="271" style=""/&gt;
+    &lt;/node&gt;
+
+    &lt;edge id="G1:G2" from="G1" to="G2" minvalue="1" sign="positive" /&gt;
+    &lt;edge id="G0:G1" from="G0" to="G1" minvalue="1" sign="positive" /&gt;
+    &lt;edge id="G0:G2" from="G0" to="G2" minvalue="1" sign="negative" /&gt;
+
+    &lt;annotation&gt;
+      &lt;linklist&gt;
+        &lt;link xlink:href="www.ginsim.org"/&gt;
+      &lt;/linklist&gt;
+      &lt;comment&gt;Documentation can be added to the model itself, nodes, or edges&lt;/comment&gt;
+    &lt;/annotation&gt;
+  &lt;/graph&gt;
+&lt;/gxl&gt;</pre></div>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Petri Net Export</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Petri Net Export</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">Regulatory graphs can be exported into standard Petri net 
+       using the rewriting method described in <a class="gloss-term" href="biblio.html">Chaouiya 2006</a>.
+       In this translation, each component is mapped on two places: one holding as many tokens as the current level
+       of the components, and a complementary place, such that the sum of their tokens is the max level of the components.
+       Each transition in the resulting Petri net will move one token between pairs of complementary places, with test
+       arcs to other places representing the logical functions.
+    </p>
+<p class="p">Several Petri net formats are supported: <span class="var">INA</span>, <span class="var">PNML</span>, and <span class="var">APNN</span>.</p>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

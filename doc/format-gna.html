@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>GNA format</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">GNA format</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">The old text format used by the <span class="link"><a href="https://team.inria.fr/ibis/genetic-network-analyzer-gna/" title="https://team.inria.fr/ibis/genetic-network-analyzer-gna/">GNA</a></span> tool.</p>
+<div class="code"><pre class="contents ">state-variable: A
+  zero-parameter: zero_A
+  box-parameter: max_A
+  threshold-parameters: t1_A
+  synthesis-parameters: k1_A
+  degradation-parameters: g_A
+  state-equation:
+    d/dt A = k1_A * s+(A,t1_A)
+        - g_A * A
+  parameter-inequalities:
+    zero_A &lt; t1_A &lt; k1_A / g_A &lt; max_A
+state-variable: B
+  zero-parameter: zero_B
+  box-parameter: max_B
+  threshold-parameters: t1_B
+  synthesis-parameters: k1_B
+  degradation-parameters: g_B
+  state-equation:
+    d/dt B = k1_B * s-(A,t1_A)
+        - g_B * B
+  parameter-inequalities:
+    zero_B &lt; t1_B &lt; k1_B / g_B &lt; max_B
+state-variable: D
+  zero-parameter: zero_D
+  box-parameter: max_D
+  threshold-parameters: t1_D
+  synthesis-parameters: k1_D
+  degradation-parameters: g_D
+  state-equation:
+    d/dt D = k1_D * s+(A,t1_A)
+        - g_D * D
+  parameter-inequalities:
+    zero_D &lt; t1_D &lt; k1_D / g_D &lt; max_D</pre></div>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>SBML-qual</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">SBML-qual</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p"><span class="link"><a href="http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/Qualitative_Models_%28qual%29" title="http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/Qualitative_Models_%28qual%29">SBML qual</a></span> is an extension
+       of the <span class="link"><a href="http://sbml.org/" title="http://sbml.org/">Systems Biology Markup Language (SBML)</a></span> Level 3 standard, designed for the representation of
+       multivalued qualitative models of biological networks.
+       The first SBML qual proposal in 2008 led to the creation of the CoLoMoTo consortium. The extension was accepted by the SBML community in 2011,
+       after consulting the wider community and refining the original proposal through additional meetings with developers of various related software tools.
+       The final specification was approved by the SBML Editors in the spring of 2013.
+    </p>
+<p class="p">BioLQM supports both import and export of SBML qual through the <span class="link"><a href="http://sbml.org/Software/JSBML" title="http://sbml.org/Software/JSBML">JSBML library</a></span>.</p>
+<div class="code"><pre class="contents ">&lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;
+&lt;sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1"
+ qual:required="true" xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1"&gt;
+  &lt;model id="model_id"&gt;
+
+    &lt;listOfCompartments&gt;
+      &lt;compartment constant="true" id="comp1"/&gt;
+    &lt;/listOfCompartments&gt;
+
+    &lt;qual:listOfQualitativeSpecies xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1"&gt;
+      &lt;qual:qualitativeSpecies qual:maxLevel="1" qual:compartment="comp1" qual:constant="true" qual:id="G0"/&gt;
+      &lt;qual:qualitativeSpecies qual:maxLevel="1" qual:compartment="comp1" qual:id="G1"/&gt;
+      &lt;qual:qualitativeSpecies qual:maxLevel="1" qual:compartment="comp1" qual:id="G2"/&gt;
+    &lt;/qual:listOfQualitativeSpecies&gt;
+
+    &lt;qual:listOfTransitions xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1"&gt;
+      &lt;qual:transition qual:id="tr_G1"&gt;
+        &lt;qual:listOfInputs&gt;
+          &lt;qual:input qual:qualitativeSpecies="G0" qual:transitionEffect="none" qual:sign="positive" qual:id="tr_G1_in_0"/&gt;
+        &lt;/qual:listOfInputs&gt;
+        &lt;qual:listOfOutputs&gt;
+          &lt;qual:output qual:qualitativeSpecies="G1" qual:transitionEffect="assignmentLevel" qual:id="tr_G1_out"/&gt;
+        &lt;/qual:listOfOutputs&gt;
+        &lt;qual:listOfFunctionTerms&gt;
+          &lt;qual:defaultTerm qual:resultLevel="0"&gt;
+          &lt;/qual:defaultTerm&gt;
+          &lt;qual:functionTerm qual:resultLevel="1"&gt;
+            &lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;
+              &lt;apply&gt;&lt;eq/&gt;&lt;ci&gt; G0 &lt;/ci&gt;&lt;cn type="integer"&gt; 1 &lt;/cn&gt;&lt;/apply&gt;
+            &lt;/math&gt;
+          &lt;/qual:functionTerm&gt;
+        &lt;/qual:listOfFunctionTerms&gt;
+      &lt;/qual:transition&gt;
+      &lt;qual:transition qual:id="tr_G2"&gt;
+        &lt;qual:listOfInputs&gt;
+          &lt;qual:input qual:qualitativeSpecies="G0" qual:transitionEffect="none" qual:sign="negative" qual:id="tr_G2_in_0"/&gt;
+          &lt;qual:input qual:qualitativeSpecies="G1" qual:transitionEffect="none" qual:sign="positive" qual:id="tr_G2_in_1"/&gt;
+        &lt;/qual:listOfInputs&gt;
+        &lt;qual:listOfOutputs&gt;
+          &lt;qual:output qual:qualitativeSpecies="G2" qual:transitionEffect="assignmentLevel" qual:id="tr_G2_out"/&gt;
+        &lt;/qual:listOfOutputs&gt;
+        &lt;qual:listOfFunctionTerms&gt;
+          &lt;qual:defaultTerm qual:resultLevel="0"&gt;
+          &lt;/qual:defaultTerm&gt;
+          &lt;qual:functionTerm qual:resultLevel="1"&gt;
+            &lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;
+              &lt;apply&gt;
+                &lt;and/&gt;
+                &lt;apply&gt;&lt;eq/&gt;&lt;ci&gt; G0 &lt;/ci&gt;&lt;cn type="integer"&gt; 0 &lt;/cn&gt;&lt;/apply&gt;
+                &lt;apply&gt;&lt;eq/&gt;&lt;ci&gt; G1 &lt;/ci&gt;&lt;cn type="integer"&gt; 1 &lt;/cn&gt;&lt;/apply&gt;
+              &lt;/apply&gt;
+            &lt;/math&gt;
+          &lt;/qual:functionTerm&gt;
+        &lt;/qual:listOfFunctionTerms&gt;
+      &lt;/qual:transition&gt;
+    &lt;/qual:listOfTransitions&gt;
+
+  &lt;/model&gt;
+&lt;/sbml&gt;</pre></div>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

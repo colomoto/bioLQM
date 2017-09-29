@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>BioLQM Documentation</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">BioLQM Documentation</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">BioLQM provides a collection of tools for the <span class="link"><a href="modifiers.html" title="Model modifiers">modification</a></span> and <span class="link"><a href="formats.html" title="I/O formats">conversion</a></span>
+       of <span class="em-bold em">Logical Qualitative Models of biological networks</span>, started as part of the 
+       <span class="link"><a href="http://colomoto.org/" title="http://colomoto.org/">CoLoMoTo consortium</a></span> to facilitate model exchange.
+    </p>
+<p class="p">It can be used on the <span class="link"><a href="cli.html" title="Command-Line Interface">command line</a></span>, through <span class="link"><a href="scripting.html" title="Scripting bioLQM">scripts</a></span>, or embded in other
+       tools such as <span class="link"><a href="http://www.ginsim.org" title="http://www.ginsim.org">GINsim</a></span> or <span class="link"><a href="http://epilog-tool.org" title="http://epilog-tool.org">Epilog</a></span> using the
+       <span class="link"><a href="api.html" title="Java API">Java API</a></span> directly.
+    </p>
+<div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn"><div class="linkdiv "><a class="linkdiv" href="cli.html" title="Command-Line Interface"><span class="title">Command-Line Interface</span><span class="linkdiv-dash"> — </span><span class="desc">Command Line Interface</span></a></div></div>
+<div class="links-twocolumn"><div class="linkdiv "><a class="linkdiv" href="starting.html" title="Install and Run"><span class="title">Install and Run</span><span class="linkdiv-dash"> — </span><span class="desc">Availability, requirements, first run</span></a></div></div>
+</div></div></div>
+</div>
+<div id="core" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Core features</span></h2></div>
+<div class="region"><div class="contents"><div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="formats.html" title="I/O formats"><span class="title">I/O formats</span><span class="linkdiv-dash"> — </span><span class="desc">Define Import / Export filters</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="api.html" title="Java API"><span class="title">Java API</span><span class="linkdiv-dash"> — </span><span class="desc">Using bioLQM from Java code</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="modifiers.html" title="Model modifiers"><span class="title">Model modifiers</span><span class="linkdiv-dash"> — </span><span class="desc">Model in, modified model out</span></a></div>
+</div>
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="scripting.html" title="Scripting bioLQM"><span class="title">Scripting bioLQM</span><span class="linkdiv-dash"> — </span><span class="desc">Scripting</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="tools.html" title="Tools"><span class="title">Tools</span><span class="linkdiv-dash"> — </span><span class="desc">Tools applied to models</span></a></div>
+</div>
+</div></div></div></div></div>
+</div></div>
+<div id="formats" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Import/Export formats</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Formats provide import/export filters for the following file formats.</p>
+<div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="format-bnet.html" title="BoolNet format"><span class="title">BoolNet format</span><span class="linkdiv-dash"> — </span><span class="desc">Import/Export to the BoolNet format</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-boolsim.html" title="BoolSim format"><span class="title">BoolSim format</span><span class="linkdiv-dash"> — </span><span class="desc">Import/Export boolSim models</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-booleannet.html" title="Booleannet format"><span class="title">Booleannet format</span><span class="linkdiv-dash"> — </span><span class="desc">Import/Export to the boolean format</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-cnet.html" title="CNET format"><span class="title">CNET format</span><span class="linkdiv-dash"> — </span><span class="desc">Import/Export to the cnet format (for BNS)</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-gna.html" title="GNA format"><span class="title">GNA format</span><span class="linkdiv-dash"> — </span><span class="desc">Export to the GNA text format</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-maboss.html" title="MaBoSS format"><span class="title">MaBoSS format</span><span class="linkdiv-dash"> — </span><span class="desc">Export logical models for a Markovian Boolean Stochastic Simulator</span></a></div>
+</div>
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="format-petri-net.html" title="Petri Net Export"><span class="title">Petri Net Export</span><span class="linkdiv-dash"> — </span><span class="desc">Export logical models as Petri net</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-pint.html" title="Pint format"><span class="title">Pint format</span><span class="linkdiv-dash"> — </span><span class="desc">Export to the pint format</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-sbml.html" title="SBML-qual"><span class="title">SBML-qual</span><span class="linkdiv-dash"> — </span><span class="desc">Import/Export regulatory graph to SBML-qual standard format</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-ginml.html" title="The GINML format"><span class="title">The GINML format</span><span class="linkdiv-dash"> — </span><span class="desc">Export to the XML format used in GINsim</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="format-truthtable.html" title="Truth table format"><span class="title">Truth table format</span><span class="linkdiv-dash"> — </span><span class="desc">Import/Export logical models as truth tables</span></a></div>
+</div>
+</div></div></div>
+</div></div>
+</div></div>
+<div id="modifiers" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Model modifiers</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">A model modifier takes a model as input (and in some cases some parameters), and constructs a modified version of the model.</p>
+<div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="modifier-perturbation.html" title="Model Perturbations (mutants)"><span class="title">Model Perturbations (mutants)</span><span class="linkdiv-dash"> — </span><span class="desc">Define perturbations of logical models</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="modifier-booleanization.html" title="Model booleanization"><span class="title">Model booleanization</span><span class="linkdiv-dash"> — </span><span class="desc">Boolean mapping for multivalued models</span></a></div>
+</div>
+<div class="links-twocolumn">
+<div class="linkdiv "><a class="linkdiv" href="modifier-reduction.html" title="Model reduction"><span class="title">Model reduction</span><span class="linkdiv-dash"> — </span><span class="desc">Automated reduction of logical models</span></a></div>
+<div class="linkdiv "><a class="linkdiv" href="fmodifier-reversal.html" title="Model reversal"><span class="title">Model reversal</span><span class="linkdiv-dash"> — </span><span class="desc">Models with reversed asynchronous dynamics</span></a></div>
+</div>
+</div></div></div>
+</div></div>
+</div></div>
+<div id="tools" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Tools</span></h2></div>
+<div class="region"><div class="contents"><div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn"><div class="linkdiv "><a class="linkdiv" href="tools-trapspace.html" title="Identification of trap-spaces"><span class="title">Identification of trap-spaces</span><span class="linkdiv-dash"> — </span><span class="desc">Finding trap-spaces of a logical model</span></a></div></div>
+<div class="links-twocolumn"><div class="linkdiv "><a class="linkdiv" href="tools-stable.html" title="Stable state search"><span class="title">Stable state search</span><span class="linkdiv-dash"> — </span><span class="desc">Finding stable states of a logical model</span></a></div></div>
+</div></div></div></div></div>
+</div></div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"><div class="sect about ui-expander" role="contentinfo">
+<div class="yelp-data yelp-data-ui-expander" data-yelp-expanded="false"></div>
+<div class="inner">
+<div class="hgroup"><h2><span class="title">About</span></h2></div>
+<div class="region"><div class="contents">
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Aurelien Naldi</li></ul>
+</div>
+<div class="aboutblurb editors">
+<div class="title"><span class="title">Edited By</span></div>
+<ul class="credits">
+<li>Claudine Chaouiya</li>
+<li>Pedro Monteiro</li>
+<li>Denis Thieffry</li>
+</ul>
+</div>
+<div class="aboutblurb license">
+<div class="title"><span class="title">License</span></div>
+<div class="contents"><p class="p">Creative Commons Share Alike 3.0</p></div>
+</div>
+</div></div>
+</div>
+</div></div>
+</div></body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Tools</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation"><div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Tools</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">Tools correspond to actions that can be performed on logical models.</p>
+<div class="note note-warning" title="Warning"><div class="inner"><div class="region"><div class="contents"><p class="p">Support for tools is currently in flux: the API will change before more tools are added.</p></div></div></div></div>
+</div>
+<div id="cli" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Command line use</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">A tool can be specified at the end of the <span class="link"><a href="cli.html" title="Command-Line Interface">command line</a></span>
+           using the <span class="cmd">-r toolName [parameters]</span> switch.
+        </p>
+<p class="p">For example, the following command will show the stable states for a model:</p>
+<div class="code"><pre class="contents ">java -jar bioLQM.jar model.sbml -r stable</pre></div>
+<p class="p">all arguments following the name of the selected tool are considered as tool parameters.
+        See the documentation of specific tools for available arguments.
+        </p>
+</div></div>
+</div></div>
+<div id="script" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Scripting</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">In scripts, tools are available through the <span class="code">lqm.getTool(name)</span> method.
+           The returned object provides at least the <span class="code">run(model)</span> method.
+        </p>
+<div class="code"><pre class="contents ">model = lqm.loadModel("model.sbml")
+lqm.getTool("stable").run(model)</pre></div>
+</div></div>
+</div></div>
+<div id="api" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Java API</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Tools, like other services, are available by name or by type from static methods in the
+        <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html" title="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</a></span> class.
+        Currently, all tool services have a <span class="code">run(LogicalModel model)</span> method, this minimalistic API will
+        be extended in the future.
+        </p>
+<div class="code"><pre class="contents ">LogicalModel model = LQMLauncher.loadModel("model.xml", "sbml");
+StableStateTool stableService = LQMServiceManager.getTool(StableStateTool.class);
+stableService.run(model);</pre></div>
+</div></div>
+</div></div>
+<div id="implementation" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Implementation</span></h2></div>
+<div class="region"><div class="contents"><p class="p">
+        Tool services implement the <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/tool/LogicalModelTool.html" title="../apidocs/index.html?org/colomoto/biolqm/tool/LogicalModelTool.html">LogicalModelTool</a></span> interface,
+        and are accessible throught a dedicated <span class="link"><a href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html" title="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</a></span>.
+        Services are discovered by using the <span class="code">@ProviderFor(LogicalModelTool.class)</span> decorator.
+        </p></div></div>
+</div></div>
+<div id="list" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Available Tools</span></h2></div>
+<div class="region"><div class="contents"><div class="links topiclinks"><div class="inner"><div class="region">
+<div class="links-twocolumn"><div class="linkdiv "><a class="linkdiv" href="tools-trapspace.html" title="Identification of trap-spaces"><span class="title">Identification of trap-spaces</span><span class="linkdiv-dash"> — </span><span class="desc">Finding trap-spaces of a logical model</span></a></div></div>
+<div class="links-twocolumn"><div class="linkdiv "><a class="linkdiv" href="tools-stable.html" title="Stable state search"><span class="title">Stable state search</span><span class="linkdiv-dash"> — </span><span class="desc">Finding stable states of a logical model</span></a></div></div>
+</div></div></div></div></div>
+</div></div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links "><a href="index.html#core" title="Core features">Core features</a></li></ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>

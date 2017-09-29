@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Truth table format</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="jquery.syntax.js"></script><script type="text/javascript" src="yelp.js"></script>
+</head>
+<body><div class="page" role="main">
+<div class="header"><div class="trails" role="navigation">
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#core" title="Core features">Core features</a> » <a class="trail" href="formats.html" title="I/O formats">I/O formats</a> › <a class="trail" href="formats.html#list" title="Available Formats">Available Formats</a> » </div>
+<div class="trail">
+<a class="trail" href="index.html" title="BioLQM Documentation">Index</a> › <a class="trail" href="index.html#formats" title="Import/Export formats">Formats</a> » </div>
+</div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Truth table format</span></h1></div>
+<div class="region">
+<div class="contents">
+<p class="p">The truth table format supports importing and exporting models as truth table formated as a two-column text file.
+       Each line of this table contains the source and target states under a synchronous updating.
+    </p>
+<p class="p">This file may not describe a complete truth table, i.e., it may not have information regarding some of the source states
+       of the corresponding state transition graph.
+       The first line of the table can be an optional list of node identifiers to be used.
+       Between each source and target state it is accepted any number of spaces and/or tabs.
+       Also, every line starting with character '#' will be considered as a comment.
+       The description of each state must be characterized by the valuations of their composing components without any space
+       (consequently, multivalued components can not take values higher than 9).
+    </p>
+<p class="p">Example of a truth table, for a boolean system with three components:</p>
+<div class="code"><pre class="contents ">GeneA GeneB GeneC
+000 100
+001 010
+# This is a comment
+010 110
+011 110
+100 100
+# Yet another unnecessary comment
+101 000
+110 110
+111 110</pre></div>
+<p class="p">The importer performs two file reads.
+       During the first read, it reads the node identifiers (if available) and records the maximum value for each of component.
+       During the second read, it creates the model and the logical functions associated to each component.
+    </p>
+<p class="p">Future plans include support for a folder of truth tables representing the functions of individual components,
+       which would scale to larger models.
+    </p>
+</div>
+<div class="sect sect-links" role="navigation">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul>
+<li class="links "><a href="formats.html#list" title="Available Formats">Available Formats</a></li>
+<li class="links "><a href="index.html#formats" title="Import/Export formats">Import/Export formats</a></li>
+</ul></div>
+</div></div></div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="footer"></div>
+</div></body>
+</html>
