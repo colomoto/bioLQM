@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.Service;
 
 /**
  * Description of an available file format.
@@ -11,7 +12,7 @@ import org.colomoto.biolqm.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-public interface LogicalModelFormat {
+public interface LogicalModelFormat extends Service {
 
 	enum MultivaluedSupport {
 
@@ -26,19 +27,6 @@ public interface LogicalModelFormat {
 	};
 
 	/**
-	 * get the ID of the format. It will be used to retrieve the format
-	 * @return the format ID
-	 */
-	String getID();
-	
-	/**
-	 * Get a longer name for the format.
-	 * This is descriptive only and has no real role.
-	 * @return the format name
-	 */
-	String getName();
-
-	/**
 	 * Does this format supports export operation?
 	 * @return true if this format implements export.
 	 */
@@ -49,14 +37,6 @@ public interface LogicalModelFormat {
 	 * @return true if this format implements import.
 	 */
 	boolean canImport();
-
-	/**
-	 * Does this format handle multivalued models?
-	 * 
-	 * @return true if it supports multivalued models, false for Boolean formats
-	 */
-	@Deprecated
-	boolean supportsMultivalued();
 
 	/**
 	 * Precise type of support for multivalued models.

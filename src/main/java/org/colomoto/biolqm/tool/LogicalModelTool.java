@@ -20,35 +20,63 @@ public interface LogicalModelTool<R,S> extends Service {
 	
 	/**
 	 * Construct a default setting object.
-	 * @param parameters optional command line settings
+	 * 
 	 * @return the custom setting object
 	 */
 	S getSettings();
 	
+	/**
+	 * Construct a default setting object.
+	 * @param parameters optional command line settings
+	 * @return the custom setting object
+	 */
 	S getSettings(String parameters);
 	
+	/**
+	 * Construct a default setting object.
+	 * 
+	 * @param parameters optional command line settings
+	 * @return the custom setting object
+	 */
 	S getSettings(String ... parameters);
 	
 	/**
 	 * Get the analysis result with a custom setting.
 	 * 
-	 * @param model
+	 * @param model the source model
 	 * @param settings a custom setting object
 	 * @return the result object
-	 * @throws Exception
+	 * @throws Exception when the analysis could not be performed
 	 */
 	R getResult(LogicalModel model, S settings) throws Exception;
 	
 	/**
 	 * Get the analysis result.
 	 * 
-	 * @param model
-	 * @param parameters optional command line settings
+	 * @param model the source model
 	 * @return the result object
-	 * @throws Exception
+	 * @throws Exception when the analysis could not be performed
 	 */
 	R getResult(LogicalModel model) throws Exception;
+
+	/**
+	 * Get the analysis result.
+	 * 
+	 * @param model the source model
+	 * @param parameters optional command line settings (space separated)
+	 * @return the result object
+	 * @throws Exception when the analysis could not be performed
+	 */
 	R getResult(LogicalModel model, String parameters) throws Exception;
+	
+	/**
+	 * Get the analysis result.
+	 * 
+	 * @param model the source model
+	 * @param parameters optional list of command line settings
+	 * @return the result object
+	 * @throws Exception when the analysis could not be performed
+	 */
 	R getResult(LogicalModel model, String ... parameters) throws Exception;
 	
 	/**

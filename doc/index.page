@@ -14,7 +14,7 @@
         <license><p>Creative Commons Share Alike 3.0</p></license>
     </info>
 
-    <title>Documentation for bioLQM</title>
+    <title>BioLQM Documentation</title>
 
     <p>BioLQM provides a collection of tools for the <link xref="modifiers">modification</link> and <link xref="formats">conversion</link>
        of <em style="strong">Logical Qualitative Models of biological networks</em>, started as part of the 
@@ -36,7 +36,7 @@
         <info>
             <title type="link" role="trail">Formats</title>
         </info>
-        <title>Available Import/Export formats</title>
+        <title>Import/Export formats</title>
         <p>Formats provide import/export filters for the following file formats.</p>
         <links type="topic" style="2column"/>
     </section>
@@ -45,7 +45,7 @@
         <info>
             <title type="link" role="trail">Modifiers</title>
         </info>
-        <title>Available model modifiers</title>
+        <title>Model modifiers</title>
         <p>A model modifier takes a model as input (and in some cases some parameters), and constructs a modified version of the model.</p>
     </section>
 
@@ -53,7 +53,7 @@
         <info>
             <title type="link" role="trail">Tools</title>
         </info>
-        <title>Available tools</title>
+        <title>Tools</title>
     </section>
 
 </page>

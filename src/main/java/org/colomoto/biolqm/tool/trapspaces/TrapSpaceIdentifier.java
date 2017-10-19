@@ -72,6 +72,19 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 //        	}
         	solver.add_variable(i, formula, not_formula);
         }
+        
+		if (settings.focusComponents != null) {
+			for (String sid: settings.focusComponents) {
+				int idx=0;
+				for (NodeInfo ni: model.getComponents()) {
+					if (ni.getNodeID().equals(sid)) {
+						solver.add_focus(idx);
+						break;
+					}
+					idx++;
+				}
+			}
+		}
 	}
 
 	public static List<TrapSpace> selectAttractors(List<TrapSpace> solutions) {

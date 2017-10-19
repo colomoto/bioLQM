@@ -9,5 +9,7 @@ public interface TrapSpaceSolver {
 	void add_fixed(int idx, int value);
 	
 	void solve(TrapSpaceList solutions);
+
+	void add_focus(int idx);
 	
 }

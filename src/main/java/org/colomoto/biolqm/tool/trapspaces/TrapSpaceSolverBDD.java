@@ -23,15 +23,26 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	private StructuralNodeOrderer order;
 	private List<NodeInfo> components;
 	private boolean percolate;
+	private BDD focus;
 
 	public TrapSpaceSolverBDD(LogicalModel model, TrapSpaceSettings settings) {
 		this.percolate = settings.percolate;
 		nvar = model.getComponents().size();
 		jbdd = BDDFactory.init("java", 50000, 500);
 		jbdd.setVarNum(nvar*2);
+		focus = jbdd.one();
 		constraints = new BDD[nvar];
 		order = new StructuralNodeOrderer(model);
 		components = model.getComponents();
+	}
+	
+	public void add_focus(int idx) {
+		int vidx = 2*idx;
+		BDD active = jbdd.ithVar(vidx).andWith(jbdd.nithVar(vidx+1));
+		BDD inactive = jbdd.nithVar(vidx).andWith(jbdd.ithVar(vidx+1));
+		
+		// TODO: refine constraint
+		focus.andWith(active);
 	}
 	
 	@Override
@@ -89,7 +100,8 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	
 	@Override
 	public void solve(TrapSpaceList solutions) {
-		BDD result = jbdd.one();
+//		BDD result = jbdd.one();
+		BDD result = focus;
 		for (int idx: order) {
 			BDD next = constraints[idx];
 			result.andWith(next);

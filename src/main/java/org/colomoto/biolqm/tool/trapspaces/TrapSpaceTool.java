@@ -27,8 +27,12 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 	public TrapSpaceSettings getSettings(String[] parameters) {
 		TrapSpaceSettings settings = new TrapSpaceSettings();
 		if (parameters != null && parameters.length > 0) {
+			boolean focus = false;
 			for (String s: parameters) {
-				if ("terminal".equalsIgnoreCase(s)) {
+				if (focus) {
+					settings.focusComponents = s.split(",");
+					focus = false;
+				} else if ("terminal".equalsIgnoreCase(s)) {
 					settings.terminal = true;
 					settings.tree = false;
 				} else if ("raw".equalsIgnoreCase(s)) {
@@ -53,7 +57,8 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 				} else if ("showASP".equalsIgnoreCase(s)) {
 					settings.bdd = false;
 					settings.showasp = true;
-					
+				} else if ("focus".equalsIgnoreCase(s)) {
+					focus = true;
 				} else {
 					System.out.println("Unknown parameter: "+ s);
 				}

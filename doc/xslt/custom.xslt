@@ -5,8 +5,8 @@
                 version="1.0">
 
   <!-- Parameters -->
-  <xsl:param name="mal2html.editor_mode" select="true()"/>
 <!--
+  <xsl:param name="mal2html.editor_mode" select="true()"/>
   <xsl:param name="html.syntax.highlight" select="false()"/>
 -->
 

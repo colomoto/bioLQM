@@ -70,11 +70,26 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 	}
 	
 	public String getASP() {
+
+		boolean focusMode = false;
+		if (settings.focusComponents != null && settings.focusComponents.length > 0) {
+			focusMode = true;
+			program.append("% Keep only conditions to fix selected components\n");
+			for (String nodeid: settings.focusComponents) {
+				program.append("focus(\""+nodeid+"\").\n");
+			}
+			program.append(
+				"focus(V2) :- in_set(ID), target(V1,S1,ID), source(V2,S2,ID), focus(V1).\n"
+			  + ":- in_set(ID), target(V,S,ID), not focus(V), not percolated(V).\n\n"
+			);
+		}
+
 		program.append("\n\n"
 				+ "% generator: \"in_set(ID)\" specifies which arcs are chosen for a trap set (ID is unique for target(_,_,_)).\n"
-				+ "{in_set(ID) : target(V,S,ID)}.\n\n"
+				+ "{in_set(ID) : target(V,S,ID)}.\n\n");
 
-				+ "% consistency constraint: a node can not be fixed to different values\n"
+		program.append("\n\n"
+				+  "% consistency constraint: a node can not be fixed to different values\n"
 				+ ":- in_set(ID1), in_set(ID2), target(V,1,ID1), target(V,0,ID2).\n\n"
 
 				+ "% stability constraint: a fixed node must be target in a selected prime\n"
@@ -85,17 +100,17 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 				);
 
 		if (settings.percolate) {
-			program.append(
-					"% Enforce propagation\n"
-					+ "in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID).\n\n"
-	
-					+ "% Detect percolated: nodes which are not part of a selected circuit\n"
-					+ "upstream(V1,V2) :- in_set(ID), target(V1,S1,ID), source(V2,S2,ID).\n"
-					+ "upstream(V1,V2) :- upstream(V1,V3), upstream(V3,V2).\n"
-					+ "percolated(V1) :- hit(V1,S), not upstream(V1,V1).\n\n"
-					
-					
-					);
+			program.append("% Enforce propagation\n");
+			if (focusMode) {
+				
+			} else {
+				program.append(
+						"in_set(ID) :- target(V,S,ID); hit(V1,S1) : source(V1,S1,ID).\n\n"
+						+ "% Detect percolated: nodes which are not part of a selected circuit\n"
+						+ "upstream(V1,V2) :- in_set(ID), target(V1,S1,ID), source(V2,S2,ID).\n"
+						+ "upstream(V1,V2) :- upstream(V1,V3), upstream(V3,V2).\n"
+						+ "percolated(V1) :- hit(V1,S), not upstream(V1,V1).\n\n");
+			}
 		} else {
 			program.append(
 					"% bijection constraint (bijection between solutions and trap spaces), avoids duplicate results\n"
@@ -171,6 +186,11 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 		}
 		
 		solutions.add(new TrapSpace(pattern, isPercolated));
+	}
+
+	@Override
+	public void add_focus(int idx) {
+		// TODO Auto-generated method stub
 	}
 	
 }

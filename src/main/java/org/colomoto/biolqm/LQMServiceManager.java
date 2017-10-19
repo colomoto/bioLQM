@@ -144,4 +144,41 @@ public class LQMServiceManager {
 	public static Iterable<ModelModifierService> getModifiers() {
 		return modifiers;
 	}
+	
+	/**
+	 * Register a service after initial service discovery.
+	 * 
+	 * When possible, service discovery should be used instead.
+	 * 
+	 * @param srv the new service to register
+	 * @return true is the service was added
+	 */
+	public static boolean register(Service srv) {
+		if (srv == null) {
+			return false;
+		}
+		
+		if (register(ModelModifierService.class, srv, modifiers, id2modifier)) {
+			return true;
+		}
+		if (register(LogicalModelTool.class, srv, tools, id2tool)) {
+			return true;
+		}
+		if (register(LogicalModelFormat.class, srv, formats, id2format)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private static <T> boolean register(Class<T> cl, Service srv, List<T> services, Map<String,T> id2srv) {
+		String id = srv.getID();
+		if (!cl.isInstance(srv) || id2srv.containsKey(id)) {
+			return false;
+		}
+		
+		services.add((T)srv);
+		id2srv.put(id, (T)srv);
+		return true;
+	}
 }

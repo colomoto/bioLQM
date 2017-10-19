@@ -11,4 +11,5 @@ public class TrapSpaceSettings {
 	public boolean terminal = false;
 	public boolean tree = false;
 
+	public String[] focusComponents = null;
 }

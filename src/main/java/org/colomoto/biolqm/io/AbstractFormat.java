@@ -76,11 +76,6 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	}
 
 	@Override
-	public boolean supportsMultivalued() {
-		return this.modelType == MultivaluedSupport.MULTIVALUED;
-	}
-
-	@Override
 	public MultivaluedSupport getMultivaluedSupport() {
 		return this.modelType;
 	}
