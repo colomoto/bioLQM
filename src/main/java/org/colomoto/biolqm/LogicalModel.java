@@ -30,13 +30,6 @@ public interface LogicalModel {
 	List<NodeInfo> getComponents();
 
 	/**
-	 * proxy for the getComponent method.
-	 * @return the list of NodeInfo objects for core components.
-	 */
-	@Deprecated
-	List<NodeInfo> getNodeOrder();
-	
-	/**
 	 * Get the logical function of core components in this model.
 	 * The order used is the same as for <code>getNodeOrder()</code>.
 	 * These functions are just identifiers, actual functions are stored in

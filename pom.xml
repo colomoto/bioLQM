@@ -7,7 +7,7 @@
   <groupId>org.colomoto</groupId>
   <artifactId>bioLQM</artifactId>
   <name>Logical Qualitative Models of biological network</name>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <description>simple toolbox for the manipulation of logical models (not edition)</description>
   <inceptionYear>2012</inceptionYear>
   <packaging>jar</packaging>

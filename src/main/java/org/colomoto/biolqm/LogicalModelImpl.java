@@ -60,12 +60,6 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 	
 	@Override
-	@Deprecated
-	public List<NodeInfo> getNodeOrder() {
-		return getComponents();
-	}
-
-	@Override
 	public int[] getLogicalFunctions() {
 		return coreFunctions;
 	}
@@ -113,7 +107,7 @@ public class LogicalModelImpl implements LogicalModel {
 
     @Override
     public boolean isBoolean() {
-        for (NodeInfo ni: getNodeOrder()) {
+        for (NodeInfo ni: getComponents()) {
             if (ni.getMax() > 1) {
                 return false;
             }
@@ -133,7 +127,7 @@ public class LogicalModelImpl implements LogicalModel {
 			return null;
 		}
 		
-		for (NodeInfo ni: getNodeOrder()) {
+		for (NodeInfo ni: getComponents()) {
 			if (id.equals(ni.getNodeID())) {
 				return ni;
 			}
