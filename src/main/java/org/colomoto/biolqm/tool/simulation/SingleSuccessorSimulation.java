@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.tool.simulation;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * A simple simulation engine for updaters with a single successor.
@@ -49,7 +50,7 @@ class StateIterator implements Iterator<byte[]> {
     @Override
     public byte[] next() {
         if (state == null) {
-            return null;
+            throw new NoSuchElementException();
         }
 
         byte[] ret = state;

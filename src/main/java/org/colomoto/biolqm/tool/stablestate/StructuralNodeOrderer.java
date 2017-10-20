@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.colomoto.biolqm.LogicalModel;
@@ -77,6 +78,9 @@ class NodeIterator implements Iterator<Integer> {
 
 	@Override
 	public Integer next() {
+		if (!hasNext()) {
+			throw new NoSuchElementException();
+		}
 		int choice = bestIndex;
 		int ret = t_newreg[choice][0];
 		bestValue = nbgene+1;

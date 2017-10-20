@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.tool.implicants;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.colomoto.mddlib.MDDManager;
 
@@ -61,6 +62,9 @@ public class ImplicantSearcher implements Iterable<Integer> {
 
 		@Override
 		public Integer next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
 			if (nextInPattern < 0) {
 				// retrieve a new pattern
 				returnedValue = parentIterator.next();
