@@ -156,8 +156,8 @@ public class ModelReducer {
 	public void remove(int varIdx) {
 		MDDVariable var = variables[varIdx];
 		Set<Integer> varTargets = targets.get(var);
-		removed[varIdx] = true;
 		if (varTargets == null) {
+			removed[varIdx] = true;
 			return;
 		}
 		
@@ -171,6 +171,7 @@ public class ModelReducer {
 		
 		// the selected variable should not have any remaining target
 		targets.remove(var);
+		removed[varIdx] = true;
 	}
 	
 	/**
