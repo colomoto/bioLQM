@@ -80,7 +80,19 @@ public class NodeInfo {
 	public NodeInfo[] getBooleanizedGroup() {
 		return booleanized_group;
 	}
-	public void setBooleanizedGroup(NodeInfo[]booleanized_group) {
+	public void setBooleanizedGroup(NodeInfo[] booleanized_group) {
 		this.booleanized_group = booleanized_group;
+	}
+	
+	public NodeInfo clone() {
+		NodeInfo clone = new NodeInfo(getNodeID(), max);
+		clone.isInput = isInput;
+		if (booleanized_group != null) {
+			clone.booleanized_group = new NodeInfo[booleanized_group.length];
+			for (int i=0 ; i<booleanized_group.length ; i++) {
+				clone.booleanized_group[i] = booleanized_group[i].clone();
+			}
+		}
+		return clone;
 	}
 }
