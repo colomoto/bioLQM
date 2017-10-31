@@ -80,7 +80,7 @@ public class LogicalModelImpl implements LogicalModel {
 	private List<NodeInfo> cloneNodes(List<NodeInfo> source) {
 		List<NodeInfo> result = new ArrayList<NodeInfo>(source.size());
 		for (NodeInfo ni: source) {
-			result.add(ni);
+			result.add(ni.clone());
 		}
 		return result;
 	}

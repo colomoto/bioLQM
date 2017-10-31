@@ -15,6 +15,7 @@ public class NodeInfo {
 	private String nodeID;
 	private byte max;
 	private boolean isInput = false;
+	private int hashcode = -1;
 
 	private NodeInfo[] booleanized_group = null;
 
@@ -87,6 +88,7 @@ public class NodeInfo {
 	public NodeInfo clone() {
 		NodeInfo clone = new NodeInfo(getNodeID(), max);
 		clone.isInput = isInput;
+		clone.hashcode = this.hashCode();
 		if (booleanized_group != null) {
 			clone.booleanized_group = new NodeInfo[booleanized_group.length];
 			for (int i=0 ; i<booleanized_group.length ; i++) {
@@ -95,4 +97,13 @@ public class NodeInfo {
 		}
 		return clone;
 	}
+	
+	@Override
+	public int hashCode() {
+		if (hashcode <= 0) {
+			return super.hashCode();
+		}
+		return hashCode();
+	}
+
 }
