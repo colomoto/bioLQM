@@ -103,7 +103,7 @@ public class NodeInfo {
 		if (hashcode <= 0) {
 			return super.hashCode();
 		}
-		return hashCode();
+		return hashcode;
 	}
 
 }
