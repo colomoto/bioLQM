@@ -13,7 +13,7 @@ public class BooleanNetFormat extends AbstractFormat {
 	public static final String ID = "booleannet";
 
 	public BooleanNetFormat() {
-		super(ID, "Alternative functions format");
+		super(ID, "Alternative functions format", MultivaluedSupport.BOOLEANIZED);
 	}
 
 

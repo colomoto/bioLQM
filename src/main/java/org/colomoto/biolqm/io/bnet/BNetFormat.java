@@ -13,7 +13,8 @@ public class BNetFormat extends AbstractFormat {
 	public static final String ID = "bnet";
 
 	public BNetFormat() {
-		super(ID, "bnet functions format");
+		super(ID, "bnet functions format", MultivaluedSupport.BOOLEANIZED);
+		
 	}
 
 

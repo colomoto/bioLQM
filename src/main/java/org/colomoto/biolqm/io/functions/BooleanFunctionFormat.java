@@ -13,7 +13,7 @@ public class BooleanFunctionFormat extends AbstractFormat {
 	public static final String ID = "boolfunctions";
 	
 	public BooleanFunctionFormat() {
-		super(ID, "Raw functions format");
+		super(ID, "Raw functions format", MultivaluedSupport.BOOLEANIZED);
 	}
 
 	

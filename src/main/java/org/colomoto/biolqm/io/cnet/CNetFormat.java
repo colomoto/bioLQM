@@ -13,7 +13,7 @@ public class CNetFormat extends AbstractFormat {
 	public static final String ID = "cnet";
 
 	public CNetFormat() {
-		super(ID, "cnet functions format");
+		super(ID, "cnet functions format", MultivaluedSupport.BOOLEANIZED);
 	}
 
 	@Override
