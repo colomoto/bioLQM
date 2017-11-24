@@ -7,6 +7,7 @@ import java.util.Arrays;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.colomoto.biolqm.modifier.ModelModifierService;
+import org.colomoto.biolqm.modifier.booleanize.ModelBooleanizerService;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
 import org.colomoto.biolqm.tool.LogicalModelTool;
 
@@ -322,6 +323,16 @@ public class LQMLauncher {
         }
 
         try {
+			if (!model.isBoolean()) {
+	        	switch (outputFormat.getMultivaluedSupport()) {
+				case BOOLEAN_STRICT:
+		            throw new RuntimeException(outputFormat.getID() +" does not support multivalued models");
+				case BOOLEANIZED:
+		            System.out.println(outputFormat.getID() +": export of a booleanized model");
+		            model = LQMServiceManager.getModifier(ModelBooleanizerService.class).getModifiedModel(model);
+					break;
+				}
+			}
             outputFormat.export(model, new OutputStreamProvider( filename));
             return true;
         } catch (IOException e) {
