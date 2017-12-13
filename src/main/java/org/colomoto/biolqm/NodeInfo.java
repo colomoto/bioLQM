@@ -66,7 +66,7 @@ public class NodeInfo {
 				this.isInput == other.isInput;
 			
 		} else if( obj instanceof NodeInfoHolder) {
-			return super.equals(((NodeInfoHolder)obj).getNodeInfo());
+			return equals(((NodeInfoHolder)obj).getNodeInfo());
 		} else {
 			return false;
 		}
