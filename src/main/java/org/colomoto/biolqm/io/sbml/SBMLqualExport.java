@@ -48,15 +48,19 @@ public class SBMLqualExport {
 	private boolean needFilled = true;
 	
 	private String tr_prefix = "tr_";
-	
+
 	public SBMLqualExport(LogicalModel model) {
+		this(model, false);
+	}
+
+	public SBMLqualExport(LogicalModel model, boolean addLayout) {
 		this.model = model;
 		this.ddmanager = model.getMDDManager();
 		this.searcher = new PathSearcher(ddmanager, true);
 		this.matrix = new ConnectivityMatrix(model);
 		this.coreNodes = model.getComponents();
 
-		this.qualBundle = SBMLqualHelper.newBundle();
+		this.qualBundle = SBMLqualHelper.newBundle(addLayout);
 	}
 
 	public void export(OutputStream out) throws IOException, XMLStreamException {
