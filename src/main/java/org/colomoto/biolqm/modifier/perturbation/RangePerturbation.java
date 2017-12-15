@@ -85,6 +85,11 @@ public class RangePerturbation extends AbstractPerturbation {
 	}
 
 	@Override
+	public 	String getStringRepresentation() {
+		return component.getNodeID()+ "%" + min + ":" + max;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RangePerturbation) {
 			RangePerturbation p = (RangePerturbation)o;

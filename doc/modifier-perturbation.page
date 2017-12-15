@@ -50,7 +50,7 @@
                 where the target value of a component is blocked inside a smaller range. When the target value
                 of the component is larger (resp. smaller) than the range, it is replaced by the max (resp. min)
                 bound of the range.
-                Use <cmd>A%v1-v2</cmd> to restrict the value of component <cmd>A</cmd> in the range <cmd>[v1,v2]</cmd>.
+                Use <cmd>A%v1:v2</cmd> to restrict the value of component <cmd>A</cmd> in the range <cmd>[v1,v2]</cmd>.
                 </p>
             </item>
             

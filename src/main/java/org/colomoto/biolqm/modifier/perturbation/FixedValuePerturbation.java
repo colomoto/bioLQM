@@ -74,6 +74,7 @@ public class FixedValuePerturbation extends AbstractPerturbation {
         return component.equals(node);
     }
 
+	@Override
     public String toString() {
 		if (value == 0) {
 			return component.getNodeID() + " KO";
@@ -81,7 +82,12 @@ public class FixedValuePerturbation extends AbstractPerturbation {
 		
 		return component.getNodeID() + " E" +value;
 	}
-	
+
+	@Override
+	public 	String getStringRepresentation() {
+		return component.getNodeID() + "%" +value;
+	}
+
 	public boolean equals(Object o) {
 		if (o instanceof FixedValuePerturbation) {
 			FixedValuePerturbation p = (FixedValuePerturbation)o;
@@ -90,4 +96,5 @@ public class FixedValuePerturbation extends AbstractPerturbation {
 		}
 		return false;
 	}
+
 }

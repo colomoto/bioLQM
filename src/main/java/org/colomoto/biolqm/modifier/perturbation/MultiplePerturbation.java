@@ -36,7 +36,8 @@ public class MultiplePerturbation<P extends LogicalModelPerturbation> extends Ab
 			perturbation.update(model);
 		}
 	}
-	
+
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		boolean first = true;
@@ -50,7 +51,22 @@ public class MultiplePerturbation<P extends LogicalModelPerturbation> extends Ab
 		}
 		return sb.toString();
 	}
-	
+
+	@Override
+	public 	String getStringRepresentation() {
+		StringBuffer sb = new StringBuffer();
+		boolean first = true;
+		for (LogicalModelPerturbation p: perturbations) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+			sb.append(p.getStringRepresentation());
+		}
+		return sb.toString();
+	}
+
 	public boolean equals(Object o) {
 		if (o instanceof MultiplePerturbation) {
 			MultiplePerturbation mp = (MultiplePerturbation)o;

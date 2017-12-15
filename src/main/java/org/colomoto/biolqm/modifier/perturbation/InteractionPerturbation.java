@@ -58,10 +58,17 @@ public class InteractionPerturbation extends AbstractPerturbation {
 		model.getMDDManager().free(oldValue);
 	}
 
+	@Override
 	public String toString() {
 		return target.getNodeID() + " ["+ regulator.getNodeID() + "@"+regValue+"]";
 	}
-	
+
+
+	@Override
+	public 	String getStringRepresentation() {
+		return regulator.getNodeID() + ":" + target.getNodeID()+ "%" + regValue;
+	}
+
 	public boolean equals(Object o) {
 		if (o instanceof InteractionPerturbation) {
 			InteractionPerturbation p = (InteractionPerturbation)o;
