@@ -73,7 +73,7 @@
             <p>Note that in some cases, the reduction may only be possible in a precise order (but the result does not not change with the order when several orders are feasible).
                When blocked, bioLQM will try alternate orders for the remaining components, but not for the components which have already been succesfully reduced.
                In such cases, it may be necessary to provide the list of components to reduce in several steps to force the use of the correct order.
-               Note that such ordering problems only occur for reductions which show a high risk of modifying the dynamical behaviour.
+               Note that such grouping problems only occur for reductions which show a high risk of modifying the dynamical behaviour.
             </p>
         </note>
 -->

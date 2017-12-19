@@ -1,23 +1,23 @@
-package org.colomoto.biolqm.tool.simulation;
+package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A simple simulation engine for updaters with a single successor.
+ * A simple simulation engine for deterministic updaters (with a single successor).
  * It will stop when reaching a stable state, but has otherwise no memory and will
  * not detect cycles, just stop after reaching a limit on the number of iterations.
  *
  * @author Aurelien Naldi
  */
-public class SingleSuccessorSimulation implements Iterable<byte[]> {
+public class DeterministicSimulation implements Iterable<byte[]> {
 
     private final DeterministicUpdater updater;
     private final byte[] init;
 
     private final int max_steps;
 
-    public SingleSuccessorSimulation(DeterministicUpdater updater, byte[] init, int max_steps) {
+    public DeterministicSimulation(DeterministicUpdater updater, byte[] init, int max_steps) {
         this.updater = updater;
         this.init = init;
         this.max_steps = max_steps;

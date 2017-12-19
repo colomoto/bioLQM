@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import org.colomoto.biolqm.LogicalModel;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * Updater for the "complete" mode: include all asynchronous, synchronous and partially synchronous changes.
  * It returns all successors according to the order of components in the model.
  *
- * Warning: this updater can generate a huge number of successors and should not be used to large models.
+ * Warning: this random can generate a huge number of successors and should not be used to large models.
  * It will fail when more than 30 individual changes are available (and may fill the memory before that).
  * 
  * @author Aurelien Naldi
@@ -20,9 +20,9 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
     private final int[] changing;
 
 	/**
-	 * Create a new full updater.
+	 * Create a new full random.
 	 * 
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
 	 */
 	public CompleteUpdater(LogicalModel model) {
 		super(model);

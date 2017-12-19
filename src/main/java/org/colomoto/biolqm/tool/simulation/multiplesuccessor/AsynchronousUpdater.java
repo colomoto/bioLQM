@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import org.colomoto.biolqm.LogicalModel;
 
@@ -16,9 +16,9 @@ public class AsynchronousUpdater extends AbstractMultipleSuccessorUpdater {
     private final int[] changes;
 
 	/**
-	 * Create a new asynchronous updater.
+	 * Create a new asynchronous random.
 	 * 
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
 	 */
 	public AsynchronousUpdater(LogicalModel model) {
 		super(model);

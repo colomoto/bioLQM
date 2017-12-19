@@ -10,8 +10,12 @@ import java.util.Iterator;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.simulation.updater.AsynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.updater.SynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicSimulation;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorSimulation;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -128,7 +132,7 @@ public class TestSimulations {
 		byte[] state = {0, 0, 0};
 		byte[] state2 = {1, 1, 0};
 		byte[] state3 = {1, 1, 1};
-		SingleSuccessorSimulation simulation = new SingleSuccessorSimulation(updater, state, 100);
+		DeterministicSimulation simulation = new DeterministicSimulation(updater, state, 100);
 		
 		Iterator<byte[]> it = simulation.iterator();
 		

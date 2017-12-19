@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;

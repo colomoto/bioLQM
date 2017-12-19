@@ -1,14 +1,13 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.MultipleSuccessorsUpdater;
-import org.colomoto.biolqm.tool.simulation.RandomUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 
 import java.util.List;
 import java.util.Random;
 
 /**
- * Random updater which wraps a MultipleSuccessorUpdater and picks one of the successors.
+ * Random random which wraps a MultipleSuccessorUpdater and picks one of the successors.
  *
  * @author Aurelien Naldi
  */

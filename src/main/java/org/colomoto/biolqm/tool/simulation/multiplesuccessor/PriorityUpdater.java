@@ -1,11 +1,11 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 
 /**
- * Draft for a priority updater: components are grouped in groups, which can be
+ * Draft for a priority random: components are grouped in groups, which can be
  * updated synchronously or asynchronously. Only components from the first group
  * with updated components will be taken into account
  *

@@ -1,19 +1,19 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.DeterministicUpdater;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 
 /**
  * Updater for the synchronous scheme: all possible changes are applied in a single successor
  * 
  * @author Aurelien Naldi
  */
-public class SynchronousUpdater extends AbstractDeterministicUpdater implements DeterministicUpdater {
+public class SynchronousUpdater extends BaseUpdater implements DeterministicUpdater {
 
 	/**
 	 * Create a new synchronous updater
 	 * 
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
 	 */
 	public SynchronousUpdater(LogicalModel model) {
 		super(model);

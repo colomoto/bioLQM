@@ -1,13 +1,15 @@
-package org.colomoto.biolqm.tool.simulation;
+package org.colomoto.biolqm.tool.simulation.random;
+
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 
 /**
  * Interface for random (stochastic) updaters.
- * A stochastic updater will pick a single successor for a given state,
+ * A stochastic random will pick a single successor for a given state,
  * but a different successor may be selected when calling it again on the same state.
  *
  * @author Aurelien Naldi
  */
-public interface RandomUpdater extends SingleSuccessorUpdater {
+public interface RandomUpdater extends LogicalModelUpdater {
 
     /**
      * Get the successor of a state state.

@@ -5,10 +5,10 @@ import java.util.Iterator;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.avatar.AvatarUtils;
-import org.colomoto.biolqm.tool.simulation.SingleSuccessorSimulation;
-import org.colomoto.biolqm.tool.simulation.updater.SequentialUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicSimulation;
+import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 
-public class AvatarSimulation extends SingleSuccessorSimulation {
+public class AvatarSimulation extends DeterministicSimulation {
 
 	public static int MAX_STEPS = 100;
 	public HashSet<byte[]> hs;

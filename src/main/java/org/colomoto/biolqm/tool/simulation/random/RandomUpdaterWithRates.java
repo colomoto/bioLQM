@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
 
@@ -13,9 +13,9 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
     private final double[] rates;
 
 	/**
-	 * Create a new random updater
+	 * Create a new random random
 	 *
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
 	 */
     public RandomUpdaterWithRates(LogicalModel model) {
         this(model, null);
@@ -23,7 +23,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     /**
      * 
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
      * @param rates the rates associated to each component
      */
     public RandomUpdaterWithRates(LogicalModel model, double[] rates) {

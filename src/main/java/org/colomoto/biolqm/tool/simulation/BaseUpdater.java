@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;

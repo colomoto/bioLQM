@@ -1,7 +1,7 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.RandomUpdater;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 
 import java.util.Random;
 

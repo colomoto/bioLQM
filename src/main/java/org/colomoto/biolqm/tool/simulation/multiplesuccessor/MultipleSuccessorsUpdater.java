@@ -1,4 +1,6 @@
-package org.colomoto.biolqm.tool.simulation;
+package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
+
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation;
+package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import java.util.*;
 

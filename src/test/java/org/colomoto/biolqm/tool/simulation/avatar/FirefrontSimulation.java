@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.MultipleSuccessorSimulation;
-import org.colomoto.biolqm.tool.simulation.updater.AsynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorSimulation;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 
 public class FirefrontSimulation extends MultipleSuccessorSimulation {
 

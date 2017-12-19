@@ -1,7 +1,7 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.DeterministicUpdater;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 
 /**
  * Updater for the sequential scheme: all components are updated one after the other in a single successor.
@@ -9,14 +9,14 @@ import org.colomoto.biolqm.tool.simulation.DeterministicUpdater;
  * 
  * @author Aurelien Naldi
  */
-public class SequentialUpdater extends AbstractDeterministicUpdater implements DeterministicUpdater {
+public class SequentialUpdater extends BaseUpdater implements DeterministicUpdater {
 
 	private final int[] order;
 	
 	/**
-	 * Create a new sequential updater, using the default order
+	 * Create a new sequential random, using the default order
 	 * 
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
 	 */
 	public SequentialUpdater(LogicalModel model) {
 		super(model);
@@ -29,7 +29,7 @@ public class SequentialUpdater extends AbstractDeterministicUpdater implements D
 	/**
 	 * Create a new sequential updater, using a custom order
 	 * 
-	 * @param model the model for which the updater is constructed
+	 * @param model the model for which the random is constructed
 	 * @param order the ordering for sequential updates
 	 */
 	public SequentialUpdater(LogicalModel model, int[] order) {

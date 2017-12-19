@@ -1,10 +1,10 @@
-package org.colomoto.biolqm.tool.simulation.updater;
+package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.DeterministicUpdater;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 
 /**
  * Updater for a block-sequential scheme: there are groups of nodes updated in 
@@ -25,7 +25,7 @@ import org.colomoto.biolqm.tool.simulation.DeterministicUpdater;
  * 
  * @author Francisco Plana
  */
-public class BlockSequentialUpdater extends AbstractDeterministicUpdater implements DeterministicUpdater {
+public class BlockSequentialUpdater extends BaseUpdater implements DeterministicUpdater {
 	
 	private final List<int[]> blocks;
 	
