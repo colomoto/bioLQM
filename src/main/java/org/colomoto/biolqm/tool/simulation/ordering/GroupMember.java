@@ -23,12 +23,13 @@ public class GroupMember {
             this.group.remove(this);
         }
 
-        if (group != null) {
-            group.add(this);
+        this.group = group;
+
+        if (this.group != null) {
+            this.group.add(this);
         }
 
-        this.group = group;
-    }
+}
 
     public boolean isSplit() {
         return (type != SplittingType.MERGED);
@@ -40,7 +41,7 @@ public class GroupMember {
         }
 
         this.type = SplittingType.POSITIVE;
-        membership.assign(SplittingType.NEGATIVE, group);
+        membership.setGroup(SplittingType.NEGATIVE, group);
     }
 
     public void merge() {
@@ -48,7 +49,7 @@ public class GroupMember {
             return;
         }
 
-        membership.assign(SplittingType.MERGED, group);
+        membership.setGroup(SplittingType.MERGED, group);
     }
 
 }

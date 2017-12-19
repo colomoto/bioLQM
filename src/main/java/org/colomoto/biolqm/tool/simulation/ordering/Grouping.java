@@ -5,15 +5,24 @@ import org.colomoto.biolqm.NodeInfo;
 
 import java.util.*;
 
-public class Grouping {
+/**
+ * Define a grouping of transitions on components, optionally separating
+ * increases from decreases.
+ * This grouping can serve as basis for some configurable updatings, in particular
+ * using priorities or sequential updatings.
+ *
+ * The data structure defining the grouping goes beyond an ordered list of component
+ * identifiers to facilitate its integration in model editors and GUIs.
+ *
+ * @author Aurelien Naldi
+ */
+public class Grouping extends ArrayList<Group> {
 
-    private final LogicalModel model;
-    private Map<NodeInfo, NodeMembership> memberships = new HashMap();
-    private final List<Group> groups;
+    protected final LogicalModel model;
+    protected Map<NodeInfo, NodeMembership> memberships = new HashMap();
 
     public Grouping(LogicalModel model) {
         this.model = model;
-        this.groups = new ArrayList<Group>();
         refresh();
     }
 
@@ -23,7 +32,7 @@ public class Grouping {
             if (membership == null) {
                 return;
             }
-            membership.assign(type, grp);
+            membership.setGroup(type, grp);
             return;
         }
 
@@ -34,7 +43,7 @@ public class Grouping {
             return;
         }
 
-        membership.assign(type, grp);
+        membership.setGroup(type, grp);
     }
 
     public void refresh() {
@@ -47,14 +56,30 @@ public class Grouping {
         }
 
         // Make sure to have all nodes
-        if (groups.size() < 1) {
-            groups.add(new Group(this));
+        if (size() < 1) {
+            add(new Group(this));
         }
-        Group grp = groups.get(0);
+        Group grp = get(0);
         for (NodeInfo ni : model.getComponents()) {
             if (!memberships.containsKey(ni)) {
                 assign(ni, SplittingType.MERGED, grp);
             }
+        }
+
+        // no need to update the content of groups as long as we used the API ?
+
+        // remove empty groups
+        List<Group> toRemove = null;
+        for (Group group: this) {
+            if (group.size() < 1) {
+                if (toRemove == null) {
+                    toRemove = new ArrayList<Group>();
+                }
+                toRemove.add(group);
+            }
+        }
+        if (toRemove != null) {
+            removeAll(toRemove);
         }
     }
 

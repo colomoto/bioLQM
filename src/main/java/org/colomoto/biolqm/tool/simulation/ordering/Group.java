@@ -6,7 +6,7 @@ public class Group extends ArrayList<GroupMember> {
 
     private final Grouping grouping;
 
-    protected Group(Grouping grouping) {
+    public Group(Grouping grouping) {
         this.grouping = grouping;
     }
 
