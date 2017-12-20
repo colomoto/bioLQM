@@ -8,8 +8,9 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 import org.mangosdk.spi.ProviderFor;
 
+
 @ProviderFor(LogicalModelTool.class)
-public class StableStateTool extends AbstractTool<StableStateList, StableStateMethod> {
+public class StableStateTool extends AbstractTool<StableStateList, StableStateSettings> {
 
 	public static final String HELP_LINE = "Search stable states";
 	public static final String HELP_MESSAGE = "arguments: asp";
@@ -19,17 +20,16 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateMe
 	}
 
 	@Override
-	public StableStateMethod getSettings(String ... parameters) {
+	public StableStateSettings getSettings(LogicalModel model, String ... parameters) {
+		StableStateSettings settings = new StableStateSettings(model);
+
 		for (String p: parameters) {
 			p = p.trim();
-			if ("bdd".equalsIgnoreCase(p)) {
-				return StableStateMethod.BDD;
-			}
 			if ("asp".equalsIgnoreCase(p )) {
-				return StableStateMethod.ASP;
+				settings.method = StableStateMethod.ASP;
 			}
 		}
-		return StableStateMethod.MDD;
+		return settings;
 	}
 
 	@Override
@@ -69,19 +69,19 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateMe
 	public StableStateList getMDD(LogicalModel model) {
 		StableStateSearcher ssearcher = new StableStateSearcher(model);
 		StableStateList result = new StableStateList(model);
-        try {
-            int stable = ssearcher.call();
-            MDDManager ddm = ssearcher.getMDDManager();
+		try {
+			int stable = ssearcher.call();
+			MDDManager ddm = ssearcher.getMDDManager();
 
-            PathSearcher psearcher = new PathSearcher(ddm, 1);
-            int[] path = psearcher.setNode(stable);
-            for (int v: psearcher) {
-            	result.add(path.clone());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+			PathSearcher psearcher = new PathSearcher(ddm, 1);
+			int[] path = psearcher.setNode(stable);
+			for (int v: psearcher) {
+				result.add(path.clone());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	private StableStateList getASP(LogicalModel model) {
@@ -90,12 +90,12 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateMe
 	}
 
 	@Override
-	public StableStateList getResult(LogicalModel model, StableStateMethod settings) {
-		switch (settings) {
+	public StableStateList getResult(StableStateSettings settings) {
+		switch (settings.method) {
 		case ASP:
-			return getASP(model);
+			return getASP(settings.model);
 		default:
-			return getMDD(model);
+			return getMDD(settings.model);
 		}
 	}
 }

@@ -19,13 +19,13 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 
 	@Override
 	public void run(LogicalModel model, String ... parameters) {
-		TrapSpaceSettings settings = getSettings(parameters);
-		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(model, settings);
+		TrapSpaceSettings settings = getSettings(model, parameters);
+		TrapSpaceIdentifier identifier = new TrapSpaceIdentifier(settings);
 		identifier.runCLI();
 	}
 	
-	public TrapSpaceSettings getSettings(String[] parameters) {
-		TrapSpaceSettings settings = new TrapSpaceSettings();
+	public TrapSpaceSettings getSettings(LogicalModel model, String[] parameters) {
+		TrapSpaceSettings settings = new TrapSpaceSettings(model);
 		if (parameters != null && parameters.length > 0) {
 			boolean focus = false;
 			for (String s: parameters) {
@@ -68,12 +68,12 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 	}
 	
 	@Override
-	public TrapSpaceList getResult(LogicalModel model, TrapSpaceSettings settings) throws Exception {
-		return getTask(model, settings).call();
+	public TrapSpaceList getResult(TrapSpaceSettings settings) throws Exception {
+		return getTask(settings).call();
 	}
 
-	public Task<TrapSpaceList> getTask(LogicalModel model, TrapSpaceSettings settings) {
-		return new TrapSpaceIdentifier(model, settings);
+	public Task<TrapSpaceList> getTask(TrapSpaceSettings settings) {
+		return new TrapSpaceIdentifier(settings);
 	}
 
 }

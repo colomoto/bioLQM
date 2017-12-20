@@ -3,6 +3,7 @@ package org.colomoto.biolqm.tool.attractor;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractTool;
 import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.ToolSettings;
 import org.mangosdk.spi.ProviderFor;
 
 /**
@@ -26,7 +27,12 @@ public class AttractorTool extends AbstractTool {
 	}
 
 	@Override
-	public Object getResult(LogicalModel model, Object settings) throws Exception {
+	public ToolSettings getSettings(LogicalModel model, String... parameters) {
+		return new ToolSettings(model);
+	}
+
+	@Override
+	public Object getResult(ToolSettings settings) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

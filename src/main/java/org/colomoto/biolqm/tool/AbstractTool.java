@@ -7,7 +7,7 @@ import org.colomoto.biolqm.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-abstract public class AbstractTool<R,S> implements LogicalModelTool<R,S> {
+abstract public class AbstractTool<R,S extends ToolSettings> implements LogicalModelTool<R,S> {
 
 	private final String formatID;
 	private final String formatName;
@@ -26,33 +26,28 @@ abstract public class AbstractTool<R,S> implements LogicalModelTool<R,S> {
 	}
 	
 	@Override
-	public S getSettings() {
-		return getSettings(new String[0]);
+	public S getSettings(LogicalModel model) {
+		return getSettings(model, new String[0]);
 	}
 	
 	@Override
-	public S getSettings(String s) {
-		return getSettings(s.split(" "));
-	}
-	
-	@Override
-	public S getSettings(String ... parameters) {
-		return null;
+	public S getSettings(LogicalModel model, String s) {
+		return getSettings(model, s.split(" "));
 	}
 	
 	@Override
 	public R getResult(LogicalModel model) throws Exception {
-		return getResult(model, getSettings());
+		return getResult(getSettings(model));
 	}
 	
 	@Override
 	public R getResult(LogicalModel model, String parameters) throws Exception {
-		return getResult(model, getSettings(parameters));
+		return getResult(getSettings(model, parameters));
 	}
 	
 	@Override
 	public R getResult(LogicalModel model, String ... parameters) throws Exception {
-		return getResult(model, getSettings(parameters));
+		return getResult(getSettings(model, parameters));
 	}
 	
 	@Override

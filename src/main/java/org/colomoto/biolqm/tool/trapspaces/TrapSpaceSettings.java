@@ -1,6 +1,9 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
-public class TrapSpaceSettings {
+import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.ToolSettings;
+
+public class TrapSpaceSettings extends ToolSettings {
 
 	public boolean reduce = false;
 	
@@ -12,4 +15,8 @@ public class TrapSpaceSettings {
 	public boolean tree = false;
 
 	public String[] focusComponents = null;
+
+	public TrapSpaceSettings(LogicalModel model) {
+		super(model);
+	}
 }

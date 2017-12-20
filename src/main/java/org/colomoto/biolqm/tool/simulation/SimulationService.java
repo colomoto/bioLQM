@@ -22,13 +22,20 @@ public class SimulationService  extends AbstractTool<List<byte[]>, TraceSetting>
     }
 
     @Override
-    public List<byte[]> getResult(LogicalModel model, TraceSetting settings) throws Exception {
+    public TraceSetting getSettings(LogicalModel model, String... parameters) {
+        TraceSetting settings = new TraceSetting(model);
+        // TODO: parse arguments
+        return settings;
+    }
+
+    @Override
+    public List<byte[]> getResult(TraceSetting settings) throws Exception {
         return null;
     }
 
     @Override
     public void run(LogicalModel model, String... parameters) {
-
+        System.out.println("TODO: run trace");
     }
 
 }

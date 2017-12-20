@@ -9,7 +9,7 @@ import org.colomoto.biolqm.Service;
  * 
  * @author Aurelien Naldi
  */
-public interface LogicalModelTool<R,S> extends Service {
+public interface LogicalModelTool<R,S extends ToolSettings> extends Service {
 
 	/**
 	 * Does this tool handle multivalued models?
@@ -20,35 +20,38 @@ public interface LogicalModelTool<R,S> extends Service {
 	
 	/**
 	 * Construct a default setting object.
-	 * 
+	 *
+	 * @param model the source model
 	 * @return the custom setting object
 	 */
-	S getSettings();
+	S getSettings(LogicalModel model);
 	
 	/**
-	 * Construct a default setting object.
+	 * Construct a parsed setting object.
+	 *
+	 * @param model the source model
 	 * @param parameters optional command line settings
 	 * @return the custom setting object
 	 */
-	S getSettings(String parameters);
+	S getSettings(LogicalModel model, String parameters);
 	
 	/**
 	 * Construct a default setting object.
-	 * 
+	 *
+	 * @param model the source model
 	 * @param parameters optional command line settings
 	 * @return the custom setting object
 	 */
-	S getSettings(String ... parameters);
+	S getSettings(LogicalModel model, String ... parameters);
 	
 	/**
 	 * Get the analysis result with a custom setting.
 	 * 
-	 * @param model the source model
 	 * @param settings a custom setting object
 	 * @return the result object
 	 * @throws Exception when the analysis could not be performed
 	 */
-	R getResult(LogicalModel model, S settings) throws Exception;
+	R getResult(S settings) throws Exception;
 	
 	/**
 	 * Get the analysis result.

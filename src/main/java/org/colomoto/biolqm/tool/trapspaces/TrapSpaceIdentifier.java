@@ -28,8 +28,9 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 	
 	private static boolean SMART_TREE = false;
 	
-	public TrapSpaceIdentifier(LogicalModel model, TrapSpaceSettings settings) {
+	public TrapSpaceIdentifier(TrapSpaceSettings settings) {
 		this.settings = settings;
+		LogicalModel model = settings.model;
 		
 		// Ensure that the model is booleanized
         if (!model.isBoolean()) {
