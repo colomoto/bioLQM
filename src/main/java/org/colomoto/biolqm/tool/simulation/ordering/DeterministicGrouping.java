@@ -3,6 +3,7 @@ package org.colomoto.biolqm.tool.simulation.ordering;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicPriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 
 import java.util.List;
@@ -47,22 +48,51 @@ public class DeterministicGrouping extends Grouping {
 
     }
 
-    public DeterministicUpdater getBlockSequentialUpdater() {
+    private int[][] getBlocks() {
+        // Make sure the grouping is ready to use
+        refresh();
 
-        List<NodeInfo> nodes = model.getComponents();
-        int[] blocks = new int[nodes.size()];
+        // create groups
+        List<NodeInfo> components = model.getComponents();
+        int[][] blocks = new int[size()][];
         int idx = 0;
-        for (NodeInfo ni: nodes) {
-            NodeMembership membership = memberships.get(ni);
-            int j = indexOf( membership.getGroup(SplittingType.MERGED));
-            if (j < 0) {
-                blocks[idx++] = 0;
-            } else {
-                blocks[idx++] = j;
+        for (Group group : this) {
+            // Start by counting the number of really needed entries
+            int len = 0;
+            for (GroupMember member : group) {
+                if (member.type == SplittingType.NEGATIVE && ! member.membership.isSeparated()) {
+                    continue;
+                }
+                len += 2;
+            }
+
+            // Go through entries a second time to fill the block
+            int[] content = new int[len];
+            blocks[idx++] = content;
+            int curnode = 0;
+            for (GroupMember member : group) {
+                int nodeidx = components.indexOf(member.membership.node);
+                int cst = 0;
+                if (member.membership.isSeparated()) {
+                    if (member.type == SplittingType.POSITIVE) {
+                        cst = 1;
+                    } else {
+                        cst = -1;
+                    }
+                }
+                content[curnode++] = nodeidx;
+                content[curnode++] = cst;
+
             }
         }
-        return new BlockSequentialUpdater(model, blocks);
+        return blocks;
     }
 
+    public DeterministicUpdater getBlockSequentialUpdater() {
+        return new BlockSequentialUpdater(model, getBlocks());
+    }
 
+    public DeterministicUpdater getPriorityUpdater() {
+        return new DeterministicPriorityUpdater(model, getBlocks());
+    }
 }

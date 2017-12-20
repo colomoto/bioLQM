@@ -3,7 +3,7 @@ package org.colomoto.biolqm.tool.simulation;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
@@ -34,7 +34,7 @@ public class TestOrdering {
         int fb = vb.getNode(0, 1);
         functions[0] = 1;
         functions[1] = fa;
-        functions[2] = MDDBaseOperators.AND.combine(manager, fa, fb);
+        functions[2] = MDDBaseOperators.OR.combine(manager, fa, fb);
 
         return new LogicalModelImpl(vars, manager, functions);
     }
@@ -44,22 +44,39 @@ public class TestOrdering {
     public void testOrdering() throws IOException {
 
         LogicalModel model = getModel();
-        String s_grouping = "C;A,B";
-        byte[] state = {0,0,0};
-
+        String s_grouping = "C[+];C[-],A;B[+],B[-]";
         DeterministicGrouping grouping = new DeterministicGrouping(model, s_grouping);
 
-        BlockSequentialUpdater updater = (BlockSequentialUpdater) grouping.getBlockSequentialUpdater();
+        DeterministicUpdater updater = grouping.getBlockSequentialUpdater();
+        byte[] state = {0,0,1};
 
         byte[] next = updater.getSuccessor(state);
+        Assert.assertEquals(1, next[0]);
+        Assert.assertEquals(1, next[1]);
+        Assert.assertEquals(0, next[2]);
+
+        next = updater.getSuccessor(next);
+        Assert.assertEquals(1, next[0]);
+        Assert.assertEquals(1, next[1]);
+        Assert.assertEquals(1, next[2]);
+
+        next = updater.getSuccessor(next);
+        Assert.assertNull(next);
+
+
+
+        updater = grouping.getPriorityUpdater();
+        state = new byte[] {0,0,1};
+
+        next = updater.getSuccessor(state);
         Assert.assertEquals(1, next[0]);
         Assert.assertEquals(0, next[1]);
         Assert.assertEquals(0, next[2]);
 
         next = updater.getSuccessor(next);
         Assert.assertEquals(1, next[0]);
-        Assert.assertEquals(1, next[1]);
-        Assert.assertEquals(0, next[2]);
+        Assert.assertEquals(0, next[1]);
+        Assert.assertEquals(1, next[2]);
 
         next = updater.getSuccessor(next);
         Assert.assertEquals(1, next[0]);

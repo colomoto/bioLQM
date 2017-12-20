@@ -38,6 +38,7 @@ public class NodeMembership {
                 negGroup.setGroup(grp);
             } else {
                 negGroup.setGroup(posGroup.group);
+                posGroup.setGroup(grp);
             }
             return;
         }
@@ -48,5 +49,12 @@ public class NodeMembership {
             posGroup.setGroup(grp);
         }
 
+    }
+
+    public boolean isSeparated() {
+        if (negGroup == null) {
+            return false;
+        }
+        return posGroup != negGroup;
     }
 }
