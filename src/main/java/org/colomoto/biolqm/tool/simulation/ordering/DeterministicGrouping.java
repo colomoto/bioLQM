@@ -18,6 +18,52 @@ public class DeterministicGrouping extends Grouping {
         super(model);
     }
 
+
+    public DeterministicGrouping(LogicalModel model, int[] times) {
+        super(model);
+        if (times.length < 1) {
+            return;
+        }
+
+        if (times.length != model.getComponents().size()) {
+            throw new RuntimeException("Inconsistent number of timed components");
+        }
+
+        // Find the maximal used time
+        int max = times[0];
+        for (int v: times) {
+            if (v < 0) {
+                throw new RuntimeException("Invalid time: "+v);
+            }
+            if (v > max) {
+                max = v;
+            }
+        }
+
+
+        // Assign each node to the mapped group
+        Group[] time2group = new Group[max+1];
+        int idx = 0;
+        for (NodeInfo ni: model.getComponents()) {
+            int v = times[idx++];
+            Group group = time2group[v];
+            if (group == null) {
+                group = new Group(this);
+                time2group[v] = group;
+            }
+            assign(ni, SplittingType.MERGED, group);
+        }
+
+        // Add all created groups in the proper order
+        for (Group group: time2group) {
+            if (group == null) {
+                continue;
+            }
+            add(group);
+        }
+    }
+
+
     public DeterministicGrouping(LogicalModel model, String setup) {
         super(model);
         boolean first = true;

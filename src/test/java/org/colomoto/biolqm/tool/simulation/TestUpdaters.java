@@ -15,6 +15,7 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityClasses;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -116,7 +117,8 @@ public class TestUpdaters {
 		
 		// create the block sequential scheme
 		int[] scheme = {1,2,1,1,2};
-        DeterministicUpdater updater = new BlockSequentialUpdater(model,scheme);
+		DeterministicGrouping grouping = new DeterministicGrouping(model, scheme);
+        DeterministicUpdater updater = grouping.getBlockSequentialUpdater();
 		byte[] state = {1,1,1,1,1};
         byte[] next = updater.getSuccessor(state);
 		
@@ -127,7 +129,8 @@ public class TestUpdaters {
 		Assert.assertEquals(1, next[4]);
 
 		int[] scheme1 = {1,1,1,1,2};
-		updater = new BlockSequentialUpdater(model,scheme1);
+		grouping = new DeterministicGrouping(model, scheme1);
+		updater = grouping.getBlockSequentialUpdater();
         next = updater.getSuccessor(state);
 		
 		Assert.assertEquals(1, next[0]);
@@ -137,7 +140,8 @@ public class TestUpdaters {
 		Assert.assertEquals(1, next[4]);
 
 		int[] scheme2 = {1,2,3,4,5};
-		updater = new BlockSequentialUpdater(model,scheme2);
+		grouping = new DeterministicGrouping(model, scheme2);
+		updater = grouping.getBlockSequentialUpdater();
         next = updater.getSuccessor(state);
 
         DeterministicUpdater updater1 = new SequentialUpdater(model);
