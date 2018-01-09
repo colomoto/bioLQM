@@ -54,7 +54,7 @@ class StateIterator implements Iterator<byte[]> {
         }
 
         byte[] ret = state;
-        if (steps < 0) {
+        if (steps < 1) {
             state = null;
         } else {
             state = updater.getSuccessor(state);
