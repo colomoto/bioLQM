@@ -1,0 +1,33 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="modifier-restriction">
+    <info>
+      <link type="guide" xref="index#modifiers"/>
+      <link type="guide" xref="modifiers#list"/>
+      <revision status="stub" date="2018-01-10"/>
+      <desc>Restrict a model to a subspace</desc>
+    </info>
+
+    <title>Model restriction</title>
+
+    <section>
+        <title>Description</title>
+        <p>
+        </p>
+    </section>
+
+    <section>
+        <title>Usage</title>
+        <p>The restriction takes a pattern as argument: use the <cmd>-m restrict --01--1-</cmd> switch on the 
+           <link xref="cli">command line</link> or <code>lqm.modifyModel(model, "restrict", "--01--1-")</code> in <link xref="scripting">scripts</link>.
+        </p>
+    </section>
+
+    <section>
+        <title>Going further</title>
+        <p>This service is provided by <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/subspace/SubSpaceService.html">SubSpaceService</link>.
+        </p>
+    </section>
+
+</page>
+

@@ -1,0 +1,33 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:gloss="http://projectmallard.org/experimental/gloss/"
+      type="topic"
+      id="tools-trace">
+    <info>
+        <link type="guide" xref="index#tools"/>
+        <link type="guide" xref="tools#list"/>
+      <revision status="stub" date="2018-01-10"/>
+        <desc>Finding stable states of a logical model</desc>
+        <gloss:term id="Naldi2007" />
+    </info>
+
+    <title>Compute deterministic trace</title>
+
+    <section id="motivation">
+        <title>Motivation</title>
+        <p>
+        </p>
+    </section>
+
+    <section id="usage">
+        <title>Usage</title>
+
+        <p></p>
+        <code>java -jar bioLQM.jar model.sbml -r trace -u synchronous -i 001011 -m 100</code>
+        
+        <p>The output is a list of successive states. The simulation stops when reaching a stable state
+        or the maximal number of steps.
+        </p>
+    </section>
+
+</page>
+
