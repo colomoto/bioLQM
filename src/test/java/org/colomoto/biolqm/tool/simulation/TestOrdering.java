@@ -44,7 +44,7 @@ public class TestOrdering {
     public void testOrdering() throws IOException {
 
         LogicalModel model = getModel();
-        String s_grouping = "C[+];C[-],A;B[+],B[-]";
+        String s_grouping = "C[+] C[-],A B[+],B[-]";
         DeterministicGrouping grouping = new DeterministicGrouping(model, s_grouping);
 
         DeterministicUpdater updater = grouping.getBlockSequentialUpdater();

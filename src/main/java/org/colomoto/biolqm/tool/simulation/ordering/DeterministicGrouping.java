@@ -67,7 +67,7 @@ public class DeterministicGrouping extends Grouping {
     public DeterministicGrouping(LogicalModel model, String setup) {
         super(model);
         boolean first = true;
-        for (String block: setup.split(";")) {
+        for (String block: setup.split(" ")) {
             if (first) {
                 first = false;
                 continue;

@@ -11,7 +11,7 @@ import java.util.Iterator;
 public class TraceTool extends AbstractTool<DeterministicSimulation, TraceSetting> {
 
     public static final String HELP_LINE = "Compute deterministic trace";
-    public static final String HELP_MESSAGE = "arguments: <sequential|synchronous> <initial state>, <max:#steps>";
+    public static final String HELP_MESSAGE = "arguments: [-u sequential|synchronous] [-i 0010110], [-m #steps]";
 
 
     public TraceTool() {
