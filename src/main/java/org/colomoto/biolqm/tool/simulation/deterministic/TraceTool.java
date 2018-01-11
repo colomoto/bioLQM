@@ -5,10 +5,8 @@ import org.colomoto.biolqm.tool.AbstractTool;
 import org.colomoto.biolqm.tool.LogicalModelTool;
 import org.mangosdk.spi.ProviderFor;
 
-import java.util.Iterator;
-
 @ProviderFor(LogicalModelTool.class)
-public class TraceTool extends AbstractTool<DeterministicSimulation, TraceSetting> {
+public class TraceTool extends AbstractTool<DeterministicSimulation, TraceSettings> {
 
     public static final String HELP_LINE = "Compute deterministic trace";
     public static final String HELP_MESSAGE = "arguments: [-u sequential|synchronous] [-i 0010110], [-m #steps]";
@@ -19,14 +17,14 @@ public class TraceTool extends AbstractTool<DeterministicSimulation, TraceSettin
     }
 
     @Override
-    public TraceSetting getSettings(LogicalModel model, String... parameters) {
-        TraceSetting settings = new TraceSetting(model);
+    public TraceSettings getSettings(LogicalModel model, String... parameters) {
+        TraceSettings settings = new TraceSettings(model);
         settings.parseParameters(parameters);
         return settings;
     }
 
     @Override
-    public DeterministicSimulation getResult(TraceSetting settings) throws Exception {
+    public DeterministicSimulation getResult(TraceSettings settings) throws Exception {
         return settings.getSimulation();
     }
 

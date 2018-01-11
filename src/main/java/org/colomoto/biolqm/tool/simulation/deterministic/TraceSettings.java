@@ -4,14 +4,14 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.ToolSettings;
 import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 
-public class TraceSetting extends ToolSettings {
+public class TraceSettings extends ToolSettings {
 
     DeterministicGrouping grouping = null;
     boolean isSequential = false;
     byte[] state = null;
     int max_steps = 1000;
 
-    public TraceSetting(LogicalModel model) {
+    public TraceSettings(LogicalModel model) {
         super(model);
     }
 

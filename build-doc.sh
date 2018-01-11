@@ -20,7 +20,7 @@ command -v yelp-build > /dev/null || die "Command 'yelp-build' not found"
 #test -e $OUT && echo "Confirm to remove '$OUT'..." && rm -Ir "$OUT"
 
 # First build the javadoc
-#mvn javadoc:javadoc
+mvn javadoc:javadoc
 mkdir -p "$OUT"
 
 cd $DOC
