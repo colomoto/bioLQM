@@ -78,6 +78,7 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateSe
 			for (int v: psearcher) {
 				result.add(path.clone());
 			}
+			ddm.free(stable);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

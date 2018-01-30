@@ -92,6 +92,7 @@ public class StableOperation extends AbstractFlexibleOperator {
 					children[i] = (i==other) ? first : 0;
 				}
 			}
+			// The selected children must not be freed in this case
 			return ref.getNode(children);
 		case LN:
 		case NN:
@@ -114,7 +115,7 @@ public class StableOperation extends AbstractFlexibleOperator {
 					children[i] = IsStableOperation.getOp(i).combine(factory, first, other);
 				}
 			}
-			return ref.getNode(children);
+			return ref.getNodeFree(children);
 		}
 		System.err.println("DEBUG: Stable custom should not come here!");
 		return -1;
