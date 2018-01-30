@@ -65,35 +65,35 @@ public class LQMScriptLauncher {
      * @param filename the path to the file to load (extension gives the format)
      * @return the loaded model
      */
-    public LogicalModel loadModel(String filename) {
-        return loadModel(filename, null);
+    public LogicalModel load(String filename) {
+        return load(filename, null);
     }
 
     /**
      * Load a model from a file.
      * If a format is provided, enforce its use, otherwise use the file extension as format name.
-     * 
-     * @see LQMLauncher#loadModel(String,String)
-     * 
+     *
+     * @see LQMLauncher#load(String,String)
+     *
      * @param filename the path to the file to load (extension gives the format)
      * @param format enforced format or null to guess from file extension
      * @return the loaded model
      */
-    public LogicalModel loadModel(String filename, String format) {
-    	return LQMLauncher.loadModel(filename, format);
+    public LogicalModel load(String filename, String format) {
+        return LQMLauncher.load(filename, format);
     }
 
     /**
      * Save a model to a file.
-     * @see LQMLauncher#saveModel(LogicalModel,String,String)
+     * @see LQMLauncher#save(LogicalModel,String,String)
      * 
      * @param model the model to save
      * @param filename the path to the output file 
      * @param format enforced format or null to guess from file extension
      * @return true if success
      */
-    public boolean saveModel(LogicalModel model, String filename, String format) {
-        return LQMLauncher.saveModel(model, filename, format);
+    public boolean save(LogicalModel model, String filename, String format) {
+        return LQMLauncher.save(model, filename, format);
     }
 
     /**
@@ -104,7 +104,7 @@ public class LQMScriptLauncher {
      * @param name the name of a modifier
      * @return a modified model
      */
-    public LogicalModel modifyModel(LogicalModel model, String name) {
+    public LogicalModel modify(LogicalModel model, String name) {
     	return modifyModel(model, name, "");
     }
     
@@ -117,7 +117,7 @@ public class LQMScriptLauncher {
      * @param parameters parameters for the model modifier
      * @return a modified model
      */
-    public LogicalModel modifyModel(LogicalModel model, String name, String parameters) {
+    public LogicalModel modify(LogicalModel model, String name, String parameters) {
     	return getModifier(name).getModifiedModel(model, parameters);
     }
 
@@ -161,5 +161,62 @@ public class LQMScriptLauncher {
      */
     public FileWriter fileWriter(String path) throws IOException {
 		return new FileWriter(path);
+    }
+
+
+    /**
+     * @deprecated replaced by {@link #load(String)}
+     * @param filename the path to the file to load (extension gives the format)
+     * @return the loaded model
+     */
+    @Deprecated
+    public LogicalModel loadModel(String filename) {
+        return load(filename, null);
+    }
+
+    /**
+     * @deprecated replaced by {@link #load(String,String)}
+     * @param filename the path to the file to load (extension gives the format)
+     * @param format enforced format or null to guess from file extension
+     * @return the loaded model
+     */
+    @Deprecated
+    public LogicalModel loadModel(String filename, String format) {
+        return LQMLauncher.load(filename, format);
+    }
+
+    /**
+     * @deprecated replaced by {@link #save(LogicalModel, String,String)}
+     * @param model the model to save
+     * @param filename the path to the output file
+     * @param format enforced format or null to guess from file extension
+     * @return true if success
+     */
+    @Deprecated
+    public boolean saveModel(LogicalModel model, String filename, String format) {
+        return LQMLauncher.save(model, filename, format);
+    }
+
+    /**
+     * @deprecated replaced by {@link #modify(LogicalModel, String)}
+     * @param model the original model
+     * @param name the name of a modifier
+     * @return a modified model
+     */
+    @Deprecated
+    public LogicalModel modifyModel(LogicalModel model, String name) {
+        return modify(model, name, "");
+    }
+
+    /**
+     * @deprecated replaced by {@link #modify(LogicalModel, String, String)}
+     * @param model the original model
+     * @param name the name of a modifier
+     * @param parameters parameters for the model modifier
+     * @return a modified model
+     */
+    @Deprecated
+    public LogicalModel modifyModel(LogicalModel model, String name, String parameters) {
+        return getModifier(name).getModifiedModel(model, parameters);
     }
 }

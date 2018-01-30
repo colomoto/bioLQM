@@ -59,7 +59,7 @@ public class LQMLauncher {
 		}
 		
 		String inputFilename = args[argIdx++];
-		LogicalModel model = loadModel(inputFilename, inputFormat);
+		LogicalModel model = load(inputFilename, inputFormat);
 		
 		while (true) {
 			if ("-m".equals(args[argIdx])) {
@@ -125,7 +125,7 @@ public class LQMLauncher {
 		}
 		
 		String outputTarget = args[argIdx++];
-		saveModel(model, outputTarget, outputFormat);
+		save(model, outputTarget, outputFormat);
 
 		if (argIdx < args.length) {
 			error((args.length-argIdx) + " remaining arguments "+args.length + "  "+ argIdx);
@@ -277,7 +277,7 @@ public class LQMLauncher {
 	 * @param format the name of the import format
 	 * @return the loaded model
 	 */
-    public static LogicalModel loadModel(String filename, String format) {
+    public static LogicalModel load(String filename, String format) {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
         }
@@ -308,7 +308,7 @@ public class LQMLauncher {
      * @param format the name of the export format
      * @return true if success
      */
-    public static boolean saveModel(LogicalModel model, String filename, String format) {
+    public static boolean save(LogicalModel model, String filename, String format) {
         if (format == null) {
             format = filename.substring(filename.lastIndexOf(".")+1);
         }
