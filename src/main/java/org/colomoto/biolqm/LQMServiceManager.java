@@ -36,8 +36,26 @@ public class LQMServiceManager {
 		for (ModelModifierService modifier: modifiers) {
 			id2modifier.put( modifier.getID(), modifier);
         }
+		fillAliases(id2format, formats);
+		fillAliases(id2tool, tools);
+		fillAliases(id2modifier, modifiers);
 	}
-	
+
+	private static <T extends Service> void fillAliases( Map<String, T> map, List<T> services) {
+		for (T srv: services) {
+			String[] aliases = srv.getAliases();
+			if (aliases != null) {
+				for (String alias: aliases) {
+					if (map.containsKey(alias)) {
+						continue;
+					}
+					map.put( alias, srv);
+				}
+			}
+
+		}
+	}
+
 	/**
 	 * Get the format declaration for a given ID.
 	 * 

@@ -16,6 +16,7 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 
 	private final String formatID;
 	private final String formatName;
+	private final String[] aliases;
 
 	private final boolean canExport;
 	private final boolean canImport;
@@ -34,7 +35,12 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	}
 
 	protected AbstractFormat(String id, String name, MultivaluedSupport modelType) {
+		this(id, null, name, modelType);
+	}
+
+	protected AbstractFormat(String id, String[] aliases, String name, MultivaluedSupport modelType) {
 		this.formatID = id;
+		this.aliases = aliases;
 		this.formatName = name;
 		this.modelType = modelType;
 
@@ -63,6 +69,11 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	@Override
 	public String getName() {
 		return formatName;
+	}
+
+	@Override
+	public String[] getAliases() {
+		return aliases;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.stablestate;
+package org.colomoto.biolqm.tool.fixpoints;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.stablestate;
+package org.colomoto.biolqm.tool.fixpoints;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,11 +6,11 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 
-public class StableStateList extends ArrayList<int[]> {
+public class FixpointList extends ArrayList<int[]> {
 
 	public final List<NodeInfo> nodes;
 
-	public StableStateList(LogicalModel model) {
+	public FixpointList(LogicalModel model) {
 		this.nodes = model.getComponents();
 	}
 	

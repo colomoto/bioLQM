@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.stablestate;
+package org.colomoto.biolqm.tool.fixpoints;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -24,7 +24,7 @@ public class StableASP implements ClingoResultHandler {
 	private final LogicalModel model;
 	private final List<NodeInfo> components;
 	
-	private StableStateList result = null; 
+	private FixpointList result = null;
 	
 	public StableASP(LogicalModel model) {
 		this.model = model;
@@ -75,8 +75,8 @@ public class StableASP implements ClingoResultHandler {
 		return program.toString();
 	}
 	
-	public StableStateList get() {
-		result = new StableStateList(model);
+	public FixpointList get() {
+		result = new FixpointList(model);
 		String program = getProgram();
 		ClingoLauncher launcher = new ClingoLauncher(this, program);
 		try {

@@ -5,7 +5,7 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.implicants.Formula;
-import org.colomoto.biolqm.tool.stablestate.StructuralNodeOrderer;
+import org.colomoto.biolqm.tool.fixpoints.StructuralNodeOrderer;
 
 import net.sf.javabdd.BDD;
 import net.sf.javabdd.BDDFactory;

@@ -10,19 +10,25 @@ import org.colomoto.biolqm.LogicalModel;
 abstract public class AbstractTool<R,S extends ToolSettings> implements LogicalModelTool<R,S> {
 
 	private final String formatID;
+	private final String[] aliases;
 	private final String formatName;
 	private final String helpMessage;
 	private final boolean supportsMultivalued;
 	
 	protected AbstractTool(String id, String name) {
-		this(id, name, "", false);
+		this(id, null, name, "", false);
 	}
-	
+
 	protected AbstractTool(String id, String name, String helpMessage, boolean supportsMultivalued) {
+		this(id, null, name, helpMessage, supportsMultivalued);
+	}
+
+	protected AbstractTool(String id, String[] aliases, String name, String helpMessage, boolean supportsMultivalued) {
 		this.formatID = id;
 		this.formatName = name;
 		this.helpMessage = helpMessage;
 		this.supportsMultivalued = supportsMultivalued;
+		this.aliases = aliases;
 	}
 	
 	@Override
@@ -74,4 +80,8 @@ abstract public class AbstractTool<R,S extends ToolSettings> implements LogicalM
 		return getID() +"\t"+ getName();
 	}
 
+	@Override
+	public String[] getAliases() {
+		return aliases;
+	}
 }

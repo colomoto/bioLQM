@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.stablestate;
+package org.colomoto.biolqm.tool.fixpoints;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import org.colomoto.mddlib.PathSearcher;
  * 
  * @author Aurelien Naldi
  */
-public class StableStateSearcher extends AbstractTask<Integer> {
+public class FixpointSearcher extends AbstractTask<Integer> {
 
 	private final LogicalModel model;
 
@@ -26,7 +26,7 @@ public class StableStateSearcher extends AbstractTask<Integer> {
 	 * 
 	 * @param model the model for which we search stable states.
 	 */
-	public StableStateSearcher(LogicalModel model) {
+	public FixpointSearcher(LogicalModel model) {
 		this.model = model;
 	}
 

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.stablestate;
+package org.colomoto.biolqm.tool.fixpoints;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
@@ -10,23 +10,26 @@ import org.mangosdk.spi.ProviderFor;
 
 
 @ProviderFor(LogicalModelTool.class)
-public class StableStateTool extends AbstractTool<StableStateList, StableStateSettings> {
+public class FixpointTool extends AbstractTool<FixpointList, FixpointSettings> {
 
-	public static final String HELP_LINE = "Search stable states";
+	public static final String UID = "fixpoints";
+	public static final String[] ALIASES = { "stable", "fixed", "fp" };
+
+	public static final String HELP_LINE = "Search fixed (stable) states";
 	public static final String HELP_MESSAGE = "arguments: asp";
 
-	public StableStateTool() {
-		super("stable", HELP_LINE, HELP_MESSAGE, true);
+	public FixpointTool() {
+		super(UID, ALIASES, HELP_LINE, HELP_MESSAGE, true);
 	}
 
 	@Override
-	public StableStateSettings getSettings(LogicalModel model, String ... parameters) {
-		StableStateSettings settings = new StableStateSettings(model);
+	public FixpointSettings getSettings(LogicalModel model, String ... parameters) {
+		FixpointSettings settings = new FixpointSettings(model);
 
 		for (String p: parameters) {
 			p = p.trim();
 			if ("asp".equalsIgnoreCase(p )) {
-				settings.method = StableStateMethod.ASP;
+				settings.method = FixpointMethod.ASP;
 			}
 		}
 		return settings;
@@ -34,7 +37,7 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateSe
 
 	@Override
 	public void run(LogicalModel model, String ... parameters) {
-		StableStateList result = null;
+		FixpointList result = null;
 		try {
 			result = getResult(model, parameters);
 		} catch(Exception e) {
@@ -66,9 +69,9 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateSe
     	}
 	}
 
-	public StableStateList getMDD(LogicalModel model) {
-		StableStateSearcher ssearcher = new StableStateSearcher(model);
-		StableStateList result = new StableStateList(model);
+	public FixpointList getMDD(LogicalModel model) {
+		FixpointSearcher ssearcher = new FixpointSearcher(model);
+		FixpointList result = new FixpointList(model);
 		try {
 			int stable = ssearcher.call();
 			MDDManager ddm = ssearcher.getMDDManager();
@@ -85,13 +88,13 @@ public class StableStateTool extends AbstractTool<StableStateList, StableStateSe
 		return result;
 	}
 
-	private StableStateList getASP(LogicalModel model) {
+	private FixpointList getASP(LogicalModel model) {
 		StableASP asp = new StableASP(model);
 		return asp.get();
 	}
 
 	@Override
-	public StableStateList getResult(StableStateSettings settings) {
+	public FixpointList getResult(FixpointSettings settings) {
 		switch (settings.method) {
 		case ASP:
 			return getASP(settings.model);
