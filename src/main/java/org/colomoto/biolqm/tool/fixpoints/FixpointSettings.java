@@ -10,6 +10,14 @@ public class FixpointSettings extends ToolSettings {
 	public FixpointSettings(LogicalModel model) {
 		super(model);
 	}
+
+	public void useASP() {
+		this.method = FixpointMethod.ASP;
+	}
+
+	public void useMDD() {
+		this.method = FixpointMethod.MDD;
+	}
 }
 
 enum FixpointMethod {
