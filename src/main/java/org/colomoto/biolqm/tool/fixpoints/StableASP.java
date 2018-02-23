@@ -101,7 +101,7 @@ public class StableASP implements ClingoResultHandler {
 			}
 		}
 		
-		int[] pattern = new int[components.size()];
+		byte[] pattern = new byte[components.size()];
 		for (int idx=0 ; idx<pattern.length ; idx++) {
 			String uid = components.get(idx).getNodeID();
 			if (active.contains(uid)) {

@@ -6,7 +6,7 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 
-public class FixpointList extends ArrayList<int[]> {
+public class FixpointList extends ArrayList<byte[]> {
 
 	public final List<NodeInfo> nodes;
 

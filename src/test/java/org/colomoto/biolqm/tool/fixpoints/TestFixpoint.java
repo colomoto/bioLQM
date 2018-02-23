@@ -11,14 +11,14 @@ public class TestFixpoint {
 
 
     @Test
-    public void testBasicStable() throws IOException {
+    public void testBasicStable() throws Exception {
         LQMScriptLauncher lqm = new LQMScriptLauncher(null);
         FixpointTool stool = (FixpointTool) lqm.getTool("fixpoints");
 
         String[] refModels = ReferenceModels.getNames();
         for (String name: refModels) {
             LogicalModel model = ReferenceModels.getModel(name);
-            FixpointList list = stool.getMDD(model);
+            FixpointList list = stool.getResult(model);
         }
     }
 }
