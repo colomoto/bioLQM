@@ -6,6 +6,7 @@ import org.colomoto.biolqm.tool.ToolSettings;
 public class FixpointSettings extends ToolSettings {
 
 	public FixpointMethod method = FixpointMethod.MDD;
+	public boolean pattern = false;
 
 	public FixpointSettings(LogicalModel model) {
 		super(model);
