@@ -22,17 +22,18 @@ public class XMLWriter {
     private boolean indent;
     private StringBuffer buf = null;
 
+    private static final Pattern P_SID = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_]*$");
+
 	/**
-	 * Indicates if the given string is a valid GINsim ID (contains only a-z, A-Z, 0-9, "_" or "-" characters)
+	 * Indicates if the given string is a valid GINsim ID (contains only a-z, A-Z, 0-9, "_" characters, not starting with a digit)
 	 * 
 	 * @param id the string to test
 	 * @return true if the given string can be used as ID
 	 */
-	public static boolean isValidId(String id) {
-		return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(id).find();
-	}
+    public static boolean isValidId(String id) {
+        return P_SID.matcher(id).find();
+    }
 
-    
     /**
      * Create a XMLWriter with the path to a file.
      * @param filename the path to the output file

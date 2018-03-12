@@ -1,6 +1,8 @@
 package org.colomoto.biolqm;
 
 
+import org.colomoto.common.xml.XMLWriter;
+
 /**
  * Contains the basic informations of a regulatory node (gene) : 
  * 	- nodeID : a unique identifier for the gene
@@ -25,7 +27,7 @@ public class NodeInfo {
 	
 	public NodeInfo(String name, byte max) {
 		super();
-		this.nodeID = name;
+		setNodeID(name);
 		this.max = max;
 	}
 
@@ -34,6 +36,9 @@ public class NodeInfo {
 	}
 	
 	public void setNodeID( String id) {
+		if (!XMLWriter.isValidId(id)) {
+			throw new RuntimeException("Invalid ID: "+ id);
+		}
 		this.nodeID = id;
 	}
 	
