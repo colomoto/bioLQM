@@ -74,6 +74,9 @@ public class Formula {
     @SuppressWarnings("unchecked")
     public void reduceToPrimeImplicants() {
         originalTermList = new ArrayList<Term>(termList);
+        if (termList.size() == 0) {
+            return;
+        }
         int numVars = termList.get(0).getNumVars();
         ArrayList<Term>[][] table = new ArrayList[numVars + 1][numVars + 1];
         for(int dontKnows=0; dontKnows <= numVars; dontKnows++) {
