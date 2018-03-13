@@ -26,6 +26,10 @@ public class TraceSettings extends ToolSettings {
 
             String s = parameters[idx];
 
+            if (s == null || s.length() == 0) {
+                continue;
+            }
+
             String next = null;
             if (s.length() == 2 && s.charAt(0) == '-') {
                 while (++idx < parameters.length) {
@@ -94,12 +98,28 @@ public class TraceSettings extends ToolSettings {
 
     public void parseInitialState(String s) {
         int n = s.length();
-        if (n == model.getComponents().size()) {
-            this.state = new byte[n];
-            for (int i=0 ; i<n ; i++) {
-                state[i] = (byte)Character.getNumericValue(s.charAt(i));
-            }
+        int k = model.getComponents().size();
+        if (n != k) {
+            throw new RuntimeException("Length of initial state mismatch: "+n + " (expected: "+k+")");
         }
+
+        this.state = new byte[n];
+        for (int i=0 ; i<n ; i++) {
+            this.state[i] = (byte)Character.getNumericValue(s.charAt(i));
+        }
+    }
+
+    public void setInitialState(byte[] state) {
+        if (state == null) {
+            this.state = null;
+            return;
+        }
+
+        int k = model.getComponents().size();
+        if (state.length != k) {
+            throw new RuntimeException("Length of initial state mismatch: " + state.length + " (expected: "+k+")");
+        }
+        this.state = state;
     }
 
     public DeterministicSimulation getSimulation() {
