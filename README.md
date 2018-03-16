@@ -37,10 +37,10 @@ For now it supports the following formats (< and > denote import/export capabili
   * <> [SBML-qual](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
   * <> raw logical functions
   * <> boolsim
-  *  > [GINML](http://doc.ginsim.org/format-ginml.html)
-  *  > [GNA](http://ibis.inrialpes.fr/article122.html)
-  *  > Petri net (INA, PNML, APNN)
-  *  > [Pint](http://loicpauleve.name/pint)
+  * &nbsp;\> [GINML](http://doc.ginsim.org/format-ginml.html)
+  * &nbsp;\> [GNA](http://ibis.inrialpes.fr/article122.html)
+  * &nbsp;\> Petri net (INA, PNML, APNN)
+  * &nbsp;\> [Pint](http://loicpauleve.name/pint)
   * <> [Truth table](http://doc.ginsim.org/format-truthtable.html)
 
 The integration of a filter only requires a simple format declaration class.
