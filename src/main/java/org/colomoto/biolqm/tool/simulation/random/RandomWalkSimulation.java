@@ -1,8 +1,10 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
+import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -23,6 +25,10 @@ public class RandomWalkSimulation implements Iterable<byte[]> {
         this.updater = updater;
         this.init = init;
         this.max_steps = max_steps;
+    }
+
+    public List<NodeInfo> getNodes() {
+        return updater.getModel().getComponents();
     }
 
     @Override

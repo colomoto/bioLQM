@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.ToolSettings;
+import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicSimulation;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
@@ -30,7 +31,10 @@ public class RandomWalkSettings extends ToolSettings {
 
         for (int idx=0 ; idx<parameters.length ; idx++) {
 
-            String s = parameters[idx];
+            String s = parameters[idx].trim();
+            if (s == null || s.length() < 1) {
+                continue;
+            }
 
             String next = null;
             if (s.length() == 2 && s.charAt(0) == '-') {
@@ -56,7 +60,7 @@ public class RandomWalkSettings extends ToolSettings {
                         parseMax(next);
                         continue;
                     case 'i':
-                        parseInitialState(next);
+                        this.state = InitialStateFactory.parseInitialState(this.model, next);
                         continue;
                 }
             }
@@ -82,16 +86,6 @@ public class RandomWalkSettings extends ToolSettings {
         }
 
         throw new RuntimeException("Unrecognized updater: "+s);
-    }
-
-    public void parseInitialState(String s) {
-        int n = s.length();
-        if (n == model.getComponents().size()) {
-            this.state = new byte[n];
-            for (int i=0 ; i<n ; i++) {
-                state[i] = (byte)Character.getNumericValue(s.charAt(i));
-            }
-        }
     }
 
     public RandomWalkSimulation getSimulation() {

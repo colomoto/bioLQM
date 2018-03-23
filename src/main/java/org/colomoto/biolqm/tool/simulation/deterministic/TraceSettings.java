@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.ToolSettings;
+import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
 import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 
 public class TraceSettings extends ToolSettings {
@@ -24,8 +25,7 @@ public class TraceSettings extends ToolSettings {
 
         for (int idx=0 ; idx<parameters.length ; idx++) {
 
-            String s = parameters[idx];
-
+            String s = parameters[idx].trim();
             if (s == null || s.length() == 0) {
                 continue;
             }
@@ -54,7 +54,7 @@ public class TraceSettings extends ToolSettings {
                         parseMax(next);
                         continue;
                     case 'i':
-                        parseInitialState(next);
+                        this.state = InitialStateFactory.parseInitialState(this.model, next);
                         continue;
                 }
             }
@@ -94,32 +94,6 @@ public class TraceSettings extends ToolSettings {
         }
 
         throw new RuntimeException("Unrecognized updater: "+s);
-    }
-
-    public void parseInitialState(String s) {
-        int n = s.length();
-        int k = model.getComponents().size();
-        if (n != k) {
-            throw new RuntimeException("Length of initial state mismatch: "+n + " (expected: "+k+")");
-        }
-
-        this.state = new byte[n];
-        for (int i=0 ; i<n ; i++) {
-            this.state[i] = (byte)Character.getNumericValue(s.charAt(i));
-        }
-    }
-
-    public void setInitialState(byte[] state) {
-        if (state == null) {
-            this.state = null;
-            return;
-        }
-
-        int k = model.getComponents().size();
-        if (state.length != k) {
-            throw new RuntimeException("Length of initial state mismatch: " + state.length + " (expected: "+k+")");
-        }
-        this.state = state;
     }
 
     public DeterministicSimulation getSimulation() {
