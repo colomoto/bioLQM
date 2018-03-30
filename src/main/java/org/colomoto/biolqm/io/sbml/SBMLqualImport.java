@@ -163,20 +163,17 @@ public class SBMLqualImport {
 		List<NodeInfo> variables = new ArrayList<NodeInfo>();
 		int curIndex = 0;
 		for (QualitativeSpecies sp: qualBundle.qmodel.getListOfQualitativeSpecies()) {
-			String name = sp.getName();
-			if (name == null || name.length() == 0) {
-				name = sp.getId();
-				if (name.startsWith("s_")) {
-					// remove prefix from ID if possible
-					name = name.substring(2);
-				}
+			String spid = sp.getId();
+			if (spid.startsWith("s_")) {
+				// remove prefix from ID if possible
+				spid = spid.substring(2);
 			}
-			
+
 			byte max = (byte)-1;
 			try {
 				max = (byte)sp.getMaxLevel();
 			} catch (Exception e) {}
-			NodeInfo ni = new NodeInfo(name, max);
+			NodeInfo ni = new NodeInfo(spid, max);
 			if (sp.isSetConstant() && sp.getConstant()) {
 				ni.setInput(true);
 			}
