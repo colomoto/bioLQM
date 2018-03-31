@@ -206,6 +206,34 @@ public final class AvatarUtils {
 	}
 
 	/**
+	 * Integer matrix to string
+	 * 
+	 * @param matrix
+	 *            the matrix of integers
+	 * @return textual representation of the matrix of integers
+	 */
+	public static String toString(int[][] matrix) {
+		StringBuffer result = new StringBuffer("{");
+		for (int i = 0; i < matrix.length; i++)
+			result.append(toString(matrix[i]) + "\n");
+		return result.toString() + "}";
+	}
+
+	/**
+	 * Double matrix to string
+	 * 
+	 * @param matrix
+	 *            the matrix of doubles
+	 * @return textual representation of the matrix of doubles
+	 */
+	public static String toString(double[][] matrix) {
+		StringBuffer result = new StringBuffer("{");
+		for (int i = 0; i < matrix.length; i++)
+			result.append(toString(matrix[i]) + "\n");
+		return result.toString() + "}";
+	}
+
+	/**
 	 * Converts a list of integers to an array
 	 * 
 	 * @param list
