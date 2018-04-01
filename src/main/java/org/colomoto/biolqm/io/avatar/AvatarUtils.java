@@ -1,15 +1,19 @@
 package org.colomoto.biolqm.io.avatar;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
  * Facilities for the management of logical models for simulations
  * 
- * @author Rui Henriques, Pedro T. Monteiro
- * @version 1.0
+ * @author Rui Henriques
+ * @author Pedro T. Monteiro
  */
 public final class AvatarUtils {
+
+	public final static int DEC_PLACES = 4;
 
 	/**
 	 * Creates a state (int array) where components are initialized as -1
@@ -169,7 +173,7 @@ public final class AvatarUtils {
 			return "[]";
 		String result = "[" + vector[0];
 		for (int i = 1; i < vector.length; i++)
-			result += "," + vector[i];// String.format("%.2f",vector[i]);
+			result += "," + round(vector[i]);
 		return result + "]";
 	}
 
@@ -259,5 +263,14 @@ public final class AvatarUtils {
 		for (int i = 0, l = vector.length; i < l; i++)
 			array[i] = (byte) vector[i];
 		return array;
+	}
+	
+	public static double round(double value, int decimalPlaces) {
+	    BigDecimal bd = new BigDecimal(value);
+	    bd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
+	}
+	public static double round(double value) {
+		return round(value, DEC_PLACES);
 	}
 }
