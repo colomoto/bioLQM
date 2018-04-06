@@ -24,6 +24,14 @@ public class ReductionModifier implements ModelModifier {
             reducer.removePseudoOutputs();
         }
         LogicalModel result = reducer.getModel();
+
+        if (settings.pattern != null) {
+
+        }
+
+        if (settings.pattern != null) {
+            result = new PatternReduction(result, settings.pattern).getModifiedModel();
+        }
         
         if (settings.handleFixed) {
             result = FixedComponentRemover.reduceFixed(result, settings.purgeFixed);

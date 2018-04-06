@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.modifier.reduction;
 
+import org.colomoto.biolqm.settings.state.StatePattern;
+
 public class ReductionSettings {
 
     public boolean handleFixed = false;
@@ -8,6 +10,9 @@ public class ReductionSettings {
     public boolean handleDuplicates = false;
 
     public boolean handleOutputs = false;
+
+    public StatePattern pattern = null;
+    public boolean forcePattern = false;
 
     public ReductionSettings() {
         this("");
@@ -29,6 +34,6 @@ public class ReductionSettings {
     }
 
     public boolean hasReduction() {
-    	return (handleFixed || purgeFixed || handleDuplicates || handleOutputs);
+    	return (handleFixed || purgeFixed || handleDuplicates || handleOutputs || pattern != null);
     }
 }
