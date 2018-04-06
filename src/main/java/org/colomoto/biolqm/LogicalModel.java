@@ -68,16 +68,24 @@ public interface LogicalModel {
 	 * @return the target value reached for this state
 	 */
 	byte getTargetValue(int componentIdx, byte[] state);
-	
+
 	/**
 	 * Compute the value of an extra component for a given state.
-	 * 
+	 *
 	 * @param componentIdx index of the component in the extra node order
 	 * @param state value of components
 	 * @return the computed value for this state
 	 */
 	byte getExtraValue(int componentIdx, byte[] state);
-	
+
+	/**
+	 * Compute the value of all extra components for a given state.
+	 *
+	 * @param state value of components
+	 * @param extra an array of the right size to fill
+	 */
+	void fillExtraValues(byte[] state, byte[] extra);
+
 	/**
 	 * Make a copy of this model.
 	 * This will duplicate logical functions pointers, but not the actual MDD Factory.

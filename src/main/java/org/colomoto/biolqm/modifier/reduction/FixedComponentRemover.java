@@ -83,22 +83,30 @@ public class FixedComponentRemover {
         // construct an updated model if needed
         if (changed) {
             List<NodeInfo> core = model.getComponents();
+            List<NodeInfo> extra = model.getExtraComponents();
         	if (removeFixed) {
         		for (int i = knownFixed.length - 1; i >= 0; i--) {
         			if (knownFixed[i]) {
-        				core.remove(i);
+        				NodeInfo ni = core.remove(i);
+        				extra.add(0, ni);
         			}
         		}
-        		int[] newFunctions = new int[core.size()];
+                int[] newFunctions = new int[core.size()];
+                int[] newExtraFunctions = new int[extra.size()];
+                int e = extraFunctions.length;
+                System.arraycopy(extraFunctions, 0, newExtraFunctions, 0, e);
         		for (int i = 0, n=0; i < knownFixed.length; i++) {
         			if (!knownFixed[i]) {
         				newFunctions[n] = functions[i];
         				n++;
-        			}
+        			} else {
+                        newExtraFunctions[e] = functions[i];
+                        e++;
+                    }
         		}
         		functions = newFunctions;
+        		extraFunctions = newExtraFunctions;
         	}
-            List<NodeInfo> extra = model.getExtraComponents();
             LogicalModel newModel = new LogicalModelImpl(ddmanager, core, functions, extra, extraFunctions);
 
             return newModel;

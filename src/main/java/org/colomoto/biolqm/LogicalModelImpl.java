@@ -96,6 +96,13 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 
 	@Override
+	public void fillExtraValues(byte[] state, byte[] extra) {
+		for (int i=0 ; i<extra.length ; i++) {
+			extra[i] = getExtraValue(i, state);
+		}
+	}
+
+	@Override
 	public LogicalModel getView(List<NodeInfo> neworder) {
 		
 		MDDManager newmanager = ddmanager.getManager(neworder);

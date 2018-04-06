@@ -31,9 +31,22 @@ public class TraceTool extends AbstractTool<DeterministicSimulation, TraceSettin
     @Override
     public void run(LogicalModel model, String... parameters) {
         DeterministicSimulation simulation = getSettings(model, parameters).getSimulation();
+        byte[] extra = null;
+        int n_extra = model.getExtraComponents().size();
+        if (n_extra > 0) {
+            extra = new byte[n_extra];
+        }
         for (byte[] state: simulation) {
             for (byte b: state) {
                 System.out.print(b);
+            }
+
+            if (extra != null) {
+                model.fillExtraValues(state, extra);
+                System.out.print("  ");
+                for (byte b: extra) {
+                    System.out.print(b);
+                }
             }
             System.out.println();
         }
