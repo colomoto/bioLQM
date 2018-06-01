@@ -26,7 +26,7 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 	
 	private final TrapSpaceSettings settings;
 	
-	private static boolean SMART_TREE = false;
+	private static boolean SMART_DIAG = false;
 	
 	public TrapSpaceIdentifier(TrapSpaceSettings settings) {
 		this.settings = settings;
@@ -119,15 +119,15 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 		}
 		
 		TrapSpaceList solutions = doGetResult();
-		if (settings.tree) {
+		if (settings.diag) {
 			int n = solutions.size();
 			int k = (int)Math.log10(n) + 1;
 
-			if (SMART_TREE) {
-				List<Integer>[] tree = solutions.getInclusiontree();
+			if (SMART_DIAG) {
+				List<Integer>[] diagram = solutions.getInclusionDiagram();
 		        for (int i=0 ; i<n ; i++) {
 		        	TrapSpace s = solutions.get(i);
-		        	List<Integer> children = tree[i];
+		        	List<Integer> children = diagram[i];
 		        	String incl = " ";
 		        	if (children == null) {
 		        		incl = "@";
@@ -143,12 +143,12 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 		        System.out.println();
 			}
 			
-	        boolean[][] btree = solutions.inclusion();
+	        boolean[][] diagram = solutions.inclusion();
 	        for (int i=0 ; i<n ; i++) {
 	        	TrapSpace s = solutions.get(i);
 	        	String incl = " ";
 	        	for (int j=0 ; j<n ; j++) {
-	        		if (btree[i][j]) {
+	        		if (diagram[i][j]) {
 	        			incl += " "+j;
 	        		}
 	        	}

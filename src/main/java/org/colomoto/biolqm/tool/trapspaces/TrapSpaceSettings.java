@@ -12,7 +12,7 @@ public class TrapSpaceSettings extends ToolSettings {
 	public boolean showasp = false;
 	
 	public boolean terminal = false;
-	public boolean tree = false;
+	public boolean diag = false;
 
 	public String[] focusComponents = null;
 

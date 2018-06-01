@@ -18,7 +18,7 @@ import java.util.ServiceLoader;
  */
 public class ExtensionLoader {
 
-    private static ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+    private static ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
     private static ClassLoader cld = null;
 
     /**
@@ -28,7 +28,7 @@ public class ExtensionLoader {
      */
     public static ClassLoader getClassLoader() {
         if (cld == null) {
-            return contextLoader;
+            return systemLoader;
         }
         return cld;
     }
@@ -41,7 +41,6 @@ public class ExtensionLoader {
      */
     public static void loadExtensions(String ename, Class<?> cl) {
         if (cld != null) {
-            System.err.println("Extensions are already loaded");
             return;
         }
 
@@ -58,17 +57,18 @@ public class ExtensionLoader {
 
         // extend the classpath if an extension folder is available
         if (ename == null) {
-            cld = contextLoader;
+            cld = systemLoader;
             return;
         }
         
         File extensionDir = new File(basedir, ename);
         if (!extensionDir.isDirectory()) {
-            cld = contextLoader;
+            cld = systemLoader;
             return;
         }
 
 
+//        System.out.println("Loading extensions from "+ extensionDir.getAbsolutePath());
         FileFilter filter = new FileFilter() {
             public boolean accept(File file) {return file.getPath().toLowerCase().endsWith(".jar");}
         };
@@ -78,12 +78,16 @@ public class ExtensionLoader {
             int i=0;
             for (File f: files) {
                 urls[i++] = f.toURI().toURL();
+                System.out.println("   "+ f.getName());
             }
 
-            cld = new URLClassLoader(urls, contextLoader);
+            cld = new URLClassLoader(urls, systemLoader);
         } catch (IOException e) {
             System.err.println("Could not load extension files");
-            cld = contextLoader;
+            cld = systemLoader;
+        }
+        if (cld != null && cld != systemLoader) {
+            Thread.currentThread().setContextClassLoader(cld);
         }
     }
 

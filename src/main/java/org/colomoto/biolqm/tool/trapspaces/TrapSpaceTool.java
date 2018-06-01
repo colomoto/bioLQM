@@ -11,7 +11,7 @@ import org.mangosdk.spi.ProviderFor;
 public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings> {
 
 	public static final String HELP_LINE = "Search trap spaces using ASP or BDDs";
-	public static final String HELP_MESSAGE = "arguments: (all,percolate) ; (BDD,ASP,showASP) ; (raw,terminal,tree)";
+	public static final String HELP_MESSAGE = "arguments: (all,percolate) ; (BDD,ASP,showASP) ; (raw,terminal,diag)";
 	
 	public TrapSpaceTool() {
 		super("trapspace", HELP_LINE, HELP_MESSAGE, true);
@@ -34,13 +34,13 @@ public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings
 					focus = false;
 				} else if ("terminal".equalsIgnoreCase(s)) {
 					settings.terminal = true;
-					settings.tree = false;
+					settings.diag = false;
 				} else if ("raw".equalsIgnoreCase(s)) {
 					settings.terminal = false;
-					settings.tree = false;
-				} else if ("tree".equalsIgnoreCase(s)) {
+					settings.diag = false;
+				} else if ("diag".equalsIgnoreCase(s) || "tree".equalsIgnoreCase(s)) {
 					settings.terminal = false;
-					settings.tree = true;
+					settings.diag = true;
 					
 				} else if ("percolate".equalsIgnoreCase(s)) {
 					settings.percolate = true;

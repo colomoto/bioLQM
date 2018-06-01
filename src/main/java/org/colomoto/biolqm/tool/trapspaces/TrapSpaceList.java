@@ -163,7 +163,7 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 		return super.add(t);
 	}
 	
-	public List<Integer>[] getInclusiontree() {
+	public List<Integer>[] getInclusionDiagram() {
 		
 		int n = size();
 		List<Integer> roots = new ArrayList<Integer>();
