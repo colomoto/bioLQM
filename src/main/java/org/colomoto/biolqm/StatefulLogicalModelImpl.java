@@ -51,8 +51,8 @@ public class StatefulLogicalModelImpl extends LogicalModelImpl implements Statef
 	 * @param model the logical model to clone
 	 * @param states the set of initial states to be added
 	 */
-	public StatefulLogicalModelImpl(LogicalModel model, List<byte[]> states) {
-		this(model.getMDDManager(), model.getComponents(), model.getLogicalFunctions(),model.getExtraComponents(),model.getExtraLogicalFunctions(),states,"");
+	public StatefulLogicalModelImpl(LogicalModel model, List<byte[]> states, String _name) {
+		this(model.getMDDManager(), model.getComponents(), model.getLogicalFunctions(),model.getExtraComponents(),model.getExtraLogicalFunctions(),states,_name);
 	}
 	
 	@Override
