@@ -22,10 +22,10 @@
         <title>Usage</title>
 
         <p></p>
-        <code>java -jar bioLQM.jar model.sbml -r trace -u synchronous -i 001011 -m 100</code>
+        <code>java -jar bioLQM.jar model.sbml -r trace -u synchronous -i 001011 -m 100 -l 10</code>
         
-        <p>The output is a list of successive states. The simulation stops when reaching a stable state
-        or the maximal number of steps.
+        <p>The output is a list of successive states. The simulation stops when reaching a stable state,
+        a cycle up to length l, or the maximal number of steps.
         </p>
     </section>
 
