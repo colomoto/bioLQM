@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.NodeInfo;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -80,14 +81,7 @@ class StateIterator implements Iterator<byte[]> {
             if (prev == null) {
                 break;
             }
-            boolean found = true;
-            for (int i=0 ; i<prev.length ; i++) {
-                if (prev[i] != state[i]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) {
+            if ( Arrays.equals(state,prev) ) {
                 byte[] ret = state;
                 state = null;
                 return ret;
