@@ -11,6 +11,7 @@ public class TraceSettings extends ToolSettings {
     boolean isSequential = false;
     byte[] state = null;
     int max_steps = 1000;
+    int length = 100;
 
     public TraceSettings(LogicalModel model) {
         super(model);
@@ -53,6 +54,9 @@ public class TraceSettings extends ToolSettings {
                     case 'm':
                         parseMax(next);
                         continue;
+                    case 'l':
+                        parseLength(next);
+                        continue;
                     case 'i':
                         this.state = InitialStateFactory.parseInitialState(this.model, next);
                         continue;
@@ -66,6 +70,10 @@ public class TraceSettings extends ToolSettings {
 
     public void parseMax(String s) {
         max_steps = Integer.parseInt(s);
+    }
+
+    public void parseLength(String s) {
+        length = Integer.parseInt(s);
     }
 
     public void parseUpdater(String s) {
@@ -103,7 +111,7 @@ public class TraceSettings extends ToolSettings {
         }
 
         DeterministicUpdater updater = getUpdater();
-        return new DeterministicSimulation(updater, state, max_steps);
+        return new DeterministicSimulation(updater, state, length, max_steps);
     }
 
     public DeterministicUpdater getUpdater() {

@@ -8,8 +8,9 @@ import java.util.NoSuchElementException;
 
 /**
  * A simple simulation engine for deterministic updaters (with a single successor).
- * It will stop when reaching a stable state, but has otherwise no memory and will
- * not detect cycles, just stop after reaching a limit on the number of iterations.
+ * It will stop when reaching a stable state, a keeps a partial memory to detect
+ * cycles up to the specified length.
+ * If no attractor is identified, it stops after reaching the max number of iterations.
  *
  * @author Aurelien Naldi
  */
@@ -19,10 +20,19 @@ public class DeterministicSimulation implements Iterable<byte[]> {
     private final byte[] init;
 
     private final int max_steps;
+    private final int length;
 
+    public DeterministicSimulation(DeterministicUpdater updater, byte[] init) {
+        this(updater, init, 10000);
+    }
     public DeterministicSimulation(DeterministicUpdater updater, byte[] init, int max_steps) {
+        this(updater, init, 100, max_steps);
+    }
+
+    public DeterministicSimulation(DeterministicUpdater updater, byte[] init, int length, int max_steps) {
         this.updater = updater;
         this.init = init;
+        this.length = length;
         this.max_steps = max_steps;
     }
 
@@ -32,21 +42,26 @@ public class DeterministicSimulation implements Iterable<byte[]> {
 
     @Override
     public Iterator<byte[]> iterator() {
-        return new StateIterator(init, updater, max_steps);
+        return new StateIterator(init, updater, length, max_steps);
     }
 }
 
 class StateIterator implements Iterator<byte[]> {
 
     private byte[] state;
+    private final byte[][] buffer;
+    private int buffer_pos;
+
     private final DeterministicUpdater updater;
     private int steps;
 
-    public StateIterator(byte[] state, DeterministicUpdater updater, int max_steps) {
+    public StateIterator(byte[] state, DeterministicUpdater updater, int length, int max_steps) {
         this.state = state;
         this.updater = updater;
         this.steps = max_steps;
 
+        this.buffer = new byte[length][];
+        this.buffer_pos = 0;
     }
 
     @Override
@@ -58,6 +73,31 @@ class StateIterator implements Iterator<byte[]> {
     public byte[] next() {
         if (state == null) {
             throw new NoSuchElementException();
+        }
+
+        // Lookup the previous state in the buffer
+        for (byte[] prev: buffer) {
+            if (prev == null) {
+                break;
+            }
+            boolean found = true;
+            for (int i=0 ; i<prev.length ; i++) {
+                if (prev[i] != state[i]) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                byte[] ret = state;
+                state = null;
+                return ret;
+            }
+        }
+
+        // add the previous state to the circular buffer
+        this.buffer[buffer_pos++] = state;
+        if (this.buffer_pos >= this.buffer.length) {
+            this.buffer_pos = 0;
         }
 
         byte[] ret = state;
