@@ -52,11 +52,18 @@ https://colomoto.github.io/colomoto-docker/.
 ### Build from source
 
 Requirements: java 8 (JDK) and [maven](http://maven.apache.org/).
+Get the source code and build bioLQM with the following commands:
 
-* grab the source from github (from git or a release archive)
-* run "mvn package" to compile and package it
-* you can then use the jar in the "target" subdirectory. If you want move the jar file 
+    git clone https://github.com/colomoto/bioLQM.git
+    cd bioLQM
+    mvn package
+
+You can then use the jar in the "target" subdirectory. If you want move the jar file 
 to another folder, you should also take the "lib" folder (which contains dependencies).
+You can also build a "fat jar" including all dependencies with:
+
+    mvn assembly:assembly
+
 
 
 ### Maven repository
