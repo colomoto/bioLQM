@@ -267,14 +267,13 @@ public class SBMLqualImport {
 		
 		return index;
 	}
-	
+
 	/**
 	 * Get a MDD representing a parsed MathML function.
 	 * 
 	 * @param ddmanager
 	 * @param math
 	 * @param value
-	 * @param defaultValue
 	 * @return
 	 */
 	private int getMDDForMathML(MDDManager ddmanager, ASTNode math, int value) {
@@ -588,4 +587,303 @@ public class SBMLqualImport {
 		
 		throw new RuntimeException("Could not handle relation: "+relation);
 	}
+
+	private String mathml2string(ASTNode math, int value) {
+		StringBuffer sb = new StringBuffer();
+		mathml2string(math, sb);
+		return sb.toString();
+	}
+
+	private void mathml2string(ASTNode math, StringBuffer sb) {
+
+		Type type = math.getType();
+		switch (type) {
+
+			case NAME:
+				String name = math.getName().trim();
+				int threshold = 1;
+
+				Input input = m_curInputs.get(name);
+				if (input != null) {
+					name = input.getQualitativeSpecies().trim();
+					threshold = input.getThresholdLevel();
+				}
+
+				if (threshold < 1) {
+					// not really a constraint!
+					throw new RuntimeException("Inconsistent formula");
+				}
+
+				int index = getIndexForName(name);
+				MDDVariable var = ddvariables[index];
+				if (threshold >= var.nbval) {
+					throw new RuntimeException("Invalid threshold in "+input);
+				}
+
+				sb.append(var);
+				if (threshold > 1) {
+					sb.append(var+":"+threshold);
+				}
+				return;
+
+			case RELATIONAL_GEQ:
+			case RELATIONAL_GT:
+			case RELATIONAL_LEQ:
+			case RELATIONAL_LT:
+			case RELATIONAL_NEQ:
+			case RELATIONAL_EQ:
+				fillRelationString(math, sb);
+				return;
+
+			case CONSTANT_FALSE:
+				sb.append("false");
+				return;
+			case CONSTANT_TRUE:
+				sb.append("true");
+				return;
+
+			case LOGICAL_NOT:
+				if (math.getChildCount() != 1) {
+					throw new RuntimeException("Invalid number of children in relation: "+math);
+				}
+
+				ASTNode child = math.getChild(0);
+				switch (child.getType()) {
+					case CONSTANT_FALSE:
+						sb.append("true");
+						return;
+					case CONSTANT_TRUE:
+						sb.append("false");
+						return;
+					case LOGICAL_NOT:
+						if (child.getChildCount() != 1) {
+							throw new RuntimeException("Invalid number of children in relation: "+math);
+						}
+						mathml2string(child.getChild(0), sb);
+						return;
+					case NAME:
+						sb.append("!");
+						mathml2string(child, sb);
+						return;
+					default:
+						sb.append("!(");
+						mathml2string(child, sb);
+						sb.append(")");
+				}
+				return;
+		}
+
+
+		// now we should have a logical operation or some unrecognised MathML...
+		String op = null;
+		switch (type) {
+
+			case LOGICAL_AND:
+				op = " & ";
+				break;
+
+			case LOGICAL_OR:
+				op = " | ";
+				break;
+
+			default:
+				throw new RuntimeException("TODO: support MathML node for: "+math);
+		}
+
+		// if we get here, we have a recognised logical operation, hooray!
+		// start by recursively identifying children!
+		List<ASTNode> children = math.getChildren();
+		boolean first = true;
+		for (ASTNode child: children) {
+			mathml2string(child, sb);
+			if (!first) {
+				first = false;
+				sb.append(op);
+			}
+		}
+	}
+
+	private void fillRelationString(ASTNode relation, StringBuffer sb) {
+
+		Type type = relation.getType();
+
+		// consistency check: should only be called for relation nodes
+		switch (type) {
+			case RELATIONAL_GEQ:
+			case RELATIONAL_GT:
+			case RELATIONAL_LEQ:
+			case RELATIONAL_LT:
+			case RELATIONAL_NEQ:
+			case RELATIONAL_EQ:
+				break;
+			default:
+				throw new RuntimeException("Not a relation: "+relation);
+		}
+
+		// a relation should always have two children
+		if (relation.getChildCount() != 2) {
+			throw new RuntimeException("Invalid number of children in relation: "+relation);
+		}
+		ASTNode varNode = relation.getChild(0);
+		ASTNode valueNode = relation.getChild(1);
+
+		String varName = varNode.getName().trim();
+		Integer relValue = null;
+		boolean reversed = false;
+
+		// extract content from children (NAME and INTEGER only)
+		if (varNode.getType() == Type.NAME && valueNode.getType() == Type.INTEGER) {
+			relValue = valueNode.getInteger();
+		} else if (varNode.getType() == Type.INTEGER && valueNode.getType() == Type.NAME) {
+			reversed = true;
+			varName = valueNode.getName().trim();
+			relValue = varNode.getInteger();
+		} else if (varNode.getType() == Type.NAME && valueNode.getType() == Type.NAME) {
+			String valueName = valueNode.getName().trim();
+			Input input = m_curInputs.get(valueName);
+			if (input == null) {
+				// try reversing the relation
+				input = m_curInputs.get(varName);
+				if (input != null) {
+					reversed = true;
+					String stmp = varName;
+					varName = valueName;
+					valueName = stmp;
+				}
+			}
+
+			if (input != null) {
+				if (!varName.equals(input.getQualitativeSpecies().trim())) {
+					throw new RuntimeException("Constraint '"+input.getQualitativeSpecies().trim()+"' and variable '"+varName+"' do not match in: "+relation);
+				}
+				try {
+					relValue = input.getThresholdLevel();
+				} catch (Exception e) {
+					relValue = 1;
+				}
+			}
+		}
+
+		if (relValue == null) {
+			throw new RuntimeException("Could not find a value in: "+relation);
+		}
+
+		// handle inequalities in reversed relations ( "1 > g2" becomes "g2 < 1" )
+		if (reversed) {
+			switch (type) {
+				case RELATIONAL_GEQ:
+					type = Type.RELATIONAL_LEQ;
+					break;
+				case RELATIONAL_LEQ:
+					type = Type.RELATIONAL_GEQ;
+					break;
+				case RELATIONAL_GT:
+					type = Type.RELATIONAL_LT;
+					break;
+				case RELATIONAL_LT:
+					type = Type.RELATIONAL_GT;
+					break;
+			}
+		}
+
+		int index = getIndexForName(varName);
+		if (index < 0) {
+			throw new RuntimeException("Unrecognized name in relation: "+relation);
+		}
+
+		MDDVariable var = ddvariables[index];
+
+		// Normalise inequalities and handle border cases (always true or false)
+		switch (type) {
+
+			case RELATIONAL_GT:
+				type = Type.RELATIONAL_GEQ;
+				relValue += 1;
+			case RELATIONAL_GEQ:
+				if (relValue <= 0) {
+					sb.append("true");
+					return;
+				}
+				if (relValue >= var.nbval) {
+					sb.append("false");
+					return;
+				}
+				break;
+
+
+			case RELATIONAL_LEQ:
+				type = Type.RELATIONAL_LT;
+				relValue += 1;
+			case RELATIONAL_LT:
+				if (relValue >= var.nbval) {
+					sb.append("true");
+					return;
+				}
+				if (relValue <= 0) {
+					sb.append("false");
+					return;
+				}
+				break;
+
+
+			case RELATIONAL_NEQ:
+				if (relValue < 0 || relValue >= var.nbval) {
+					sb.append("true");
+					return;
+				}
+				break;
+
+			case RELATIONAL_EQ:
+				if (relValue < 0 || relValue >= var.nbval) {
+					sb.append("false");
+					return;
+				}
+				break;
+
+			default:
+				throw new RuntimeException("unknown relation type: "+relation);
+		}
+
+
+
+		// now we should have a valid relValue and only EQ, NEQ, GEQ or LT relations
+		if (0 > relValue || var.nbval <= relValue) {
+			throw new RuntimeException("Relation value out of [0.."+var.nbval+"[ range: "+valueNode);
+		}
+
+
+		if (var.nbval == 2) {
+			switch (type) {
+
+				case RELATIONAL_LT:
+					sb.append("!"+var);
+					return;
+
+				case RELATIONAL_GEQ:
+					sb.append(var);
+					return;
+
+				case RELATIONAL_EQ:
+					if (relValue == 0) {
+						sb.append("!"+var);
+						return;
+					}
+					sb.append(var);
+					return;
+
+				case RELATIONAL_NEQ:
+					if (relValue == 0) {
+						sb.append(var);
+						return;
+					}
+					sb.append("!"+var);
+					return;
+			}
+
+			throw new RuntimeException("Could not handle relation: "+relation);
+		}
+
+		throw new RuntimeException("Multi-valued is not handled here!");
+	}
+
 }

@@ -4,12 +4,16 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDManagerFactory;
+import org.colomoto.mddlib.MDDOperator;
+import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.ValueNode;
 import org.colomoto.mddlib.logicalfunction.operators.AndOperatorFactory;
 import org.colomoto.mddlib.logicalfunction.operators.NotOperatorFactory;
 import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
+import org.colomoto.mddlib.operators.OverwriteOperator;
 
 import java.util.List;
 import java.util.Map;
@@ -46,6 +50,36 @@ public class ExpressionStack {
                 functions[i] = 0;
             } else {
                 functions[i] = node.getMDD( manager);
+            }
+        }
+        return new LogicalModelImpl(nodes, manager, functions);
+    }
+
+    public static LogicalModel constructMVModel(OperandFactory operandFactory, List<NodeInfo> nodes, Map<NodeInfo,List<Assignment>> var2assign) {
+
+        // Prepare the corresponding MDD manager
+        MDDVariableFactory mvf = new MDDVariableFactory();
+        for (NodeInfo ni: nodes) {
+            mvf.add(ni, (byte)(ni.getMax()+1));
+        }
+        MDDManager manager = MDDManagerFactory.getManager(mvf, 10);
+
+        int[] functions = new int[nodes.size()];
+        for (int i=0 ; i<functions.length ; i++) {
+            NodeInfo ni = nodes.get(i);
+            List<Assignment> asgs = var2assign.get( ni);
+            functions[i] = 0;
+            for (Assignment asg: asgs) {
+                if (asg == null) {
+                    continue;
+                }
+
+                int overMDD = asg.condition.getMDD(manager);
+                MDDOperator op = OverwriteOperator.getOverwriteAction(asg.value);
+                int old = functions[i];
+                functions[i] = op.combine(manager, old, overMDD);
+                manager.free(overMDD);
+                manager.free(old);
             }
         }
         return new LogicalModelImpl(nodes, manager, functions);
@@ -101,6 +135,14 @@ public class ExpressionStack {
 
     public void ident(String name) {
         FunctionNode node = operandFactory.createOperand(name);
+        if (node == null) {
+            throw new RuntimeException("Operand could not be created");
+        }
+        stack.add( node);
+    }
+
+    public void ident(String name, int threshold) {
+        FunctionNode node = operandFactory.createOperand(name, threshold);
         if (node == null) {
             throw new RuntimeException("Operand could not be created");
         }
