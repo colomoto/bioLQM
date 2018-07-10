@@ -1,81 +1,98 @@
-bioLQM: Logical Qualitative Models of biological networks
-=========================================================
+# BioLQM: Logical Qualitative Models of biological networks
 
-The aim of this project is to improve interoperability between logical modeling tools,
-motivated by the [CoLoMoTo](www.colomoto.org) discussion group.
-For this, we define some core interfaces for the definition of Logical Models,
-as well as some tools for their manipulation.
+BioLQM is a toolkit for the manipulation and analysis of Logical (Qualitative) Models
+of biological networks. A model is composed of a list of components, associated to Boolean
+or multi-valued activity levels and to dynamical rules driving changes in their activity
+levels.
 
-For now it is fairly limited, but we aim to add export capabilities to various formats,
-notably SBML-qual and GINsim's GINML. Contributions to support more formats are welcome!
+BioLQM provides a collection of *import/export formats*, enabling the exchange of models
+between complementary tools (motivated by the [CoLoMoTo](www.colomoto.org) discussion
+group) and the design of complex analysis workflows.
+It also allows to define *model modifications*, to represent biological modifications 
+(mutations) or to facilitate further analysis (model reduction, Boolean mapping of
+multi-valued models).
+Finally, it provides some analysis tools, focussing on the identification of attractors
+and on building-blocks for model simulation.
 
-We also want to allow tight integration in two forms:
-* Model editors can support this data structure and use directly the provided tools and exports.
-* Some analysis tools could provide bridges, allowing to be used from such editors.
-* Let us know what you would like to do with it...
+
+## How to use it?
 
 
+It can be used either as a standalone command-line tool, or as a programming interface:
+the Java API can be integrated in other software or used through scripts.
+Documentation and further information are available on http://colomoto.org/biolqm/.
 
-How to use it?
---------------
+## Install
 
-As this is still work in progress, we do not have real releases yet,
-so you will have to compile it, but it is fairly easy!
-To compile it you will need is java6 JDK and [maven](http://maven.apache.org/).
+BioLQM is distributed as cross-platform binaries, relying on the Java Runtime (JRE), see
+the github releases and http://colomoto.org/biolqm/.
+While most features are implemented in Java and should work without further installation,
+some analysis rely on the clingo ASP solver, available on https://potassco.org/.
 
-* grab the source from github
+
+### Conda package
+
+BioLQM is included in the conda package for GINsim. In a working conda environment, run
+    conda install -c colomoto ginsim
+to install GINsim, BioLQM, and their dependencies. These packages are tested on Linux (x64),
+but should also work on Mac OSX and Windows platforms.
+a *bioLQM* command should then be available in your environment.
+
+These conda packages are used to build a consistent and reproducible environment integrating
+several software tools for the analysis of qualitative models, as described in
+https://colomoto.github.io/colomoto-docker/.
+
+
+### Build from source
+
+Requirements: java 8 (JDK) and [maven](http://maven.apache.org/).
+
+* grab the source from github (from git or a release archive)
 * run "mvn package" to compile and package it
-* you can use the jar in the "target" subdirectory. It needs the "lib" folder that maven filled for you.
-
-For now, the included command-line tool only does model conversion as follow:
-
-    java -jar bioLQM-0.4.jar <your_input_file.sbml>  <your_output_file.ginml>
-
-It will guess the desired formats based on file extensions.
-Launch it without arguments to see the available formats and extra options.
-For now it supports the following formats (< and > denote import/export capabilities):
-  * <> [SBML-qual](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
-  * <> raw logical functions
-  * <> boolsim
-  * &nbsp;\> [GINML](http://doc.ginsim.org/format-ginml.html)
-  * &nbsp;\> [GNA](http://ibis.inrialpes.fr/article122.html)
-  * &nbsp;\> Petri net (INA, PNML, APNN)
-  * &nbsp;\> [Pint](http://loicpauleve.name/pint)
-  * <> [Truth table](http://doc.ginsim.org/format-truthtable.html)
-
-The integration of a filter only requires a simple format declaration class.
-These classes are automatically detected using some java annotations.
-(see subpackages of org.colomoto.biolqm.io)
+* you can then use the jar in the "target" subdirectory. If you want move the jar file 
+to another folder, you should also take the "lib" folder (which contains dependencies).
 
 
-It relies on [JSBML](http://sbml.org/Software/JSBML) for SBML-qual import/export, 
-and on a small [MDD manipulation toolkit](https://github.com/colomoto/mddlib).
+### Maven repository
 
+To integrate BioLQM in your Java software, you can use our Maven repository as follows:
 
-This is also integrated into GINsim, which provides a model editor,
-some specific tools and thin wrapper around the common tools and exports.
-
-[Javadoc snapshots](http://colomoto.github.com/gh-documentation/) are also available.
-
-
-Where does it come from?
-------------------------
-
-Most of this comes from a refactoring of [GINsim](http://www.ginsim.org) to cleanup its core and enable more code sharing.
-Discussions among [CoLoMoTo](http://www.colomoto.org) participants showed a growing interest for improved interoperability.
-This motivated the [qualitative extension](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
-for SBML and this common toolbox.
+      <repositories>
+        <repository>
+           <id>ginsim_snapshot</id>
+           <name>GINsim snapshot repository</name>
+           <snapshots><enabled>true</enabled></snapshots>
+           <releases><enabled>false</enabled></releases>
+           <url>http://ginsim.org/maven/snapshot</url>
+        </repository>
+        <repository>
+           <id>ginsim_stable</id>
+           <snapshots><enabled>false</enabled></snapshots>
+           <releases><enabled>true</enabled></releases>
+           <name>GINsim deps</name>
+           <url>http://ginsim.org/maven/stable</url>
+        </repository>
+      </repositories>
+    
+      <dependencies>
+        <dependency>
+          <groupId>org.colomoto</groupId>
+          <artifactId>bioLQM</artifactId>
+          <version>0.6-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
 
 
 
-Licence
--------
+## Licence and authors
 
 This code is available under LGPL v3+/CeCILL-C.
 
+The code started as a refactoring of [GINsim](http://www.ginsim.org) to cleanup its core and enable more code sharing.
+Discussions among [CoLoMoTo](http://www.colomoto.org) participants showed a growing interest for improved interoperability.
+This motivated the [qualitative extension](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
+for SBML and this toolkit.
 
-Authors
--------
 
 Aurelien Naldi   
 Pedro Monteiro  
@@ -85,7 +102,6 @@ Francisco Plana
 Rui Henriques  
 Julien Dorier  
 Gautier Stoll  
-Add your name here ;)   
 
 The rest of the GINsim crew provided insight:   
 Claudine Chaouiya  
