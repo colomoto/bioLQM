@@ -29,14 +29,20 @@ the github releases and http://colomoto.org/biolqm/.
 While most features are implemented in Java and should work without further installation,
 some analysis rely on the clingo ASP solver, available on https://potassco.org/.
 
+After downloading the jar file for a release, run:
+
+    java -jar bioLQM-0.6.1.jar
+
 
 ### Conda package
 
-BioLQM is included in the conda package for GINsim. In a working conda environment, run
+BioLQM is included in the conda package for GINsim. In a working conda environment, the
+following command will to install GINsim, BioLQM, and their dependencies.
+
     conda install -c colomoto ginsim
-to install GINsim, BioLQM, and their dependencies. These packages are tested on Linux (x64),
-but should also work on Mac OSX and Windows platforms.
-a *bioLQM* command should then be available in your environment.
+
+A *bioLQM* command should then be available in your environment.
+These packages are tested on Linux (x64), but should also work on Mac OSX and Windows platforms.
 
 These conda packages are used to build a consistent and reproducible environment integrating
 several software tools for the analysis of qualitative models, as described in
