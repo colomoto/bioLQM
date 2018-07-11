@@ -57,7 +57,12 @@ public class MNetExport {
 
 			// directly write fixed values
 			if (ddmanager.isleaf(function)) {
-				writer.write(var+gap+" <- " + function+"\n");
+				if (var.nbval == 2) {
+					writer.write(var+gap+" <- " + function+"\n");
+				} else {
+					// Set the target value as true
+					writer.write(var+":"+function+gap+" <- 1\n");
+				}
 				continue;
 			}
 			
@@ -109,7 +114,7 @@ public class MNetExport {
 					// Build multivalued ranges
 					if (cst_min > 0) {
 						sb.append(regname);
-						if (cst_min > 1) {
+						if (reg.nbval > 2) {
 							sb.append(":" + cst_min);
 						}
 					}
@@ -119,7 +124,7 @@ public class MNetExport {
 							sb.append(" & ");
 						}
 						sb.append("!"+regname);
-						if (cst_max > 1) {
+						if (reg.nbval > 2) {
 							sb.append(":"+(cst_max));
 						}
 					}

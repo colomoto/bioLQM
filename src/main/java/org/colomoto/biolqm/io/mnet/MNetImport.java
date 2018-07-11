@@ -48,9 +48,9 @@ public class MNetImport {
 
 		if (errors.hasErrors()) {
 			// TODO: better check for errors
-			System.out.println("Found some errors:");
+			System.err.println("Found some errors:");
 			for (String s: errors.getErrors()) {
-				System.out.println("  "+s);
+				System.err.println("  "+s);
 			}
 			return null;
 		}
@@ -102,8 +102,6 @@ public class MNetImport {
 		// then load the actual functions
 		Map<NodeInfo,List<Assignment>> var2assign = new HashMap<>();
 		for (MNetParser.AssignContext actx: mctx.assign()) {
-
-			System.out.println("PARSE:: "+ actx.getText().trim());
 
 			MNetParser.VarContext vc = actx.var();
 			String id = vc.ID().getText();
