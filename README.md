@@ -22,79 +22,7 @@ It can be used either as a standalone command-line tool, or as a programming int
 the Java API can be integrated in other software or used through scripts.
 Documentation and further information are available on http://colomoto.org/biolqm/.
 
-## Install
-
-BioLQM is distributed as cross-platform binaries, relying on the Java Runtime (JRE), see
-the github releases and http://colomoto.org/biolqm/.
-While most features are implemented in Java and should work without further installation,
-some analysis rely on the clingo ASP solver, available on https://potassco.org/.
-
-After downloading the jar file for a release, run:
-
-    java -jar bioLQM-0.6.1.jar
-
-
-### Conda package
-
-BioLQM is included in the conda package for GINsim. In a working conda environment, the
-following command will to install GINsim, BioLQM, and their dependencies.
-
-    conda install -c colomoto ginsim
-
-A *bioLQM* command should then be available in your environment.
-These packages are tested on Linux (x64), but should also work on Mac OSX and Windows platforms.
-
-These conda packages are used to build a consistent and reproducible environment integrating
-several software tools for the analysis of qualitative models, as described in
-https://colomoto.github.io/colomoto-docker/.
-
-
-### Build from source
-
-Requirements: java 8 (JDK) and [maven](http://maven.apache.org/).
-Get the source code and build bioLQM with the following commands:
-
-    git clone https://github.com/colomoto/bioLQM.git
-    cd bioLQM
-    mvn package
-
-You can then use the jar in the "target" subdirectory. If you want move the jar file 
-to another folder, you should also take the "lib" folder (which contains dependencies).
-You can also build a "fat jar" including all dependencies with:
-
-    mvn assembly:assembly
-
-
-
-### Maven repository
-
-To integrate BioLQM in your Java software, you can use our Maven repository as follows:
-
-      <repositories>
-        <repository>
-           <id>ginsim_snapshot</id>
-           <name>GINsim snapshot repository</name>
-           <snapshots><enabled>true</enabled></snapshots>
-           <releases><enabled>false</enabled></releases>
-           <url>http://ginsim.org/maven/snapshot</url>
-        </repository>
-        <repository>
-           <id>ginsim_stable</id>
-           <snapshots><enabled>false</enabled></snapshots>
-           <releases><enabled>true</enabled></releases>
-           <name>GINsim deps</name>
-           <url>http://ginsim.org/maven/stable</url>
-        </repository>
-      </repositories>
-    
-      <dependencies>
-        <dependency>
-          <groupId>org.colomoto</groupId>
-          <artifactId>bioLQM</artifactId>
-          <version>0.6-SNAPSHOT</version>
-        </dependency>
-      </dependencies>
-
+* Install instructions: http://colomoto.org/biolqm/doc/install.html.
 
 
 ## Licence and authors
@@ -107,16 +35,15 @@ This motivated the [qualitative extension](http://sbml.org/Community/Wiki/SBML_L
 for SBML and this toolkit.
 
 
-Aurelien Naldi   
-Pedro Monteiro  
-Duncan Berenguier  
-Loïc Pauleve  
-Francisco Plana  
-Rui Henriques  
-Julien Dorier  
-Gautier Stoll  
+Aurelien Naldi designed and maintains the project, with feedback and contributions from:
 
-The rest of the GINsim crew provided insight:   
 Claudine Chaouiya  
 Denis Thieffry  
+Duncan Berenguier  
+Francisco Plana  
+Gautier Stoll  
+Julien Dorier  
+Loïc Pauleve  
+Pedro Monteiro  
+Rui Henriques  
 

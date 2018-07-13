@@ -1,0 +1,119 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="guide" style="2column"
+      id="install">
+
+    <info>
+        <link type="guide" xref="index" group="run"/>
+        <desc>Availability, requirements, installation</desc>
+        <revision status="review" date="2018-07-13"/>
+    </info>
+
+    <title>Install and run bioLQM</title>
+
+    <p>BioLQM is freely available without guarantees, under the
+      <link href="https://www.gnu.org/copyleft/lesser.html">LGPL v3+</link> and
+      <link href="https://cecill.info">CeCILL-C 2.1</link> licenses.
+    </p>
+    
+    <p>In the following, we describe the installation methods.</p>
+
+    <section id="java">
+        <title>1 - Use the released jar file</title>
+
+        <p>BioLQM requires the <link href="http://www.java.com">Java 8 Runtime</link>, available for Linux,
+          Windows and Mac systems (older Macs come with an unsupported version of Java, which could complicate
+          the installation of Java 8). Use the following command to see you java version (it should be 1.8.x).
+        </p>
+
+        <code>java -version</code>
+
+        <p>
+          Some features (notably for the identification of trapspaces) further rely on the
+          <link href="https://potassco.org/">clingo ASP solver</link> available in your execution path.
+        </p>
+
+        <p>
+          To install bioLQM, download the jar file associated to the latest
+          <link href="https://github.com/colomoto/bioLQM/releases">release</link>.
+          You can then running bioLQM on the command-line with the java environment.
+          The following command will display a help message, see the documentation of the 
+          <link xref="cli">command-line interface</link> to start using it.
+        </p>
+        <code>java -jar bioLQM-<var>#version</var>.jar</code>
+
+        <p>The JAVA virtual machine provide many options of its own, for large models, bioLQM could
+            mostly benefit from extending the amount of memory available, with the <code>-Xmx</code> option.
+            For example, one can launch bioLQM with 1000MB of memory using
+            <code>java -Xmm1000M -jar bioLQM-<var>#version</var>.jar</code>. For more details, see 
+            <link href="http://docs.oracle.com/javase/6/docs/technotes/tools/">the java tools documentation</link>
+       </p>
+
+    </section>
+
+    <section id="conda">
+        <title>2 - Conda package and docker image</title>
+
+    <p>BioLQM is included in the <link href="https://anaconda.org/colomoto/ginsim">conda package for GINsim</link>.
+       In a working conda environment (we recommend the use of <link href="https://conda.io/miniconda.html">MiniConda 3</link>,
+       the following command will to install GINsim, BioLQM, and their dependencies. A *bioLQM* command should then be available
+       in your environment.
+       These packages are tested on Linux (x64), but should also work on Mac OSX and Windows platforms.
+    </p>
+
+    <code>conda install -c colomoto ginsim</code>
+
+    <p>These conda packages are used to build a consistent and reproducible environment integrating several software tools
+       for the analysis of qualitative models, as described in <link href="https://colomoto.github.io/colomoto-docker/" />.
+    </p>
+
+    </section>
+
+    <section id="build">
+        <title>3 - Building from source</title>
+        <p>Building bioLQM from source further requires a Java Compiler (JDK) and the <link href="https://maven.apache.org/">Maven build tool</link>.</p>
+        
+        <code>git clone https://github.com/colomoto/bioLQM.git
+cd bioLQM
+mvn package</code>
+
+        <p>
+          Maven downloads all requirements and generates the <var>target</var> folder containing the jar file along
+          with a <var>lib</var> folder for dependencies. These dependencies are bundled with the release jar.
+        </p>
+    </section>
+
+    <section id="maven">
+        <title>4 - Maven</title>
+        
+        <p>To integrate BioLQM in your Java software using Maven, put the following in your <code>pom.xml</code> file:</p>
+
+<code><![CDATA[
+      <repositories>
+        <repository>
+           <id>ginsim_snapshot</id>
+           <name>GINsim snapshot repository</name>
+           <snapshots><enabled>true</enabled></snapshots>
+           <releases><enabled>false</enabled></releases>
+           <url>http://ginsim.org/maven/snapshot</url>
+        </repository>
+        <repository>
+           <id>ginsim_stable</id>
+           <snapshots><enabled>false</enabled></snapshots>
+           <releases><enabled>true</enabled></releases>
+           <name>GINsim deps</name>
+           <url>http://ginsim.org/maven/stable</url>
+        </repository>
+      </repositories>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.colomoto</groupId>
+          <artifactId>bioLQM</artifactId>
+          <version>0.6-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
+]]></code>
+    </section>
+
+</page>
+
