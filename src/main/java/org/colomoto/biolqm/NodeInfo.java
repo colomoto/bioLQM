@@ -4,44 +4,61 @@ package org.colomoto.biolqm;
 import org.colomoto.common.xml.XMLWriter;
 
 /**
- * Contains the basic informations of a regulatory node (gene) : 
- * 	- nodeID : a unique identifier for the gene
- *  - max : the maximal regulatory level 
+ * Contains the basic information of a regulatory component :
+ * <ul>
+ * 	<li>nodeID : a unique identifier for the gene</li>
+ * 	<li>display name (optional)</li>
+ *  <li>max : the maximal activity level</li>
+ *</ul>
  *
  * @author Aurelien Naldi
  */
 public class NodeInfo {
 	
 	public static final byte UNDEFINED_MAX = -1;
-	
+
 	private String nodeID;
+	private String name;
 	private byte max;
 	private boolean isInput = false;
 	private int hashcode = -1;
 
 	private NodeInfo[] booleanized_group = null;
 
-	public NodeInfo(String name) {
-		this(name, (byte)1);
+	public NodeInfo(String uid) {
+		this(uid, null, (byte)1);
 	}
-	
-	public NodeInfo(String name, byte max) {
+
+	public NodeInfo(String uid, byte max) {
+		this(uid, null, max);
+	}
+
+	public NodeInfo(String uid, String name, byte max) {
 		super();
-		setNodeID(name);
+		setNodeID(uid);
+		setName(name);
 		this.max = max;
 	}
 
 	public String getNodeID() {
 		return nodeID;
 	}
-	
+
 	public void setNodeID( String id) {
 		if (!XMLWriter.isValidId(id)) {
 			throw new RuntimeException("Invalid ID: "+ id);
 		}
 		this.nodeID = id;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName( String name) {
+		this.name = name;
+	}
+
 	public byte getMax() {
 		return max;
 	}
@@ -76,10 +93,16 @@ public class NodeInfo {
 			return false;
 		}
 	}
-	
+
+	public String getDisplayName() {
+		if (name != null && name.length() > 0) {
+			return name;
+		}
+		return nodeID;
+	}
+
 	@Override
 	public String toString() {
-		
 		return nodeID;
 	}
 

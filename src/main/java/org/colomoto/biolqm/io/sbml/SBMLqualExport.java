@@ -117,6 +117,11 @@ public class SBMLqualExport {
 				QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
 				sp.setMaxLevel( ni.getMax());
 				node2species.put(ni, sp);
+
+				String name = ni.getName();
+				if (name != null && name.length() > 0) {
+					sp.setName(name);
+				}
 				
 				if (ni.isInput()) {
 					sp.setConstant(true);

@@ -169,11 +169,9 @@ public class SBMLqualImport {
 				spid = spid.substring(2);
 			}
 
-			byte max = (byte)-1;
-			try {
-				max = (byte)sp.getMaxLevel();
-			} catch (Exception e) {}
-			NodeInfo ni = new NodeInfo(spid, max);
+			String name = sp.isSetName() ? sp.getName() : null;
+			byte max = sp.isSetMaxLevel() ? (byte)sp.getMaxLevel() : (byte)-1;
+			NodeInfo ni = new NodeInfo(spid, name, max);
 			if (sp.isSetConstant() && sp.getConstant()) {
 				ni.setInput(true);
 			}
