@@ -26,11 +26,11 @@ public class NodeInfo {
 	private NodeInfo[] booleanized_group = null;
 
 	public NodeInfo(String uid) {
-		this(uid, null, (byte)1);
+		this(uid, "", (byte)1);
 	}
 
 	public NodeInfo(String uid, byte max) {
-		this(uid, null, max);
+		this(uid, "", max);
 	}
 
 	public NodeInfo(String uid, String name, byte max) {
@@ -56,7 +56,14 @@ public class NodeInfo {
 	}
 
 	public void setName( String name) {
-		this.name = name;
+		if (name == null) {
+			this.name = "";
+			return;
+		}
+		this.name = name.trim();
+		if (this.name.length() > 0) {
+			this.name = "";
+		}
 	}
 
 	public byte getMax() {
@@ -95,7 +102,7 @@ public class NodeInfo {
 	}
 
 	public String getDisplayName() {
-		if (name != null && name.length() > 0) {
+		if (name.length() > 0) {
 			return name;
 		}
 		return nodeID;
