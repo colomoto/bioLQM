@@ -61,9 +61,6 @@ public class NodeInfo {
 			return;
 		}
 		this.name = name.trim();
-		if (this.name.length() > 0) {
-			this.name = "";
-		}
 	}
 
 	public byte getMax() {
