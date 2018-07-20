@@ -21,8 +21,8 @@ public class FixpointSearcher extends AbstractTask<Integer> {
 
 	/**
 	 * Create a new stable state searcher.
-	 * Not that the provided model will be used directly for stable state search:
-	 * simplifications, perturbations, restrictions... must be applied before.
+	 * The provided model will be used directly for stable state search:
+	 * model modifications (perturbations, reduction, ...) must be applied before.
 	 * 
 	 * @param model the model for which we search stable states.
 	 */

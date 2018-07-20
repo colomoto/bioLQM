@@ -6,6 +6,8 @@ import org.colomoto.biolqm.tool.AbstractTool;
 import org.colomoto.biolqm.tool.LogicalModelTool;
 import org.mangosdk.spi.ProviderFor;
 
+import java.util.List;
+
 
 @ProviderFor(LogicalModelTool.class)
 public class FixpointTool extends AbstractTool<FixpointList, FixpointSettings> {
@@ -51,13 +53,22 @@ public class FixpointTool extends AbstractTool<FixpointList, FixpointSettings> {
 			System.out.println("NO RESULTS");
 			return;
 		}
-		
+
+		List<byte[]> extra = result.fillExtraNodes();
+
 		// print out the result
-    	for (NodeInfo node : model.getComponents()) {
-    		System.out.print(node.getNodeID() + " ");
-    	}
+		for (NodeInfo node : model.getComponents()) {
+			System.out.print(node.getNodeID() + " ");
+		}
+		if (extra != null) {
+			System.out.print("    ");
+			for (NodeInfo node : model.getExtraComponents()) {
+				System.out.print(node.getNodeID() + " ");
+			}
+		}
     	System.out.println();
 
+		int idx = 0;
     	for (byte[] path: result) {
 	        for (int i: path) {
 	        	if (i<0) {
@@ -66,6 +77,18 @@ public class FixpointTool extends AbstractTool<FixpointList, FixpointSettings> {
 	        		System.out.print(i);
 	        	}
 	        }
+
+	        if (extra != null) {
+	        	System.out.print("    ");
+	        	byte[] extrapath = extra.get(idx++);
+				for (int i: extrapath) {
+					if (i<0) {
+						System.out.print("-");
+					} else {
+						System.out.print(i);
+					}
+				}
+			}
 	        System.out.println();
     	}
 	}
