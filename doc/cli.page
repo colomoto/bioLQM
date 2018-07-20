@@ -28,7 +28,8 @@
         <item><p>The loaded file. An import filter will be used to open this file and construct a model.</p>
             <p>The format can be guessed from the file extension or specified explicitly with the <var>-if format</var> optional argument.</p>
         </item>
-        <item><p>An optional list of <link xref="modifiers">model modifications</link> using the <var>-m modifier:parameters</var> switch.</p>
+        <item><p>An optional list of <link xref="modifiers">model modifications</link> using the <var>-m modifier_name [parameters]</var> switch.
+            All following arguments which do not start with a "-" sign will be taken as modifier parameters, except the last argument.</p>
             <p>Note that the <cmd>-p argument</cmd> shortcut can be used to apply a <link xref="modifier-perturbation">perturbation</link> directly.</p>
         </item>
         <item><p>The action to perform on the resulting model: it can be saved to a file or used as input for an analysis tool.</p>

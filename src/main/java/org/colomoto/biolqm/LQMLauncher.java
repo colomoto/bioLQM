@@ -75,9 +75,20 @@ public class LQMLauncher {
 					// Handle modifier parameters
 					s_parameters = s_modifier.substring(idx+1);
 					s_modifier = s_modifier.substring(0, idx);
+				} else {
+					StringBuffer sb = new StringBuffer();
+					for ( ; argIdx < args.length-1 ; argIdx++ ) {
+						if (args[argIdx].startsWith("-")) {
+							break;
+						}
+						if (sb.length() > 0) {
+							sb.append(" ");
+						}
+						sb.append(args[argIdx]);
+					}
+					s_parameters = sb.toString();
 				}
-				String modifierName = s_modifier;
-				ModelModifierService modifier = LQMServiceManager.getModifier(modifierName);
+				ModelModifierService modifier = LQMServiceManager.getModifier(s_modifier);
 				model = modifier.getModifiedModel(model, s_parameters);
 				continue;
 			}
@@ -186,10 +197,10 @@ public class LQMLauncher {
 		StringBuffer sb = new StringBuffer();
 		sb.append(separator+"| Usage: \n"+separator);
 		sb.append("# Convert a single file:\n");
-		sb.append(command).append(" [-if informat] infile [-m modifier] [-of outformat] outfile\n");
+		sb.append(command).append(" [-if informat] infile [-m modifier [options]] [-of outformat] outfile\n");
 
         sb.append("\n# Run a tool on an imported model:\n");
-        sb.append(command).append(" [-if informat] infile [-m modifier] -r tool\n");
+        sb.append(command).append(" [-if informat] infile [-m modifier [options]] -r tool [options]\n");
 
         sb.append("\n# Run a script:\n");
         sb.append(command).append(" -s script.js [arguments...]\n");
