@@ -7,9 +7,9 @@ import java.util.Arrays;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.colomoto.biolqm.modifier.booleanize.ModelBooleanizerService;
+import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.ModelToolService;
 
 import javax.script.ScriptEngine;
 
@@ -100,7 +100,7 @@ public class LQMLauncher {
 				}
 				argIdx++;
 				String s_parameters = args[argIdx++];
-				ModelModifierService modifier = LQMServiceManager.getModifier(PerturbationService.class);
+				ModelModifierService modifier = LQMServiceManager.get(PerturbationService.class);
 				model = modifier.getModifiedModel(model, s_parameters);
 				continue;
 			}
@@ -115,7 +115,7 @@ public class LQMLauncher {
 			}
 			argIdx++;
 			String toolID = args[argIdx++];
-			LogicalModelTool tool = LQMServiceManager.getTool(toolID);
+			ModelToolService tool = LQMServiceManager.getTool(toolID);
 			if (tool == null) {
 				throw new RuntimeException("Unknown tool: "+toolID);
 			}
@@ -264,7 +264,7 @@ public class LQMLauncher {
 		}
 
 		sb.append("\n\n"+separator+"| Available tools:\n"+separator);
-		for (LogicalModelTool tool: LQMServiceManager.getTools()) {
+		for (ModelToolService tool: LQMServiceManager.getTools()) {
 			String level = tool.supportsMultivalued() ? "M " : "B ";
 			sb.append(level).append(" ").append(tool.getID());
 			sb.append("\t").append(tool.getName()).append("\n");
@@ -340,7 +340,7 @@ public class LQMLauncher {
 		            throw new RuntimeException(outputFormat.getID() +" does not support multivalued models");
 				case BOOLEANIZED:
 		            System.out.println(outputFormat.getID() +": export of a booleanized model");
-		            model = LQMServiceManager.getModifier(ModelBooleanizerService.class).getModifiedModel(model);
+		            model = LQMServiceManager.get(BooleanizeService.class).getModifiedModel(model);
 					break;
 				}
 			}

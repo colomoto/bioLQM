@@ -17,4 +17,14 @@ public interface ModelModifier {
 	 * @return a (new) LogicalModel where the modifications have been applied
 	 */
 	LogicalModel getModifiedModel();
+
+	default void setParameters(String[] parameters) {
+		
+	}
+
+	default void setParameters(String parameters) {
+		String[] t_parameters = parameters.split(" ");
+		setParameters(t_parameters);
+	}
+
 }

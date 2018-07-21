@@ -2,15 +2,15 @@ package org.colomoto.biolqm.tool.fixpoints;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.AbstractTool;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.AbstractToolService;
+import org.colomoto.biolqm.tool.ModelToolService;
 import org.mangosdk.spi.ProviderFor;
 
 import java.util.List;
 
 
-@ProviderFor(LogicalModelTool.class)
-public class FixpointTool extends AbstractTool<FixpointList, FixpointSettings> {
+@ProviderFor(ModelToolService.class)
+public class FixpointTool extends AbstractToolService<FixpointList, FixpointSettings> {
 
 	public static final String UID = "fixpoints";
 	public static final String[] ALIASES = { "stable", "fixed", "fp" };

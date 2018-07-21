@@ -1,14 +1,14 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.AbstractTool;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.AbstractToolService;
+import org.colomoto.biolqm.tool.ModelToolService;
 import org.colomoto.common.task.Task;
 import org.mangosdk.spi.ProviderFor;
 
 
-@ProviderFor(LogicalModelTool.class)
-public class TrapSpaceTool extends AbstractTool<TrapSpaceList, TrapSpaceSettings> {
+@ProviderFor(ModelToolService.class)
+public class TrapSpaceTool extends AbstractToolService<TrapSpaceList, TrapSpaceSettings> {
 
 	public static final String HELP_LINE = "Search trap spaces using ASP or BDDs";
 	public static final String HELP_MESSAGE = "arguments: (all,percolate) ; (BDD,ASP,showASP) ; (raw,terminal,diag)";

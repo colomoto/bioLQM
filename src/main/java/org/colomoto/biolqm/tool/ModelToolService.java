@@ -9,7 +9,7 @@ import org.colomoto.biolqm.Service;
  * 
  * @author Aurelien Naldi
  */
-public interface LogicalModelTool<R,S extends ToolSettings> extends Service {
+public interface ModelToolService<R,S extends ToolSettings> extends Service {
 
 	/**
 	 * Does this tool handle multivalued models?

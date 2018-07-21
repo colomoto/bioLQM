@@ -1,28 +1,28 @@
-package org.colomoto.biolqm.modifier.reverse;
+package org.colomoto.biolqm.modifier.booleanize;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.modifier.AbstractModelModifierService;
+import org.colomoto.biolqm.modifier.AbstractModifierService;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.mangosdk.spi.ProviderFor;
 
 /**
- * Wrap the reverser code into the ModelModifier interface.
+ * A service for model booleanization.
  *
  * @author Aurelien Naldi
  */
 @ProviderFor(ModelModifierService.class)
-public class ModelReverserService extends AbstractModelModifierService {
+public class BooleanizeService extends AbstractModifierService {
 
     /** The identifier used to retrieve this service by name */
-    public static final String ID = "reverse";
-    private static final String NAME = "model reverser";
+    public static final String ID = "booleanize";
+    private static final String NAME = "model booleanizer";
     private static final String DESCR = "(no parameters)";
 
     /**
      * Public constructor which should only be used for service discovery.
      */
-    public ModelReverserService() {
+    public BooleanizeService() {
         super(ID, NAME, DESCR);
     }
 
@@ -31,24 +31,11 @@ public class ModelReverserService extends AbstractModelModifierService {
         return getModifier(model);
     }
 
-    /**
-     * Shorthand to retrieve a modifier without requiring a parameter String.
-     *
-     * @param model the model to be reversed
-     * @return a reverser instance for this model
-     */
     public ModelModifier getModifier(LogicalModel model) {
-        return new ModelReverser(model);
+        return new BooleanizeModifier(model);
     }
 
-    /**
-     * Shorthand to retrieve a modified model without requiring a parameter String.
-     *
-     * @param model the model to be reversed
-     * @return the reversed model
-     */
     public LogicalModel getModifiedModel(LogicalModel model) {
         return getModifier(model).getModifiedModel();
     }
-
 }

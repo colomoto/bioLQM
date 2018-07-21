@@ -7,7 +7,7 @@ import org.colomoto.biolqm.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-abstract public class AbstractTool<R,S extends ToolSettings> implements LogicalModelTool<R,S> {
+abstract public class AbstractToolService<R,S extends ToolSettings> implements ModelToolService<R,S> {
 
 	private final String formatID;
 	private final String[] aliases;
@@ -15,15 +15,15 @@ abstract public class AbstractTool<R,S extends ToolSettings> implements LogicalM
 	private final String helpMessage;
 	private final boolean supportsMultivalued;
 	
-	protected AbstractTool(String id, String name) {
+	protected AbstractToolService(String id, String name) {
 		this(id, null, name, "", false);
 	}
 
-	protected AbstractTool(String id, String name, String helpMessage, boolean supportsMultivalued) {
+	protected AbstractToolService(String id, String name, String helpMessage, boolean supportsMultivalued) {
 		this(id, null, name, helpMessage, supportsMultivalued);
 	}
 
-	protected AbstractTool(String id, String[] aliases, String name, String helpMessage, boolean supportsMultivalued) {
+	protected AbstractToolService(String id, String[] aliases, String name, String helpMessage, boolean supportsMultivalued) {
 		this.formatID = id;
 		this.formatName = name;
 		this.helpMessage = helpMessage;

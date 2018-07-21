@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.ModelToolService;
 
 /**
  * Static service manager: list available "services" in LQM:
@@ -19,26 +19,27 @@ import org.colomoto.biolqm.tool.LogicalModelTool;
 public class LQMServiceManager {
 	
 	private static final List<LogicalModelFormat> formats = ExtensionLoader.load_instances(LogicalModelFormat.class);
-	private static final List<LogicalModelTool> tools = ExtensionLoader.load_instances(LogicalModelTool.class);
+	private static final List<ModelToolService> tools = ExtensionLoader.load_instances(ModelToolService.class);
 	private static final List<ModelModifierService> modifiers = ExtensionLoader.load_instances(ModelModifierService.class);
 
 	private static final Map<String, LogicalModelFormat> id2format = new HashMap<String, LogicalModelFormat>();
-	private static final Map<String, LogicalModelTool> id2tool = new HashMap<String, LogicalModelTool>();
+	private static final Map<String, ModelToolService> id2tool = new HashMap<String, ModelToolService>();
 	private static final Map<String, ModelModifierService> id2modifier = new HashMap<String, ModelModifierService>();
 
+	private static Map<Class, Service> byClass = new HashMap<>();
+
 	static {
-		for (LogicalModelFormat format: formats) {
-			id2format.put( format.getID(), format);
-        }
-		for (LogicalModelTool tool: tools) {
-			id2tool.put( tool.getID(), tool);
-        }
-		for (ModelModifierService modifier: modifiers) {
-			id2modifier.put( modifier.getID(), modifier);
-        }
-		fillAliases(id2format, formats);
-		fillAliases(id2tool, tools);
-		fillAliases(id2modifier, modifiers);
+		load(formats, id2format);
+		load(tools, id2tool);
+		load(modifiers, id2modifier);
+	}
+
+	private static <T extends Service> void load(List<T> services, Map<String, T> idmap) {
+		for (T srv: services) {
+			idmap.put( srv.getID(), srv);
+			byClass.put(srv.getClass(), srv);
+		}
+		fillAliases(idmap, services);
 	}
 
 	private static <T extends Service> void fillAliases( Map<String, T> map, List<T> services) {
@@ -76,44 +77,22 @@ public class LQMServiceManager {
 	}
 
 	/**
-	 * Get the format descriptor instance for a given class.
-	 *
-	 * @param cl the class of the format
-	 * @param <T> the type of the class and returned instance
-	 * @return the format instance or null if not found.
-	 */
-	public static <T extends LogicalModelFormat> T getFormat(Class<T> cl) {
-		return getByClass(getFormats(), cl);
-	}
-
-	/**
 	 * Get the tool declaration for a given ID.
 	 *
 	 * @param name ID of the tool
 	 * @return the tool declaration instance or null if not found.
 	 */
-	public static LogicalModelTool getTool(String name) {
+	public static ModelToolService getTool(String name) {
 
 		return id2tool.get(name);
 	}
 
 	/**
-	 * Get the tool service instance for a given class.
-	 *
-	 * @param cl the class of the tool service
-	 * @param <T> the type of the class and returned instance
-	 * @return the tool service instance or null if not found.
-	 */
-	public static <T extends LogicalModelTool> T getTool(Class<T> cl) {
-		return getByClass(getTools(), cl);
-	}
-	
-	/**
 	 * Get the available tools.
 	 *
 	 * @return all available tools
 	 */
-	public static Iterable<LogicalModelTool> getTools() {
+	public static Iterable<ModelToolService> getTools() {
 		return tools;
 	}
 
@@ -128,30 +107,13 @@ public class LQMServiceManager {
 	}
 
 	/**
-	 * Get the service instance for a given class.
-	 *
-	 * @param cl the class of the service
-	 * @param <T> the type of the class and returned instance
-	 * @return the service instance or null if not found.
-	 */
-	public static <T extends ModelModifierService> T getModifier(Class<T> cl) {
-		return getByClass(getModifiers(), cl);
-	}
-
-	/**
-	 * Shared code to retrieve an element by class in a list of services.
+	 * Retrieve any service by class
 	 * 
-	 * @param l
 	 * @param cl
 	 * @return
 	 */
-	private static <S, T extends S> T getByClass(Iterable<S> l, Class<T> cl) {
-		for (S srv: l) {
-			if (cl.isInstance(srv)) {
-				return (T)srv;
-			}
-		}
-		return null;
+	public static <T> T get(Class<T> cl) {
+		return (T)byClass.get(cl);
 	}
 
 	/**
@@ -179,7 +141,7 @@ public class LQMServiceManager {
 		if (register(ModelModifierService.class, srv, modifiers, id2modifier)) {
 			return true;
 		}
-		if (register(LogicalModelTool.class, srv, tools, id2tool)) {
+		if (register(ModelToolService.class, srv, tools, id2tool)) {
 			return true;
 		}
 		if (register(LogicalModelFormat.class, srv, formats, id2format)) {

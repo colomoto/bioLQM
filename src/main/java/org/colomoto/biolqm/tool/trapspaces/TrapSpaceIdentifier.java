@@ -6,9 +6,9 @@ import java.util.List;
 import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.modifier.booleanize.ModelBooleanizerService;
-import org.colomoto.biolqm.modifier.reduction.ModelReductionService;
-import org.colomoto.biolqm.modifier.reduction.ReductionSettings;
+import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
+import org.colomoto.biolqm.modifier.reduction.ReductionService;
+import org.colomoto.biolqm.modifier.reduction.ReductionModifier;
 import org.colomoto.biolqm.tool.implicants.Formula;
 import org.colomoto.biolqm.tool.implicants.MDD2PrimeImplicants;
 import org.colomoto.common.task.AbstractTask;
@@ -16,8 +16,8 @@ import org.colomoto.mddlib.MDDManager;
 
 public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 
-    private static final ModelBooleanizerService boolService = LQMServiceManager.getModifier(ModelBooleanizerService.class);
-    private static final ModelReductionService reduceService = LQMServiceManager.getModifier(ModelReductionService.class);
+    private static final BooleanizeService boolService = LQMServiceManager.get(BooleanizeService.class);
+    private static final ReductionService reduceService = LQMServiceManager.get(ReductionService.class);
 
 	private final LogicalModel model;
 	private final MDDManager ddmanager;
@@ -39,11 +39,11 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
         
         if (settings.reduce) {
 	        // reduce boring fixed components
-	        ReductionSettings rsettings = reduceService.getSettings();
-	        rsettings.handleFixed = true;
-	        rsettings.purgeFixed = true;
-	        rsettings.handleOutputs = false;
-	    	model = reduceService.getModifier(model, rsettings).getModifiedModel();
+	        ReductionModifier reducer = reduceService.getModifier(model);
+			reducer.handleFixed = true;
+			reducer.purgeFixed = true;
+			reducer.handleOutputs = false;
+	    	model = reducer.getModifiedModel();
         }
     	this.model = model;
         

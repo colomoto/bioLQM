@@ -8,7 +8,7 @@ import org.colomoto.biolqm.LogicalModel;
  *
  * @author Aurelien Naldi
  */
-abstract public class AbstractModelModifierService implements ModelModifierService {
+abstract public class AbstractModifierService implements ModelModifierService {
 
     private final String id, name, descr;
     private final String[] aliases;
@@ -21,11 +21,11 @@ abstract public class AbstractModelModifierService implements ModelModifierServi
      * @param name the human readable name of the service
      * @param descr a longer description (for the help message)
      */
-    public AbstractModelModifierService(String id, String name, String descr) {
+    public AbstractModifierService(String id, String name, String descr) {
         this(id, null, name, descr);
     }
 
-    public AbstractModelModifierService(String id, String[] aliases, String name, String descr) {
+    public AbstractModifierService(String id, String[] aliases, String name, String descr) {
         this.id = id;
         this.name = name;
         this.descr = descr;

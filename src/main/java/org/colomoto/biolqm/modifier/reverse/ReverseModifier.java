@@ -3,11 +3,13 @@ package org.colomoto.biolqm.modifier.reverse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.modifier.ModelModifier;
-import org.colomoto.biolqm.modifier.booleanize.Booleanizer;
+import org.colomoto.biolqm.modifier.booleanize.BooleanizeModifier;
+import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 
@@ -17,7 +19,7 @@ import org.colomoto.mddlib.MDDVariable;
  * 
  * @author Pedro T. Monteiro
  */
-public class ModelReverser implements ModelModifier {
+public class ReverseModifier implements ModelModifier {
 
 	private final MDDManager ddmanager;
 	private final ReverseOperation revOp;
@@ -31,9 +33,9 @@ public class ModelReverser implements ModelModifier {
 	 * 
 	 * @param model The odel to be reversed
 	 */
-	public ModelReverser(LogicalModel model) {
+	public ReverseModifier(LogicalModel model) {
 		// First booleanize the model
-		model = Booleanizer.booleanize(model);
+		model = new BooleanizeModifier(model).getModifiedModel();
 
 		this.ddmanager = model.getMDDManager();
 		this.revOp = new ReverseOperation(ddmanager);
@@ -65,7 +67,7 @@ public class ModelReverser implements ModelModifier {
 		}
 
 		// Fix the functions for booleanized models
-		Booleanizer.preventForbiddenStates(ddmanager, allNodes, allFunctions);
+		BooleanizeModifier.preventForbiddenStates(ddmanager, allNodes, allFunctions);
 	}
 
 	/**

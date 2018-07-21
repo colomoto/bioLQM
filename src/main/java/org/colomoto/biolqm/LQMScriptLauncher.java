@@ -9,7 +9,7 @@ import javax.script.ScriptEngineManager;
 
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.ModelToolService;
 
 /**
  * Wrap common API to provide convenient access in scripts.
@@ -147,7 +147,7 @@ public class LQMScriptLauncher {
      * @return the corresponding tool service
      * @see LQMServiceManager#getTool(String)
      */
-    public LogicalModelTool getTool(String name) {
+    public ModelToolService getTool(String name) {
     	return LQMServiceManager.getTool(name);
     }
 

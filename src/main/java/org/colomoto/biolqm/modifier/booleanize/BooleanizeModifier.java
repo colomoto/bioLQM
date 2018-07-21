@@ -3,12 +3,16 @@ package org.colomoto.biolqm.modifier.booleanize;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Construct a Boolean version of a multi-valued model.
@@ -20,30 +24,28 @@ import java.util.*;
  *
  * @author Aurelien Naldi
  */
-public class Booleanizer {
+public class BooleanizeModifier implements ModelModifier {
 
-    public static LogicalModel booleanize( LogicalModel ori) {
-
-        if ( ori.isBoolean()) {
-            return ori;
-        }
-
-        Booleanizer bool = new Booleanizer( ori );
-        return bool.getModel();
-    }
-
-    private final MDDManager ddm, newDDM;
-    private final List<NodeInfo> core, extra, newCore, newExtra;
-    private final int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
+    private final LogicalModel model;
+    private MDDManager ddm, newDDM;
+    private List<NodeInfo> core, extra, newCore, newExtra;
+    private int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
     private final Map<String,NodeInfo[]> mv2bool = new HashMap<String, NodeInfo[]>();
 
+    public BooleanizeModifier(LogicalModel model) {
+        this.model = model;
+    }
 
-    public Booleanizer(LogicalModel ori) {
-        this.ddm = ori.getMDDManager();
-        this.core = ori.getComponents();
-        this.extra = ori.getExtraComponents();
-        this.coreFunctions = ori.getLogicalFunctions();
-        this.extraFunctions = ori.getExtraLogicalFunctions();
+    @Override
+    public LogicalModel getModifiedModel() {
+        if (model.isBoolean()) {
+            return model;
+        }
+        this.ddm = model.getMDDManager();
+        this.core = model.getComponents();
+        this.extra = model.getExtraComponents();
+        this.coreFunctions = model.getLogicalFunctions();
+        this.extraFunctions = model.getExtraLogicalFunctions();
 
         this.newCore = getBoolComponents(core);
         this.newExtra = getBoolComponents(extra);
@@ -56,6 +58,8 @@ public class Booleanizer {
 
         transformFunctions(core, coreFunctions, newCoreFunctions);
         transformFunctions(extra, extraFunctions, newExtraFunctions);
+
+        return new LogicalModelImpl( newDDM, newCore, newCoreFunctions, newExtra, newExtraFunctions);
     }
 
     private List<Object> getBoolVariables( MDDManager ddm) {
@@ -169,17 +173,17 @@ public class Booleanizer {
             newDDM.free(prev);
             newDDM.free(tmp);
         }
-        
+
         if (restriction != 1) {
-	        int tmp = bf;
-	        bf = MDDBaseOperators.AND.combine(newDDM, bf, restriction);
-	        newDDM.free(restriction);
-	        newDDM.free(tmp);
+            int tmp = bf;
+            bf = MDDBaseOperators.AND.combine(newDDM, bf, restriction);
+            newDDM.free(restriction);
+            newDDM.free(tmp);
         }
-        
+
         return bf;
     }
-    
+
     /**
      * Ensure that a booleanized model has no transition leading to forbidden states.
      * The functions will be modified in place.
@@ -205,9 +209,9 @@ public class Booleanizer {
             int bf = restrictFunction(newDDM, bnodes, functions[idx], i);
             functions[idx] = bf;
             idx++;
-        }    	
+        }
     }
-    
+
 
     /**
      * Take a Boolean function and transfer it into the new MDDManager,
@@ -259,8 +263,4 @@ public class Booleanizer {
         return cur;
     }
 
-
-    public LogicalModel getModel() {
-        return new LogicalModelImpl( newDDM, newCore, newCoreFunctions, newExtra, newExtraFunctions);
-    }
 }

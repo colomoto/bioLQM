@@ -1,12 +1,12 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.AbstractTool;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.AbstractToolService;
+import org.colomoto.biolqm.tool.ModelToolService;
 import org.mangosdk.spi.ProviderFor;
 
-@ProviderFor(LogicalModelTool.class)
-public class RandomWalkTool extends AbstractTool<RandomWalkSimulation, RandomWalkSettings> {
+@ProviderFor(ModelToolService.class)
+public class RandomWalkTool extends AbstractToolService<RandomWalkSimulation, RandomWalkSettings> {
 
     public static final String HELP_LINE = "Perform a random walk in the dynamics";
     public static final String HELP_MESSAGE = "arguments: [-u asynchronous|complete] [-i 0010110], [-m #steps]";

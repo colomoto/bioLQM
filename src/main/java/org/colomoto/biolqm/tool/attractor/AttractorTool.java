@@ -1,8 +1,8 @@
 package org.colomoto.biolqm.tool.attractor;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.AbstractTool;
-import org.colomoto.biolqm.tool.LogicalModelTool;
+import org.colomoto.biolqm.tool.AbstractToolService;
+import org.colomoto.biolqm.tool.ModelToolService;
 import org.colomoto.biolqm.tool.ToolSettings;
 import org.mangosdk.spi.ProviderFor;
 
@@ -13,8 +13,8 @@ import org.mangosdk.spi.ProviderFor;
  *
  * @author Mitchell Markin
  */
-@ProviderFor(LogicalModelTool.class)
-public class AttractorTool extends AbstractTool {
+@ProviderFor(ModelToolService.class)
+public class AttractorTool extends AbstractToolService {
 
 	public AttractorTool() {
 		super("attractor", "Find synchronous attractors using SAT", "", false);
