@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.implicants;
+package org.colomoto.biolqm.helper.implicants;
 
 import java.util.ArrayList;
 import java.util.List;

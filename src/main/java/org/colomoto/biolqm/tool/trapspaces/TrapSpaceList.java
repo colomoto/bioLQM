@@ -12,7 +12,7 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 	public final boolean terminal;
 	public final List<NodeInfo> nodes;
 	
-	public TrapSpaceList(TrapSpaceSettings settings, LogicalModel model) {
+	public TrapSpaceList(TrapSpaceTask settings, LogicalModel model) {
 		this.terminal = settings.terminal;
 		this.nodes = model.getComponents();
 	}

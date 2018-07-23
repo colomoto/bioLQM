@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.implicants.Formula;
+import org.colomoto.biolqm.helper.implicants.Formula;
 import org.colomoto.biolqm.tool.fixpoints.StructuralNodeOrderer;
 
 import net.sf.javabdd.BDD;
@@ -25,7 +25,7 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 	private boolean percolate;
 	private BDD focus;
 
-	public TrapSpaceSolverBDD(LogicalModel model, TrapSpaceSettings settings) {
+	public TrapSpaceSolverBDD(LogicalModel model, TrapSpaceTask settings) {
 		this.percolate = settings.percolate;
 		nvar = model.getComponents().size();
 		jbdd = BDDFactory.init("java", 50000, 500);

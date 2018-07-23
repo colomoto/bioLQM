@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.inferinteraction;
+package org.colomoto.biolqm.helper.inferinteraction;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

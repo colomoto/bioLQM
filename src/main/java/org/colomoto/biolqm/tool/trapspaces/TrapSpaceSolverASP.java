@@ -12,7 +12,7 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.helper.clingo.ClingoLauncher;
 import org.colomoto.biolqm.helper.clingo.ClingoResult;
 import org.colomoto.biolqm.helper.clingo.ClingoResultHandler;
-import org.colomoto.biolqm.tool.implicants.Formula;
+import org.colomoto.biolqm.helper.implicants.Formula;
 
 /**
  * Use the clingo ASP solver to identify trap spaces.
@@ -25,11 +25,11 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 	private final List<NodeInfo> components;
 	private int curprime = 0;
 	private TrapSpaceList solutions;
-	TrapSpaceSettings settings;
+	TrapSpaceTask settings;
 	
 	private final StringBuffer program = new StringBuffer();
 	
-	public TrapSpaceSolverASP(LogicalModel model, TrapSpaceSettings settings) {
+	public TrapSpaceSolverASP(LogicalModel model, TrapSpaceTask settings) {
 		this.model = model;
 		this.settings = settings;
 		this.components = model.getComponents();

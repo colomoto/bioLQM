@@ -1,11 +1,11 @@
 package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.ToolSettings;
+import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
 import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 
-public class TraceSettings extends ToolSettings {
+public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
 
     DeterministicGrouping grouping = null;
     boolean isSequential = false;
@@ -13,7 +13,7 @@ public class TraceSettings extends ToolSettings {
     int max_steps = 1000;
     int length = 100;
 
-    public TraceSettings(LogicalModel model) {
+    public TraceTask(LogicalModel model) {
         super(model);
     }
 
@@ -126,6 +126,11 @@ public class TraceSettings extends ToolSettings {
             return new SequentialUpdater(model);
         }
         return new SynchronousUpdater(model);
+    }
+
+    @Override
+    protected DeterministicSimulation doGetResult() throws Exception {
+        return getSimulation();
     }
 }
 

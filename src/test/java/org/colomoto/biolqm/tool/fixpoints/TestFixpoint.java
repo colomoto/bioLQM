@@ -5,20 +5,18 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ReferenceModels;
 import org.junit.Test;
 
-import java.io.IOException;
-
 public class TestFixpoint {
 
 
     @Test
     public void testBasicStable() throws Exception {
         LQMScriptLauncher lqm = new LQMScriptLauncher(null);
-        FixpointTool stool = (FixpointTool) lqm.getTool("fixpoints");
+        FixpointService stool = (FixpointService) lqm.getTool("fixpoints");
 
         String[] refModels = ReferenceModels.getNames();
         for (String name: refModels) {
             LogicalModel model = ReferenceModels.getModel(name);
-            FixpointList list = stool.getResult(model);
+            FixpointList list = stool.getTask(model).call();
         }
     }
 }

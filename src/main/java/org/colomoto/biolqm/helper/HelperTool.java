@@ -1,4 +1,4 @@
-package org.colomoto.biolqm;
+package org.colomoto.biolqm.helper;
 
 import java.io.File;
 import java.util.ArrayList;

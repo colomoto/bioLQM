@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @ProviderFor(ModelToolService.class)
-public class FixpointTool extends AbstractToolService<FixpointList, FixpointSettings> {
+public class FixpointService extends AbstractToolService<FixpointList, FixpointTask> {
 
 	public static final String UID = "fixpoints";
 	public static final String[] ALIASES = { "stable", "fixed", "fp" };
@@ -18,31 +18,20 @@ public class FixpointTool extends AbstractToolService<FixpointList, FixpointSett
 	public static final String HELP_LINE = "Search fixed (stable) states";
 	public static final String HELP_MESSAGE = "arguments: asp pattern";
 
-	public FixpointTool() {
+	public FixpointService() {
 		super(UID, ALIASES, HELP_LINE, HELP_MESSAGE, true);
 	}
 
 	@Override
-	public FixpointSettings getSettings(LogicalModel model, String ... parameters) {
-		FixpointSettings settings = new FixpointSettings(model);
-
-		for (String p: parameters) {
-			p = p.trim();
-			if ("asp".equalsIgnoreCase(p )) {
-				settings.method = FixpointMethod.ASP;
-			}
-			if ("pattern".equalsIgnoreCase(p )) {
-				settings.pattern = true;
-			}
-		}
-		return settings;
+	public FixpointTask getTask(LogicalModel model, String ... parameters) {
+		return new FixpointTask(model, parameters);
 	}
 
 	@Override
 	public void run(LogicalModel model, String ... parameters) {
 		FixpointList result = null;
 		try {
-			result = getResult(model, parameters);
+			result = getTask(model, parameters).call();
 		} catch(Exception e) {
 			System.out.println("Error while constructing the result");
 			e.printStackTrace();
@@ -91,15 +80,6 @@ public class FixpointTool extends AbstractToolService<FixpointList, FixpointSett
 			}
 	        System.out.println();
     	}
-	}
-
-	public FixpointTask getTask(FixpointSettings settings) {
-		return new FixpointTask(settings);
-	}
-
-	@Override
-	public FixpointList getResult(FixpointSettings settings) throws Exception {
-		return getTask(settings).call();
 	}
 
 }

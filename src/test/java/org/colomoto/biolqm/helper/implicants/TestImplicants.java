@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.implicants;
+package org.colomoto.biolqm.helper.implicants;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ReferenceModels;

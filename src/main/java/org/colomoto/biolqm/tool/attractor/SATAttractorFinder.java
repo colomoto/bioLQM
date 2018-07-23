@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -21,7 +22,7 @@ import org.sat4j.specs.TimeoutException;
  *
  * @author Mitchell Markin
  */
-public class SATAttractorFinder {
+public class SATAttractorFinder extends AbstractToolTask {
 
 	private Map<Integer, ArrayList<ArrayList<Integer>>> dnfFunctions;
 	private Map<Integer, ArrayList<ArrayList<Integer>>> cnfFunctions;
@@ -29,16 +30,15 @@ public class SATAttractorFinder {
 	
 	//from the sat4j documentation, not sure if necessary
 	private final int MAXVAR = 1000000;
-	private final LogicalModel model;
 
 	public SATAttractorFinder(LogicalModel model) {
+		super(model);
 		dnfFunctions = new HashMap<Integer, ArrayList<ArrayList<Integer>>>();
 		cnfFunctions = new HashMap<Integer, ArrayList<ArrayList<Integer>>>();
 		constants = new HashMap<Integer, Integer>();
-		this.model = model;
 	}
 
-	public void run() {
+	public Object doGetResult() {
 		MDDManager manager = model.getMDDManager();
 	
 		//convert the model into a set of functions in disjunctive normal form
@@ -67,7 +67,9 @@ public class SATAttractorFinder {
 				} 
 				System.out.print(var.toString());
 			}
-			return;
+
+			// FIXME: return a result object
+			return null;
 		}
 
 		//create the conjunctive normal form representation of each function
@@ -226,6 +228,9 @@ public class SATAttractorFinder {
 				System.out.println();
 			}
 		}
+
+		// FIXME: return a result object
+		return null;
 	}
 	
 	/**

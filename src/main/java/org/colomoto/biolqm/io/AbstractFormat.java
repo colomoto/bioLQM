@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 
+import org.colomoto.biolqm.BaseService;
 import org.colomoto.biolqm.LogicalModel;
 
 /**
@@ -12,11 +13,7 @@ import org.colomoto.biolqm.LogicalModel;
  * 
  * @author Aurelien Naldi
  */
-abstract public class AbstractFormat implements LogicalModelFormat {
-
-	private final String formatID;
-	private final String formatName;
-	private final String[] aliases;
+abstract public class AbstractFormat extends BaseService implements LogicalModelFormat {
 
 	private final boolean canExport;
 	private final boolean canImport;
@@ -39,9 +36,7 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 	}
 
 	protected AbstractFormat(String id, String[] aliases, String name, MultivaluedSupport modelType) {
-		this.formatID = id;
-		this.aliases = aliases;
-		this.formatName = name;
+		super(id, aliases, name, "");
 		this.modelType = modelType;
 
 		boolean canImport = false;
@@ -61,21 +56,6 @@ abstract public class AbstractFormat implements LogicalModelFormat {
 		this.canExport = canExport;
 	}
 	
-	@Override
-	public String getID() {
-		return formatID;
-	}
-
-	@Override
-	public String getName() {
-		return formatName;
-	}
-
-	@Override
-	public String[] getAliases() {
-		return aliases;
-	}
-
 	@Override
 	public boolean canExport() {
 		return canExport;

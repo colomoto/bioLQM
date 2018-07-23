@@ -1,24 +1,20 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.ToolSettings;
+import org.colomoto.biolqm.tool.AbstractToolTask;
+import org.colomoto.biolqm.tool.ToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
-import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicSimulation;
-import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
-import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
-import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.CompleteUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
-import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 
-public class RandomWalkSettings extends ToolSettings {
+public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
 
     boolean isComplete = false;
     byte[] state = null;
     int max_steps = 1000;
 
-    public RandomWalkSettings(LogicalModel model) {
+    public RandomWalkTask(LogicalModel model) {
         super(model);
     }
 
@@ -106,6 +102,11 @@ public class RandomWalkSettings extends ToolSettings {
             updater = new AsynchronousUpdater(model);
         }
         return new RandomUpdaterWrapper(updater);
+    }
+
+    @Override
+    protected RandomWalkSimulation doGetResult() {
+        return getSimulation();
     }
 }
 

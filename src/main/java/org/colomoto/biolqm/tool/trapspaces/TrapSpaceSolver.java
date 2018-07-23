@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
-import org.colomoto.biolqm.tool.implicants.Formula;
+import org.colomoto.biolqm.helper.implicants.Formula;
 
 public interface TrapSpaceSolver {
 

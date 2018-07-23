@@ -25,4 +25,11 @@ public interface Service {
      * @return the service name
      */
     String getName();
+
+    /**
+     * Provide a brief description of parameters for the help message
+     *
+     * @return a short String describing the service parameters
+     */
+    String getDescription();
 }

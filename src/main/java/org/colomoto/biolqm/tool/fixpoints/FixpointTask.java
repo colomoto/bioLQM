@@ -2,28 +2,49 @@ package org.colomoto.biolqm.tool.fixpoints;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.common.task.AbstractTask;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 
 import java.util.List;
 
-public class FixpointTask extends AbstractTask<FixpointList> {
+public class FixpointTask extends AbstractToolTask<FixpointList> {
 
-    private final FixpointSettings settings;
+    public FixpointMethod method = FixpointMethod.MDD;
+    public boolean pattern = false;
 
-    public FixpointTask(FixpointSettings settings) {
-        this.settings = settings;
+
+    public FixpointTask(LogicalModel model, String[] parameters) {
+        super(model);
+
+        for (String p: parameters) {
+            p = p.trim();
+            if ("asp".equalsIgnoreCase(p )) {
+                this.method = FixpointMethod.ASP;
+            }
+            if ("pattern".equalsIgnoreCase(p )) {
+                this.pattern = true;
+            }
+        }
     }
 
     @Override
     protected FixpointList doGetResult() throws Exception {
-        switch (settings.method) {
+        switch (method) {
             case ASP:
-                return getASP(settings.model);
+                return getASP(model);
             default:
-                return getMDD(settings.model, settings.pattern);
+                return getMDD(model, pattern);
         }
+    }
+
+    public void useASP() {
+        this.method = FixpointMethod.ASP;
+    }
+
+    public void useMDD() {
+        this.method = FixpointMethod.MDD;
     }
 
 

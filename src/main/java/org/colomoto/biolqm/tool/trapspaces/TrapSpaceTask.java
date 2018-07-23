@@ -9,55 +9,107 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.biolqm.modifier.reduction.ReductionService;
 import org.colomoto.biolqm.modifier.reduction.ReductionModifier;
-import org.colomoto.biolqm.tool.implicants.Formula;
-import org.colomoto.biolqm.tool.implicants.MDD2PrimeImplicants;
-import org.colomoto.common.task.AbstractTask;
+import org.colomoto.biolqm.helper.implicants.Formula;
+import org.colomoto.biolqm.helper.implicants.MDD2PrimeImplicants;
+import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.mddlib.MDDManager;
 
-public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
+public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 
     private static final BooleanizeService boolService = LQMServiceManager.get(BooleanizeService.class);
     private static final ReductionService reduceService = LQMServiceManager.get(ReductionService.class);
 
-	private final LogicalModel model;
-	private final MDDManager ddmanager;
-	private final MDD2PrimeImplicants primer;
+	private MDDManager ddmanager;
+	private MDD2PrimeImplicants primer;
 	private TrapSpaceSolver solver;
-	
-	private final TrapSpaceSettings settings;
-	
+
+	private LogicalModel workModel;
+
+	public boolean reduce = false;
+
+	public boolean percolate = true;
+	public boolean bdd = false;
+	public boolean showasp = false;
+
+	public boolean terminal = false;
+	public boolean diag = false;
+
+	public String[] focusComponents = null;
+
 	private static boolean SMART_DIAG = false;
-	
-	public TrapSpaceIdentifier(TrapSpaceSettings settings) {
-		this.settings = settings;
-		LogicalModel model = settings.model;
-		
-		// Ensure that the model is booleanized
-        if (!model.isBoolean()) {
-        	model = boolService.getModifiedModel(model);
+
+	public TrapSpaceTask(LogicalModel model, String[] parameters) {
+		super(model);
+		workModel = model;
+
+		if (parameters == null) {
+		    return;
         }
-        
-        if (settings.reduce) {
+
+        boolean focus = false;
+        for (String s: parameters) {
+            if (focus) {
+                focusComponents = s.split(",");
+                focus = false;
+            } else if ("terminal".equalsIgnoreCase(s)) {
+                terminal = true;
+                diag = false;
+            } else if ("raw".equalsIgnoreCase(s)) {
+                terminal = false;
+                diag = false;
+            } else if ("diag".equalsIgnoreCase(s) || "tree".equalsIgnoreCase(s)) {
+                terminal = false;
+                diag = true;
+
+            } else if ("percolate".equalsIgnoreCase(s)) {
+                percolate = true;
+            } else if ("all".equalsIgnoreCase(s)) {
+                percolate = false;
+
+            } else if ("reduce".equalsIgnoreCase(s)) {
+                reduce = true;
+
+            } else if ("bdd".equalsIgnoreCase(s)) {
+                bdd = true;
+            } else if ("asp".equalsIgnoreCase(s)) {
+                bdd = false;
+            } else if ("showASP".equalsIgnoreCase(s)) {
+                bdd = false;
+                showasp = true;
+            } else if ("focus".equalsIgnoreCase(s)) {
+                focus = true;
+            } else {
+                System.out.println("Unknown parameter: "+ s);
+            }
+        }
+	}
+
+	public void loadSettings() {
+		// Ensure that the model is booleanized
+        if (!workModel.isBoolean()) {
+        	workModel = boolService.getModifiedModel(workModel);
+        }
+
+        if (reduce) {
 	        // reduce boring fixed components
-	        ReductionModifier reducer = reduceService.getModifier(model);
+	        ReductionModifier reducer = reduceService.getModifier(workModel);
 			reducer.handleFixed = true;
 			reducer.purgeFixed = true;
 			reducer.handleOutputs = false;
-	    	model = reducer.getModifiedModel();
+			workModel = reducer.getModifiedModel();
         }
-    	this.model = model;
-        
-        this.ddmanager = model.getMDDManager();
+
+        this.ddmanager = workModel.getMDDManager();
         this.primer = new MDD2PrimeImplicants(ddmanager);
-        if (settings.bdd) {
-            this.solver = new TrapSpaceSolverBDD(model, settings);
+        if (bdd) {
+            this.solver = new TrapSpaceSolverBDD(workModel, this);
         } else {
-        	this.solver = new TrapSpaceSolverASP(model, settings);
+        	this.solver = new TrapSpaceSolverASP(workModel, this);
         }
 	}
-	
+
 	public void loadModel() {
-		int[] functions = model.getLogicalFunctions();
+		int[] functions = workModel.getLogicalFunctions();
         for (int i=0 ; i<functions.length ; i++ ) {
         	int f = functions[i];
         	if (f < ddmanager.getLeafCount()) {
@@ -74,10 +126,10 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
         	solver.add_variable(i, formula, not_formula);
         }
         
-		if (settings.focusComponents != null) {
-			for (String sid: settings.focusComponents) {
+		if (focusComponents != null) {
+			for (String sid: focusComponents) {
 				int idx=0;
-				for (NodeInfo ni: model.getComponents()) {
+				for (NodeInfo ni: workModel.getComponents()) {
 					if (ni.getNodeID().equals(sid)) {
 						solver.add_focus(idx);
 						break;
@@ -112,14 +164,14 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 	}
 	
 	public void runCLI() {
-		if (settings.showasp) {
+		if (showasp) {
 			loadModel();
 			System.out.println( ((TrapSpaceSolverASP)solver).getASP() );
 			return;
 		}
 		
 		TrapSpaceList solutions = doGetResult();
-		if (settings.diag) {
+		if (diag) {
 			int n = solutions.size();
 			int k = (int)Math.log10(n) + 1;
 
@@ -171,8 +223,9 @@ public class TrapSpaceIdentifier extends AbstractTask<TrapSpaceList> {
 
 	@Override
 	protected TrapSpaceList doGetResult() {
+		loadSettings();
 		loadModel();
-        TrapSpaceList solutions = new TrapSpaceList(settings, model);
+        TrapSpaceList solutions = new TrapSpaceList(this, workModel);
         solver.solve(solutions);
         
         return solutions;

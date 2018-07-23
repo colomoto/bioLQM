@@ -15,13 +15,6 @@ import org.colomoto.biolqm.Service;
 public interface ModelModifierService extends Service {
 
     /**
-     * Provide a brief description of parameters for the help message
-     *
-     * @return a short String describing the service parameters
-     */
-    String getDescription();
-
-    /**
      * Setup a new modifier object.
      *
      * @param model the model to modify

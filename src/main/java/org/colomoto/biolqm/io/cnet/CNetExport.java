@@ -4,7 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
-import org.colomoto.biolqm.tool.implicants.RestrictedPathSearcher;
+import org.colomoto.biolqm.helper.implicants.RestrictedPathSearcher;
 import org.colomoto.biolqm.NodeInfo;
 
 import java.io.IOException;

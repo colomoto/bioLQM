@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import org.colomoto.biolqm.HelperTool;
+import org.colomoto.biolqm.helper.HelperTool;
 
 public class ClingoLauncher {
 

@@ -6,31 +6,26 @@ import org.colomoto.biolqm.tool.ModelToolService;
 import org.mangosdk.spi.ProviderFor;
 
 @ProviderFor(ModelToolService.class)
-public class TraceTool extends AbstractToolService<DeterministicSimulation, TraceSettings> {
+public class TraceService extends AbstractToolService<DeterministicSimulation, TraceTask> {
 
     public static final String HELP_LINE = "Compute deterministic trace";
     public static final String HELP_MESSAGE = "arguments: [-u sequential|synchronous] [-i 0010110], [-m #steps]";
 
 
-    public TraceTool() {
+    public TraceService() {
         super("trace", HELP_LINE, HELP_MESSAGE, true);
     }
 
     @Override
-    public TraceSettings getSettings(LogicalModel model, String... parameters) {
-        TraceSettings settings = new TraceSettings(model);
+    public TraceTask getTask(LogicalModel model, String... parameters) {
+        TraceTask settings = new TraceTask(model);
         settings.parseParameters(parameters);
         return settings;
     }
 
     @Override
-    public DeterministicSimulation getResult(TraceSettings settings) throws Exception {
-        return settings.getSimulation();
-    }
-
-    @Override
     public void run(LogicalModel model, String... parameters) {
-        DeterministicSimulation simulation = getSettings(model, parameters).getSimulation();
+        DeterministicSimulation simulation = getTask(model, parameters).getSimulation();
         byte[] extra = null;
         int n_extra = model.getExtraComponents().size();
         if (n_extra > 0) {

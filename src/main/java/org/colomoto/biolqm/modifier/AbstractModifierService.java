@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.modifier;
 
 
+import org.colomoto.biolqm.BaseService;
 import org.colomoto.biolqm.LogicalModel;
 
 /**
@@ -8,11 +9,7 @@ import org.colomoto.biolqm.LogicalModel;
  *
  * @author Aurelien Naldi
  */
-abstract public class AbstractModifierService implements ModelModifierService {
-
-    private final String id, name, descr;
-    private final String[] aliases;
-
+abstract public class AbstractModifierService extends BaseService implements ModelModifierService {
 
     /**
      * Shared constructor for model modifier.
@@ -22,38 +19,15 @@ abstract public class AbstractModifierService implements ModelModifierService {
      * @param descr a longer description (for the help message)
      */
     public AbstractModifierService(String id, String name, String descr) {
-        this(id, null, name, descr);
+        super(id, name, descr);
     }
 
     public AbstractModifierService(String id, String[] aliases, String name, String descr) {
-        this.id = id;
-        this.name = name;
-        this.descr = descr;
-        this.aliases = aliases;
-    }
-
-    @Override
-    public String getID() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return descr;
+        super(id, aliases, name, descr);
     }
 
     @Override
     public LogicalModel getModifiedModel(LogicalModel model, String parameters) {
         return getModifier(model,parameters).getModifiedModel();
-    }
-
-    @Override
-    public String[] getAliases() {
-        return aliases;
     }
 }

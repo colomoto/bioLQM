@@ -11,6 +11,8 @@ public class FixpointList extends ArrayList<byte[]> {
 
 	public final List<NodeInfo> nodes;
 	private List<NodeInfo> extraNodes;
+	private String[] tnodes = null;
+	private String[] extratnodes = null;
 	private int[] extraFunctions;
 	private MDDManager ddmanager;
 	private List<byte[]> extra;
@@ -40,5 +42,35 @@ public class FixpointList extends ArrayList<byte[]> {
 
 	public List<byte[]> getExtraValues() {
 		return extra;
+	}
+
+	public String[] getNodeIDs() {
+		if (tnodes == null) {
+			tnodes = new String[nodes.size()];
+			for (int i=0 ; i<tnodes.length ; i++) {
+				tnodes[i] = nodes.get(i).getNodeID();
+			}
+		}
+		return tnodes;
+	}
+	public String[] getExtraNodeIDs() {
+		if (tnodes == null) {
+			tnodes = new String[nodes.size()];
+			for (int i=0 ; i<tnodes.length ; i++) {
+				tnodes[i] = nodes.get(i).getNodeID();
+			}
+		}
+		return tnodes;
+	}
+
+	public byte[] rawByteArray() {
+		int x = 0;
+		int l = nodes.size();
+		byte[] content = new byte[size()*l];
+		for (byte[] d: this) {
+			System.arraycopy(d, 0, content, x, l);
+			x += l;
+		}
+		return content;
 	}
 }
