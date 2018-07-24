@@ -13,6 +13,7 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
 
     public FixpointMethod method = FixpointMethod.MDD;
     public boolean pattern = false;
+    public boolean extra = false;
 
 
     public FixpointTask(LogicalModel model, String[] parameters) {
@@ -26,17 +27,26 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
             if ("pattern".equalsIgnoreCase(p )) {
                 this.pattern = true;
             }
+            if ("extra".equalsIgnoreCase(p )) {
+                this.extra = true;
+            }
         }
     }
 
     @Override
     protected FixpointList doGetResult() throws Exception {
+        FixpointList result = null;
         switch (method) {
             case ASP:
-                return getASP(model);
+                result = getASP(model);
+                break;
             default:
-                return getMDD(model, pattern);
+                result = getMDD(model, pattern);
+                break;
         }
+
+        result.setExtra(extra);
+        return result;
     }
 
     public void useASP() {

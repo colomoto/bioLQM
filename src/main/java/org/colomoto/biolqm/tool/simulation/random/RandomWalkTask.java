@@ -2,7 +2,6 @@ package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolTask;
-import org.colomoto.biolqm.tool.ToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.CompleteUpdater;

@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.fixpoints;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.settings.state.StateList;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
 import org.mangosdk.spi.ProviderFor;
@@ -29,7 +30,7 @@ public class FixpointService extends AbstractToolService<FixpointList, FixpointT
 
 	@Override
 	public void run(LogicalModel model, String ... parameters) {
-		FixpointList result = null;
+		StateList result = null;
 		try {
 			result = getTask(model, parameters).call();
 		} catch(Exception e) {
@@ -43,41 +44,23 @@ public class FixpointService extends AbstractToolService<FixpointList, FixpointT
 			return;
 		}
 
-		List<byte[]> extra = result.fillExtraNodes();
-
 		// print out the result
-		for (NodeInfo node : model.getComponents()) {
-			System.out.print(node.getNodeID() + " ");
-		}
-		if (extra != null) {
-			System.out.print("    ");
-			for (NodeInfo node : model.getExtraComponents()) {
-				System.out.print(node.getNodeID() + " ");
-			}
+		NodeInfo[] components = result.getComponents();
+		for (NodeInfo ni : components) {
+			System.out.print(ni + " ");
 		}
     	System.out.println();
 
-		int idx = 0;
-    	for (byte[] path: result) {
-	        for (int i: path) {
+		int nrows = result.size();
+    	for (int row=0 ; row<nrows ; row++) {
+	        for (int col=0 ; col<components.length ; col++) {
+	        	int i = result.get(row, col);
 	        	if (i<0) {
 	        		System.out.print("-");
 	        	} else {
 	        		System.out.print(i);
 	        	}
 	        }
-
-	        if (extra != null) {
-	        	System.out.print("    ");
-	        	byte[] extrapath = extra.get(idx++);
-				for (int i: extrapath) {
-					if (i<0) {
-						System.out.print("-");
-					} else {
-						System.out.print(i);
-					}
-				}
-			}
 	        System.out.println();
     	}
 	}
