@@ -70,14 +70,18 @@ public class FixpointList extends ArrayList<byte[]> implements StateList {
 
 	@Override
 	public boolean setExtra(boolean extra) {
-		if (extra == isExtra) {
+		if (extra == this.isExtra) {
 			return false;
 		}
 		this.isExtra = extra;
 
-		if (!isExtra || extraNodes == null || extraNodes.length == 0) {
-			this.extra = null;
+		if (extraNodes == null || extraNodes.length == 0) {
 			return false;
+		}
+
+		if (!this.isExtra) {
+			this.extra = null;
+			return true;
 		}
 
 		this.extra = new ArrayList<>(this.size());
