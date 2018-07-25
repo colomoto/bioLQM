@@ -70,6 +70,15 @@ public interface LogicalModel {
 	byte getTargetValue(int componentIdx, byte[] state);
 
 	/**
+	 * Check if the model has extra component(s).
+	 * If this returns true, then the getExtraComponents() and
+	 * getExtraLogicalFunctions() methods should not return null.
+	 *
+	 * @return true is there is at least one extra component
+	 */
+	boolean hasExtraComponents();
+
+	/**
 	 * Compute the value of an extra component for a given state.
 	 *
 	 * @param componentIdx index of the component in the extra node order

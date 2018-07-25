@@ -67,6 +67,10 @@ public class LogicalModelImpl implements LogicalModel {
 		return extraNodes;
 	}
 
+	public boolean hasExtraComponents() {
+		return extraFunctions != null && extraFunctions.length > 0;
+	}
+
 	@Override
 	public int[] getExtraLogicalFunctions() {
 		return extraFunctions;
