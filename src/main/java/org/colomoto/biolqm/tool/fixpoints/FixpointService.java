@@ -55,9 +55,11 @@ public class FixpointService extends AbstractToolService<FixpointList, FixpointT
     	for (int row=0 ; row<nrows ; row++) {
 	        for (int col=0 ; col<components.length ; col++) {
 	        	int i = result.get(row, col);
-	        	if (i<0) {
-	        		System.out.print("-");
-	        	} else {
+	        	if (i == -5) {
+	        		System.out.print("?");
+				} else if (i<0) {
+					System.out.print("-");
+				} else {
 	        		System.out.print(i);
 	        	}
 	        }
