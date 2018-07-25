@@ -4,6 +4,10 @@ import org.colomoto.biolqm.NodeInfo;
 
 public interface StateList {
 
+    public static final int JOKER = -1;
+    public static final int FREE = -2;
+    public static final int UNDEFINED = -5;
+
     /**
      * Get the components defining this list of states.
      * @return the list of components
