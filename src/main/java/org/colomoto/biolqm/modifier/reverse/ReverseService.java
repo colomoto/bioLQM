@@ -4,14 +4,14 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.AbstractModifierService;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
 /**
  * Wrap the reverser code into the ModelModifier interface.
  *
  * @author Aurelien Naldi
  */
-@ProviderFor(ModelModifierService.class)
+@MetaInfServices(ModelModifierService.class)
 public class ReverseService extends AbstractModifierService {
 
     /** The identifier used to retrieve this service by name */

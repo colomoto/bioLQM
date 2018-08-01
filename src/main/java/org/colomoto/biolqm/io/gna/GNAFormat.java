@@ -1,12 +1,12 @@
 package org.colomoto.biolqm.io.gna;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Format description for GNA (non-xml) files.
@@ -14,7 +14,7 @@ import org.mangosdk.spi.ProviderFor;
  * 
  * @author Pedro T. Monteiro
  */
-@ProviderFor(LogicalModelFormat.class)
+@MetaInfServices(LogicalModelFormat.class)
 public class GNAFormat extends AbstractFormat {
 
 	public GNAFormat() {

@@ -1,22 +1,21 @@
 package org.colomoto.biolqm.io.sbml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.xml.stream.XMLStreamException;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Format description for SBML files, using the qual extension.
  * 
  * @author Aurelien Naldi
  */
-@ProviderFor(LogicalModelFormat.class)
+@MetaInfServices(LogicalModelFormat.class)
 public class SBMLFormat extends AbstractFormat {
 
 	public SBMLFormat() {

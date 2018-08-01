@@ -1,12 +1,12 @@
 package org.colomoto.biolqm.io.ginml;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Format description for GINML files.
@@ -14,7 +14,7 @@ import org.mangosdk.spi.ProviderFor;
  * 
  * @author Aurelien Naldi
  */
-@ProviderFor(LogicalModelFormat.class)
+@MetaInfServices(LogicalModelFormat.class)
 public class GINMLFormat extends AbstractFormat {
 
 	public GINMLFormat() {

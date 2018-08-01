@@ -1,14 +1,14 @@
 package org.colomoto.biolqm.io.pint;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
-@ProviderFor(LogicalModelFormat.class)
+import java.io.IOException;
+import java.io.OutputStream;
+
+@MetaInfServices(LogicalModelFormat.class)
 public class PintFormat extends AbstractFormat {
 
 	public PintFormat() { super("an", "Pint format", MultivaluedSupport.MULTIVALUED); }

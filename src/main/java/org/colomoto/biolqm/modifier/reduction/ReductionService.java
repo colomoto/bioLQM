@@ -3,14 +3,14 @@ package org.colomoto.biolqm.modifier.reduction;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.AbstractModifierService;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
 /**
  * Orchestrator for model reduction tools
  *
  * @author Aurelien Naldi
  */
-@ProviderFor(ModelModifierService.class)
+@MetaInfServices(ModelModifierService.class)
 public class ReductionService extends AbstractModifierService {
 
     /** The identifier used to retrieve this service by name */

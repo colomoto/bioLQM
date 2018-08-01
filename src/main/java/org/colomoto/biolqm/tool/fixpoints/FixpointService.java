@@ -5,12 +5,10 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.settings.state.StateList;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
-import org.mangosdk.spi.ProviderFor;
-
-import java.util.List;
+import org.kohsuke.MetaInfServices;
 
 
-@ProviderFor(ModelToolService.class)
+@MetaInfServices(ModelToolService.class)
 public class FixpointService extends AbstractToolService<FixpointList, FixpointTask> {
 
 	public static final String UID = "fixpoints";

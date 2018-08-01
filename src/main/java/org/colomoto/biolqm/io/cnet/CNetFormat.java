@@ -3,11 +3,12 @@ package org.colomoto.biolqm.io.cnet;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
-@ProviderFor(LogicalModelFormat.class)
+@MetaInfServices(LogicalModelFormat.class)
 public class CNetFormat extends AbstractFormat {
 
 	public static final String ID = "cnet";

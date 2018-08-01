@@ -3,9 +3,9 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
-@ProviderFor(ModelToolService.class)
+@MetaInfServices(ModelToolService.class)
 public class TraceService extends AbstractToolService<DeterministicSimulation, TraceTask> {
 
     public static final String HELP_LINE = "Compute deterministic trace";

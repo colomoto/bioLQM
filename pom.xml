@@ -20,7 +20,7 @@
   </properties>
 
   <repositories>
-    <!-- GINsim repository provides ready-to-use jars for MDDlib, JSBML and mangosdk.spi  -->
+    <!-- GINsim repository provides ready-to-use jars for MDDlib  -->
     <repository>
        <id>ginsim_snapshot</id>
        <snapshots><enabled>true</enabled></snapshots>
@@ -28,34 +28,28 @@
        <name>GINsim snapshot repository</name>
        <url>http://ginsim.org/maven/snapshot</url>
     </repository>
-    <repository>
-       <id>ginsim_stable</id>
-       <snapshots><enabled>false</enabled></snapshots>
-       <releases><enabled>true</enabled></releases>
-       <name>GINsim deps</name>
-       <url>http://ginsim.org/maven/stable</url>
-    </repository>
-    <repository>
-      <id>ebi-repo</id>
-      <name>The EBI repository</name>
-      <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-      <releases><enabled>true</enabled></releases>
-    </repository>
   </repositories>
 
   <dependencies>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>5.2.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.mangosdk.spi</groupId>
-      <artifactId>spi</artifactId>
-      <version>0.2.4</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.2.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kohsuke.metainf-services</groupId>
+      <artifactId>metainf-services</artifactId>
+      <version>1.8</version>
       <!-- only needed to compile: this allows to exclude it from copy-dependencies goal -->
       <scope>provided</scope>  
     </dependency>
@@ -75,12 +69,12 @@
     <dependency>
           <groupId>org.antlr</groupId>
           <artifactId>antlr4-runtime</artifactId>
-          <version>4.5</version>
+          <version>4.7.1</version>
     </dependency>
 
     <dependency>
-        <groupId>net.sf</groupId>
-        <artifactId>javabdd</artifactId>
+        <groupId>de.fosd.typechef</groupId>
+        <artifactId>javabdd_repackaged</artifactId>
         <version>1.0b2</version>
     </dependency>
 
@@ -111,7 +105,7 @@
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.5</version>
+        <version>4.7.1</version>
         <executions>
           <execution>
             <goals>
@@ -124,7 +118,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
+        <version>3.7.0</version>
         <configuration>
            <source>1.8</source>
            <target>1.8</target>
@@ -134,7 +128,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.1.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -153,7 +147,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.1.0</version>
         <configuration>
           <archive>
             <manifest>
@@ -168,7 +162,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.8.1</version>
+        <version>3.0.1</version>
 <!--	
         <configuration>
           <links>
@@ -181,14 +175,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.12.4</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-junit47</artifactId>
-            <version>2.12.4</version>
-          </dependency>
-        </dependencies>
+        <version>2.22.0</version>
       </plugin>
 
     </plugins>

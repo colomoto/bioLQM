@@ -1,15 +1,15 @@
 package org.colomoto.biolqm.io.maboss;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.OutputStreamProvider;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
-@ProviderFor(LogicalModelFormat.class)
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+@MetaInfServices(LogicalModelFormat.class)
 public class MaBoSSFormat extends AbstractFormat {
 
 	public MaBoSSFormat() { super("bnd", "MaBoSS format", MultivaluedSupport.BOOLEANIZED); }

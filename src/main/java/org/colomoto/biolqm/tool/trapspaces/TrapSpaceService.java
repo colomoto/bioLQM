@@ -3,10 +3,10 @@ package org.colomoto.biolqm.tool.trapspaces;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
 
-@ProviderFor(ModelToolService.class)
+@MetaInfServices(ModelToolService.class)
 public class TrapSpaceService extends AbstractToolService<TrapSpaceList, TrapSpaceTask> {
 
 	public static final String HELP_LINE = "Search trap spaces using ASP or BDDs";

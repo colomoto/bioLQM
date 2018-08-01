@@ -4,7 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.AbstractModifierService;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
 /**
  * Service to apply perturbations to Logical Models.
@@ -12,7 +12,7 @@ import org.mangosdk.spi.ProviderFor;
  *
  * @author Aurelien Naldi
  */
-@ProviderFor(ModelModifierService.class)
+@MetaInfServices(ModelModifierService.class)
 public class PerturbationService extends AbstractModifierService {
 
     /** The identifier used to retrieve this service by name */

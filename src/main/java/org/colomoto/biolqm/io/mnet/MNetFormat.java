@@ -3,11 +3,11 @@ package org.colomoto.biolqm.io.mnet;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
 import java.io.*;
 
-@ProviderFor(LogicalModelFormat.class)
+@MetaInfServices(LogicalModelFormat.class)
 public class MNetFormat extends AbstractFormat {
 
 	public static final String ID = "mnet";

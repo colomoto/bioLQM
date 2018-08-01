@@ -1,13 +1,13 @@
 package org.colomoto.biolqm.io.truthtable;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Format description for TruthTable (.tt) files. These files are in a two
@@ -15,7 +15,7 @@ import org.mangosdk.spi.ProviderFor;
  * 
  * @author Pedro T. Monteiro
  */
-@ProviderFor(LogicalModelFormat.class)
+@MetaInfServices(LogicalModelFormat.class)
 public class TruthTableFormat extends AbstractFormat {
 
 	public TruthTableFormat() {

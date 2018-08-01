@@ -4,14 +4,14 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.AbstractModifierService;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
 /**
  * Modifier Service for subspace restriction
  * 
  * @author Aurelien Naldi
  */
-@ProviderFor(ModelModifierService.class)
+@MetaInfServices(ModelModifierService.class)
 public class SubSpaceService extends AbstractModifierService {
 
 	/** The identifier used to retrieve this service by name */

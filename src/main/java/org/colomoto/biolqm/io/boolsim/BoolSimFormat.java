@@ -1,13 +1,13 @@
 package org.colomoto.biolqm.io.boolsim;
 
-import java.io.*;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
-@ProviderFor(LogicalModelFormat.class)
+import java.io.*;
+
+@MetaInfServices(LogicalModelFormat.class)
 public class BoolSimFormat extends AbstractFormat {
 
 	public static final String ID = "boolsim";

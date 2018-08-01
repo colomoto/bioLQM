@@ -3,9 +3,9 @@ package org.colomoto.biolqm.tool.simulation.random;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
-import org.mangosdk.spi.ProviderFor;
+import org.kohsuke.MetaInfServices;
 
-@ProviderFor(ModelToolService.class)
+@MetaInfServices(ModelToolService.class)
 public class RandomWalkService extends AbstractToolService<RandomWalkSimulation, RandomWalkTask> {
 
     public static final String HELP_LINE = "Perform a random walk in the dynamics";
