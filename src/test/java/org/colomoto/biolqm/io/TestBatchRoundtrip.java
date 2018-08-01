@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.io;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,8 +11,9 @@ import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
 import org.colomoto.biolqm.ReferenceModels;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Brute force tests for all formats supporting both import and export.
@@ -81,6 +80,6 @@ public class TestBatchRoundtrip {
 		File f = TestHelper.getTestOutput("io_roundtrips", ioName);
 		format.export(model, new OutputStreamProvider(f));
 		LogicalModel importedModel = format.importFile(f);
-		Assert.assertTrue( LogicalModelComparator.compare(model, importedModel) );
+		assertTrue( LogicalModelComparator.compare(model, importedModel) );
 	}
 }

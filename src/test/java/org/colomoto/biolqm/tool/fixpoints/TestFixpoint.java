@@ -3,7 +3,7 @@ package org.colomoto.biolqm.tool.fixpoints;
 import org.colomoto.biolqm.LQMScriptLauncher;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ReferenceModels;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestFixpoint {
 

@@ -10,7 +10,6 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityClasses;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
@@ -20,8 +19,9 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestUpdaters {
 
@@ -83,17 +83,17 @@ public class TestUpdaters {
 		MultipleSuccessorsUpdater updater = new AsynchronousUpdater(model);
 		byte[] state = {0,0,0};
 		List<byte[]> successors = updater.getSuccessors(state);
-		Assert.assertEquals(2, successors.size());
+		assertEquals(2, successors.size());
 
 		byte[] next = successors.get(0);
-		Assert.assertEquals(1, next[0]);
-		Assert.assertEquals(0, next[1]);
-		Assert.assertEquals(0, next[2]);
+		assertEquals(1, next[0]);
+		assertEquals(0, next[1]);
+		assertEquals(0, next[2]);
 
         next = successors.get(1);
-        Assert.assertEquals(0, next[0]);
-		Assert.assertEquals(1, next[1]);
-		Assert.assertEquals(0, next[2]);
+        assertEquals(0, next[0]);
+		assertEquals(1, next[1]);
+		assertEquals(0, next[2]);
 
 	}
 
@@ -104,9 +104,9 @@ public class TestUpdaters {
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
 		
-		Assert.assertEquals(1, next[0]);
-		Assert.assertEquals(1, next[1]);
-		Assert.assertEquals(0, next[2]);
+		assertEquals(1, next[0]);
+		assertEquals(1, next[1]);
+		assertEquals(0, next[2]);
 
 	}
 	
@@ -122,22 +122,22 @@ public class TestUpdaters {
 		byte[] state = {1,1,1,1,1};
         byte[] next = updater.getSuccessor(state);
 		
-		Assert.assertEquals(1, next[0]);
-		Assert.assertEquals(0, next[1]);
-		Assert.assertEquals(0, next[2]);
-		Assert.assertEquals(0, next[3]);
-		Assert.assertEquals(1, next[4]);
+		assertEquals(1, next[0]);
+		assertEquals(0, next[1]);
+		assertEquals(0, next[2]);
+		assertEquals(0, next[3]);
+		assertEquals(1, next[4]);
 
 		int[] scheme1 = {1,1,1,1,2};
 		grouping = new DeterministicGrouping(model, scheme1);
 		updater = grouping.getBlockSequentialUpdater();
         next = updater.getSuccessor(state);
 		
-		Assert.assertEquals(1, next[0]);
-		Assert.assertEquals(1, next[1]);
-		Assert.assertEquals(0, next[2]);
-		Assert.assertEquals(0, next[3]);
-		Assert.assertEquals(1, next[4]);
+		assertEquals(1, next[0]);
+		assertEquals(1, next[1]);
+		assertEquals(0, next[2]);
+		assertEquals(0, next[3]);
+		assertEquals(1, next[4]);
 
 		int[] scheme2 = {1,2,3,4,5};
 		grouping = new DeterministicGrouping(model, scheme2);
@@ -147,11 +147,11 @@ public class TestUpdaters {
         DeterministicUpdater updater1 = new SequentialUpdater(model);
         byte[] next1 = updater1.getSuccessor(state);
 
-		Assert.assertEquals(next1[0], next[0]);
-		Assert.assertEquals(next1[1], next[1]);
-		Assert.assertEquals(next1[2], next[2]);
-		Assert.assertEquals(next1[3], next[3]);
-		Assert.assertEquals(next1[4], next[4]);
+		assertEquals(next1[0], next[0]);
+		assertEquals(next1[1], next[1]);
+		assertEquals(next1[2], next[2]);
+		assertEquals(next1[3], next[3]);
+		assertEquals(next1[4], next[4]);
 		
 	}
 
@@ -162,9 +162,9 @@ public class TestUpdaters {
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
 		
-		Assert.assertEquals(1, next[0]);
-		Assert.assertEquals(1, next[1]);
-		Assert.assertEquals(1, next[2]);
+		assertEquals(1, next[0]);
+		assertEquals(1, next[1]);
+		assertEquals(1, next[2]);
 	}
 
 	@Test
@@ -175,9 +175,9 @@ public class TestUpdaters {
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
 
-		Assert.assertEquals(1, next[0]);
-		Assert.assertEquals(1, next[1]);
-		Assert.assertEquals(0, next[2]);
+		assertEquals(1, next[0]);
+		assertEquals(1, next[1]);
+		assertEquals(0, next[2]);
 	}
 	
 	@Test
@@ -191,19 +191,19 @@ public class TestUpdaters {
 		PriorityUpdater updater = new PriorityUpdater(model, pcs);
 		byte[] state = {1,1,0,1,0};
 		List<byte[]> lNext = updater.getSuccessors(state);
-		Assert.assertEquals(1, lNext.size());
-		Assert.assertEquals(1, lNext.get(0)[0]);
-		Assert.assertEquals(0, lNext.get(0)[1]);
-		Assert.assertEquals(0, lNext.get(0)[2]);
-		Assert.assertEquals(0, lNext.get(0)[3]);
-		Assert.assertEquals(1, lNext.get(0)[4]);
+		assertEquals(1, lNext.size());
+		assertEquals(1, lNext.get(0)[0]);
+		assertEquals(0, lNext.get(0)[1]);
+		assertEquals(0, lNext.get(0)[2]);
+		assertEquals(0, lNext.get(0)[3]);
+		assertEquals(1, lNext.get(0)[4]);
 		
 		// One class Async
 		pcs = new PriorityClasses();
 		pcs.add(pc, false);
 		updater = new PriorityUpdater(model, pcs);
 		lNext = updater.getSuccessors(state);
-		Assert.assertEquals(3, lNext.size());
+		assertEquals(3, lNext.size());
 
 		// Two class s[B-E+] s[AB+CDE-]
 		pcs = new PriorityClasses();
@@ -213,12 +213,12 @@ public class TestUpdaters {
 		pcs.add(pc2, true);
 		updater = new PriorityUpdater(model, pcs);
 		lNext = updater.getSuccessors(state);
-		Assert.assertEquals(1, lNext.size());
-		Assert.assertEquals(1, lNext.get(0)[0]);
-		Assert.assertEquals(0, lNext.get(0)[1]);
-		Assert.assertEquals(0, lNext.get(0)[2]);
-		Assert.assertEquals(1, lNext.get(0)[3]);
-		Assert.assertEquals(1, lNext.get(0)[4]);
+		assertEquals(1, lNext.size());
+		assertEquals(1, lNext.get(0)[0]);
+		assertEquals(0, lNext.get(0)[1]);
+		assertEquals(0, lNext.get(0)[2]);
+		assertEquals(1, lNext.get(0)[3]);
+		assertEquals(1, lNext.get(0)[4]);
 
 	}
 }

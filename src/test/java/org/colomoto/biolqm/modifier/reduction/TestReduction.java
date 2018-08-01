@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.modifier.reduction;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.ReferenceModels;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestReduction {
 

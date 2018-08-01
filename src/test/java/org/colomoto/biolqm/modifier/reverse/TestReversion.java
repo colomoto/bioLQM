@@ -3,7 +3,6 @@ package org.colomoto.biolqm.modifier.reverse;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
@@ -12,13 +11,15 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
  * @author Pedro T. Monteiro
  */
-public class TestReversion extends TestCase {
+public class TestReversion {
 
 	private static LogicalModel loadSimpleModelA() {
 		List<NodeInfo> variables = new ArrayList<NodeInfo>();
@@ -69,6 +70,7 @@ public class TestReversion extends TestCase {
 				new ArrayList<NodeInfo>(), new int[0]);
 	}
 
+	@Test
 	private void testDoubleReversion(LogicalModel mOrig) {
 		ReverseModifier modelRev1 = new ReverseModifier(mOrig);
 		modelRev1.reverse();

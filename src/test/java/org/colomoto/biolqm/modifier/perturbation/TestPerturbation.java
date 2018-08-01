@@ -11,8 +11,9 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestPerturbation {
 
@@ -42,8 +43,8 @@ public class TestPerturbation {
 		LogicalModel pmodel= p.apply(model);
 		int[] pfunctions = pmodel.getLogicalFunctions();
 		
-		Assert.assertEquals( pfunctions[0], functions[0]);
-		Assert.assertEquals( pfunctions[1], functions[1]);
-		Assert.assertEquals( pfunctions[2], fa);
+		assertEquals( pfunctions[0], functions[0]);
+		assertEquals( pfunctions[1], functions[1]);
+		assertEquals( pfunctions[2], fa);
 	}
 }

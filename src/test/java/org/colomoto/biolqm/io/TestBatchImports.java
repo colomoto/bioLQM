@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.io;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -9,8 +7,9 @@ import org.colomoto.TestHelper;
 import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Brute force tests for all formats supporting both import and export.
@@ -53,7 +52,7 @@ public class TestBatchImports {
 						refModel = model;
 					} else {
 						// check that the models are identical
-						Assert.assertTrue( LogicalModelComparator.compare(refModel, model) );
+						assertTrue( LogicalModelComparator.compare(refModel, model) );
 					}
 				} catch (IOException e) {
 					fail();

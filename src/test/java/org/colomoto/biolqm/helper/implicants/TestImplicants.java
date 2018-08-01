@@ -3,7 +3,7 @@ package org.colomoto.biolqm.helper.implicants;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ReferenceModels;
 import org.colomoto.mddlib.MDDManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestImplicants {
 

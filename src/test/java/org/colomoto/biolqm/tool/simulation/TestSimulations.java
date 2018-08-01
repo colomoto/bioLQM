@@ -20,9 +20,10 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SimulationTestImpl extends MultipleSuccessorSimulation {
 
@@ -136,9 +137,9 @@ public class TestSimulations {
 		
 		Iterator<byte[]> it = simulation.iterator();
 		
-		Assert.assertArrayEquals(state, it.next());
-		Assert.assertArrayEquals(state2, it.next());
-		Assert.assertArrayEquals(state3, it.next());
+		assertArrayEquals(state, it.next());
+		assertArrayEquals(state2, it.next());
+		assertArrayEquals(state3, it.next());
 
 	}
 }

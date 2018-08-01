@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.StatefulLogicalModelImpl;
@@ -14,9 +12,9 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.MDDVariableFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AvatarSimulationTests extends TestCase {
+public class AvatarSimulationTests {
 
 	@Test
 	public void testFileSimulations() {

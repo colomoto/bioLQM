@@ -10,7 +10,7 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestInteractionSearch {
 

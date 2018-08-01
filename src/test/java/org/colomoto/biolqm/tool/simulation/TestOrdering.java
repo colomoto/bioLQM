@@ -9,12 +9,13 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestOrdering {
 
@@ -51,17 +52,17 @@ public class TestOrdering {
         byte[] state = {0,0,1};
 
         byte[] next = updater.getSuccessor(state);
-        Assert.assertEquals(1, next[0]);
-        Assert.assertEquals(1, next[1]);
-        Assert.assertEquals(0, next[2]);
+        assertEquals(1, next[0]);
+        assertEquals(1, next[1]);
+        assertEquals(0, next[2]);
 
         next = updater.getSuccessor(next);
-        Assert.assertEquals(1, next[0]);
-        Assert.assertEquals(1, next[1]);
-        Assert.assertEquals(1, next[2]);
+        assertEquals(1, next[0]);
+        assertEquals(1, next[1]);
+        assertEquals(1, next[2]);
 
         next = updater.getSuccessor(next);
-        Assert.assertNull(next);
+        assertNull(next);
 
 
 
@@ -69,22 +70,22 @@ public class TestOrdering {
         state = new byte[] {0,0,1};
 
         next = updater.getSuccessor(state);
-        Assert.assertEquals(1, next[0]);
-        Assert.assertEquals(0, next[1]);
-        Assert.assertEquals(0, next[2]);
+        assertEquals(1, next[0]);
+        assertEquals(0, next[1]);
+        assertEquals(0, next[2]);
 
         next = updater.getSuccessor(next);
-        Assert.assertEquals(1, next[0]);
-        Assert.assertEquals(0, next[1]);
-        Assert.assertEquals(1, next[2]);
+        assertEquals(1, next[0]);
+        assertEquals(0, next[1]);
+        assertEquals(1, next[2]);
 
         next = updater.getSuccessor(next);
-        Assert.assertEquals(1, next[0]);
-        Assert.assertEquals(1, next[1]);
-        Assert.assertEquals(1, next[2]);
+        assertEquals(1, next[0]);
+        assertEquals(1, next[1]);
+        assertEquals(1, next[2]);
 
         next = updater.getSuccessor(next);
-        Assert.assertNull(next);
+        assertNull(next);
     }
 
 }

@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import junit.framework.TestCase;
-
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
@@ -27,9 +25,11 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TestImportExport extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class TestImportExport {
 
 	@Test
 	public void testGINMLExport() {
