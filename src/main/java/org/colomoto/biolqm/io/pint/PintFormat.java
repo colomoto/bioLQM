@@ -3,6 +3,7 @@ package org.colomoto.biolqm.io.pint;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -23,9 +24,8 @@ public class PintFormat extends AbstractFormat {
 	*/
 
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
-		PintExport exporter = new PintExport();
-		exporter.export(model, out);
+	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
+		PintExport.export(model, out.getOutputStream());
 	}
 }
 

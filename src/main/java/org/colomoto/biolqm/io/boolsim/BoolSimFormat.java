@@ -4,6 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -22,16 +23,14 @@ public class BoolSimFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel load(InputStreamProvider ip) throws IOException {
-		Reader reader = new InputStreamReader( ip.getInputStream());
-		return BoolSimImport.getModel(reader);
+	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
+		return BoolSimImport.getModel(ip.getReader());
 	}
 
 
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
-		BoolSimExport exporter = new BoolSimExport();
-		exporter.export(model, out);
+	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
+		BoolSimExport.export(model, out.getOutputStream());
 	}
 
 }

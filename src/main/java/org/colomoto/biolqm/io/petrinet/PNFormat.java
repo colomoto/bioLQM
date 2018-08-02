@@ -1,14 +1,14 @@
 package org.colomoto.biolqm.io.petrinet;
 
-import java.io.IOException;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.OutputStreamProvider;
 
+import java.io.IOException;
+
 abstract public class PNFormat extends AbstractFormat {
 
-    public PNFormat(String uid, String descr) { super(uid, descr, MultivaluedSupport.MULTIVALUED); }
+    PNFormat(String uid, String descr) { super(uid, descr, MultivaluedSupport.MULTIVALUED); }
 
     abstract AbstractPNEncoder getEncoder(LogicalModel model);
     
@@ -25,7 +25,7 @@ abstract public class PNFormat extends AbstractFormat {
     }
     
     @Override
-    public void export(LogicalModel model, OutputStreamProvider out) throws IOException {
+    public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
     	export(model, null, out);
     }
 }

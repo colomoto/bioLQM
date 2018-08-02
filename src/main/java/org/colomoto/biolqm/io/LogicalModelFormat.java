@@ -49,15 +49,17 @@ public interface LogicalModelFormat extends Service {
 	 * 
 	 * @param model the model to export
 	 * @param outputProvider an object providing output streams on demand for saving to one or multiple files
+	 * @throws UnsupportedOperationException if this format does not support export
 	 * @throws IOException if writing failed
 	 */
-	void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException;
+	void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException, UnsupportedOperationException;
 
 	/**
-	 * Import a file in this format and build a logical model for it.
+	 * Load a file in this format and build a logical model for it.
 	 * 
 	 * @param inputProvider an object providing input streams on demand, allowing to load from one or multiple files
 	 * @return a new LogicalModel containing the imported data.
+	 * @throws UnsupportedOperationException if this format does not support loading
 	 * @throws IOException if loading failed
 	 */
 	LogicalModel load(InputStreamProvider inputProvider) throws IOException;

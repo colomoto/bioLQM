@@ -25,7 +25,7 @@ public class PintExport {
 	 * @param out an opened output stream to save the result
 	 * @throws IOException if writing fails
 	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public static void export(LogicalModel model, OutputStream out) throws IOException {
 
 		final List<NodeInfo> nodes = model.getComponents();
 

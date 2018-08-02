@@ -25,7 +25,7 @@ public class BoolSimExport {
 	 * @param out an opened output stream to save the result
 	 * @throws IOException if writing fails
 	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public static void export(LogicalModel model, OutputStream out) throws IOException {
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);

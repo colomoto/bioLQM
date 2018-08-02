@@ -2,6 +2,8 @@ package org.colomoto.biolqm.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * Provide InputStream objects to import filters.
@@ -32,4 +34,18 @@ public interface InputStreamProvider {
      * @throws IOException if creating the stream failed
      */
     InputStream getInputStream(String pattern) throws IOException;
+
+    default Reader getReader() throws IOException {
+        return new InputStreamReader( getInputStream());
+    }
+
+    default Reader getReader(String pattern) throws IOException {
+        return new InputStreamReader( getInputStream(pattern));
+    }
+
+    /**
+     * Close the stream provider
+     */
+    default void close() {
+    }
 }

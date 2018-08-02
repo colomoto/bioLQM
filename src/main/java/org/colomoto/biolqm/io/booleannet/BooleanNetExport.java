@@ -24,7 +24,7 @@ public class BooleanNetExport {
 	 * @param out the output stream
 	 * @throws java.io.IOException if writing fails
 	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public static void export(LogicalModel model, OutputStream out) throws IOException {
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);

@@ -23,7 +23,7 @@ public class TruthTableExport {
 	 * @param out an opened output stream to save the result
 	 * @throws IOException if writing fails
 	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public static void export(LogicalModel model, OutputStream out) throws IOException {
 		Writer writer = new OutputStreamWriter(out);
 
 		List<NodeInfo> nodeOrder = model.getComponents();
@@ -35,15 +35,15 @@ public class TruthTableExport {
 		writer.write(stmp.trim() + "\n");
 		// END Header
 		byte[] state = new byte[nodeOrder.size()];
-		this.exportStatesFromDim(writer, model, state, 0, 0);
+		exportStatesFromDim(writer, model, state, 0, 0);
 		writer.close();
 	}
 
-	private void exportStatesFromDim(Writer writer, LogicalModel m,
+	private static void exportStatesFromDim(Writer writer, LogicalModel m,
 			byte[] state, int i, int j) throws IOException {
 		if (j == state.length) {
-			writer.append(this.state2String(state) + " ");
-			writer.append(this.state2String(this.getStateImage(m, state))
+			writer.append(state2String(state) + " ");
+			writer.append(state2String(getStateImage(m, state))
 					+ "\n");
 		} else {
 			NodeInfo node = m.getComponents().get(j);
@@ -57,7 +57,7 @@ public class TruthTableExport {
 		}
 	}
 
-	private String state2String(byte[] state) {
+	private static String state2String(byte[] state) {
 		String tmp = "";
 		for (int i = 0; i < state.length; i++) {
 			tmp += state[i];
@@ -65,7 +65,7 @@ public class TruthTableExport {
 		return tmp;
 	}
 
-	private byte[] getStateImage(LogicalModel m, byte[] state) {
+	private static byte[] getStateImage(LogicalModel m, byte[] state) {
 		byte[] nextState = new byte[state.length];
 		for (int i = 0; i < state.length; i++) {
 			nextState[i] = m.getTargetValue(i, state);

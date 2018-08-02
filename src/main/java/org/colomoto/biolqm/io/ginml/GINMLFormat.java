@@ -3,6 +3,7 @@ package org.colomoto.biolqm.io.ginml;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -22,8 +23,8 @@ public class GINMLFormat extends AbstractFormat {
 	}
 	
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
-		new LogicalModel2GINML(model).export(out);
+	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
+		new LogicalModel2GINML(model).export(out.getOutputStream());
 	}
 
 }

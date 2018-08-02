@@ -4,6 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.*;
@@ -17,18 +18,14 @@ public class BooleanFunctionFormat extends AbstractFormat {
 		super(ID, "Raw functions format", MultivaluedSupport.BOOLEANIZED);
 	}
 
-
 	@Override
-	public LogicalModel load(InputStreamProvider ip) throws IOException {
-		Reader reader = new InputStreamReader( ip.getInputStream());
-		return BooleanFunctionImport.getModel( reader);
+	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
+		return BooleanFunctionImport.getModel( ip.getReader());
 	}
 
-
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
-		BooleanFunctionExport exporter = new BooleanFunctionExport();
-		exporter.export(model, out);
+	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
+		BooleanFunctionExport.export(model, out.getOutputStream());
 	}
 
 }

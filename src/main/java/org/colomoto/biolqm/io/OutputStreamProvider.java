@@ -32,4 +32,7 @@ public interface OutputStreamProvider {
      * @throws IOException if creating the stream failed
      */
     OutputStream getOutputStream(String pattern) throws IOException;
+
+    default void close() {}
+
 }

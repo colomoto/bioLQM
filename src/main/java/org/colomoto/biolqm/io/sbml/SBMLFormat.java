@@ -4,6 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import javax.xml.stream.XMLStreamException;
@@ -23,7 +24,7 @@ public class SBMLFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel load(InputStreamProvider ip) throws IOException {
+	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
 		try {
 			return new SBMLqualImport(ip.getInputStream()).getModel();
 		} catch (XMLStreamException e) {
@@ -33,9 +34,9 @@ public class SBMLFormat extends AbstractFormat {
 
 	
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
 		try {
-			new SBMLqualExport(model).export(out);
+			new SBMLqualExport(model).export(out.getOutputStream());
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}

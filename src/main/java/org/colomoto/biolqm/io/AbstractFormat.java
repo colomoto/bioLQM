@@ -1,12 +1,10 @@
 package org.colomoto.biolqm.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-
 import org.colomoto.biolqm.BaseService;
 import org.colomoto.biolqm.LogicalModel;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * Simple helper to fill in the boring parts of format declaration classes.
@@ -19,8 +17,8 @@ abstract public class AbstractFormat extends BaseService implements LogicalModel
 	private final boolean canImport;
 	private final MultivaluedSupport modelType;
 	
-	private static final String NAME_IMPORT = "load";
-	private static final String NAME_EXPORT = "export";
+	private static final String NAME_IMPORT = "loadImpl";
+	private static final String NAME_EXPORT = "exportImpl";
 
 	protected AbstractFormat(String id, String name) {
 		this(id, name, MultivaluedSupport.BOOLEAN_STRICT);
@@ -73,15 +71,27 @@ abstract public class AbstractFormat extends BaseService implements LogicalModel
 
 	@Override
 	public LogicalModel load(InputStreamProvider inputProvider) throws IOException {
+		LogicalModel model = loadImpl(inputProvider);
+
+		// TODO: common code for side data: layout, annotations...
+
+		inputProvider.close();
+		return model;
+	}
+
+	public LogicalModel loadImpl(InputStreamProvider inputProvider) throws IOException {
 		throw new RuntimeException("Import not implemented for format " + getID());
 	}
 
 	@Override
 	public void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException {
-		export(model, outputProvider.getOutputStream());
+		exportImpl(model, outputProvider);
+
+		// TODO: common code for side data: layout, annotations...
+		outputProvider.close();
 	}
 
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public void exportImpl(LogicalModel model, OutputStreamProvider outputProvider) throws IOException {
 		throw new RuntimeException("Export not implemented for format " + getID());
 	}
 	

@@ -4,6 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -21,18 +22,15 @@ public class BNetFormat extends AbstractFormat {
 		
 	}
 
-
 	@Override
-	public LogicalModel load(InputStreamProvider ip) throws IOException {
-		Reader reader = new InputStreamReader( ip.getInputStream());
-		return BNetImport.getModel(reader);
+	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
+		return BNetImport.getModel(ip.getReader());
 	}
 
 
 	@Override
-	public void export(LogicalModel model, OutputStream out) throws IOException {
-		BNetExport exporter = new BNetExport();
-		exporter.export(model, out);
+	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
+		BNetExport.export(model, out.getOutputStream());
 	}
 
 }

@@ -1,20 +1,16 @@
 package org.colomoto.biolqm.io.gna;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.*;
 
 /**
  * Exports a logical model into the non-xml GNA format.
@@ -30,7 +26,7 @@ public class GNAExport {
 	 * @param out an opened output stream to save the result
 	 * @throws IOException if writing fails
 	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public static void export(LogicalModel model, OutputStream out) throws IOException {
 		Writer writer = new OutputStreamWriter(out);
 		
 		MDDManager ddmanager = model.getMDDManager();
@@ -115,7 +111,7 @@ public class GNAExport {
 		writer.close();
 	}
 	
-	private void browse(PathSearcher searcher, int mdd,
+	private static void browse(PathSearcher searcher, int mdd,
 			MDDVariable[] variables, String nodeID, Writer out)
 			throws IOException {
 		int[] path = searcher.setNode(mdd);

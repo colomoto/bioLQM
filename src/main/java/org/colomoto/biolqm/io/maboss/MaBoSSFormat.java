@@ -15,7 +15,7 @@ public class MaBoSSFormat extends AbstractFormat {
 	public MaBoSSFormat() { super("bnd", "MaBoSS format", MultivaluedSupport.BOOLEANIZED); }
 
 	@Override
-	public void export(LogicalModel model, OutputStreamProvider provider) throws IOException {
+	public void exportImpl(LogicalModel model, OutputStreamProvider provider) throws IOException {
 		MaBoSSEncoder encoder = new MaBoSSEncoder(model);
 		
 		OutputStreamWriter writer = new OutputStreamWriter(provider.getOutputStream());
