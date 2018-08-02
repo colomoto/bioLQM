@@ -35,4 +35,9 @@ public class InputStreamProviderFileImpl implements InputStreamProvider {
 
         return new FileInputStream(f);
     }
+
+    @Override
+    public File getFile() {
+        return new File(parent, filename);
+    }
 }

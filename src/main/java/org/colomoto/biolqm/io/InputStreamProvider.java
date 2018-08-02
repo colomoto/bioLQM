@@ -1,9 +1,6 @@
 package org.colomoto.biolqm.io;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 
 /**
  * Provide InputStream objects to import filters.
@@ -47,5 +44,10 @@ public interface InputStreamProvider {
      * Close the stream provider
      */
     default void close() {
+    }
+
+    @Deprecated
+    default File getFile() {
+        throw new UnsupportedOperationException();
     }
 }
