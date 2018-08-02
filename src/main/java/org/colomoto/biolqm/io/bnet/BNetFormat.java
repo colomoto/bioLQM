@@ -2,10 +2,14 @@ package org.colomoto.biolqm.io.bnet;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
+import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.kohsuke.MetaInfServices;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 
 @MetaInfServices(LogicalModelFormat.class)
 public class BNetFormat extends AbstractFormat {
@@ -19,9 +23,8 @@ public class BNetFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel importFile(File f) throws IOException {
-
-		Reader reader = new FileReader( f);
+	public LogicalModel load(InputStreamProvider ip) throws IOException {
+		Reader reader = new InputStreamReader( ip.getInputStream());
 		return BNetImport.getModel(reader);
 	}
 

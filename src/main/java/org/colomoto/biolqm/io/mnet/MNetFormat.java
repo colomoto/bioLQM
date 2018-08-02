@@ -2,6 +2,7 @@ package org.colomoto.biolqm.io.mnet;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
+import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.kohsuke.MetaInfServices;
 
@@ -17,8 +18,8 @@ public class MNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public LogicalModel importFile(File f) throws IOException {
-		Reader reader = new FileReader( f);
+	public LogicalModel load(InputStreamProvider ip) throws IOException {
+		Reader reader = new InputStreamReader( ip.getInputStream());
 		return MNetImport.getModel(reader);
 	}
 

@@ -19,7 +19,7 @@ abstract public class AbstractFormat extends BaseService implements LogicalModel
 	private final boolean canImport;
 	private final MultivaluedSupport modelType;
 	
-	private static final String NAME_IMPORT = "importFile";
+	private static final String NAME_IMPORT = "load";
 	private static final String NAME_EXPORT = "export";
 
 	protected AbstractFormat(String id, String name) {
@@ -46,9 +46,9 @@ abstract public class AbstractFormat extends BaseService implements LogicalModel
 			if (m.getDeclaringClass() != cl) {
 				continue;
 			}
-			if (m.getName() == NAME_IMPORT) {
+			if (NAME_IMPORT.equals(m.getName())) {
 				canImport = true;
-			} else if (m.getName() == NAME_EXPORT) {
+			} else if (NAME_EXPORT.equals(m.getName())) {
 				canExport = true;
 			}
 		}
@@ -72,7 +72,7 @@ abstract public class AbstractFormat extends BaseService implements LogicalModel
 	}
 
 	@Override
-	public LogicalModel importFile(File f) throws IOException {
+	public LogicalModel load(InputStreamProvider inputProvider) throws IOException {
 		throw new RuntimeException("Import not implemented for format " + getID());
 	}
 

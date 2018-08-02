@@ -2,12 +2,11 @@ package org.colomoto.biolqm.io.truthtable;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
+import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.kohsuke.MetaInfServices;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * Format description for TruthTable (.tt) files. These files are in a two
@@ -23,10 +22,9 @@ public class TruthTableFormat extends AbstractFormat {
 	}
 
 	@Override
-	public LogicalModel importFile(File f) throws IOException {
+	public LogicalModel load(InputStreamProvider ip) throws IOException {
 		TruthTableImport importer = new TruthTableImport();
-
-		return importer.getModel(f);
+		return importer.getModel(ip);
 	}
 
 	@Override

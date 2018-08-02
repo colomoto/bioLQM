@@ -2,6 +2,7 @@ package org.colomoto.biolqm.io.functions;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
+import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.kohsuke.MetaInfServices;
 
@@ -16,11 +17,10 @@ public class BooleanFunctionFormat extends AbstractFormat {
 		super(ID, "Raw functions format", MultivaluedSupport.BOOLEANIZED);
 	}
 
-	
-	@Override
-	public LogicalModel importFile(File f) throws IOException {
 
-		Reader reader = new FileReader( f);
+	@Override
+	public LogicalModel load(InputStreamProvider ip) throws IOException {
+		Reader reader = new InputStreamReader( ip.getInputStream());
 		return BooleanFunctionImport.getModel( reader);
 	}
 

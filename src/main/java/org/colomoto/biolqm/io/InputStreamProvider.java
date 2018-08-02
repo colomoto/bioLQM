@@ -1,23 +1,23 @@
 package org.colomoto.biolqm.io;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 
 /**
- * Provide OutputStream objects to export filters.
+ * Provide InputStream objects to import filters.
  *
  * @author Aurelien Naldi
  */
-public interface OutputStreamProvider {
+public interface InputStreamProvider {
 
     /**
-     * Get a single stream. When saving to a file it will have the selected filename.
+     * Get the default stream.
      *
-     * @return the output stream
+     * @return the input stream
      * @throws IOException if creating the stream failed
      */
-    default OutputStream getOutputStream() throws IOException {
-        return getOutputStream("$f");
+    default InputStream getInputStream() throws IOException {
+        return getInputStream("$f");
     }
 
     /**
@@ -28,8 +28,8 @@ public interface OutputStreamProvider {
      * <li>$f: the selected filename</li>
      * </ul>
      * @param pattern a naming pattern for the new stream
-     * @return an output stream associated to the desired pattern
+     * @return an input stream associated to the desired pattern
      * @throws IOException if creating the stream failed
      */
-    OutputStream getOutputStream(String pattern) throws IOException;
+    InputStream getInputStream(String pattern) throws IOException;
 }

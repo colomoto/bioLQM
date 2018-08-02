@@ -1,20 +1,21 @@
 package org.colomoto.biolqm.io.truthtable;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Imports a file in the Truth Table format into a LogicalModel.
@@ -48,8 +49,8 @@ public final class TruthTableImport {
 		return line.matches(".*[a-zA-Z].*");
 	}
 
-	private List<NodeInfo> getNodes(File file) throws IOException {
-		FileReader fr = new FileReader(file);
+	private List<NodeInfo> getNodes(InputStreamProvider ip) throws IOException {
+		Reader fr = new InputStreamReader(ip.getInputStream());
 		BufferedReader br = new BufferedReader(fr);
 
 		// Get Header node names
@@ -106,8 +107,8 @@ public final class TruthTableImport {
 		return nodeOrder;
 	}
 
-	public LogicalModel getModel(File file) throws IOException {
-		List<NodeInfo> nodeOrder = this.getNodes(file);
+	public LogicalModel getModel(InputStreamProvider ip) throws IOException {
+		List<NodeInfo> nodeOrder = this.getNodes(ip);
 
 		// Create the MDDManager
 		byte max = 0;
@@ -120,8 +121,8 @@ public final class TruthTableImport {
 		MDDManager ddmanager = MDDManagerFactory.getManager(mvf, (max + 1));
 
 		// Fill in the MDDs
-		FileReader fr = new FileReader(file);
-		BufferedReader br = new BufferedReader(fr);
+		Reader reader = new InputStreamReader(ip.getInputStream());
+		BufferedReader br = new BufferedReader(reader);
 
 		int[] kMDDs = new int[nodeOrder.size()];
 		String line;
@@ -147,7 +148,7 @@ public final class TruthTableImport {
 			}
 		}
 		br.close();
-		fr.close();
+		reader.close();
 		return new LogicalModelImpl(nodeOrder, ddmanager, kMDDs);
 	}
 

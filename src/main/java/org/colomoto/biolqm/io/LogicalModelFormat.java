@@ -1,6 +1,5 @@
 package org.colomoto.biolqm.io;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.biolqm.LogicalModel;
@@ -57,10 +56,10 @@ public interface LogicalModelFormat extends Service {
 	/**
 	 * Import a file in this format and build a logical model for it.
 	 * 
-	 * @param f the file to import
+	 * @param inputProvider an object providing input streams on demand, allowing to load from one or multiple files
 	 * @return a new LogicalModel containing the imported data.
 	 * @throws IOException if loading failed
 	 */
-	LogicalModel importFile(File f) throws IOException;
+	LogicalModel load(InputStreamProvider inputProvider) throws IOException;
 	
 }

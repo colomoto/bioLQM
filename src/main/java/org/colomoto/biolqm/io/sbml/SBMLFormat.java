@@ -2,13 +2,12 @@ package org.colomoto.biolqm.io.sbml;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
+import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.kohsuke.MetaInfServices;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * Format description for SBML files, using the qual extension.
@@ -21,12 +20,12 @@ public class SBMLFormat extends AbstractFormat {
 	public SBMLFormat() {
 		super("sbml", "SBML-qual v1.0 format", MultivaluedSupport.MULTIVALUED);
 	}
-	
-	
+
+
 	@Override
-	public LogicalModel importFile(File f) throws IOException {
+	public LogicalModel load(InputStreamProvider ip) throws IOException {
 		try {
-			return new SBMLqualImport(f).getModel();
+			return new SBMLqualImport(ip.getInputStream()).getModel();
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}

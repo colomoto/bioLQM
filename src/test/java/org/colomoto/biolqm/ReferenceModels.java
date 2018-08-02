@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.TestHelper;
+import org.colomoto.biolqm.io.InputStreamProviderFileImpl;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 
 public class ReferenceModels {
@@ -27,7 +28,7 @@ public class ReferenceModels {
 	}
 	
 	public static LogicalModel getModel(String name) throws IOException {
-		return format.importFile(new File(dir, name));
+		return format.load(new InputStreamProviderFileImpl( new File(dir, name)));
 	}
 
 	/**

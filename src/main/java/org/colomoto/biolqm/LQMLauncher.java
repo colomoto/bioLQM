@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.colomoto.biolqm.io.InputStreamProviderFileImpl;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProvider;
+import org.colomoto.biolqm.io.OutputStreamProviderFileImpl;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
@@ -303,7 +304,7 @@ public class LQMLauncher {
         }
 
         try {
-            LogicalModel model = inputFormat.importFile(new File(filename));
+            LogicalModel model = inputFormat.load(new InputStreamProviderFileImpl(filename));
             return model;
         } catch (IOException e) {
             e.printStackTrace();
@@ -344,7 +345,7 @@ public class LQMLauncher {
 					break;
 				}
 			}
-            outputFormat.export(model, new OutputStreamProvider( filename));
+            outputFormat.export(model, new OutputStreamProviderFileImpl( filename));
             return true;
         } catch (IOException e) {
             e.printStackTrace();
