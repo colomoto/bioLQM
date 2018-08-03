@@ -83,7 +83,7 @@
 
     <section>
         <title>Going further</title>
-        <p>The <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/reduction/ModelReductionService.html">ModelReductionService</link>,
+        <p>The <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/reduction/ReductionService.html">ReductionService</link>,
            instance will provide additional methods to facilitate the definition of custom reduction strategies.
         </p>
     </section>

@@ -80,8 +80,8 @@
     <section id="api">
         <title>API use</title>
         
-        <p>The <link href="../apidocs/index.html?org/colomoto/biolqm/tool/trapspaces/TrapSpaceTool.html">TrapSpaceTool</link>,
-           instance provides additional methods to retrieve the list of trap-spaces instead of printing them out.
+        <p>The dedicated task is available throught the <link href="../apidocs/index.html?org/colomoto/biolqm/tool/trapspaces/TrapSpaceService.html">
+        TrapSpaceService</link> instance and provides additional methods to retrieve the list of trap-spaces instead of printing them out.
         </p>
     </section>
 

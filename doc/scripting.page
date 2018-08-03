@@ -21,7 +21,7 @@
 
     <p>
     In script mode, bioLQM creates an instance of
-    <link href="../apidocs/index.html?org/colomoto/biolqm/LQMScriptLauncher.html">LQMScriptLauncher</link>, which serves as
+    <link href="../apidocs/index.html?org/colomoto/biolqm/service/LQMScriptLauncher.html">LQMScriptLauncher</link>, which serves as
     single entry point for the bioLQM API. This object is available as the <code>lqm</code> variable.
     bioLQM features which are not available through this object can be used by importing the right java classes,
     but their API is more likely to change.

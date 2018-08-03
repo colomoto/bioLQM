@@ -14,43 +14,16 @@
     <link href="http://www.ginsim.org">GINsim</link> and <link href="http://epilog-tool.org">Epilog</link> tools.
     </p>
     
-    <section id="setup">
-        <title>Setup using maven</title>
-        <p>BioLQM snapshots are currently hosted on a maven repository on the GINsim website,
-        you will need to integrate the following in your pom.xml:
-        </p>
-    
-<code><![CDATA[
-  <repositories>
-    <repository>
-       <id>ginsim_snapshot</id>
-       <snapshots><enabled>true</enabled></snapshots>
-       <releases><enabled>false</enabled></releases>
-       <name>GINsim snapshot repository</name>
-       <url>http://ginsim.org/maven/snapshot</url>
-    </repository>
-  </repositories>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.colomoto</groupId>
-      <artifactId>bioLQM</artifactId>
-      <version>0.4-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
-]]></code>
-
-</section>
-
+    <p>To use the Java API, we provide maven packages, as described in the <link xref="install">Installation documentation</link>.</p>
 
     <section id="use">
         <title>Using the API</title>
     <p>
     The main entry point for the Java API is the
-    <link href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</link>,
+    <link href="../apidocs/index.html?org/colomoto/biolqm/service/LQMServiceManager.html">LQMServiceManager</link>,
     which provides static methods to access the registered formats, modifiers and tools.
-    Some bioLQM features which are not available through this object can be used by importing the right java classes,
-    but their API is more likely to change (see the <link href="../apidocs/index.html">full javadoc</link>).
+    Some bioLQM features which are not available through this object can be used by importing the right java classes
+    directly, but their API is more likely to change (see the <link href="../apidocs/index.html">full javadoc</link>).
     </p>
 
     </section>

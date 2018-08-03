@@ -47,7 +47,7 @@ lqm.getTool("stable").run(model)
     <section id="api">
         <title>Java API</title>
         <p>Tools, like other services, are available by name or by type from static methods in the
-        <link href="../apidocs/index.html?org/colomoto/biolqm/LQMServiceManager.html">LQMServiceManager</link> class.
+        <link href="../apidocs/index.html?org/colomoto/biolqm/service/LQMServiceManager.html">LQMServiceManager</link> class.
         Currently, all tool services have a <code>run(LogicalModel model)</code> method, this minimalistic API will
         be extended in the future.
         </p>
@@ -63,9 +63,9 @@ stableService.run(model);
     <section id="implementation">
         <title>Implementation</title>
         <p>
-        Tool services implement the <link href="../apidocs/index.html?org/colomoto/biolqm/tool/LogicalModelTool.html">LogicalModelTool</link> interface,
-        and are accessible throught a dedicated <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/ModelModifierService.html">ModelModifierService</link>.
-        Services are discovered by using the <code>@ProviderFor(LogicalModelTool.class)</code> decorator.
+        The various analysis tools implement the <link href="../apidocs/index.html?org/colomoto/biolqm/tool/ToolTask.html">ToolTask</link> interface,
+        and are accessible through a dedicated <link href="../apidocs/index.html?org/colomoto/biolqm/tool/ModelToolService.html">ModelToolService</link>.
+        These services are discovered by using the <code>@MetaInfServices(ModelToolService.class)</code> decorator.
         </p>
     </section>
 

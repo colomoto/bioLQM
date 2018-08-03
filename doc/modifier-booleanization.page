@@ -42,7 +42,7 @@
 
     <section>
         <title>Going further</title>
-        <p>This service is provided by <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/booleanize/ModelBooleanizerService.html">ModelBooleanizerService</link>.
+        <p>This service is provided by the <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/booleanize/BooleanizeService.html">BooleanizeService</link>.
         </p>
     </section>
 

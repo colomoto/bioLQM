@@ -28,7 +28,7 @@
 
     <section>
         <title>Going further</title>
-        <p>This service is provided by <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/reverse/ModelReverserService.html">ModelReverserService</link>.
+        <p>This service is provided by <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/reverse/ReverseService.html">ReverseService</link>.
         </p>
     </section>
 
