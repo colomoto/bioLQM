@@ -1,8 +1,8 @@
 package org.colomoto.biolqm.tool;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.Service;
-import org.colomoto.common.task.Task;
 
 /**
  * Simple tool description interface.
@@ -17,7 +17,7 @@ public interface ModelToolService<R, T extends ToolTask<R>> extends Service {
 	 * 
 	 * @return true if it supports multivalued models, false for Boolean only
 	 */
-	boolean supportsMultivalued();
+	MultivaluedSupport getMultivaluedSupport();
 	
 	/**
 	 * Construct a default setting object.

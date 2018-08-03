@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.tool.simulation.deterministic;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
@@ -13,7 +14,7 @@ public class TraceService extends AbstractToolService<DeterministicSimulation, T
 
 
     public TraceService() {
-        super("trace", HELP_LINE, HELP_MESSAGE, true);
+        super("trace", HELP_LINE, HELP_MESSAGE, MultivaluedSupport.MULTIVALUED);
     }
 
     @Override

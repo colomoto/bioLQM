@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.io.pint;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;

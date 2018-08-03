@@ -1,6 +1,5 @@
 package org.colomoto.biolqm;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -266,7 +265,7 @@ public class LQMLauncher {
 
 		sb.append("\n\n"+separator+"| Available tools:\n"+separator);
 		for (ModelToolService tool: LQMServiceManager.getTools()) {
-			String level = tool.supportsMultivalued() ? "M " : "B ";
+			String level = tool.getMultivaluedSupport().flag;
 			sb.append(level).append(" ").append(tool.getID());
 			sb.append("\t").append(tool.getName()).append("\n");
 		}

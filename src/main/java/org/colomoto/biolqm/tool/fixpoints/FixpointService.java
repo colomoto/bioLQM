@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.tool.fixpoints;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.settings.state.StateList;
@@ -18,7 +19,7 @@ public class FixpointService extends AbstractToolService<FixpointList, FixpointT
 	public static final String HELP_MESSAGE = "arguments: asp pattern";
 
 	public FixpointService() {
-		super(UID, ALIASES, HELP_LINE, HELP_MESSAGE, true);
+		super(UID, ALIASES, HELP_LINE, HELP_MESSAGE, MultivaluedSupport.MULTIVALUED);
 	}
 
 	@Override

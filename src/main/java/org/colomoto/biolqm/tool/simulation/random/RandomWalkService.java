@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
@@ -13,7 +14,7 @@ public class RandomWalkService extends AbstractToolService<RandomWalkSimulation,
 
 
     public RandomWalkService() {
-        super("random", HELP_LINE, HELP_MESSAGE, true);
+        super("random", HELP_LINE, HELP_MESSAGE, MultivaluedSupport.MULTIVALUED);
     }
 
     @Override

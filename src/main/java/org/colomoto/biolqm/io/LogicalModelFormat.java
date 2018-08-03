@@ -2,6 +2,7 @@ package org.colomoto.biolqm.io;
 
 import java.io.IOException;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.Service;
 
@@ -12,18 +13,6 @@ import org.colomoto.biolqm.Service;
  * @author Aurelien Naldi
  */
 public interface LogicalModelFormat extends Service {
-
-	enum MultivaluedSupport {
-
-		BOOLEAN_STRICT("b"), BOOLEANIZED("B"), MULTIVALUED("M");
-
-		public final String flag;
-
-		MultivaluedSupport(String flag) {
-			this.flag = flag;
-		}
-
-	};
 
 	/**
 	 * Does this format supports export operation?

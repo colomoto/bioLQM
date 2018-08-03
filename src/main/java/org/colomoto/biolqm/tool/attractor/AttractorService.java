@@ -14,7 +14,7 @@ import org.colomoto.biolqm.tool.ToolTask;
 public class AttractorService extends AbstractToolService {
 
 	public AttractorService() {
-		super("attractor", "Find synchronous attractors using SAT", "", false);
+		super("attractor", "Find synchronous attractors using SAT");
 	}
 	
 	@Override

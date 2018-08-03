@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.tool;
 
+import org.colomoto.MultivaluedSupport;
 import org.colomoto.biolqm.BaseService;
 import org.colomoto.biolqm.LogicalModel;
 
@@ -10,17 +11,17 @@ import org.colomoto.biolqm.LogicalModel;
  */
 abstract public class AbstractToolService<R, T extends ToolTask<R>> extends BaseService implements ModelToolService<R,T> {
 
-	private final boolean supportsMultivalued;
+	private final MultivaluedSupport supportsMultivalued;
 	
 	protected AbstractToolService(String id, String name) {
-		this(id, null, name, "", false);
+		this(id, null, name, "", MultivaluedSupport.BOOLEANIZED);
 	}
 
-	protected AbstractToolService(String id, String name, String helpMessage, boolean supportsMultivalued) {
+	protected AbstractToolService(String id, String name, String helpMessage, MultivaluedSupport supportsMultivalued) {
 		this(id, null, name, helpMessage, supportsMultivalued);
 	}
 
-	protected AbstractToolService(String id, String[] aliases, String name, String helpMessage, boolean supportsMultivalued) {
+	protected AbstractToolService(String id, String[] aliases, String name, String helpMessage, MultivaluedSupport supportsMultivalued) {
 		super(id, aliases, name, helpMessage);
 		this.supportsMultivalued = supportsMultivalued;
 	}
@@ -36,7 +37,7 @@ abstract public class AbstractToolService<R, T extends ToolTask<R>> extends Base
 	}
 
 	@Override
-	public boolean supportsMultivalued() {
+	public MultivaluedSupport getMultivaluedSupport() {
 		return supportsMultivalued;
 	}
 
