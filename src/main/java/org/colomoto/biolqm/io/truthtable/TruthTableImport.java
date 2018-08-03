@@ -3,7 +3,7 @@ package org.colomoto.biolqm.io.truthtable;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.io.InputStreamProvider;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
@@ -49,8 +49,8 @@ public final class TruthTableImport {
 		return line.matches(".*[a-zA-Z].*");
 	}
 
-	private List<NodeInfo> getNodes(InputStreamProvider ip) throws IOException {
-		Reader fr = new InputStreamReader(ip.getInputStream());
+	private List<NodeInfo> getNodes(StreamProvider streams) throws IOException {
+		Reader fr = new InputStreamReader(streams.input());
 		BufferedReader br = new BufferedReader(fr);
 
 		// Get Header node names
@@ -107,8 +107,8 @@ public final class TruthTableImport {
 		return nodeOrder;
 	}
 
-	public LogicalModel getModel(InputStreamProvider ip) throws IOException {
-		List<NodeInfo> nodeOrder = this.getNodes(ip);
+	public LogicalModel getModel(StreamProvider streams) throws IOException {
+		List<NodeInfo> nodeOrder = this.getNodes(streams);
 
 		// Create the MDDManager
 		byte max = 0;
@@ -121,7 +121,7 @@ public final class TruthTableImport {
 		MDDManager ddmanager = MDDManagerFactory.getManager(mvf, (max + 1));
 
 		// Fill in the MDDs
-		Reader reader = new InputStreamReader(ip.getInputStream());
+		Reader reader = new InputStreamReader(streams.input());
 		BufferedReader br = new BufferedReader(reader);
 
 		int[] kMDDs = new int[nodeOrder.size()];

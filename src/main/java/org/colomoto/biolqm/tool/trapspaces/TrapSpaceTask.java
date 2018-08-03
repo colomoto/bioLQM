@@ -3,7 +3,7 @@ package org.colomoto.biolqm.tool.trapspaces;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colomoto.biolqm.LQMServiceManager;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;

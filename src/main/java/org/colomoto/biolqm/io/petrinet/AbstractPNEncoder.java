@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.io.OutputStreamProvider;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 
@@ -195,14 +195,14 @@ public abstract class AbstractPNEncoder {
     
     abstract protected void doExport( String netName, List<NodeInfo> nodes, List[] t_transition, byte[][] t_markup, OutputStreamWriter out) throws IOException;
     
-    public void export( PNConfig config, OutputStreamProvider out) throws IOException {
+    public void export( PNConfig config, StreamProvider out) throws IOException {
     	
     	// start with the common parts
         List[] t_transition = new List[len];
         byte[][] t_markup = prepareExport(config, t_transition);
 
         // TODO: add support for output nodes?
-        OutputStreamWriter writer = new OutputStreamWriter(out.getOutputStream());
+        OutputStreamWriter writer = new OutputStreamWriter(out.output());
     	doExport( "defaultName", nodeOrder, t_transition, t_markup, writer);
     	writer.close();
     }

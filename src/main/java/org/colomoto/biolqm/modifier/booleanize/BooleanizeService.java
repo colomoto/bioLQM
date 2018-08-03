@@ -1,7 +1,8 @@
 package org.colomoto.biolqm.modifier.booleanize;
 
+import org.colomoto.biolqm.service.BaseService;
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.modifier.AbstractModifierService;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.kohsuke.MetaInfServices;
@@ -12,7 +13,7 @@ import org.kohsuke.MetaInfServices;
  * @author Aurelien Naldi
  */
 @MetaInfServices(ModelModifierService.class)
-public class BooleanizeService extends AbstractModifierService {
+public class BooleanizeService extends BaseService implements ModelModifierService {
 
     /** The identifier used to retrieve this service by name */
     public static final String ID = "booleanize";
@@ -23,19 +24,11 @@ public class BooleanizeService extends AbstractModifierService {
      * Public constructor which should only be used for service discovery.
      */
     public BooleanizeService() {
-        super(ID, NAME, DESCR);
-    }
-
-    @Override
-    public ModelModifier getModifier(LogicalModel model, String parameters) {
-        return getModifier(model);
+        super(ID, NAME, DESCR, MultivaluedSupport.MULTIVALUED);
     }
 
     public ModelModifier getModifier(LogicalModel model) {
         return new BooleanizeModifier(model);
     }
 
-    public LogicalModel getModifiedModel(LogicalModel model) {
-        return getModifier(model).getModifiedModel();
-    }
 }

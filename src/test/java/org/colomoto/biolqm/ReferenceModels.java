@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.io.InputStreamProviderFileImpl;
+import org.colomoto.biolqm.io.StreamProviderFileImpl;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.service.LQMServiceManager;
 
 public class ReferenceModels {
 
@@ -18,7 +19,7 @@ public class ReferenceModels {
 			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
 		}
 		
-		if (format == null || !format.canImport()) {
+		if (format == null || !format.canLoad()) {
 			throw new RuntimeException("Could not find the reference format");
 		}
 	}
@@ -28,7 +29,7 @@ public class ReferenceModels {
 	}
 	
 	public static LogicalModel getModel(String name) throws IOException {
-		return format.load(new InputStreamProviderFileImpl( new File(dir, name)));
+		return format.load(new StreamProviderFileImpl( new File(dir, name)));
 	}
 
 	/**

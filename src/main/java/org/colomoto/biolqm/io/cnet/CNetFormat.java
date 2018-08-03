@@ -1,10 +1,10 @@
 package org.colomoto.biolqm.io.cnet;
 
-import org.colomoto.biolqm.MultivaluedSupport;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProvider;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -19,8 +19,8 @@ public class CNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
-		CNetExport.export(model, out.getOutputStream());
+	public void export(LogicalModel model, StreamProvider streams) throws IOException {
+		CNetExport.export(model, streams.output());
 	}
 
 }

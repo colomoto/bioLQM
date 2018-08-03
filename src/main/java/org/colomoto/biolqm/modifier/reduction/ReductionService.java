@@ -1,7 +1,8 @@
 package org.colomoto.biolqm.modifier.reduction;
 
+import org.colomoto.biolqm.service.BaseService;
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.modifier.AbstractModifierService;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.kohsuke.MetaInfServices;
 
@@ -11,7 +12,7 @@ import org.kohsuke.MetaInfServices;
  * @author Aurelien Naldi
  */
 @MetaInfServices(ModelModifierService.class)
-public class ReductionService extends AbstractModifierService {
+public class ReductionService extends BaseService implements ModelModifierService {
 
     /** The identifier used to retrieve this service by name */
     public static final String ID = "reduce";
@@ -22,14 +23,10 @@ public class ReductionService extends AbstractModifierService {
      * Public constructor which should only be used for service discovery.
      */
     public ReductionService() {
-        super(ID, NAME, DESCR);
+        super(ID, NAME, DESCR, MultivaluedSupport.MULTIVALUED);
     }
 
     @Override
-    public ReductionModifier getModifier(LogicalModel model, String parameters) {
-        return new ReductionModifier(model, parameters);
-    }
-
     public ReductionModifier getModifier(LogicalModel model) {
         return new ReductionModifier(model);
     }

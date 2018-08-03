@@ -1,7 +1,7 @@
 package org.colomoto.biolqm.modifier;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.Service;
+import org.colomoto.biolqm.service.Service;
 
 /**
  * A service providing modifiers for logical models.
@@ -22,7 +22,18 @@ public interface ModelModifierService extends Service {
      *
      * @return a configured modifier instance
      */
-    ModelModifier getModifier(LogicalModel model, String parameters);
+    default ModelModifier getModifier(LogicalModel model, String parameters) {
+        return getModifier(model, parameters);
+    }
+
+    /**
+     * Get a new modifier object.
+     *
+     * @param model the model to modify
+     *
+     * @return a modifier instance using the default parameters
+     */
+    ModelModifier getModifier(LogicalModel model);
 
     /**
      * Setup a modifier and directly retrieve the modified model.
@@ -32,6 +43,18 @@ public interface ModelModifierService extends Service {
      * @param parameters the setting String (can be empty for some modifiers)
      * @return a new modified model
      */
-    LogicalModel getModifiedModel(LogicalModel model, String parameters);
+    default LogicalModel getModifiedModel(LogicalModel model, String parameters) {
+        return getModifier(model, parameters).getModifiedModel();
+    }
+
+    /**
+     * Apply a modifier with the default parameters.
+     *
+     * @param model the original model
+     * @return the modified model
+     */
+    default LogicalModel getModifiedModel(LogicalModel model) {
+        return getModifier(model).getModifiedModel();
+    }
 
 }

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm;
+package org.colomoto.biolqm.service;
 
 import java.io.File;
 import java.io.FileFilter;

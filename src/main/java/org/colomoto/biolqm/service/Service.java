@@ -1,4 +1,4 @@
-package org.colomoto.biolqm;
+package org.colomoto.biolqm.service;
 
 /**
  * Simple service description interface.
@@ -32,4 +32,12 @@ public interface Service {
      * @return a short String describing the service parameters
      */
     String getDescription();
+
+    /**
+     * Precise type of support for multivalued models.
+     *
+     * @return the type of support: native, booleanized or none
+     */
+    MultivaluedSupport getMultivaluedSupport();
+
 }

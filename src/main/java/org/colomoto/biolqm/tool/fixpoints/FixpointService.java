@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.tool.fixpoints;
 
-import org.colomoto.biolqm.MultivaluedSupport;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.settings.state.StateList;

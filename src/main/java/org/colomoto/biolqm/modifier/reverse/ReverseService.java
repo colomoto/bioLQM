@@ -1,7 +1,8 @@
 package org.colomoto.biolqm.modifier.reverse;
 
+import org.colomoto.biolqm.service.BaseService;
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.modifier.AbstractModifierService;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.kohsuke.MetaInfServices;
@@ -12,7 +13,7 @@ import org.kohsuke.MetaInfServices;
  * @author Aurelien Naldi
  */
 @MetaInfServices(ModelModifierService.class)
-public class ReverseService extends AbstractModifierService {
+public class ReverseService extends BaseService implements ModelModifierService {
 
     /** The identifier used to retrieve this service by name */
     public static final String ID = "reverse";
@@ -23,32 +24,12 @@ public class ReverseService extends AbstractModifierService {
      * Public constructor which should only be used for service discovery.
      */
     public ReverseService() {
-        super(ID, NAME, DESCR);
+        super(ID, NAME, DESCR, MultivaluedSupport.MULTIVALUED);
     }
 
     @Override
-    public ModelModifier getModifier(LogicalModel model, String parameters) {
-        return getModifier(model);
-    }
-
-    /**
-     * Shorthand to retrieve a modifier without requiring a parameter String.
-     *
-     * @param model the model to be reversed
-     * @return a reverser instance for this model
-     */
     public ModelModifier getModifier(LogicalModel model) {
         return new ReverseModifier(model);
-    }
-
-    /**
-     * Shorthand to retrieve a modified model without requiring a parameter String.
-     *
-     * @param model the model to be reversed
-     * @return the reversed model
-     */
-    public LogicalModel getModifiedModel(LogicalModel model) {
-        return getModifier(model).getModifiedModel();
     }
 
 }

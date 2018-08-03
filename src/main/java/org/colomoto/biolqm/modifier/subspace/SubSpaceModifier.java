@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.modifier.subspace;
 
-import org.colomoto.biolqm.LQMServiceManager;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
@@ -26,9 +26,8 @@ public class SubSpaceModifier implements ModelModifier {
 		setPattern(pattern);
 	}
 
-	public SubSpaceModifier(LogicalModel model, String parameters) {
+	public SubSpaceModifier(LogicalModel model) {
 		this.model = model;
-		setParameters(parameters);
 	}
 
 	public void setParameters(String[] params) {

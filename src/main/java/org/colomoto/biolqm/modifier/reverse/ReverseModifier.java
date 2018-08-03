@@ -3,13 +3,11 @@ package org.colomoto.biolqm.modifier.reverse;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colomoto.biolqm.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.modifier.ModelModifier;
 import org.colomoto.biolqm.modifier.booleanize.BooleanizeModifier;
-import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 

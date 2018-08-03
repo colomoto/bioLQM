@@ -1,10 +1,9 @@
 package org.colomoto.biolqm.io;
 
-import java.io.IOException;
-
-import org.colomoto.biolqm.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.Service;
+import org.colomoto.biolqm.service.Service;
+
+import java.io.IOException;
 
 /**
  * Description of an available file format.
@@ -21,36 +20,33 @@ public interface LogicalModelFormat extends Service {
 	boolean canExport();
 	
 	/**
-	 * Does this format supports import operation?
-	 * @return true if this format implements import.
+	 * Does this format supports loading models?
+	 * @return true if this model loading is implemented.
 	 */
-	boolean canImport();
+	boolean canLoad();
 
-	/**
-	 * Precise type of support for multivalued models.
-	 *
-	 * @return the type of support: native, booleanized or none
-	 */
-	MultivaluedSupport getMultivaluedSupport();
-	
 	/**
 	 * Export a logical model to this format.
 	 * 
 	 * @param model the model to export
-	 * @param outputProvider an object providing output streams on demand for saving to one or multiple files
+	 * @param streams an object providing output streams on demand for saving to one or multiple files
 	 * @throws UnsupportedOperationException if this format does not support export
 	 * @throws IOException if writing failed
 	 */
-	void export(LogicalModel model, OutputStreamProvider outputProvider) throws IOException, UnsupportedOperationException;
+	default void export(LogicalModel model, StreamProvider streams) throws IOException {
+        throw new UnsupportedOperationException("");
+    }
 
 	/**
 	 * Load a file in this format and build a logical model for it.
 	 * 
-	 * @param inputProvider an object providing input streams on demand, allowing to load from one or multiple files
+	 * @param streams an object providing input streams on demand, allowing to load from one or multiple files
 	 * @return a new LogicalModel containing the imported data.
 	 * @throws UnsupportedOperationException if this format does not support loading
 	 * @throws IOException if loading failed
 	 */
-	LogicalModel load(InputStreamProvider inputProvider) throws IOException;
-	
+	default LogicalModel load(StreamProvider streams) throws IOException {
+        throw new RuntimeException("Model loading is not implemented for format " + getID());
+    }
+
 }

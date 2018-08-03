@@ -1,8 +1,8 @@
 package org.colomoto.biolqm.tool;
 
-import org.colomoto.biolqm.MultivaluedSupport;
-import org.colomoto.biolqm.BaseService;
+import org.colomoto.biolqm.service.BaseService;
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 
 /**
  * Base class for the boring parts of tool declaration classes.
@@ -11,8 +11,6 @@ import org.colomoto.biolqm.LogicalModel;
  */
 abstract public class AbstractToolService<R, T extends ToolTask<R>> extends BaseService implements ModelToolService<R,T> {
 
-	private final MultivaluedSupport supportsMultivalued;
-	
 	protected AbstractToolService(String id, String name) {
 		this(id, null, name, "", MultivaluedSupport.BOOLEANIZED);
 	}
@@ -22,8 +20,7 @@ abstract public class AbstractToolService<R, T extends ToolTask<R>> extends Base
 	}
 
 	protected AbstractToolService(String id, String[] aliases, String name, String helpMessage, MultivaluedSupport supportsMultivalued) {
-		super(id, aliases, name, helpMessage);
-		this.supportsMultivalued = supportsMultivalued;
+		super(id, aliases, name, helpMessage, supportsMultivalued);
 	}
 	
 	@Override
@@ -34,11 +31,6 @@ abstract public class AbstractToolService<R, T extends ToolTask<R>> extends Base
 	@Override
 	public T getTask(LogicalModel model, String s) {
 		return getTask(model, s.split(" "));
-	}
-
-	@Override
-	public MultivaluedSupport getMultivaluedSupport() {
-		return supportsMultivalued;
 	}
 
 }

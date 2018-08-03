@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.LQMServiceManager;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
 import org.colomoto.biolqm.ReferenceModels;
@@ -28,7 +28,7 @@ public class TestBatchRoundtrip {
 		String[] names = ReferenceModels.getNames();
 		List<LogicalModelFormat> ioformats = new ArrayList<LogicalModelFormat>();
 		for (LogicalModelFormat format: LQMServiceManager.getFormats()) {
-			if (format.canImport() && format.canExport()) {
+			if (format.canLoad() && format.canExport()) {
 				ioformats.add(format);
 			}
 		}
@@ -78,8 +78,8 @@ public class TestBatchRoundtrip {
 	private void roundtrip(LogicalModelFormat format, String name, LogicalModel model) throws FileNotFoundException, IOException {
 		String ioName = name+"."+format.getID();
 		File f = TestHelper.getTestOutput("io_roundtrips", ioName);
-		format.export(model, new OutputStreamProviderFileImpl(f));
-		LogicalModel importedModel = format.load(new InputStreamProviderFileImpl(f));
+		format.export(model, new StreamProviderFileImpl(f));
+		LogicalModel importedModel = format.load(new StreamProviderFileImpl(f));
 		assertTrue( LogicalModelComparator.compare(model, importedModel) );
 	}
 }

@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.export;
+package org.colomoto.biolqm.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,13 +9,12 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.LQMServiceManager;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.ReferenceModels;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProviderFileImpl;
 import org.colomoto.biolqm.io.ginml.LogicalModel2GINML;
 import org.colomoto.biolqm.io.functions.BooleanFunctionFormat;
 import org.colomoto.biolqm.io.sbml.SBMLqualExport;
@@ -129,7 +128,7 @@ public class TestImportExport {
 	public void testRawFunctionExport() throws IOException {
 		File f = TestHelper.getTestOutput("exportFunctions.txt");
 		LogicalModelFormat format = LQMServiceManager.getFormat(BooleanFunctionFormat.ID);
-		format.export(getSimpleModel(), new OutputStreamProviderFileImpl(f));
+		format.export(getSimpleModel(), new StreamProviderFileImpl(f));
 	}
 
 	@Test

@@ -1,11 +1,10 @@
 package org.colomoto.biolqm.io.boolsim;
 
-import org.colomoto.biolqm.MultivaluedSupport;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
-import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProvider;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -21,14 +20,14 @@ public class BoolSimFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
-		return BoolSimImport.getModel(ip.getReader());
+	public LogicalModel load(StreamProvider streams) throws IOException {
+		return BoolSimImport.getModel(streams.reader());
 	}
 
 
 	@Override
-	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
-		BoolSimExport.export(model, out.getOutputStream());
+	public void export(LogicalModel model, StreamProvider streams) throws IOException {
+		BoolSimExport.export(model, streams.output());
 	}
 
 }

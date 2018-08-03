@@ -3,12 +3,12 @@ package org.colomoto.biolqm;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.colomoto.biolqm.io.InputStreamProviderFileImpl;
-import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProviderFileImpl;
+import org.colomoto.biolqm.io.*;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
+import org.colomoto.biolqm.service.ExtensionLoader;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.tool.ModelToolService;
 
 import javax.script.ScriptEngine;
@@ -221,7 +221,7 @@ public class LQMLauncher {
 		String nameformat = "%1$-"+namelength+"s    ";
 		for (LogicalModelFormat format: LQMServiceManager.getFormats()) {
 			String cap;
-			if (format.canImport()) {
+			if (format.canLoad()) {
 				if (format.canExport()) {
 					cap = " <> ";
 				} else {
@@ -298,12 +298,12 @@ public class LQMLauncher {
             return null;
         }
 
-        if (!inputFormat.canImport()) {
-            throw new RuntimeException(inputFormat.getID() +" Format does not support import");
-        }
-
         try {
-            LogicalModel model = inputFormat.load(new InputStreamProviderFileImpl(filename));
+			StreamProvider streams = new StreamProviderFileImpl(filename);
+            LogicalModel model = inputFormat.load(streams);
+			// TODO: common code for side data: layout, annotations...
+			streams.close();
+
             return model;
         } catch (IOException e) {
             e.printStackTrace();
@@ -329,10 +329,6 @@ public class LQMLauncher {
             return false;
         }
 
-        if (!outputFormat.canExport()) {
-            throw new RuntimeException(outputFormat.getID() +" Format does not support export");
-        }
-
         try {
 			if (!model.isBoolean()) {
 	        	switch (outputFormat.getMultivaluedSupport()) {
@@ -344,7 +340,11 @@ public class LQMLauncher {
 					break;
 				}
 			}
-            outputFormat.export(model, new OutputStreamProviderFileImpl( filename));
+
+			StreamProvider streams = new StreamProviderFileImpl( filename);
+            outputFormat.export(model, streams);
+			// TODO: common code for side data: layout, annotations...
+            streams.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();

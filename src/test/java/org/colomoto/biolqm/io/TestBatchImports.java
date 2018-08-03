@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.LQMServiceManager;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelComparator;
 
@@ -47,7 +47,7 @@ public class TestBatchImports {
 				}
 				LogicalModel model;
 				try {
-					model = format.load(new InputStreamProviderFileImpl(f));
+					model = format.load(new StreamProviderFileImpl(f));
 					if (refModel == null) {
 						refModel = model;
 					} else {

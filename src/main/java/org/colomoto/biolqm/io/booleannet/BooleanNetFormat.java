@@ -1,11 +1,10 @@
 package org.colomoto.biolqm.io.booleannet;
 
-import org.colomoto.biolqm.MultivaluedSupport;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
-import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProvider;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -21,13 +20,13 @@ public class BooleanNetFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
-		return BooleanNetImport.getModel( ip.getReader());
+	public LogicalModel load(StreamProvider streams) throws IOException {
+		return BooleanNetImport.getModel( streams.reader());
 	}
 
 	@Override
-	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
-		BooleanNetExport.export(model, out.getOutputStream());
+	public void export(LogicalModel model, StreamProvider streams) throws IOException {
+		BooleanNetExport.export(model, streams.output());
 	}
 
 }

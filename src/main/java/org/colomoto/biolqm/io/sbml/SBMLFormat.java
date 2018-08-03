@@ -1,15 +1,14 @@
 package org.colomoto.biolqm.io.sbml;
 
-import org.colomoto.biolqm.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.io.AbstractFormat;
-import org.colomoto.biolqm.io.InputStreamProvider;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.OutputStreamProvider;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.IOException;
 
 /**
  * Format description for SBML files, using the qual extension.
@@ -25,9 +24,9 @@ public class SBMLFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel loadImpl(InputStreamProvider ip) throws IOException {
+	public LogicalModel load(StreamProvider streams) throws IOException {
 		try {
-			return new SBMLqualImport(ip.getInputStream()).getModel();
+			return new SBMLqualImport(streams.input()).getModel();
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
@@ -35,9 +34,9 @@ public class SBMLFormat extends AbstractFormat {
 
 	
 	@Override
-	public void exportImpl(LogicalModel model, OutputStreamProvider out) throws IOException {
+	public void export(LogicalModel model, StreamProvider streams) throws IOException {
 		try {
-			new SBMLqualExport(model).export(out.getOutputStream());
+			new SBMLqualExport(model).export(streams.output());
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}

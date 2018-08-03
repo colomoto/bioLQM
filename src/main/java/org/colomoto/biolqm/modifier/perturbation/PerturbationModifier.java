@@ -12,9 +12,8 @@ public class PerturbationModifier implements ModelModifier {
     private final LogicalModel model;
     private LogicalModelPerturbation perturbation;
 
-    public PerturbationModifier(LogicalModel model, String parameters) {
+    public PerturbationModifier(LogicalModel model) {
         this.model = model;
-        setParameters(parameters);
     }
 
     @Override
