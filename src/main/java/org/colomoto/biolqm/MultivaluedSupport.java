@@ -1,4 +1,4 @@
-package org.colomoto;
+package org.colomoto.biolqm;
 
 public 	enum MultivaluedSupport {
 

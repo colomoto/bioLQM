@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
-import org.colomoto.MultivaluedSupport;
+import org.colomoto.biolqm.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;

@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.tool;
 
-import org.colomoto.MultivaluedSupport;
+import org.colomoto.biolqm.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.Service;
 

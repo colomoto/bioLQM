@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.io.booleannet;
 
-import org.colomoto.MultivaluedSupport;
+import org.colomoto.biolqm.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.InputStreamProvider;
@@ -9,9 +9,6 @@ import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 
 @MetaInfServices(LogicalModelFormat.class)
 public class BooleanNetFormat extends AbstractFormat {

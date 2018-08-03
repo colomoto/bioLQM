@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.io.ginml;
 
-import org.colomoto.MultivaluedSupport;
+import org.colomoto.biolqm.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
@@ -8,7 +8,6 @@ import org.colomoto.biolqm.io.OutputStreamProvider;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Format description for GINML files.
