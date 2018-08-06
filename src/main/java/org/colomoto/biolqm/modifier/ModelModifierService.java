@@ -23,7 +23,11 @@ public interface ModelModifierService extends Service {
      * @return a configured modifier instance
      */
     default ModelModifier getModifier(LogicalModel model, String parameters) {
-        return getModifier(model, parameters);
+        ModelModifier modifier = getModifier(model);
+        if (parameters != null && parameters.length() > 0) {
+            modifier.setParameters(parameters);
+        }
+        return modifier;
     }
 
     /**
