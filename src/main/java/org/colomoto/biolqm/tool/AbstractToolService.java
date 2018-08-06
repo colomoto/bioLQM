@@ -23,14 +23,4 @@ abstract public class AbstractToolService<R, T extends ToolTask<R>> extends Base
 		super(id, aliases, name, helpMessage, supportsMultivalued);
 	}
 	
-	@Override
-	public T getTask(LogicalModel model) {
-		return getTask(model, new String[0]);
-	}
-	
-	@Override
-	public T getTask(LogicalModel model, String s) {
-		return getTask(model, s.split(" "));
-	}
-
 }

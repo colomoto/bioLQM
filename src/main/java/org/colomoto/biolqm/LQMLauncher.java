@@ -121,7 +121,7 @@ public class LQMLauncher {
 			}
 			String[] parameters = new String[args.length - argIdx];
 			System.arraycopy(args, argIdx, parameters, 0, parameters.length);
-			tool.run(model, parameters);
+			tool.getTask(model, parameters).cli();
 			return;
 		}
 

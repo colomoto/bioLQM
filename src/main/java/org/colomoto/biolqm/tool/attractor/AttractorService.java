@@ -11,20 +11,14 @@ import org.colomoto.biolqm.tool.ToolTask;
  *
  * @author Mitchell Markin
  */
-public class AttractorService extends AbstractToolService {
+public class AttractorService extends AbstractToolService<Object, SATAttractorFinder> {
 
 	public AttractorService() {
 		super("attractor", "Find synchronous attractors using SAT");
 	}
 	
 	@Override
-	public void run(LogicalModel model, String ... parameters) {
-		SATAttractorFinder finder = new SATAttractorFinder(model);
-		finder.run();
-	}
-
-	@Override
-	public ToolTask getTask(LogicalModel model, String... parameters) {
+	public SATAttractorFinder getTask(LogicalModel model) {
 		return new SATAttractorFinder(model);
 	}
 

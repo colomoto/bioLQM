@@ -1,7 +1,7 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
-import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
 import org.kohsuke.MetaInfServices;
@@ -18,20 +18,8 @@ public class RandomWalkService extends AbstractToolService<RandomWalkSimulation,
     }
 
     @Override
-    public RandomWalkTask getTask(LogicalModel model, String... parameters) {
+    public RandomWalkTask getTask(LogicalModel model) {
         RandomWalkTask settings = new RandomWalkTask(model);
-        settings.parseParameters(parameters);
         return settings;
-    }
-
-    @Override
-    public void run(LogicalModel model, String... parameters) {
-        RandomWalkSimulation simulation = getTask(model, parameters).getSimulation();
-        for (byte[] state: simulation) {
-            for (byte b: state) {
-                System.out.print(b);
-            }
-            System.out.println();
-        }
     }
 }

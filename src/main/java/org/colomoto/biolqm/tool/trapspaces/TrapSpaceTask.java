@@ -38,10 +38,12 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 
 	private static boolean SMART_DIAG = false;
 
-	public TrapSpaceTask(LogicalModel model, String[] parameters) {
+	public TrapSpaceTask(LogicalModel model) {
 		super(model);
 		workModel = model;
+	}
 
+	public void setParameters(String[] parameters) {
 		if (parameters == null) {
 		    return;
         }
@@ -162,8 +164,9 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 		}
 		return selected;
 	}
-	
-	public void runCLI() {
+
+	@Override
+	public void cli() {
 		if (showasp) {
 			loadModel();
 			System.out.println( ((TrapSpaceSolverASP)solver).getASP() );

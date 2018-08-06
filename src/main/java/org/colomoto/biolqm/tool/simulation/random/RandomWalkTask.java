@@ -107,5 +107,15 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
     protected RandomWalkSimulation doGetResult() {
         return getSimulation();
     }
-}
 
+    @Override
+    public void cli() {
+        RandomWalkSimulation simulation = getSimulation();
+        for (byte[] state: simulation) {
+            for (byte b: state) {
+                System.out.print(b);
+            }
+            System.out.println();
+        }
+    }
+}

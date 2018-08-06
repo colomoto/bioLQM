@@ -18,33 +18,7 @@ public class TraceService extends AbstractToolService<DeterministicSimulation, T
     }
 
     @Override
-    public TraceTask getTask(LogicalModel model, String... parameters) {
-        TraceTask settings = new TraceTask(model);
-        settings.parseParameters(parameters);
-        return settings;
-    }
-
-    @Override
-    public void run(LogicalModel model, String... parameters) {
-        DeterministicSimulation simulation = getTask(model, parameters).getSimulation();
-        byte[] extra = null;
-        int n_extra = model.getExtraComponents().size();
-        if (n_extra > 0) {
-            extra = new byte[n_extra];
-        }
-        for (byte[] state: simulation) {
-            for (byte b: state) {
-                System.out.print(b);
-            }
-
-            if (extra != null) {
-                model.fillExtraValues(state, extra);
-                System.out.print("  ");
-                for (byte b: extra) {
-                    System.out.print(b);
-                }
-            }
-            System.out.println();
-        }
+    public TraceTask getTask(LogicalModel model) {
+        return new TraceTask(model);
     }
 }

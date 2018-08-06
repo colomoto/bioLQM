@@ -26,7 +26,13 @@ public interface ModelToolService<R, T extends ToolTask<R>> extends Service {
 	 * @param parameters optional command line settings
 	 * @return the custom setting object
 	 */
-	T getTask(LogicalModel model, String parameters);
+	default T getTask(LogicalModel model, String parameters) {
+		T task = getTask(model);
+		if (parameters != null && parameters.length() > 0) {
+			task.setParameters(parameters);
+		}
+		return task;
+	}
 	
 	/**
 	 * Construct a default setting object.
@@ -35,13 +41,13 @@ public interface ModelToolService<R, T extends ToolTask<R>> extends Service {
 	 * @param parameters optional command line settings
 	 * @return the custom setting object
 	 */
-	T getTask(LogicalModel model, String ... parameters);
+	default T getTask(LogicalModel model, String ... parameters) {
+		T task = getTask(model);
+		if (parameters != null && parameters.length > 0) {
+			task.setParameters(parameters);
+		}
+		return task;
 
-	/**
-	 * Run the tool on a logical model.
-	 *
-	 * @param model the model to use
-	 * @param parameters the raw command line parameters
-	 */
-	void run(LogicalModel model, String ... parameters);
+	}
+
 }

@@ -1,7 +1,7 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
-import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.tool.AbstractToolService;
 import org.colomoto.biolqm.tool.ModelToolService;
 import org.kohsuke.MetaInfServices;
@@ -18,14 +18,8 @@ public class TrapSpaceService extends AbstractToolService<TrapSpaceList, TrapSpa
 	}
 
 	@Override
-	public void run(LogicalModel model, String ... parameters) {
-		TrapSpaceTask task = getTask(model, parameters);
-		task.runCLI();
-	}
-
-	@Override
-	public TrapSpaceTask getTask(LogicalModel model, String[] parameters) {
-		return new TrapSpaceTask(model, parameters);
+	public TrapSpaceTask getTask(LogicalModel model) {
+		return new TrapSpaceTask(model);
 	}
 	
 }

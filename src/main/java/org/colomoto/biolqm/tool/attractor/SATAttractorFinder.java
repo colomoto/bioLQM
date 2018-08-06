@@ -22,7 +22,7 @@ import org.sat4j.specs.TimeoutException;
  *
  * @author Mitchell Markin
  */
-public class SATAttractorFinder extends AbstractToolTask {
+public class SATAttractorFinder extends AbstractToolTask<Object> {
 
 	private Map<Integer, ArrayList<ArrayList<Integer>>> dnfFunctions;
 	private Map<Integer, ArrayList<ArrayList<Integer>>> cnfFunctions;
@@ -465,4 +465,13 @@ public class SATAttractorFinder extends AbstractToolTask {
 		}
 	}
 
+	public void cli() {
+		try {
+			call();
+
+			// TODO: print the results
+		} catch (Exception e) {
+			System.err.println("Error while searching for synchronous attractors");
+		}
+	}
 }

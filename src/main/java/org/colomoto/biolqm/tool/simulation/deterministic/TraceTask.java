@@ -68,15 +68,15 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
     }
 
 
-    public void parseMax(String s) {
+    private void parseMax(String s) {
         max_steps = Integer.parseInt(s);
     }
 
-    public void parseLength(String s) {
+    private void parseLength(String s) {
         length = Integer.parseInt(s);
     }
 
-    public void parseUpdater(String s) {
+    private void parseUpdater(String s) {
         if (s.equalsIgnoreCase("sequential")) {
             isSequential = true;
             grouping = null;
@@ -131,6 +131,30 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
     @Override
     protected DeterministicSimulation doGetResult() throws Exception {
         return getSimulation();
+    }
+
+    @Override
+    public void cli() {
+        DeterministicSimulation simulation = getSimulation();
+        byte[] extra = null;
+        int n_extra = model.getExtraComponents().size();
+        if (n_extra > 0) {
+            extra = new byte[n_extra];
+        }
+        for (byte[] state: simulation) {
+            for (byte b: state) {
+                System.out.print(b);
+            }
+
+            if (extra != null) {
+                model.fillExtraValues(state, extra);
+                System.out.print("  ");
+                for (byte b: extra) {
+                    System.out.print(b);
+                }
+            }
+            System.out.println();
+        }
     }
 }
 

@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.fixpoints;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.settings.state.StateList;
 import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.common.task.AbstractTask;
 import org.colomoto.mddlib.MDDManager;
@@ -16,8 +17,14 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
     public boolean extra = false;
 
 
-    public FixpointTask(LogicalModel model, String[] parameters) {
+    public FixpointTask(LogicalModel model) {
         super(model);
+    }
+
+    public void setParameters(String[] parameters) {
+        if (parameters == null) {
+            return;
+        }
 
         for (String p: parameters) {
             p = p.trim();
@@ -162,5 +169,45 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
         StableASP asp = new StableASP(model);
         return asp.get();
     }
+
+    @Override
+    public void cli() {
+        StateList result = null;
+        try {
+            result = call();
+        } catch(Exception e) {
+            System.out.println("Error while constructing the result");
+            e.printStackTrace();
+            return;
+        }
+
+        if (result == null || result.size() < 1) {
+            System.out.println("NO RESULTS");
+            return;
+        }
+
+        // print out the result
+        NodeInfo[] components = result.getComponents();
+        for (NodeInfo ni : components) {
+            System.out.print(ni + " ");
+        }
+        System.out.println();
+
+        int nrows = result.size();
+        for (int row=0 ; row<nrows ; row++) {
+            for (int col=0 ; col<components.length ; col++) {
+                int i = result.get(row, col);
+                if (i == -5) {
+                    System.out.print("?");
+                } else if (i<0) {
+                    System.out.print("-");
+                } else {
+                    System.out.print(i);
+                }
+            }
+            System.out.println();
+        }
+    }
+
 
 }
