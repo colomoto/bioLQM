@@ -20,14 +20,14 @@ public class BoolSimFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel load(StreamProvider streams) throws IOException {
-		return BoolSimImport.getModel(streams.reader());
+	public BoolSimImport getLoader(StreamProvider streams) {
+		return new BoolSimImport(streams);
 	}
 
 
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		BoolSimExport.export(model, streams.output());
+	public BoolSimExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new BoolSimExport(model, streams);
 	}
 
 }

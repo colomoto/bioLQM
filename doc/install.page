@@ -22,14 +22,15 @@
 
         <p>BioLQM requires the <link href="http://www.java.com">Java 8 Runtime</link>, available for Linux,
           Windows and Mac systems (older Macs come with an unsupported version of Java, which could complicate
-          the installation of Java 8). Use the following command to see you java version (it should be 1.8.x).
+          the installation of Java 8). Use the following command to check your java version (it should be at least 1.8.x).
         </p>
 
         <code>java -version</code>
 
         <p>
-          Some features (notably for the identification of trapspaces) further rely on the
+          Note that some features (notably more fine-grained results for the identification of trapspaces) further rely on the
           <link href="https://potassco.org/">clingo ASP solver</link> available in your execution path.
+          However, this external tool is not required for most uses of bioLQM.
         </p>
 
         <p>
@@ -55,14 +56,14 @@
 
     <p>BioLQM is included in the <link href="https://anaconda.org/colomoto/ginsim">conda package for GINsim</link>.
        In a working conda environment (we recommend the use of <link href="https://conda.io/miniconda.html">MiniConda 3</link>,
-       the following command will to install GINsim, BioLQM, and their dependencies. A *bioLQM* command should then be available
-       in your environment.
+       the following command will install GINsim, BioLQM, and their dependencies. A <code>bioLQM</code> command should then be
+       available in your environment.
        These packages are tested on Linux (x64), but should also work on Mac OSX and Windows platforms.
     </p>
 
     <code>conda install -c colomoto ginsim</code>
 
-    <p>These conda packages are used to build a consistent and reproducible environment integrating several software tools
+    <p>These conda packages are further used to build a consistent and reproducible environment integrating several software tools
        for the analysis of qualitative models, as described in <link href="https://colomoto.github.io/colomoto-docker/" />.
     </p>
 
@@ -72,20 +73,25 @@
         <title>3 - Building from source</title>
         <p>Building bioLQM from source further requires a Java Compiler (JDK) and the <link href="https://maven.apache.org/">Maven build tool</link>.</p>
         
-        <code>git clone https://github.com/colomoto/bioLQM.git
+<code>
+git clone https://github.com/colomoto/bioLQM.git
 cd bioLQM
-mvn package</code>
+mvn package
+</code>
 
         <p>
-          Maven downloads all requirements and generates the <var>target</var> folder containing the jar file along
-          with a <var>lib</var> folder for dependencies. These dependencies are bundled with the release jar.
+          Maven will download all requirements and generate the <var>target</var> folder containing the jar file along
+          with a <var>lib</var> folder for dependencies. These dependencies are bundled within the release jar. You can
+          build this jar bundle with:
         </p>
+<code>mvn assembly:assembly</code>
     </section>
 
     <section id="maven">
-        <title>4 - Maven</title>
+        <title>4 - Maven packages for Java developers</title>
         
-        <p>To integrate BioLQM in your Java software using Maven, put the following in your <code>pom.xml</code> file:</p>
+        <p>Maven packages are currently available on a custom repository (they will move to maven central in the future).
+           To integrate bioLQM in your maven-based project, add the following snippet in your <code>pom.xml</code> file:</p>
 
 <code><![CDATA[
       <repositories>
@@ -109,10 +115,11 @@ mvn package</code>
         <dependency>
           <groupId>org.colomoto</groupId>
           <artifactId>bioLQM</artifactId>
-          <version>0.6-SNAPSHOT</version>
+          <version>0.7-SNAPSHOT</version>
         </dependency>
       </dependencies>
 ]]></code>
+
     </section>
 
 </page>

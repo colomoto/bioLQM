@@ -19,8 +19,8 @@ public class CNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		CNetExport.export(model, streams.output());
+	public CNetExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new CNetExport(model, streams);
 	}
 
 }

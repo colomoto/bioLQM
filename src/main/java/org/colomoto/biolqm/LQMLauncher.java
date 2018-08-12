@@ -305,7 +305,7 @@ public class LQMLauncher {
 			streams.close();
 
             return model;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -346,7 +346,7 @@ public class LQMLauncher {
 			// TODO: common code for side data: layout, annotations...
             streams.close();
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;

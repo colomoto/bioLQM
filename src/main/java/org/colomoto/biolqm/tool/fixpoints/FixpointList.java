@@ -61,7 +61,7 @@ public class FixpointList extends ArrayList<byte[]> implements StateList {
 	}
 
 	@Override
-	public int get(int row, int col) {
+	public byte get(int row, int col) {
 		if (col < nodes.length) {
 			return get(row)[col];
 		}

@@ -1,13 +1,13 @@
 package org.colomoto.biolqm.io.booleannet;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
@@ -15,21 +15,20 @@ import java.io.Writer;
  * 
  * @author Aurelien Naldi
  */
-public class BooleanNetExport {
+public class BooleanNetExport extends BaseExporter {
 
-	/**
-	 * Export a logical model into logical functions.
-	 *
-	 * @param model the exported model
-	 * @param out the output stream
-	 * @throws java.io.IOException if writing fails
-	 */
-	public static void export(LogicalModel model, OutputStream out) throws IOException {
+
+	public BooleanNetExport(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
+	}
+
+	@Override
+	public void export() throws IOException {
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);
 		
-		Writer writer = new OutputStreamWriter(out);
+		Writer writer = streams.writer();
         writer.write("#BOOLEAN RULES\n");
 		int[] functions = model.getLogicalFunctions();
 		for (int idx=0 ; idx<functions.length ; idx++) {

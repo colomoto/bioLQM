@@ -28,7 +28,7 @@ public class ReferenceModels {
 		return dir.list();
 	}
 	
-	public static LogicalModel getModel(String name) throws IOException {
+	public static LogicalModel getModel(String name) throws Exception {
 		return format.load(new StreamProviderFileImpl( new File(dir, name)));
 	}
 

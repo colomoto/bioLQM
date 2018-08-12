@@ -13,6 +13,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseLoader;
+import org.colomoto.biolqm.io.ModelLoader;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.biolqm.io.antlr.*;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
@@ -27,18 +30,16 @@ import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
  * @author Aurelien Naldi
  * @author Julien Dorier
  */
-public class BoolSimImport {
+public class BoolSimImport extends BaseLoader {
 
-	/**
-	 * Entry point to parse a full model.
-	 *
-	 * @param reader source from which to parse
-	 * @return the reconstructed model
-	 * @throws IOException if reading fails
-	 */
-	public static LogicalModel getModel( Reader reader) throws IOException {
+	public BoolSimImport(StreamProvider streams) {
+		super(streams);
+	}
 
-		CharStream input = new ANTLRInputStream(reader);
+	@Override
+	public LogicalModel doGetResult() throws IOException {
+
+		CharStream input = new ANTLRInputStream(streams.reader());
 		ErrorListener errors = new ErrorListener();
 		BoolsimParser parser = getParser(input, errors);
 		BoolsimParser.ModelContext mctx = parser.model();

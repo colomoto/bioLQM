@@ -28,7 +28,7 @@ public interface StateList {
      * @param col the component number
      * @return the corresponding value
      */
-    int get(int row, int col);
+    byte get(int row, int col);
 
     /**
      * Include or hide extra components.

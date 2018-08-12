@@ -113,7 +113,7 @@ public class TestImportExport {
 	}
 
 	@Test
-	public void testRawFunctionImport() throws IOException {
+	public void testRawFunctionImport() throws Exception {
 		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
 		
 		List<NodeInfo> coreComponents = model.getComponents();
@@ -125,7 +125,7 @@ public class TestImportExport {
 	
 	
 	@Test
-	public void testRawFunctionExport() throws IOException {
+	public void testRawFunctionExport() throws Exception {
 		File f = TestHelper.getTestOutput("exportFunctions.txt");
 		LogicalModelFormat format = LQMServiceManager.getFormat(BooleanFunctionFormat.ID);
 		format.export(getSimpleModel(), new StreamProviderFileImpl(f));

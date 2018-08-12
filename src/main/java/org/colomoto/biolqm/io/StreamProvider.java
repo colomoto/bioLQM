@@ -60,9 +60,15 @@ public interface StreamProvider {
         return new InputStreamReader( input());
     }
 
-
     default Reader reader(String pattern) throws IOException {
         return new InputStreamReader( input(pattern));
+    }
+
+    default OutputStreamWriter writer() throws IOException {
+        return new OutputStreamWriter( output());
+    }
+    default OutputStreamWriter writer(String pattern) throws IOException {
+        return new OutputStreamWriter( output(pattern));
     }
 
     /**

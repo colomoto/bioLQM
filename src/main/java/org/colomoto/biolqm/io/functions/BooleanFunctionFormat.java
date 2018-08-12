@@ -19,13 +19,13 @@ public class BooleanFunctionFormat extends AbstractFormat {
 	}
 
 	@Override
-	public LogicalModel load(StreamProvider streams) throws IOException {
-		return BooleanFunctionImport.getModel( streams.reader());
+	public BooleanFunctionImport getLoader(StreamProvider streams) {
+		return new BooleanFunctionImport( streams);
 	}
 
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		BooleanFunctionExport.export(model, streams.output());
+	public BooleanFunctionExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new BooleanFunctionExport(model, streams);
 	}
 
 }

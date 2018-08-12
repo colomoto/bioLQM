@@ -6,6 +6,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -15,21 +17,20 @@ import org.colomoto.mddlib.PathSearcher;
  * 
  * @author Aurelien Naldi
  */
-public class BooleanFunctionExport {
+public class BooleanFunctionExport extends BaseExporter {
 
-	/**
-	 * Export a logical model into logical functions.
-	 * 
-	 * @param model the model to export
-	 * @param out an opened output stream to save the result
-	 * @throws IOException if writing fails
-	 */
-	public static void export(LogicalModel model, OutputStream out) throws IOException {
+
+	public BooleanFunctionExport(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
+	}
+
+	@Override
+	public void export() throws IOException {
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager);
 		
-		Writer writer = new OutputStreamWriter(out);
+		Writer writer = streams.writer();
 		int[] functions = model.getLogicalFunctions();
 		for (int idx=0 ; idx<functions.length ; idx++) {
 			MDDVariable var = variables[idx];

@@ -25,16 +25,39 @@ public interface LogicalModelFormat extends Service {
 	 */
 	boolean canLoad();
 
+
+	/**
+	 * Get a ready-to-use model loader from this format.
+	 *
+	 * @param streams an object providing input streams on demand, allowing to load from one or multiple files
+	 * @throws UnsupportedOperationException if this format does not support loading
+	 * @return a new model loader, or null if loading is not supported;
+	 */
+	default ModelLoader getLoader(StreamProvider streams) {
+		throw new UnsupportedOperationException("Saving model is not implemented for format " + getID());
+	}
+
+	/**
+	 * Get a ready-to-use model exporter to this format.
+	 *
+	 * @param model the model to export
+	 * @param streams an object providing output streams on demand for saving to one or multiple files
+	 * @throws UnsupportedOperationException if this format does not support export
+	 */
+	default ModelExporter getExporter(LogicalModel model, StreamProvider streams) {
+		throw new UnsupportedOperationException("Saving model is not implemented for format " + getID());
+	}
+
 	/**
 	 * Export a logical model to this format.
 	 * 
 	 * @param model the model to export
 	 * @param streams an object providing output streams on demand for saving to one or multiple files
 	 * @throws UnsupportedOperationException if this format does not support export
-	 * @throws IOException if writing failed
+	 * @throws Exception if writing failed
 	 */
-	default void export(LogicalModel model, StreamProvider streams) throws IOException {
-        throw new UnsupportedOperationException("");
+	default void export(LogicalModel model, StreamProvider streams) throws Exception {
+		getExporter(model, streams).call();
     }
 
 	/**
@@ -43,10 +66,10 @@ public interface LogicalModelFormat extends Service {
 	 * @param streams an object providing input streams on demand, allowing to load from one or multiple files
 	 * @return a new LogicalModel containing the imported data.
 	 * @throws UnsupportedOperationException if this format does not support loading
-	 * @throws IOException if loading failed
+	 * @throws Exception if loading failed
 	 */
-	default LogicalModel load(StreamProvider streams) throws IOException {
-        throw new RuntimeException("Model loading is not implemented for format " + getID());
+	default LogicalModel load(StreamProvider streams) throws Exception {
+		return getLoader(streams).call();
     }
 
 }

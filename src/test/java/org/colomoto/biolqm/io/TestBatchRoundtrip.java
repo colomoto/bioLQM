@@ -75,7 +75,7 @@ public class TestBatchRoundtrip {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	private void roundtrip(LogicalModelFormat format, String name, LogicalModel model) throws FileNotFoundException, IOException {
+	private void roundtrip(LogicalModelFormat format, String name, LogicalModel model) throws FileNotFoundException, Exception {
 		String ioName = name+"."+format.getID();
 		File f = TestHelper.getTestOutput("io_roundtrips", ioName);
 		format.export(model, new StreamProviderFileImpl(f));

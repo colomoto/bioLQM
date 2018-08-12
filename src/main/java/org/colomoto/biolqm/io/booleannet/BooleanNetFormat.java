@@ -20,13 +20,13 @@ public class BooleanNetFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel load(StreamProvider streams) throws IOException {
-		return BooleanNetImport.getModel( streams.reader());
+	public BooleanNetImport getLoader(StreamProvider streams) {
+		return new BooleanNetImport( streams);
 	}
 
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		BooleanNetExport.export(model, streams.output());
+	public BooleanNetExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new BooleanNetExport(model, streams);
 	}
 
 }

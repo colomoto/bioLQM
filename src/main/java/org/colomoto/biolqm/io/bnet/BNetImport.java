@@ -16,7 +16,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseLoader;
+import org.colomoto.biolqm.io.ModelLoader;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.biolqm.io.antlr.*;
+import org.colomoto.common.task.AbstractTask;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
@@ -27,18 +31,17 @@ import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
  * 
  * @author Hannes Klarner (minor modification to file by Aurelien Naldi)
  */
-public class BNetImport {
+public class BNetImport extends BaseLoader {
 
-	/**
-	 * Entry point to parse a full model.
-	 *
-	 * @param reader source from which to parse
-	 * @return the reconstructed model
-	 * @throws IOException if reading fails
-	 */
-	public static LogicalModel getModel( Reader reader) throws IOException {
 
-		CharStream input = new ANTLRInputStream(reader);
+	public BNetImport(StreamProvider streams) {
+		super(streams);
+	}
+
+	@Override
+	protected LogicalModel doGetResult() throws Exception {
+
+		CharStream input = new ANTLRInputStream( streams.reader());
 		ErrorListener errors = new ErrorListener();
 		BNetParser parser = getParser(input, errors);
 		BNetParser.ModelContext mctx = parser.model();

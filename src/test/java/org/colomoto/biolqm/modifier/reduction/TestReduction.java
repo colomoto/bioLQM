@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 public class TestReduction {
 
 	@Test
-	public void testCoreReduction() throws IOException {
+	public void testCoreReduction() throws Exception {
 		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
 
 		List<NodeInfo> core = model.getComponents();
@@ -40,11 +40,11 @@ public class TestReduction {
 	}
 
 	@Test
-	public void testOutputReduction() throws IOException {
+	public void testOutputReduction() throws Exception {
 		checkOutputReduction("simpleFunctions.txt", 1, 1);
 	}
 	
-	public void checkOutputReduction(String name, int expectedOutputs, int expectedPseudoOutputs) throws IOException {
+	public void checkOutputReduction(String name, int expectedOutputs, int expectedPseudoOutputs) throws Exception {
 		LogicalModel model = ReferenceModels.getModel(name);
 		List<NodeInfo> core = model.getComponents();
 		List<NodeInfo> extra = model.getExtraComponents();
@@ -68,7 +68,7 @@ public class TestReduction {
 	}
 
     @Test
-    public void testFixedPropagation() throws IOException {
+    public void testFixedPropagation() throws Exception {
         LogicalModel model = ReferenceModels.getModel("propagate_fixed.txt");
 
         LogicalModel newModel = FixedComponentRemover.reduceFixed(model, false);

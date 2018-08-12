@@ -1,8 +1,11 @@
 package org.colomoto.biolqm;
 
+import org.apache.logging.log4j.core.util.Booleans;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.VariableEffect;
+
+import java.util.BitSet;
 
 /**
  * Build and consult regulatory relations between variables in a Logical Model.
@@ -42,7 +45,7 @@ public class ConnectivityMatrix {
 		extraRegulatorEffects = new VariableEffect[extraRegulators.length][][];
 		
 	}
-	
+
 	/**
 	 * Helper to fill the connectivity matrix to be called by the constructor only.
 	 * 

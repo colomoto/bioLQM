@@ -15,8 +15,8 @@ abstract public class AbstractFormat extends BaseService implements LogicalModel
 	private final boolean canExport;
 	private final boolean canImport;
 
-	private static final String NAME_IMPORT = "load";
-	private static final String NAME_EXPORT = "export";
+	private static final String NAME_IMPORT = "getLoader";
+	private static final String NAME_EXPORT = "getExporter";
 
 	protected AbstractFormat(String id, String name) {
 		this(id, name, MultivaluedSupport.BOOLEAN_STRICT);

@@ -9,34 +9,35 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseLoader;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.biolqm.io.antlr.*;
-import org.colomoto.biolqm.io.antlr.BooleanNetBaseListener;
-import org.colomoto.biolqm.io.antlr.BooleanNetLexer;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
 import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * launch an antlr-generated parser, listen for events and feed them to an ExpressionStack
  *
  * @author Aurelien Naldi
  */
-public class BooleanNetImport {
+public class BooleanNetImport extends BaseLoader {
 
-    /**
-     * Entry point to parse a full model.
-     * @param reader the source stream to parse
-     * @return the reconstructed model
-     * @throws IOException if reading fails
-     */
-    public static LogicalModel getModel( Reader reader) throws IOException {
+    public BooleanNetImport(StreamProvider streams) {
+        super(streams);
+    }
 
-        CharStream input = new ANTLRInputStream(reader);
+    @Override
+    public LogicalModel doGetResult() throws IOException {
+
+        CharStream input = new ANTLRInputStream(streams.reader());
         ErrorListener errors = new ErrorListener();
         BooleanNetParser parser = getParser(input, errors);
         BooleanNetParser.ModelContext mctx = parser.model();
@@ -86,7 +87,7 @@ public class BooleanNetImport {
         return ExpressionStack.constructModel( operandFactory, variables, var2function);
     }
 
-    private static BooleanNetParser getParser(CharStream input, ErrorListener errors) {
+    private BooleanNetParser getParser(CharStream input, ErrorListener errors) {
         BooleanNetLexer lexer = new BooleanNetLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         BooleanNetParser parser = new BooleanNetParser(tokens);

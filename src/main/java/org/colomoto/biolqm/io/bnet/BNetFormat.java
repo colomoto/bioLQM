@@ -1,13 +1,11 @@
 package org.colomoto.biolqm.io.bnet;
 
-import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.StreamProvider;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.kohsuke.MetaInfServices;
-
-import java.io.IOException;
 
 @MetaInfServices(LogicalModelFormat.class)
 public class BNetFormat extends AbstractFormat {
@@ -20,14 +18,13 @@ public class BNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public LogicalModel load(StreamProvider streams) throws IOException {
-		return BNetImport.getModel(streams.reader());
+	public BNetImport getLoader(StreamProvider streams) {
+		return new BNetImport(streams);
 	}
 
-
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		BNetExport.export(model, streams.output());
+	public BNetExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new BNetExport(model, streams);
 	}
 
 }
