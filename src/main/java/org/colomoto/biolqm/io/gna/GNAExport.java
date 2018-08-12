@@ -2,6 +2,8 @@ package org.colomoto.biolqm.io.gna;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -17,17 +19,15 @@ import java.util.*;
  * 
  * @author Pedro T. Monteiro
  */
-public class GNAExport {
+public class GNAExport extends BaseExporter {
 
-	/**
-	 * Export a logical model into logical functions.
-	 * 
-	 * @param model the model to export
-	 * @param out an opened output stream to save the result
-	 * @throws IOException if writing fails
-	 */
-	public static void export(LogicalModel model, OutputStream out) throws IOException {
-		Writer writer = new OutputStreamWriter(out);
+	public GNAExport(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
+	}
+
+	@Override
+	public void export() throws IOException {
+		Writer writer = streams.writer();
 		
 		MDDManager ddmanager = model.getMDDManager();
 		PathSearcher searcher = new PathSearcher(ddmanager);

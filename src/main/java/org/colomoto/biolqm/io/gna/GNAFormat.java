@@ -23,8 +23,8 @@ public class GNAFormat extends AbstractFormat {
 	}
 	
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		GNAExport.export(model, streams.output());
+	public GNAExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new GNAExport(model, streams);
 	}
 
 }

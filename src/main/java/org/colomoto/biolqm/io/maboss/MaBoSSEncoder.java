@@ -1,37 +1,50 @@
 package org.colomoto.biolqm.io.maboss;
 
+import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
+import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.PathSearcher;
+
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.PathSearcher;
 
 /**
  * Export a Boolean(ized) LogicalModel into MaBoSS format
  * 
  * @author Aurelien Naldi
  */
-public class MaBoSSEncoder {
+public class MaBoSSEncoder extends BaseExporter {
 
-	private final LogicalModel model;
 	private final MDDManager ddmanager;
 	private final PathSearcher searcher;
 	private final List<NodeInfo> nodes;
 	private final List<NodeInfo> extraNodes;
 	
-	public MaBoSSEncoder(LogicalModel model) {
-		this.model = model;
+	public MaBoSSEncoder(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
 		this.ddmanager = model.getMDDManager();
 		this.nodes = model.getComponents();
 		this.extraNodes = model.getExtraComponents();
 		this.searcher = new PathSearcher(ddmanager, 1);
 	}
-	
+
+	@Override
+	public void export() throws IOException {
+		OutputStreamWriter writer = new OutputStreamWriter(streams.output());
+		write(writer);
+		writer.close();
+
+		writer = new OutputStreamWriter(streams.output("$f.cfg"));
+		writeConfig(writer);
+		writer.close();
+	}
+
 	public void write(Writer out) throws IOException {
 		
 		writeFunctions(nodes, model.getLogicalFunctions(), out);
