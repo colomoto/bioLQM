@@ -38,7 +38,7 @@ public class SATAttractorFinder extends AbstractToolTask<Object> {
 		constants = new HashMap<Integer, Integer>();
 	}
 
-	public Object doGetResult() {
+	public Object performTask() {
 		MDDManager manager = model.getMDDManager();
 	
 		//convert the model into a set of functions in disjunctive normal form

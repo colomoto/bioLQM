@@ -36,7 +36,7 @@ public class BooleanFunctionImport extends BaseLoader {
 	}
 
 	@Override
-	public LogicalModel doGetResult() throws IOException {
+	public LogicalModel performTask() throws IOException {
 
 		CharStream input = new ANTLRInputStream(streams.reader());
 		ErrorListener errors = new ErrorListener();

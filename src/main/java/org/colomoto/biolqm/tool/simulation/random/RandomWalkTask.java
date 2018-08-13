@@ -104,7 +104,7 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
     }
 
     @Override
-    protected RandomWalkSimulation doGetResult() {
+    protected RandomWalkSimulation performTask() {
         return getSimulation();
     }
 

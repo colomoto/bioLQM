@@ -2,12 +2,12 @@ package org.colomoto.biolqm.modifier.perturbation;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.modifier.ModelModifier;
+import org.colomoto.biolqm.modifier.BaseModifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PerturbationModifier implements ModelModifier {
+public class PerturbationModifier extends BaseModifier {
 
     private final LogicalModel model;
     private LogicalModelPerturbation perturbation;
@@ -17,7 +17,7 @@ public class PerturbationModifier implements ModelModifier {
     }
 
     @Override
-    public LogicalModel getModifiedModel() {
+    public LogicalModel performTask() {
         if (perturbation != null) {
             return perturbation.apply(model);
         }

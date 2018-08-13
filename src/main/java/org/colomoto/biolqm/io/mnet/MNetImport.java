@@ -40,7 +40,7 @@ public class MNetImport extends BaseLoader {
 		super(streams);
 	}
 
-	public LogicalModel doGetResult() throws IOException {
+	public LogicalModel performTask() throws IOException {
 
 		CharStream input = new ANTLRInputStream(streams.reader());
 		ErrorListener errors = new ErrorListener();

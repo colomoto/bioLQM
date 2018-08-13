@@ -1,8 +1,7 @@
 package org.colomoto.biolqm.io;
 
-import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.common.task.Task;
+import org.colomoto.biolqm.service.ModelTask;
 
-public interface ModelLoader extends Task<LogicalModel> {
+public interface ModelLoader extends ModelTask {
 
 }

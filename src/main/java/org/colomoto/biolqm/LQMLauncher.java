@@ -89,7 +89,13 @@ public class LQMLauncher {
 					s_parameters = sb.toString();
 				}
 				ModelModifierService modifier = LQMServiceManager.getModifier(s_modifier);
-				model = modifier.getModifiedModel(model, s_parameters);
+				try {
+					model = modifier.getModifiedModel(model, s_parameters);
+				} catch (Exception e) {
+					System.err.println("Error in model modification step");
+					e.printStackTrace();
+					return;
+				}
 				continue;
 			}
 			
@@ -101,7 +107,13 @@ public class LQMLauncher {
 				argIdx++;
 				String s_parameters = args[argIdx++];
 				ModelModifierService modifier = LQMServiceManager.get(PerturbationService.class);
-				model = modifier.getModifiedModel(model, s_parameters);
+				try {
+					model = modifier.getModifiedModel(model, s_parameters);
+				} catch (Exception e) {
+					System.err.println("Error in model perturbation step");
+					e.printStackTrace();
+					return;
+				}
 				continue;
 			}
 			

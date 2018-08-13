@@ -2,12 +2,12 @@ package org.colomoto.biolqm.modifier.reduction;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.modifier.ModelModifier;
+import org.colomoto.biolqm.modifier.BaseModifier;
 import org.colomoto.biolqm.settings.state.Range;
 import org.colomoto.biolqm.settings.state.StatePattern;
 import org.colomoto.mddlib.MDDManager;
 
-public class PatternReduction implements ModelModifier {
+public class PatternReduction extends BaseModifier {
 
     private final LogicalModel model;
     private final StatePattern pattern;
@@ -18,7 +18,7 @@ public class PatternReduction implements ModelModifier {
     }
 
     @Override
-    public LogicalModel getModifiedModel() {
+    public LogicalModel performTask() {
 
         LogicalModel modified = model.clone();
         MDDManager ddmanager = modified.getMDDManager();

@@ -3,7 +3,7 @@ package org.colomoto.biolqm.modifier.booleanize;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.modifier.ModelModifier;
+import org.colomoto.biolqm.modifier.BaseModifier;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author Aurelien Naldi
  */
-public class BooleanizeModifier implements ModelModifier {
+public class BooleanizeModifier extends BaseModifier {
 
     private final LogicalModel model;
     private MDDManager ddm, newDDM;
@@ -37,7 +37,7 @@ public class BooleanizeModifier implements ModelModifier {
     }
 
     @Override
-    public LogicalModel getModifiedModel() {
+    public LogicalModel performTask() {
         if (model.isBoolean()) {
             return model;
         }

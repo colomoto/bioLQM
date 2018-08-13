@@ -48,7 +48,7 @@ public class SBMLqualImport extends BaseLoader {
         return qualBundle;
     }
 
-    public LogicalModel doGetResult() throws IOException {
+    public LogicalModel performTask() throws IOException {
 
         try {
             this.qualBundle = SBMLqualHelper.parseInputStream(streams.input());

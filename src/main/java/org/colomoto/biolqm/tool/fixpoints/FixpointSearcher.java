@@ -31,7 +31,7 @@ public class FixpointSearcher extends AbstractTask<Integer> {
 	}
 
     @Override
-    protected Integer doGetResult() {
+    protected Integer performTask() {
         Iterable<Integer> ordering = new StructuralNodeOrderer(model);
         StableOperation sop = new StableOperation();
         int[] mdds = model.getLogicalFunctions();

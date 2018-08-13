@@ -47,8 +47,8 @@ public interface ModelModifierService extends Service {
      * @param parameters the setting String (can be empty for some modifiers)
      * @return a new modified model
      */
-    default LogicalModel getModifiedModel(LogicalModel model, String parameters) {
-        return getModifier(model, parameters).getModifiedModel();
+    default LogicalModel getModifiedModel(LogicalModel model, String parameters) throws Exception {
+        return getModifier(model, parameters).call();
     }
 
     /**
@@ -57,8 +57,8 @@ public interface ModelModifierService extends Service {
      * @param model the original model
      * @return the modified model
      */
-    default LogicalModel getModifiedModel(LogicalModel model) {
-        return getModifier(model).getModifiedModel();
+    default LogicalModel getModifiedModel(LogicalModel model) throws Exception {
+        return getModifier(model).call();
     }
 
 }

@@ -1,10 +1,10 @@
 package org.colomoto.biolqm.modifier.reduction;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.modifier.ModelModifier;
+import org.colomoto.biolqm.modifier.BaseModifier;
 import org.colomoto.biolqm.settings.state.StatePattern;
 
-public class ReductionModifier implements ModelModifier {
+public class ReductionModifier extends BaseModifier {
 
     private final LogicalModel model;
 
@@ -51,7 +51,7 @@ public class ReductionModifier implements ModelModifier {
     }
 
     @Override
-    public LogicalModel getModifiedModel() {
+    public LogicalModel performTask() throws Exception {
     	if (!hasReduction()) {
     		return model;
     	}
@@ -67,7 +67,7 @@ public class ReductionModifier implements ModelModifier {
         }
 
         if (pattern != null) {
-            result = new PatternReduction(result, pattern).getModifiedModel();
+            result = new PatternReduction(result, pattern).call();
         }
         
         if (handleFixed) {

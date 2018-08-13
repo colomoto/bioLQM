@@ -22,7 +22,7 @@ public abstract class BaseExporter extends AbstractTask<Boolean> implements Mode
         this.streams = streams;
     }
 
-    public Boolean doGetResult() {
+    public Boolean performTask() {
         try {
             export();
         } catch (IOException e) {

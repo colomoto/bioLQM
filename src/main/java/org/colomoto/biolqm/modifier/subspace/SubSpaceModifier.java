@@ -1,11 +1,11 @@
 package org.colomoto.biolqm.modifier.subspace;
 
-import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.modifier.ModelModifier;
+import org.colomoto.biolqm.modifier.BaseModifier;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
-import org.colomoto.biolqm.modifier.reduction.ReductionService;
 import org.colomoto.biolqm.modifier.reduction.ReductionModifier;
+import org.colomoto.biolqm.modifier.reduction.ReductionService;
+import org.colomoto.biolqm.service.LQMServiceManager;
 
 /**
  * Model Modifier to restrict a model into a subspace.
@@ -13,7 +13,7 @@ import org.colomoto.biolqm.modifier.reduction.ReductionModifier;
  * 
  * @author Aurelien Naldi
  */
-public class SubSpaceModifier implements ModelModifier {
+public class SubSpaceModifier extends BaseModifier {
 
     private static final ReductionService reduceService = LQMServiceManager.get(ReductionService.class);
     private static final PerturbationService perturbationService = LQMServiceManager.get(PerturbationService.class);
@@ -22,7 +22,7 @@ public class SubSpaceModifier implements ModelModifier {
 	private byte[] pattern;
 
 	public SubSpaceModifier(LogicalModel model, byte[] pattern) {
-		this.model = model;
+		this(model);
 		setPattern(pattern);
 	}
 
@@ -64,7 +64,7 @@ public class SubSpaceModifier implements ModelModifier {
 	}
 	
 	@Override
-	public LogicalModel getModifiedModel() {
+	public LogicalModel performTask() throws Exception {
 		LogicalModel modified = model.clone();
 		int[] functions = modified.getLogicalFunctions();
 		for (int i=0 ; i<pattern.length ; i++) {
@@ -77,7 +77,7 @@ public class SubSpaceModifier implements ModelModifier {
 		ReductionModifier modifier = reduceService.getModifier(modified);
 		modifier.handleFixed = true;
 		modifier.purgeFixed = true;
-		return modifier.getModifiedModel();
+		return modifier.call();
 	}
 
 }

@@ -113,7 +113,7 @@ public class TruthTableImport extends BaseLoader {
 	}
 
 	@Override
-	public LogicalModel doGetResult() throws IOException {
+	public LogicalModel performTask() throws IOException {
 		List<NodeInfo> nodeOrder = this.getNodes(streams);
 
 		// Create the MDDManager

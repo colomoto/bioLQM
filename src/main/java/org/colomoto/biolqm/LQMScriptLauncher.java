@@ -106,7 +106,7 @@ public class LQMScriptLauncher {
      * @param name the name of a modifier
      * @return a modified model
      */
-    public LogicalModel modify(LogicalModel model, String name) {
+    public LogicalModel modify(LogicalModel model, String name) throws Exception {
         return getModifier(name).getModifiedModel(model);
     }
     
@@ -119,7 +119,7 @@ public class LQMScriptLauncher {
      * @param parameters parameters for the model modifier
      * @return a modified model
      */
-    public LogicalModel modify(LogicalModel model, String name, String parameters) {
+    public LogicalModel modify(LogicalModel model, String name, String parameters) throws Exception {
     	return getModifier(name).getModifiedModel(model, parameters);
     }
 

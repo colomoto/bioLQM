@@ -39,7 +39,7 @@ public class BNetImport extends BaseLoader {
 	}
 
 	@Override
-	protected LogicalModel doGetResult() throws Exception {
+	protected LogicalModel performTask() throws Exception {
 
 		CharStream input = new ANTLRInputStream( streams.reader());
 		ErrorListener errors = new ErrorListener();

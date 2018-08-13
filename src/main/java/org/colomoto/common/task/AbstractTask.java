@@ -22,7 +22,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
      * @return the result of the computation
      * @throws Exception forwarded from the call() method
      */
-    abstract protected T doGetResult() throws Exception;
+    abstract protected T performTask() throws Exception;
 
     @Override
     public T getResult() {
@@ -45,7 +45,7 @@ abstract public class AbstractTask<T> extends Thread implements Task<T> {
         this.canceled = false;
         this.status = TaskStatus.RUNNING;
 
-        this.result = doGetResult();
+        this.result = performTask();
         if (canceled) {
             result = null;
             this.status = TaskStatus.CANCELED;

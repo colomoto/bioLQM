@@ -71,12 +71,10 @@ public class TestReversion {
 	}
 
 	@Test
-	private void testDoubleReversion(LogicalModel mOrig) {
+	private void testDoubleReversion(LogicalModel mOrig) throws Exception {
 		ReverseModifier modelRev1 = new ReverseModifier(mOrig);
-		modelRev1.reverse();
-		ReverseModifier modelRev2 = new ReverseModifier(modelRev1.getModifiedModel());
-		modelRev2.reverse();
-		LogicalModel mRev = modelRev2.getModifiedModel();
+		ReverseModifier modelRev2 = new ReverseModifier(modelRev1.call());
+		LogicalModel mRev = modelRev2.call();
 
 		int[] fOrig = mOrig.getLogicalFunctions();
 		int[] fRev = mRev.getLogicalFunctions();
@@ -86,13 +84,13 @@ public class TestReversion {
 	}
 
 	@Test
-	public void testSimpleModelA() {
+	public void testSimpleModelA() throws Exception {
 		LogicalModel mOrig = TestReversion.loadSimpleModelA();
 		this.testDoubleReversion(mOrig);
 	}
 
 	@Test
-	public void testSimpleModelB() {
+	public void testSimpleModelB() throws Exception {
 		LogicalModel mOrig = TestReversion.loadSimpleModelB();
 		this.testDoubleReversion(mOrig);
 	}

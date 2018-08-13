@@ -86,7 +86,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
         }
 	}
 
-	public void loadSettings() {
+	public void loadSettings() throws Exception {
 		// Ensure that the model is booleanized
         if (!workModel.isBoolean()) {
         	workModel = boolService.getModifiedModel(workModel);
@@ -98,7 +98,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 			reducer.handleFixed = true;
 			reducer.purgeFixed = true;
 			reducer.handleOutputs = false;
-			workModel = reducer.getModifiedModel();
+			workModel = reducer.call();
         }
 
         this.ddmanager = workModel.getMDDManager();
@@ -127,7 +127,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 //        	}
         	solver.add_variable(i, formula, not_formula);
         }
-        
+
 		if (focusComponents != null) {
 			for (String sid: focusComponents) {
 				int idx=0;
@@ -172,8 +172,15 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 			System.out.println( ((TrapSpaceSolverASP)solver).getASP() );
 			return;
 		}
-		
-		TrapSpaceList solutions = doGetResult();
+
+		TrapSpaceList solutions = null;
+		try {
+			solutions = performTask();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
 		if (diag) {
 			int n = solutions.size();
 			int k = (int)Math.log10(n) + 1;
@@ -193,11 +200,11 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 		        	}
 		        	System.out.format("%"+k+"d:  %s   | %s\n", i, s, incl);
 		        }
-		        
+
 		        System.out.println();
 		        System.out.println();
 			}
-			
+
 	        boolean[][] diagram = solutions.inclusion();
 	        for (int i=0 ; i<n ; i++) {
 	        	TrapSpace s = solutions.get(i);
@@ -214,7 +221,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 	        }
 	        return;
 		}
-		
+
 		for (NodeInfo ni: solutions.nodes) {
 			System.out.print(ni+" ");
 		}
@@ -225,12 +232,12 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 	}
 
 	@Override
-	protected TrapSpaceList doGetResult() {
+	protected TrapSpaceList performTask() throws Exception {
 		loadSettings();
 		loadModel();
         TrapSpaceList solutions = new TrapSpaceList(this, workModel);
         solver.solve(solutions);
-        
+
         return solutions;
 	}
 

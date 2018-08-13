@@ -129,7 +129,7 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
     }
 
     @Override
-    protected DeterministicSimulation doGetResult() throws Exception {
+    protected DeterministicSimulation performTask() throws Exception {
         return getSimulation();
     }
 

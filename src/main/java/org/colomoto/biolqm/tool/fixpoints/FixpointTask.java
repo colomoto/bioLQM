@@ -41,7 +41,7 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
     }
 
     @Override
-    protected FixpointList doGetResult() throws Exception {
+    protected FixpointList performTask() throws Exception {
         FixpointList result = null;
         switch (method) {
             case ASP:
