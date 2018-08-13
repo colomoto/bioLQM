@@ -1,12 +1,10 @@
 package org.colomoto.biolqm;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.io.StreamProviderFileImpl;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.service.LQMServiceManager;
+
+import java.io.File;
 
 public class ReferenceModels {
 
@@ -29,7 +27,7 @@ public class ReferenceModels {
 	}
 	
 	public static LogicalModel getModel(String name) throws Exception {
-		return format.load(new StreamProviderFileImpl( new File(dir, name)));
+		return format.load(new File(dir, name));
 	}
 
 	/**

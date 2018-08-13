@@ -1,9 +1,6 @@
 package org.colomoto.biolqm;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.colomoto.biolqm.io.*;
+import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.modifier.ModelModifierService;
 import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
@@ -12,6 +9,7 @@ import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.tool.ModelToolService;
 
 import javax.script.ScriptEngine;
+import java.util.Arrays;
 
 /**
  * Entry point to launch the bioLQM toolbox.
@@ -311,12 +309,7 @@ public class LQMLauncher {
         }
 
         try {
-			StreamProvider streams = new StreamProviderFileImpl(filename);
-            LogicalModel model = inputFormat.load(streams);
-			// TODO: common code for side data: layout, annotations...
-			streams.close();
-
-            return model;
+            return inputFormat.load(filename);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -353,10 +346,7 @@ public class LQMLauncher {
 				}
 			}
 
-			StreamProvider streams = new StreamProviderFileImpl( filename);
-            outputFormat.export(model, streams);
-			// TODO: common code for side data: layout, annotations...
-            streams.close();
+            outputFormat.export(model, filename);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

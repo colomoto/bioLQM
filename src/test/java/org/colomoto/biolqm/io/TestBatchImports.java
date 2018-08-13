@@ -47,7 +47,7 @@ public class TestBatchImports {
 				}
 				LogicalModel model;
 				try {
-					model = format.load(new StreamProviderFileImpl(f));
+					model = format.load(f);
 					if (refModel == null) {
 						refModel = model;
 					} else {

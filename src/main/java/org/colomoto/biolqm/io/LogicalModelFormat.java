@@ -75,6 +75,20 @@ public interface LogicalModelFormat extends Service {
     }
 
     /**
+     * Export a logical model to this format.
+     *
+     * @param model the model to export
+     * @param filename the destination file. Some formats may generate multiple output files based on it's path
+     * @throws UnsupportedOperationException if this format does not support export
+     * @throws Exception if writing failed
+     */
+    default void export(LogicalModel model, String filename) throws Exception {
+        ModelExporter exporter = getExporter(model);
+        exporter.setDestination(filename);
+        exporter.call();
+    }
+
+    /**
      * Load a file in this format and build a logical model for it.
      *
      * @param streams an object providing input streams on demand, allowing to load from one or multiple files
@@ -99,6 +113,20 @@ public interface LogicalModelFormat extends Service {
     default LogicalModel load(File source) throws Exception {
         ModelLoader loader = getLoader();
         loader.setSource(source);
+        return loader.call();
+    }
+
+    /**
+     * Load a file in this format and build a logical model for it.
+     *
+     * @param filename the source file name. Some formats may read multiple files
+     * @return a new LogicalModel containing the imported data.
+     * @throws UnsupportedOperationException if this format does not support loading
+     * @throws Exception if loading failed
+     */
+    default LogicalModel load(String filename) throws Exception {
+        ModelLoader loader = getLoader();
+        loader.setSource(filename);
         return loader.call();
     }
 

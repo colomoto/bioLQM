@@ -30,7 +30,7 @@ public interface ModelLoader extends ModelTask {
      * @param f the source file
      */
     default void setSource(File f) {
-        setSource( new StreamProviderFileImpl(f));
+        setSource( StreamProvider.create(f));
     }
 
     /**
@@ -40,6 +40,6 @@ public interface ModelLoader extends ModelTask {
      * @param filename the filename of the source
      */
     default void setSource(String filename) {
-        setSource( new StreamProviderFileImpl(filename));
+        setSource( StreamProvider.create(filename));
     }
 }

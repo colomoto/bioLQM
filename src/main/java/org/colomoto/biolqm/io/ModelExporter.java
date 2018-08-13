@@ -30,7 +30,7 @@ public interface ModelExporter extends Task<Boolean> {
      * @param f the source file
      */
     default void setDestination(File f) {
-        setDestination( new StreamProviderFileImpl(f));
+        setDestination( StreamProvider.create(f));
     }
 
     /**
@@ -40,7 +40,7 @@ public interface ModelExporter extends Task<Boolean> {
      * @param filename the filename of the source
      */
     default void setDestination(String filename) {
-        setDestination( new StreamProviderFileImpl(filename));
+        setDestination( StreamProvider.create(filename));
     }
 
 }

@@ -3,7 +3,10 @@ package org.colomoto.biolqm.io;
 import java.io.*;
 
 /**
- * Provide input streams from the file system
+ * Provide input streams from the file system.
+ *
+ * This implementation class should not be used directly, use the
+ * static create methods in the StreamProvider interface instead.
  *
  * @author Aurelien Naldi
  */
@@ -12,11 +15,11 @@ public class StreamProviderFileImpl implements StreamProvider {
     private final File parent;
     private final String filename;
 
-    public StreamProviderFileImpl(String filename) {
+    StreamProviderFileImpl(String filename) {
         this(new File(filename));
     }
 
-    public StreamProviderFileImpl(File file) {
+    StreamProviderFileImpl(File file) {
         this.parent = file.getParentFile();
         this.filename = file.getName();
     }

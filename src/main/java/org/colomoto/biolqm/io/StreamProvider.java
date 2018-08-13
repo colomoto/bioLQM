@@ -9,6 +9,14 @@ import java.io.*;
  */
 public interface StreamProvider {
 
+    static StreamProvider create(File f) {
+        return new StreamProviderFileImpl(f);
+    }
+
+    static StreamProvider create(String path) {
+        return new StreamProviderFileImpl(path);
+    }
+
     /**
      * Get a single stream. When saving to a file it will have the selected filename.
      *

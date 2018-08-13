@@ -1,19 +1,20 @@
 package org.colomoto.biolqm.io;
 
+import org.colomoto.TestHelper;
+import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.LogicalModelComparator;
+import org.colomoto.biolqm.ReferenceModels;
+import org.colomoto.biolqm.service.LQMServiceManager;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colomoto.TestHelper;
-import org.colomoto.biolqm.service.LQMServiceManager;
-import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.LogicalModelComparator;
-import org.colomoto.biolqm.ReferenceModels;
-
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Brute force tests for all formats supporting both import and export.
@@ -78,8 +79,8 @@ public class TestBatchRoundtrip {
 	private void roundtrip(LogicalModelFormat format, String name, LogicalModel model) throws FileNotFoundException, Exception {
 		String ioName = name+"."+format.getID();
 		File f = TestHelper.getTestOutput("io_roundtrips", ioName);
-		format.export(model, new StreamProviderFileImpl(f));
-		LogicalModel importedModel = format.load(new StreamProviderFileImpl(f));
+		format.export(model, f);
+		LogicalModel importedModel = format.load(f);
 		assertTrue( LogicalModelComparator.compare(model, importedModel) );
 	}
 }

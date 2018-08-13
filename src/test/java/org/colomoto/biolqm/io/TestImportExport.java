@@ -1,32 +1,30 @@
 package org.colomoto.biolqm.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
-
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.ReferenceModels;
-import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.ginml.LogicalModel2GINML;
 import org.colomoto.biolqm.io.functions.BooleanFunctionFormat;
+import org.colomoto.biolqm.io.ginml.LogicalModel2GINML;
+import org.colomoto.biolqm.io.pint.PintExport;
 import org.colomoto.biolqm.io.sbml.SBMLqualExport;
 import org.colomoto.biolqm.io.sbml.SBMLqualImport;
-import org.colomoto.biolqm.io.pint.PintExport;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestImportExport {
 
@@ -125,7 +123,7 @@ public class TestImportExport {
 	public void testRawFunctionExport() throws Exception {
 		File f = TestHelper.getTestOutput("exportFunctions.txt");
 		LogicalModelFormat format = LQMServiceManager.getFormat(BooleanFunctionFormat.ID);
-		format.export(getSimpleModel(), new StreamProviderFileImpl(f));
+		format.export(getSimpleModel(), f);
 	}
 
 	@Test
