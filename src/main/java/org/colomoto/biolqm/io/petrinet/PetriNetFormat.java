@@ -2,23 +2,14 @@ package org.colomoto.biolqm.io.petrinet;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
-import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.StreamProvider;
-import org.kohsuke.MetaInfServices;
 
 /**
- * PNML is an xml-based format for Petri net models.
- *
+ * Base format for the PN formats
  */
-@MetaInfServices(LogicalModelFormat.class)
-public class PNMLFormat extends AbstractFormat {
+abstract public class PetriNetFormat extends AbstractFormat {
 
-    public PNMLFormat() { super("pnml", "PNML format"); }
+    public PetriNetFormat(String id, String name) { super(id, name); }
 
-	@Override
-	public PNEncoderPNML getExporter(LogicalModel model, StreamProvider streams) {
-		return new PNEncoderPNML(model, streams);
-	}
-
-
+    @Override
+	abstract public AbstractPNEncoder getExporter(LogicalModel model);
 }

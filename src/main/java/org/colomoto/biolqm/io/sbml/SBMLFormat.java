@@ -24,13 +24,13 @@ public class SBMLFormat extends AbstractFormat {
 
 
 	@Override
-	public SBMLqualImport getLoader(StreamProvider streams) {
-		return new SBMLqualImport(streams);
+	public SBMLqualImport getLoader() {
+		return new SBMLqualImport();
 	}
 
 	@Override
-	public SBMLqualExport getExporter(LogicalModel model, StreamProvider streams) {
-		return new SBMLqualExport(model, streams);
+	public SBMLqualExport getExporter(LogicalModel model) {
+		return new SBMLqualExport(model);
 	}
 
 }

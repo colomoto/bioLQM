@@ -2,7 +2,6 @@ package org.colomoto.biolqm.io.booleannet;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -18,8 +17,8 @@ import java.io.Writer;
 public class BooleanNetExport extends BaseExporter {
 
 
-	public BooleanNetExport(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public BooleanNetExport(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

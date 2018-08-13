@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class CNetExport extends BaseExporter {
 
-    public CNetExport(LogicalModel model, StreamProvider streams) {
-        super(model, streams);
+    public CNetExport(LogicalModel model) {
+        super(model);
     }
 
     public void export() throws IOException {

@@ -19,8 +19,8 @@ import java.io.Writer;
  */
 public class MNetExport extends BaseExporter {
 
-	public MNetExport(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public MNetExport(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

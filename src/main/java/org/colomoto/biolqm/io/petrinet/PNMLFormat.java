@@ -1,9 +1,7 @@
 package org.colomoto.biolqm.io.petrinet;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.StreamProvider;
 import org.kohsuke.MetaInfServices;
 
 /**
@@ -11,13 +9,13 @@ import org.kohsuke.MetaInfServices;
  *
  */
 @MetaInfServices(LogicalModelFormat.class)
-public class PNMLFormat extends AbstractFormat {
+public class PNMLFormat extends PetriNetFormat {
 
     public PNMLFormat() { super("pnml", "PNML format"); }
 
 	@Override
-	public PNEncoderPNML getExporter(LogicalModel model, StreamProvider streams) {
-		return new PNEncoderPNML(model, streams);
+	public PNEncoderPNML getExporter(LogicalModel model) {
+		return new PNEncoderPNML(model);
 	}
 
 

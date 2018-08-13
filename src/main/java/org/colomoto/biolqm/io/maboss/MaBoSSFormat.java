@@ -13,8 +13,8 @@ public class MaBoSSFormat extends AbstractFormat {
 	public MaBoSSFormat() { super("bnd", "MaBoSS format", MultivaluedSupport.BOOLEANIZED); }
 
 	@Override
-	public MaBoSSEncoder getExporter(LogicalModel model, StreamProvider streams) {
-		return new MaBoSSEncoder(model, streams);
+	public MaBoSSEncoder getExporter(LogicalModel model) {
+		return new MaBoSSEncoder(model);
 	}
 
 }

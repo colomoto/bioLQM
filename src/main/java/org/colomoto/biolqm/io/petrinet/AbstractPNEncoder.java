@@ -1,16 +1,15 @@
 package org.colomoto.biolqm.io.petrinet;
 
+import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDVariable;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Vector;
-
-import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.io.StreamProvider;
-import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
 
 
 
@@ -52,8 +51,8 @@ public abstract class AbstractPNEncoder extends BaseExporter {
     private byte[] initialstate = null;
 
 
-    public AbstractPNEncoder( LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+    public AbstractPNEncoder( LogicalModel model) {
+		super(model);
 		this.nodeOrder = model.getComponents();
 		this.ddmanager = model.getMDDManager();
 		this.functions = model.getLogicalFunctions();

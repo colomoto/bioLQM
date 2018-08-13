@@ -27,10 +27,6 @@ public class TruthTableImport extends BaseLoader {
 
 	private final String SEPARATOR = "\\s+";
 
-	public TruthTableImport(StreamProvider streams) {
-		super(streams);
-	}
-
 	/**
 	 * From a BufferedReader it gets the next valid line, ignoring empty lines
 	 * and comments starting with the character '#'.

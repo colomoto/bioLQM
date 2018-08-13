@@ -30,10 +30,6 @@ import java.util.Map;
  */
 public class BooleanNetImport extends BaseLoader {
 
-    public BooleanNetImport(StreamProvider streams) {
-        super(streams);
-    }
-
     @Override
     public LogicalModel performTask() throws IOException {
 

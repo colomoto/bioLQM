@@ -21,8 +21,8 @@ import org.colomoto.biolqm.io.StreamProvider;
  */
 public class PNEncoderAPNN extends AbstractPNEncoder {
 
-	public PNEncoderAPNN(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public PNEncoderAPNN(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

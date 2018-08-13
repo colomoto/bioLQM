@@ -1,13 +1,10 @@
 package org.colomoto.biolqm.io.gna;
 
-import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
-import org.colomoto.biolqm.io.StreamProvider;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.kohsuke.MetaInfServices;
-
-import java.io.IOException;
 
 /**
  * Format description for GNA (non-xml) files.
@@ -23,8 +20,8 @@ public class GNAFormat extends AbstractFormat {
 	}
 	
 	@Override
-	public GNAExport getExporter(LogicalModel model, StreamProvider streams) {
-		return new GNAExport(model, streams);
+	public GNAExport getExporter(LogicalModel model) {
+		return new GNAExport(model);
 	}
 
 }

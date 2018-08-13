@@ -32,10 +32,6 @@ import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
  */
 public class BoolSimImport extends BaseLoader {
 
-	public BoolSimImport(StreamProvider streams) {
-		super(streams);
-	}
-
 	@Override
 	public LogicalModel performTask() throws IOException {
 

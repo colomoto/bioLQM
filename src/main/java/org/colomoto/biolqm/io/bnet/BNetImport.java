@@ -33,11 +33,6 @@ import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
  */
 public class BNetImport extends BaseLoader {
 
-
-	public BNetImport(StreamProvider streams) {
-		super(streams);
-	}
-
 	@Override
 	protected LogicalModel performTask() throws Exception {
 

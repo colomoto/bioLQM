@@ -18,13 +18,13 @@ public class BNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public BNetImport getLoader(StreamProvider streams) {
-		return new BNetImport(streams);
+	public BNetImport getLoader() {
+		return new BNetImport();
 	}
 
 	@Override
-	public BNetExport getExporter(LogicalModel model, StreamProvider streams) {
-		return new BNetExport(model, streams);
+	public BNetExport getExporter(LogicalModel model) {
+		return new BNetExport(model);
 	}
 
 }

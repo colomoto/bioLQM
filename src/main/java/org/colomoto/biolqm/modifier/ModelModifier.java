@@ -12,13 +12,4 @@ import org.colomoto.biolqm.service.ModelTask;
  */
 public interface ModelModifier extends ModelTask {
 
-//    /**
-//     * Apply the modifier and retrieve the new model
-//     *
-//     * @return a (new) LogicalModel where the modifications have been applied
-//     */
-//    default LogicalModel getModifiedModel() throws Exception {
-//        return call();
-//    }
-
 }

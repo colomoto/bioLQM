@@ -52,8 +52,8 @@ public class PNEncoderINA extends AbstractPNEncoder {
 	// FIXME: INA does not like PN with "useless" places. Such places should be removed (with a warning)
 	// to prevent INA from believing the PN is not bounded! (maybe this should be an option ?)
 
-	public PNEncoderINA(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public PNEncoderINA(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

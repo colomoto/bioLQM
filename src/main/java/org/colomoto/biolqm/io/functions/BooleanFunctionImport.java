@@ -31,10 +31,6 @@ import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
  */
 public class BooleanFunctionImport extends BaseLoader {
 
-	public BooleanFunctionImport(StreamProvider streams) {
-		super(streams);
-	}
-
 	@Override
 	public LogicalModel performTask() throws IOException {
 

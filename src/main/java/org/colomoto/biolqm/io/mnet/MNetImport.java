@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.biolqm.io.antlr.*;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -22,7 +21,6 @@ import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +32,6 @@ import java.util.Map;
  * @author Aurelien Naldi
  */
 public class MNetImport extends BaseLoader {
-
-
-	public MNetImport(StreamProvider streams) {
-		super(streams);
-	}
 
 	public LogicalModel performTask() throws IOException {
 

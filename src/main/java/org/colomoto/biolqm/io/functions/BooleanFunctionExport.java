@@ -1,16 +1,13 @@
 package org.colomoto.biolqm.io.functions;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
+
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Export logical model into a raw list of functions.
@@ -20,8 +17,8 @@ import org.colomoto.mddlib.PathSearcher;
 public class BooleanFunctionExport extends BaseExporter {
 
 
-	public BooleanFunctionExport(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public BooleanFunctionExport(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

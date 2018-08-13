@@ -1,11 +1,11 @@
 package org.colomoto.biolqm.io.ginml;
 
-import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
+import org.colomoto.biolqm.io.BaseExporter;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.StreamProvider;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.kohsuke.MetaInfServices;
 
 import java.io.IOException;
@@ -24,8 +24,8 @@ public class GINMLFormat extends AbstractFormat {
 	}
 	
 	@Override
-	public GINMLExporter getExporter(LogicalModel model, StreamProvider streams) {
-		return new GINMLExporter(model, streams);
+	public GINMLExporter getExporter(LogicalModel model) {
+		return new GINMLExporter(model);
 	}
 
 }
@@ -33,8 +33,8 @@ public class GINMLFormat extends AbstractFormat {
 
 class GINMLExporter extends BaseExporter {
 
-	public GINMLExporter(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public GINMLExporter(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

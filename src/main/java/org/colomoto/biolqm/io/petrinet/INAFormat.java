@@ -11,12 +11,12 @@ import org.kohsuke.MetaInfServices;
  *
  */
 @MetaInfServices(LogicalModelFormat.class)
-public class INAFormat extends AbstractFormat {
+public class INAFormat extends PetriNetFormat {
 
     public INAFormat() { super("ina", "INA Petri net format"); }
 
 	@Override
-	public PNEncoderINA getExporter(LogicalModel model, StreamProvider streams) {
-		return new PNEncoderINA(model, streams);
+	public PNEncoderINA getExporter(LogicalModel model) {
+		return new PNEncoderINA(model);
 	}
 }

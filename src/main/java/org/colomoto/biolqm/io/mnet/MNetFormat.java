@@ -19,12 +19,12 @@ public class MNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public MNetImport getLoader(StreamProvider streams) {
-		return new MNetImport(streams);
+	public MNetImport getLoader() {
+		return new MNetImport();
 	}
 
 	@Override
-	public MNetExport getExporter(LogicalModel model, StreamProvider streams) {
-		return new MNetExport(model, streams);
+	public MNetExport getExporter(LogicalModel model) {
+		return new MNetExport(model);
 	}
 }

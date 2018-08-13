@@ -4,8 +4,6 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.biolqm.io.StreamProvider;
-import org.colomoto.biolqm.io.StreamProviderFileImpl;
 import org.colomoto.mddlib.*;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.sbml.jsbml.ASTNode;
@@ -14,7 +12,6 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ext.qual.*;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,14 +32,6 @@ public class SBMLqualImport extends BaseLoader {
 
     private Map<String, Input> m_curInputs = new HashMap<String, Input>();
 
-
-    public SBMLqualImport(StreamProvider streams) {
-        super(streams);
-    }
-
-    public SBMLqualImport(File f) {
-        super( new StreamProviderFileImpl(f));
-    }
 
     public SBMLQualBundle getQualBundle() {
         return qualBundle;

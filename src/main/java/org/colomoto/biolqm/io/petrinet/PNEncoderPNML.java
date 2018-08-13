@@ -1,13 +1,12 @@
 package org.colomoto.biolqm.io.petrinet;
 
+import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.common.xml.XMLWriter;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
-
-import org.colomoto.biolqm.io.StreamProvider;
-import org.colomoto.common.xml.XMLWriter;
-import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.NodeInfo;
 
 
 /**
@@ -22,8 +21,8 @@ import org.colomoto.biolqm.NodeInfo;
  */
 public class PNEncoderPNML extends AbstractPNEncoder {
 
-	public PNEncoderPNML(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public PNEncoderPNML(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

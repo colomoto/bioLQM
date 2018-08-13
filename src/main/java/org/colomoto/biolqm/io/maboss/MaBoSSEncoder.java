@@ -26,8 +26,8 @@ public class MaBoSSEncoder extends BaseExporter {
 	private final List<NodeInfo> nodes;
 	private final List<NodeInfo> extraNodes;
 	
-	public MaBoSSEncoder(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public MaBoSSEncoder(LogicalModel model) {
+		super(model);
 		this.ddmanager = model.getMDDManager();
 		this.nodes = model.getComponents();
 		this.extraNodes = model.getExtraComponents();

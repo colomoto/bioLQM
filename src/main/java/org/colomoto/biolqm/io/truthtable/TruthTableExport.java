@@ -1,15 +1,12 @@
 package org.colomoto.biolqm.io.truthtable;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.List;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.io.StreamProvider;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
 /**
  * Exports a logical model into the Truth Table format.
@@ -19,8 +16,8 @@ import org.colomoto.biolqm.io.StreamProvider;
 public class TruthTableExport extends BaseExporter {
 
 
-	public TruthTableExport(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public TruthTableExport(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

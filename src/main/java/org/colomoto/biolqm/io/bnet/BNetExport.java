@@ -8,7 +8,6 @@ import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
@@ -20,8 +19,8 @@ import java.util.Arrays;
 public class BNetExport extends BaseExporter {
 
 
-    public BNetExport(LogicalModel model, StreamProvider streams) {
-        super(model, streams);
+    public BNetExport(LogicalModel model) {
+        super(model);
     }
 
     public void export() throws IOException {

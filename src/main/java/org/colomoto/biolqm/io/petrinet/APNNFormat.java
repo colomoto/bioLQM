@@ -11,13 +11,13 @@ import org.kohsuke.MetaInfServices;
  *
  */
 @MetaInfServices(LogicalModelFormat.class)
-public class APNNFormat extends AbstractFormat {
+public class APNNFormat extends PetriNetFormat {
 
     public APNNFormat() { super("apnn", "APNN format"); }
 
 	@Override
-	public PNEncoderAPNN getExporter(LogicalModel model, StreamProvider streams) {
-		return new PNEncoderAPNN(model, streams);
+	public PNEncoderAPNN getExporter(LogicalModel model) {
+		return new PNEncoderAPNN(model);
 	}
 
 }

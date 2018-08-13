@@ -21,12 +21,12 @@ public class TruthTableFormat extends AbstractFormat {
 	}
 
 	@Override
-	public TruthTableImport getLoader(StreamProvider streams) {
-		return new TruthTableImport(streams);
+	public TruthTableImport getLoader() {
+		return new TruthTableImport();
 	}
 
 	@Override
-	public TruthTableExport getExporter(LogicalModel model, StreamProvider streams) {
-		return new TruthTableExport(model, streams);
+	public TruthTableExport getExporter(LogicalModel model) {
+		return new TruthTableExport(model);
 	}
 }

@@ -12,9 +12,10 @@ import org.colomoto.common.task.AbstractTask;
  */
 public abstract class BaseLoader extends AbstractTask<LogicalModel> implements ModelLoader {
 
-    protected final StreamProvider streams;
+    protected StreamProvider streams = null;
 
-    public BaseLoader(StreamProvider streams) {
+    @Override
+    public void setSource(StreamProvider streams) {
         this.streams = streams;
     }
 

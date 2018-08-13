@@ -4,7 +4,6 @@ import org.colomoto.biolqm.ConnectivityMatrix;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -42,12 +41,12 @@ public class SBMLqualExport extends BaseExporter {
 
     private String tr_prefix = "tr_";
 
-    public SBMLqualExport(LogicalModel model, StreamProvider streams) {
-        this(model, streams, false);
+    public SBMLqualExport(LogicalModel model) {
+        this(model, false);
     }
 
-    public SBMLqualExport(LogicalModel model, StreamProvider streams, boolean addLayout) {
-        super(model, streams);
+    public SBMLqualExport(LogicalModel model, boolean addLayout) {
+        super(model);
 
         this.ddmanager = model.getMDDManager();
         this.searcher = new PathSearcher(ddmanager, true);

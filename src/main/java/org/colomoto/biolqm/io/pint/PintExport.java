@@ -1,17 +1,14 @@
 package org.colomoto.biolqm.io.pint;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.List;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseExporter;
-import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
 /**
  * Export logical model into the Pint format.
@@ -20,8 +17,8 @@ import org.colomoto.mddlib.PathSearcher;
  */
 public class PintExport extends BaseExporter {
 
-	public PintExport(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public PintExport(LogicalModel model) {
+		super(model);
 	}
 
 	@Override

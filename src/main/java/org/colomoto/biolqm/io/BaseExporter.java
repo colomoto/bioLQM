@@ -14,12 +14,11 @@ import java.io.IOException;
  */
 public abstract class BaseExporter extends AbstractTask<Boolean> implements ModelExporter {
 
-    protected final StreamProvider streams;
+    protected StreamProvider streams = null;
     protected final LogicalModel model;
 
-    public BaseExporter(LogicalModel model, StreamProvider streams) {
+    public BaseExporter(LogicalModel model) {
         this.model = model;
-        this.streams = streams;
     }
 
     public Boolean performTask() {
@@ -29,6 +28,11 @@ public abstract class BaseExporter extends AbstractTask<Boolean> implements Mode
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
+    }
+
+    @Override
+    public void setDestination(StreamProvider streams) {
+        this.streams = streams;
     }
 
     protected abstract void export() throws IOException;

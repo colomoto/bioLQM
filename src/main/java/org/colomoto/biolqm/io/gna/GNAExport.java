@@ -21,8 +21,8 @@ import java.util.*;
  */
 public class GNAExport extends BaseExporter {
 
-	public GNAExport(LogicalModel model, StreamProvider streams) {
-		super(model, streams);
+	public GNAExport(LogicalModel model) {
+		super(model);
 	}
 
 	@Override
