@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.modifier;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.common.task.Task;
 
 /**
  * Generic interface for modifications of logical models.

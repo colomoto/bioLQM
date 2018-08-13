@@ -1,7 +1,9 @@
 package org.colomoto.biolqm.io.petrinet;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.kohsuke.MetaInfServices;
 
 /**
@@ -9,12 +11,12 @@ import org.kohsuke.MetaInfServices;
  *
  */
 @MetaInfServices(LogicalModelFormat.class)
-public class INAFormat extends PNFormat {
+public class INAFormat extends AbstractFormat {
 
     public INAFormat() { super("ina", "INA Petri net format"); }
 
 	@Override
-	AbstractPNEncoder getEncoder(LogicalModel model) {
-		return new PNEncoderINA(model);
+	public PNEncoderINA getExporter(LogicalModel model, StreamProvider streams) {
+		return new PNEncoderINA(model, streams);
 	}
 }

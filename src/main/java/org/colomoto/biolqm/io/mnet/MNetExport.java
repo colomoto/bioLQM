@@ -1,6 +1,8 @@
 package org.colomoto.biolqm.io.mnet;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
@@ -15,21 +17,19 @@ import java.io.Writer;
  * 
  * @author Aurelien Naldi
  */
-public class MNetExport {
+public class MNetExport extends BaseExporter {
 
-	/**
-	 * Export a logical model into logical functions.
-	 *
-	 * @param model the exported model
-	 * @param out the output stream
-	 * @throws IOException if writing fails
-	 */
-	public void export(LogicalModel model, OutputStream out) throws IOException {
+	public MNetExport(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
+	}
+
+	@Override
+	public void export() throws IOException {
 		MDDManager ddmanager = model.getMDDManager();
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		PathSearcher searcher = new PathSearcher(ddmanager, true);
 
-		Writer writer = new OutputStreamWriter(out);
+		Writer writer = streams.writer();
 
 		// Collect names and detect the longest one to generate a nice output
 		int width = 1;

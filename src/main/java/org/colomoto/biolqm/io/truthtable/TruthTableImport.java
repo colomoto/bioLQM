@@ -3,6 +3,7 @@ package org.colomoto.biolqm.io.truthtable;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseLoader;
 import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -22,9 +23,13 @@ import java.util.List;
  * 
  * @author Pedro T. Monteiro
  */
-public final class TruthTableImport {
+public class TruthTableImport extends BaseLoader {
 
 	private final String SEPARATOR = "\\s+";
+
+	public TruthTableImport(StreamProvider streams) {
+		super(streams);
+	}
 
 	/**
 	 * From a BufferedReader it gets the next valid line, ignoring empty lines
@@ -107,7 +112,8 @@ public final class TruthTableImport {
 		return nodeOrder;
 	}
 
-	public LogicalModel getModel(StreamProvider streams) throws IOException {
+	@Override
+	public LogicalModel doGetResult() throws IOException {
 		List<NodeInfo> nodeOrder = this.getNodes(streams);
 
 		// Create the MDDManager

@@ -1,5 +1,8 @@
 package org.colomoto;
 
+import org.colomoto.biolqm.io.StreamProvider;
+import org.colomoto.biolqm.io.StreamProviderFileImpl;
+
 import java.io.File;
 
 public class TestHelper {
@@ -43,7 +46,12 @@ public class TestHelper {
 	public static File getTestOutput(String name) {
 		return getTestOutput(null, name);
 	}
-	
+
+	public static StreamProvider getOutputProvider(String name) {
+		File fout = getTestOutput(null, name);
+		return new StreamProviderFileImpl( fout);
+	}
+
 	public static File getTestOutput(String group, String name) {
 		File dir = outputFolder;
 		

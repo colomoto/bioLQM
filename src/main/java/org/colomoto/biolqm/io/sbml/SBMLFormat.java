@@ -1,10 +1,10 @@
 package org.colomoto.biolqm.io.sbml;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.io.StreamProvider;
+import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.kohsuke.MetaInfServices;
 
 import javax.xml.stream.XMLStreamException;
@@ -24,22 +24,13 @@ public class SBMLFormat extends AbstractFormat {
 
 
 	@Override
-	public LogicalModel load(StreamProvider streams) throws IOException {
-		try {
-			return new SBMLqualImport(streams.input()).getModel();
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
+	public SBMLqualImport getLoader(StreamProvider streams) {
+		return new SBMLqualImport(streams);
 	}
 
-	
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		try {
-			new SBMLqualExport(model).export(streams.output());
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
+	public SBMLqualExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new SBMLqualExport(model, streams);
 	}
 
 }

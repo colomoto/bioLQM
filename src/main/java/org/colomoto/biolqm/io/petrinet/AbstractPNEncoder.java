@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseExporter;
 import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
@@ -40,16 +41,19 @@ import org.colomoto.mddlib.MDDVariable;
  *      Networks</li>
  *</ul>
  */
-public abstract class AbstractPNEncoder {
+public abstract class AbstractPNEncoder extends BaseExporter {
 
 	public final List<NodeInfo> nodeOrder;
 	public final MDDManager ddmanager;
 	public final int[] functions;
 	public final int len;
-	
-	
-	public AbstractPNEncoder( LogicalModel model) {
-		
+
+    private int[][] t_priorities = null;
+    private byte[] initialstate = null;
+
+
+    public AbstractPNEncoder( LogicalModel model, StreamProvider streams) {
+		super(model, streams);
 		this.nodeOrder = model.getComponents();
 		this.ddmanager = model.getMDDManager();
 		this.functions = model.getLogicalFunctions();
@@ -65,7 +69,6 @@ public abstract class AbstractPNEncoder {
      * extract transitions from a tree view of logical parameters.
      *
      * @param v_result
-     * @param node tree view of logical parameters on one node
      * @param nodeIndex index of the considered node (in the regulatory graph)
      * @param v_node all nodes
      * @param len number of nodes in the original graph
@@ -158,16 +161,13 @@ public abstract class AbstractPNEncoder {
 	 *   - read/set initial markup
 	 *   - build the set of transitions
 	 *
-	 * @param config
 	 * @param t_transition
-	 * @param t_tree
 	 * @return the initial markup
 	 */
-    private byte[][] prepareExport( PNConfig config, List[] t_transition) {
+    private byte[][] prepareExport( List[] t_transition) {
 		// get the selected initial state
-    	byte[] t_state = config.getInitialstate();
-    	if (t_state == null) {
-    		t_state = new byte[len];
+    	if (initialstate == null) {
+    		initialstate = new byte[len];
     	}
 
 		// keep that for later use of priority classes
@@ -183,8 +183,8 @@ public abstract class AbstractPNEncoder {
 //                t_markup[i][1] = (byte)(vertex.getMaxValue() - vertex.getBaseValue());
 //            } else {
                 // normal node, initial markup = 0
-                t_markup[i][0] = (byte)t_state[i];
-                t_markup[i][1] = (byte)(vertex.getMax()-t_state[i]);
+                t_markup[i][0] = (byte)initialstate[i];
+                t_markup[i][1] = (byte)(vertex.getMax()-initialstate[i]);
                 Vector v_transition = new Vector();
                 t_transition[i] = v_transition;
                 browse(v_transition, ddmanager, f, t_priorities, i, nodeOrder, len);
@@ -195,17 +195,26 @@ public abstract class AbstractPNEncoder {
     
     abstract protected void doExport( String netName, List<NodeInfo> nodes, List[] t_transition, byte[][] t_markup, OutputStreamWriter out) throws IOException;
     
-    public void export( PNConfig config, StreamProvider out) throws IOException {
+    public void export() throws IOException {
     	
     	// start with the common parts
         List[] t_transition = new List[len];
-        byte[][] t_markup = prepareExport(config, t_transition);
+        byte[][] t_markup = prepareExport( t_transition);
 
         // TODO: add support for output nodes?
-        OutputStreamWriter writer = new OutputStreamWriter(out.output());
+        OutputStreamWriter writer = streams.writer();
     	doExport( "defaultName", nodeOrder, t_transition, t_markup, writer);
     	writer.close();
     }
+
+    public void setInitialState(byte[] init) {
+        this.initialstate = init;
+    }
+
+    public byte[] getInitialstate() {
+        return initialstate;
+    }
+
 }
 
 class TransitionData {

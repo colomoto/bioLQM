@@ -8,23 +8,24 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
 
 /**
  * Exports a logical model into the Truth Table format.
  * 
  * @author Pedro T. Monteiro
  */
-public class TruthTableExport {
+public class TruthTableExport extends BaseExporter {
 
-	/**
-	 * Exports a logical model into a truth table.
-	 * 
-	 * @param model the model to export
-	 * @param out an opened output stream to save the result
-	 * @throws IOException if writing fails
-	 */
-	public static void export(LogicalModel model, OutputStream out) throws IOException {
-		Writer writer = new OutputStreamWriter(out);
+
+	public TruthTableExport(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
+	}
+
+	@Override
+	public void export() throws IOException {
+		Writer writer = streams.writer();
 
 		List<NodeInfo> nodeOrder = model.getComponents();
 		// BEGIN Header

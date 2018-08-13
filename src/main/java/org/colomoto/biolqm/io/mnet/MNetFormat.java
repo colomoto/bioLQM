@@ -19,14 +19,12 @@ public class MNetFormat extends AbstractFormat {
 	}
 
 	@Override
-	public LogicalModel load(StreamProvider streams) throws IOException {
-		Reader reader = new InputStreamReader( streams.input());
-		return MNetImport.getModel(reader);
+	public MNetImport getLoader(StreamProvider streams) {
+		return new MNetImport(streams);
 	}
 
 	@Override
-	public void export(LogicalModel model, StreamProvider streams) throws IOException {
-		MNetExport exporter = new MNetExport();
-		exporter.export(model, streams.output());
+	public MNetExport getExporter(LogicalModel model, StreamProvider streams) {
+		return new MNetExport(model, streams);
 	}
 }

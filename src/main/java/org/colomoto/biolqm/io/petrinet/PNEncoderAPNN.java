@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.StreamProvider;
 
 
 /**
@@ -20,8 +21,8 @@ import org.colomoto.biolqm.NodeInfo;
  */
 public class PNEncoderAPNN extends AbstractPNEncoder {
 
-	public PNEncoderAPNN(LogicalModel model) {
-		super(model);
+	public PNEncoderAPNN(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
 	}
 
 	@Override

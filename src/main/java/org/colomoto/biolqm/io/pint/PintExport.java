@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 
@@ -16,20 +18,18 @@ import org.colomoto.mddlib.PathSearcher;
  *
  * @author Loic Pauleve
  */
-public class PintExport {
+public class PintExport extends BaseExporter {
 
-	/**
-	 * Export a logical model into automata network transitions
-	 *
-	 * @param model the model to export
-	 * @param out an opened output stream to save the result
-	 * @throws IOException if writing fails
-	 */
-	public static void export(LogicalModel model, OutputStream out) throws IOException {
+	public PintExport(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
+	}
+
+	@Override
+	public void export() throws IOException {
 
 		final List<NodeInfo> nodes = model.getComponents();
 
-		Writer writer = new OutputStreamWriter(out);
+		Writer writer = streams.writer();
 
 		writer.write("(* This model has been automatically generated using colomoto/logicalmodels\n");
 		writer.write(" * You may want to optimize this model for pint using the following command:\n");

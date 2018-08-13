@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.StreamProvider;
 
 
 /**
@@ -51,8 +52,8 @@ public class PNEncoderINA extends AbstractPNEncoder {
 	// FIXME: INA does not like PN with "useless" places. Such places should be removed (with a warning)
 	// to prevent INA from believing the PN is not bounded! (maybe this should be an option ?)
 
-	public PNEncoderINA(LogicalModel model) {
-		super(model);
+	public PNEncoderINA(LogicalModel model, StreamProvider streams) {
+		super(model, streams);
 	}
 
 	@Override

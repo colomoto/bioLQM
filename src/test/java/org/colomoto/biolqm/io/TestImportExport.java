@@ -51,24 +51,19 @@ public class TestImportExport {
 		try {
 			File f = TestHelper.getTestOutput(filename);
 			SBMLqualImport simport = new SBMLqualImport(f);
-			LogicalModel iModel = simport.getModel();
+			LogicalModel iModel = simport.call();
 			exportGINML(iModel, filename+".ginml");
 
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (XMLStreamException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
 
 	public void exportSBML(LogicalModel model, String filename) {
-		SBMLqualExport export = new SBMLqualExport(model);
+		SBMLqualExport export = new SBMLqualExport(model, TestHelper.getOutputProvider(filename));
 		try {
-			FileOutputStream out = new FileOutputStream(TestHelper.getTestOutput(filename));
-			export.export(out);
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (XMLStreamException e) {
+			export.export();
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 
@@ -137,10 +132,9 @@ public class TestImportExport {
 		exportPint(model, "testExport.an");
 	}
 	public void exportPint(LogicalModel model, String filename) {
-		PintExport exporter = new PintExport();
+		PintExport exporter = new PintExport(model, TestHelper.getOutputProvider(filename));
 		try {
-			FileOutputStream out = new FileOutputStream(TestHelper.getTestOutput(filename));
-			exporter.export(model, out);
+			exporter.export();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

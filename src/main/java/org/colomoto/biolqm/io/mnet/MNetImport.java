@@ -10,13 +10,16 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.io.BaseLoader;
+import org.colomoto.biolqm.io.StreamProvider;
 import org.colomoto.biolqm.io.antlr.*;
-import org.colomoto.mddlib.*;
+import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDManagerFactory;
+import org.colomoto.mddlib.MDDVariable;
+import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.logicalfunction.FunctionNode;
 import org.colomoto.mddlib.logicalfunction.OperandFactory;
 import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
-import org.colomoto.mddlib.logicalfunction.operators.OrOperatorFactory;
-import org.colomoto.mddlib.operators.OverwriteOperator;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,18 +33,16 @@ import java.util.Map;
  * 
  * @author Aurelien Naldi
  */
-public class MNetImport {
+public class MNetImport extends BaseLoader {
 
-	/**
-	 * Entry point to parse a full model.
-	 *
-	 * @param reader source from which to parse
-	 * @return the reconstructed model
-	 * @throws IOException if reading fails
-	 */
-	public static LogicalModel getModel( Reader reader) throws IOException {
 
-		CharStream input = new ANTLRInputStream(reader);
+	public MNetImport(StreamProvider streams) {
+		super(streams);
+	}
+
+	public LogicalModel doGetResult() throws IOException {
+
+		CharStream input = new ANTLRInputStream(streams.reader());
 		ErrorListener errors = new ErrorListener();
 		MNetParser parser = getParser(input, errors);
 		MNetParser.ModelContext mctx = parser.model();
@@ -126,7 +127,7 @@ public class MNetImport {
 		return ExpressionStack.constructMVModel(operandFactory, variables, var2assign);
 	}
 
-	private static MNetParser getParser(CharStream input, ErrorListener errors) {
+	private MNetParser getParser(CharStream input, ErrorListener errors) {
 		MNetLexer lexer = new MNetLexer(input);
 		TokenStream tokens = new CommonTokenStream(lexer);
 		MNetParser parser = new MNetParser(tokens);

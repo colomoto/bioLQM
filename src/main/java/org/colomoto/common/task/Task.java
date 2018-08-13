@@ -40,4 +40,15 @@ public interface Task<T> extends Callable<T> {
      * @param listener will be notified when the task is done
      */
     void background(TaskListener listener);
+
+
+    default void setParameters(String[] parameters) {
+
+    }
+
+    default void setParameters(String parameters) {
+        String[] t_parameters = parameters.split(" ");
+        setParameters(t_parameters);
+    }
+
 }
