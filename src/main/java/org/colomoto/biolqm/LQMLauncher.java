@@ -90,7 +90,7 @@ public class LQMLauncher {
 				}
 				ModelModifierService modifier = LQMServiceManager.getModifier(s_modifier);
 				try {
-					model = modifier.getModifiedModel(model, s_parameters);
+					model = modifier.modify(model, s_parameters);
 				} catch (Exception e) {
 					System.err.println("Error in model modification step");
 					e.printStackTrace();
@@ -108,7 +108,7 @@ public class LQMLauncher {
 				String s_parameters = args[argIdx++];
 				ModelModifierService modifier = LQMServiceManager.get(PerturbationService.class);
 				try {
-					model = modifier.getModifiedModel(model, s_parameters);
+					model = modifier.modify(model, s_parameters);
 				} catch (Exception e) {
 					System.err.println("Error in model perturbation step");
 					e.printStackTrace();
@@ -348,7 +348,7 @@ public class LQMLauncher {
 		            throw new RuntimeException(outputFormat.getID() +" does not support multivalued models");
 				case BOOLEANIZED:
 		            System.out.println(outputFormat.getID() +": export of a booleanized model");
-		            model = LQMServiceManager.get(BooleanizeService.class).getModifiedModel(model);
+		            model = LQMServiceManager.get(BooleanizeService.class).modify(model);
 					break;
 				}
 			}

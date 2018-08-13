@@ -89,7 +89,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 	public void loadSettings() throws Exception {
 		// Ensure that the model is booleanized
         if (!workModel.isBoolean()) {
-        	workModel = boolService.getModifiedModel(workModel);
+        	workModel = boolService.modify(workModel);
         }
 
         if (reduce) {

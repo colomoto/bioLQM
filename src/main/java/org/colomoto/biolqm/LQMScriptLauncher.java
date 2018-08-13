@@ -107,12 +107,12 @@ public class LQMScriptLauncher {
      * @return a modified model
      */
     public LogicalModel modify(LogicalModel model, String name) throws Exception {
-        return getModifier(name).getModifiedModel(model);
+        return getModifier(name).modify(model);
     }
     
     /**
      * Construct a modified model.
-     * @see ModelModifierService#getModifiedModel(LogicalModel,String)
+     * @see ModelModifierService#modify(LogicalModel,String)
      * 
      * @param model the original model
      * @param name the name of a modifier
@@ -120,7 +120,7 @@ public class LQMScriptLauncher {
      * @return a modified model
      */
     public LogicalModel modify(LogicalModel model, String name, String parameters) throws Exception {
-    	return getModifier(name).getModifiedModel(model, parameters);
+    	return getModifier(name).modify(model, parameters);
     }
 
     /**
