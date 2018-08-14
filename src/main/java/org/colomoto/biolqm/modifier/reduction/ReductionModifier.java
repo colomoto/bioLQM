@@ -2,7 +2,7 @@ package org.colomoto.biolqm.modifier.reduction;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.modifier.BaseModifier;
-import org.colomoto.biolqm.settings.state.StatePattern;
+import org.colomoto.biolqm.helper.state.StatePattern;
 
 public class ReductionModifier extends BaseModifier {
 

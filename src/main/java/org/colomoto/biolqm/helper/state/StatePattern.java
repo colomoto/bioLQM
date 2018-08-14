@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.settings.state;
+package org.colomoto.biolqm.helper.state;
 
 import org.colomoto.biolqm.NodeInfo;
 

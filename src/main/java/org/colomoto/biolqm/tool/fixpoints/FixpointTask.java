@@ -2,9 +2,8 @@ package org.colomoto.biolqm.tool.fixpoints;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.settings.state.StateList;
+import org.colomoto.biolqm.helper.state.StateList;
 import org.colomoto.biolqm.tool.AbstractToolTask;
-import org.colomoto.common.task.AbstractTask;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
 

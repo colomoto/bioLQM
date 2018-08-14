@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.settings.state.StateList;
+import org.colomoto.biolqm.helper.state.StateList;
 import org.colomoto.mddlib.MDDManager;
 
 public class FixpointList extends ArrayList<byte[]> implements StateList {

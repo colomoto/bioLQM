@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.settings.state;
+package org.colomoto.biolqm.helper.state;
 
 public class Range {
 

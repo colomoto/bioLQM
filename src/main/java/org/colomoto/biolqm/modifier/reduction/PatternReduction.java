@@ -3,8 +3,8 @@ package org.colomoto.biolqm.modifier.reduction;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.modifier.BaseModifier;
-import org.colomoto.biolqm.settings.state.Range;
-import org.colomoto.biolqm.settings.state.StatePattern;
+import org.colomoto.biolqm.helper.state.Range;
+import org.colomoto.biolqm.helper.state.StatePattern;
 import org.colomoto.mddlib.MDDManager;
 
 public class PatternReduction extends BaseModifier {
