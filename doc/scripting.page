@@ -4,6 +4,7 @@
     <info>
         <link type="guide" xref="index#core"/>
         <revision status="review" date="2017-03-24"/>
+        <title type="sort">Z scripting</title>
         <desc>Scripting</desc>
     </info>
 
@@ -21,11 +22,11 @@
 
     <p>
     In script mode, bioLQM creates an instance of
-    <link href="../apidocs/index.html?org/colomoto/biolqm/LQMScriptLauncher.html">LQMScriptLauncher</link>, which serves as
+    <link href="../apidocs/index.html?org/colomoto/biolqm/service/LQMServiceManager.html">LQMServiceManager</link>, which serves as
     single entry point for the bioLQM API. This object is available as the <code>lqm</code> variable.
     bioLQM features which are not available through this object can be used by importing the right java classes,
     but their API is more likely to change.
-    The script launcher provides the following methods wrapping the core features:
+    The service mnager provides the following methods wrapping the core features:
     </p>
 
     <list>

@@ -5,6 +5,7 @@
         <link type="guide" xref="index#core"/>
         <revision status="review" date="2017-03-27"/>
         <desc>Using bioLQM from Java code</desc>
+        <title type="sort">Z API</title>
     </info>
 
     <title>Java API</title>

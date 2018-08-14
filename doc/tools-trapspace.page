@@ -6,12 +6,12 @@
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
         <revision status="review" date="2017-05-02"/>
-        <desc>Finding trap-spaces of a logical model</desc>
+        <desc>Approximation of complex attractors</desc>
         <gloss:term id="Zanudo2013" />
         <gloss:term id="Klarner2014" />
     </info>
 
-    <title>Identification of trap-spaces</title>
+    <title>Trap-spaces (stable motifs)</title>
 
     <section id="motivation">
         <title>Motivation</title>

@@ -6,7 +6,7 @@
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
       <revision status="stub" date="2018-01-10"/>
-        <desc>Perform a random walk in the dynamics</desc>
+        <desc>Simulation trace with randomly-selected successors</desc>
         <gloss:term id="Naldi2007" />
     </info>
 

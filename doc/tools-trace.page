@@ -6,11 +6,11 @@
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
       <revision status="stub" date="2018-01-10"/>
-        <desc>Compute deterministic trace</desc>
+        <desc>Simulation trace with a single successor at each step</desc>
         <gloss:term id="Naldi2007" />
     </info>
 
-    <title>Compute deterministic trace</title>
+    <title>Deterministic trace</title>
 
     <section id="motivation">
         <title>Motivation</title>

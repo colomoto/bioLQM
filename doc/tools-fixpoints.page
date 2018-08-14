@@ -6,11 +6,11 @@
         <link type="guide" xref="index#tools"/>
         <link type="guide" xref="tools#list"/>
         <revision status="stub" date="2012-03-08"/>
-        <desc>Finding fixed (stable) states of a logical model</desc>
+        <desc>Identification of all possible fixed points</desc>
         <gloss:term id="Naldi2007" />
     </info>
 
-    <title>Stable state search</title>
+    <title>Fixed points (stable states)</title>
 
     <section id="motivation">
         <title>Motivation</title>
