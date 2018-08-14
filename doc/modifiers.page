@@ -56,8 +56,8 @@
         </p>
 
 <code>
-model = lqm.loadModel("model.sbml")
-modified = lqm.modifyModel(model, "perturbation", "A%0")
+model = lqm.load("model.sbml")
+modified = lqm.modify(model, "perturbation", "A%0")
 </code>
 
     </section>
@@ -69,15 +69,15 @@ modified = lqm.modifyModel(model, "perturbation", "A%0")
         While retrieving a modifier by name is convenient in <link xref="cli">command line</link> and <link xref="scripting">scripting</link>
         modes, using the class is encouraged from java code as it enables compile-time checks and directly returns an object of
         the right type (without casting).
-        All modifier services have a <code>getModifiedModel(LogicalModel model, String parameters)</code> method, where the parameters
+        All modifier services have a <code>modify(LogicalModel model, String parameters)</code> method, where the parameters
         depend on the type of modifier and are the same as on the command line and scripting case. Services can provide additional
         methods. See the documentation of individual modifiers for details.
         </p>
 
 <code>
-LogicalModel model = LQMLauncher.loadModel("model.xml", "sbml");
+LogicalModel model = LQMLauncher.load("model.xml", "sbml");
 ModelBooleanizerService boolService = LQMServiceManager.getModifier(ModelBooleanizerService.class);
-LogicalModel modified = boolService.getModifiedModel(model);
+LogicalModel modified = boolService.modify(model);
 </code>
     </section>
 

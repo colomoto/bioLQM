@@ -46,6 +46,7 @@ public interface ModelModifierService extends Service {
      * @param model the model to be modified
      * @param parameters the setting String (can be empty for some modifiers)
      * @return a new modified model
+     * @throws Exception in case of error (following the Task interface)
      */
     default LogicalModel modify(LogicalModel model, String parameters) throws Exception {
         return getModifier(model, parameters).call();
@@ -56,6 +57,7 @@ public interface ModelModifierService extends Service {
      *
      * @param model the original model
      * @return the modified model
+     * @throws Exception in case of error (following the Task interface)
      */
     default LogicalModel modify(LogicalModel model) throws Exception {
         return getModifier(model).call();

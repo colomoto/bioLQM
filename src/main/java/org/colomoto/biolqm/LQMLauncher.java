@@ -2,13 +2,14 @@ package org.colomoto.biolqm;
 
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.modifier.ModelModifierService;
-import org.colomoto.biolqm.modifier.booleanize.BooleanizeService;
 import org.colomoto.biolqm.modifier.perturbation.PerturbationService;
 import org.colomoto.biolqm.service.ExtensionLoader;
 import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.tool.ModelToolService;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -57,7 +58,7 @@ public class LQMLauncher {
 		}
 		
 		String inputFilename = args[argIdx++];
-		LogicalModel model = load(inputFilename, inputFormat);
+		LogicalModel model = LQMServiceManager.load(inputFilename, inputFormat);
 		
 		while (true) {
 			if ("-m".equals(args[argIdx])) {
@@ -146,7 +147,7 @@ public class LQMLauncher {
 		}
 		
 		String outputTarget = args[argIdx++];
-		save(model, outputTarget, outputFormat);
+		LQMServiceManager.save(model, outputTarget, outputFormat);
 
 		if (argIdx < args.length) {
 			error((args.length-argIdx) + " remaining arguments "+args.length + "  "+ argIdx);
@@ -158,7 +159,7 @@ public class LQMLauncher {
         String scriptname = args[1];
         ScriptEngine engine = null;
         try {
-            engine = LQMScriptLauncher.loadEngine(scriptname);
+            engine = loadEngine(scriptname);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
@@ -169,7 +170,7 @@ public class LQMLauncher {
 
         try {
             // add the launcher variable and actually run the script
-			LQMScriptLauncher lqm = new LQMScriptLauncher(scriptargs);
+			LQMServiceManager lqm = new LQMServiceManager(scriptargs);
 			engine.put("lqm", lqm);
 
 			if (compatible_mode) {
@@ -292,67 +293,33 @@ public class LQMLauncher {
 	}
 
 	/**
-	 * Load a model from file.
-	 * 
-	 * @param filename the path to the loaded file
-	 * @param format the name of the import format
-	 * @return the loaded model
+	 * Detect and load script engines
+	 *
+	 * @param scriptname path to the script file
+	 * @return the associated engine
+	 * @throws Exception if no engine was found or loading failed
 	 */
-    public static LogicalModel load(String filename, String format) {
-        if (format == null) {
-            format = filename.substring(filename.lastIndexOf(".")+1);
-        }
-        LogicalModelFormat inputFormat = LQMLauncher.getFormat(format);
-        if (inputFormat == null) {
-            System.err.println("Format not found: " + format);
-            return null;
-        }
+	public static ScriptEngine loadEngine(String scriptname) throws Exception {
+		File f = new File(scriptname);
+		if (!f.exists()) {
+			throw new RuntimeException("Unable to find the script file");
+		}
 
-        try {
-            return inputFormat.load(filename);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+		int lastDot = scriptname.lastIndexOf('.');
+		if (lastDot < 0) {
+			throw new RuntimeException("No extension: unable to guess the scripting language");
+		}
+		String extension = scriptname.substring(lastDot+1);
 
-    /**
-     * Save a model to file
-     * 
-     * @param model the model to save
-     * @param filename the path of the output file
-     * @param format the name of the export format
-     * @return true if success
-     */
-    public static boolean save(LogicalModel model, String filename, String format) {
-        if (format == null) {
-            format = filename.substring(filename.lastIndexOf(".")+1);
-        }
-        LogicalModelFormat outputFormat = LQMLauncher.getFormat(format);
-        if (outputFormat == null) {
-            System.err.println("Format not found: "+format);
-            return false;
-        }
+		// create JavaScript engine
+		ScriptEngineManager manager = new ScriptEngineManager(ExtensionLoader.getClassLoader());
+		ScriptEngine engine = manager.getEngineByExtension(extension);
 
-        try {
-			if (!model.isBoolean()) {
-	        	switch (outputFormat.getMultivaluedSupport()) {
-				case BOOLEAN_STRICT:
-		            throw new RuntimeException(outputFormat.getID() +" does not support multivalued models");
-				case BOOLEANIZED:
-		            System.out.println(outputFormat.getID() +": export of a booleanized model");
-		            model = LQMServiceManager.get(BooleanizeService.class).modify(model);
-					break;
-				}
-			}
+		if (engine == null) {
+			throw new RuntimeException("No engine found for "+extension);
+		}
 
-            outputFormat.export(model, filename);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-
-    }
+		return engine;
+	}
 
 }

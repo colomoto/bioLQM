@@ -1,8 +1,8 @@
 package org.colomoto.biolqm.tool.fixpoints;
 
-import org.colomoto.biolqm.LQMScriptLauncher;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ReferenceModels;
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.junit.jupiter.api.Test;
 
 public class TestFixpoint {
@@ -10,8 +10,7 @@ public class TestFixpoint {
 
     @Test
     public void testBasicStable() throws Exception {
-        LQMScriptLauncher lqm = new LQMScriptLauncher(null);
-        FixpointService stool = (FixpointService) lqm.getTool("fixpoints");
+        FixpointService stool = LQMServiceManager.get(FixpointService.class);
 
         String[] refModels = ReferenceModels.getNames();
         for (String name: refModels) {

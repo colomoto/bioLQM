@@ -21,7 +21,7 @@
 
     <p>
     In script mode, bioLQM creates an instance of
-    <link href="../apidocs/index.html?org/colomoto/biolqm/service/LQMScriptLauncher.html">LQMScriptLauncher</link>, which serves as
+    <link href="../apidocs/index.html?org/colomoto/biolqm/LQMScriptLauncher.html">LQMScriptLauncher</link>, which serves as
     single entry point for the bioLQM API. This object is available as the <code>lqm</code> variable.
     bioLQM features which are not available through this object can be used by importing the right java classes,
     but their API is more likely to change.
@@ -31,9 +31,9 @@
     <list>
         <item><p>Retrieve a <link xref="formats">format</link> with it's specialized import/export methods, using the
               <code>getFormat</code> method. Models can also be imported or exported directly from the script launcher
-              using the <code>loadModel</code> and <code>saveModel</code> methods respectively.
+              using the <code>load</code> and <code>save</code> methods respectively.
             </p></item>
-        <item><p>Perform <link xref="modifiers">model modifications</link> with the <code>modifyModel</code> method.</p></item>
+        <item><p>Perform <link xref="modifiers">model modifications</link> with the <code>modify</code> method.</p></item>
         <item><p>Run an <link xref="tools">analysis tool</link> on a model through the <code>getTool</code> method.</p></item>
         <item><p>Command line arguments are available in the <code>lqm.args</code> array</p></item>
     </list>
@@ -47,12 +47,12 @@
 
 <code>
 filename = lqm.args[0]
-model = lqm.loadModel(filename)
+model = lqm.load(filename)
 nodes = model.getComponents()
 for (i in nodes) {
     node = nodes[i]
-    perturbed = lqm.modifyModel(model, 'perturbation', node+'%0')
-    lqm.saveModel(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
+    perturbed = lqm.modify(model, 'perturbation', node+'%0')
+    lqm.save(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
 }
 </code>
 
@@ -78,10 +78,10 @@ for (i in nodes) {
         <p>A python version of the previous example.</p>
 <code>
 filename = lqm.args[0]
-model = lqm.loadModel(filename)
+model = lqm.load(filename)
 for node in model.getComponents():
-    perturbed = lqm.modifyModel(model, 'perturbation', node+'%0')
-    lqm.saveModel(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
+    perturbed = lqm.modify(model, 'perturbation', node+'%0')
+    lqm.save(perturbed, filename+"_perturbed_"+node+".boolfunctions", "boolfunctions")
 </code>
 
     </section>

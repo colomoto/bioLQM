@@ -30,7 +30,7 @@ public interface LogicalModelFormat extends Service {
      * Get a new model loader from this format.
      *
      * @throws UnsupportedOperationException if this format does not support loading
-     * @return a new model loader, or null if loading is not supported;
+     * @return a new model loader
      */
     default ModelLoader getLoader() {
         throw new UnsupportedOperationException("Saving model is not implemented for format " + getID());
@@ -40,6 +40,7 @@ public interface LogicalModelFormat extends Service {
      * Get a new model exporter to this format.
      *
      * @param model the model to export
+     * @return a new model exporter
      * @throws UnsupportedOperationException if this format does not support export
      */
     default ModelExporter getExporter(LogicalModel model) {
