@@ -31,7 +31,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 	public boolean bdd = false;
 	public boolean showasp = false;
 
-	public boolean terminal = false;
+	public boolean terminal = true;
 	public boolean diag = false;
 
 	public String[] focusComponents = null;
