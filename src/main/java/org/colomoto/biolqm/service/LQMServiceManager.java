@@ -34,9 +34,9 @@ public class LQMServiceManager {
     private static Map<Class, Service> byClass = new HashMap<>();
 
     static {
-        load(formats, id2format);
-        load(tools, id2tool);
-        load(modifiers, id2modifier);
+        loadServices(formats, id2format);
+        loadServices(tools, id2tool);
+        loadServices(modifiers, id2modifier);
     }
 
     public final String[] args;
@@ -51,7 +51,7 @@ public class LQMServiceManager {
     }
 
 
-    private static <T extends Service> void load(List<T> services, Map<String, T> idmap) {
+    private static <T extends Service> void loadServices(List<T> services, Map<String, T> idmap) {
         for (T srv: services) {
             idmap.put( srv.getID(), srv);
             byClass.put(srv.getClass(), srv);
