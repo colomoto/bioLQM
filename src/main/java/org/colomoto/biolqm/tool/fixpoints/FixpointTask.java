@@ -20,6 +20,7 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
         super(model);
     }
 
+    @Override
     public void setParameters(String[] parameters) {
         if (parameters == null) {
             return;

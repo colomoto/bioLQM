@@ -17,8 +17,9 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
         super(model);
     }
 
-    public void parseParameters(String ... parameters) {
-        if (parameters == null || parameters.length < 1) {
+    @Override
+    public void setParameters(String[] parameters) {
+        if (parameters == null) {
             return;
         }
 

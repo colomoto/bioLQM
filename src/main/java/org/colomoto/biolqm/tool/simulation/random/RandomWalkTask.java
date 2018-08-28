@@ -17,7 +17,8 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
         super(model);
     }
 
-    public void parseParameters(String ... parameters) {
+    @Override
+    public void setParameters(String[] parameters) {
         if (parameters == null || parameters.length < 1) {
             return;
         }
