@@ -174,8 +174,13 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 	@Override
 	public void cli() {
 		if (showasp) {
+			try {
+				loadSettings();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 			loadModel();
-			System.out.println( ((TrapSpaceSolverASP)solver).getASP() );
+			System.out.println( solver.show() );
 			return;
 		}
 

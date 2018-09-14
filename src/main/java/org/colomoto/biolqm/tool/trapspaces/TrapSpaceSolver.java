@@ -11,5 +11,8 @@ public interface TrapSpaceSolver {
 	void solve(TrapSpaceList solutions);
 
 	void add_focus(int idx);
-	
+
+	default String show() {
+		throw new UnsupportedOperationException();
+	}
 }

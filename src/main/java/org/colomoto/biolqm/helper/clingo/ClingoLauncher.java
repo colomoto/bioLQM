@@ -10,21 +10,38 @@ import org.colomoto.biolqm.helper.HelperTool;
 public class ClingoLauncher {
 
 	public static final HelperTool CLINGO = new HelperTool("clingo");
-	ProcessBuilder pb = CLINGO.getProcessBuilder("-n", "0");
-	
+
 	private final String program;
 	private final ClingoResultHandler handler;
+
+	private int n = 0;
+	private boolean minsolutions = false;
 	
 	public static boolean isAvailable() {
 		return CLINGO.isAvailable();
 	}
-	
+
 	public ClingoLauncher(ClingoResultHandler handler, String program) {
 		this.program = program;
 		this.handler = handler;
 	}
 
+	public void setMinsolutions(boolean min) {
+		this.minsolutions = min;
+	}
+
+	public void setSolutionLimit(int n) {
+		this.n = n;
+	}
+
 	public void run() throws IOException {
+		ProcessBuilder pb;
+		if (minsolutions) {
+			pb = CLINGO.getProcessBuilder("-n", "" + n, "--enum-mode=domRec", "--heuristic=Domain", "--dom-mod=3,16");
+		} else {
+			pb = CLINGO.getProcessBuilder("-n", "" + n);
+		}
+
 		if (pb == null) {
 			System.out.println("% Clingo not found: print the code on stdout");
 			System.out.println(program);

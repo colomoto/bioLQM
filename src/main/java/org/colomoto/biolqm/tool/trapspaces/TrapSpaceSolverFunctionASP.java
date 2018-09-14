@@ -96,7 +96,7 @@ public class TrapSpaceSolverFunctionASP implements TrapSpaceSolver, ClingoResult
 
 	}
 	
-	public String getASP() {
+	public String show() {
 
 		boolean focusMode = false;
 		if (settings.focusComponents != null && settings.focusComponents.length > 0) {
@@ -110,9 +110,10 @@ public class TrapSpaceSolverFunctionASP implements TrapSpaceSolver, ClingoResult
 	
 	@Override
 	public void solve(TrapSpaceList solutions) {
-		String asp = getASP();
+		String asp = show();
 		this.solutions = solutions;
 		ClingoLauncher launcher = new ClingoLauncher(this, asp);
+		launcher.setMinsolutions(settings.terminal);
 		try {
 			launcher.run();
 		} catch (IOException e) {
