@@ -147,6 +147,7 @@
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
               <mainClass>org.colomoto.biolqm.LQMLauncher</mainClass>
+              <useUniqueVersions>false</useUniqueVersions>
             </manifest>
           </archive>
         </configuration>

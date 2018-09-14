@@ -11,7 +11,7 @@ import org.kohsuke.MetaInfServices;
 public class FixpointService extends AbstractToolService<FixpointList, FixpointTask> {
 
 	public static final String UID = "fixpoints";
-	public static final String[] ALIASES = { "stable", "fixed", "fp" };
+	public static final String[] ALIASES = { "fixpoint", "stable", "fixed", "fp" };
 
 	public static final String HELP_LINE = "Search fixed (stable) states";
 	public static final String HELP_MESSAGE = "arguments: asp pattern";
