@@ -29,6 +29,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 
 	public boolean percolate = true;
 	public boolean bdd = false;
+	public boolean altasp = false;
 	public boolean showasp = false;
 
 	public boolean terminal = true;
@@ -73,8 +74,11 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 
             } else if ("bdd".equalsIgnoreCase(s)) {
                 bdd = true;
-            } else if ("asp".equalsIgnoreCase(s)) {
-                bdd = false;
+			} else if ("asp".equalsIgnoreCase(s)) {
+				bdd = false;
+			} else if ("altasp".equalsIgnoreCase(s)) {
+				bdd = false;
+				altasp = true;
             } else if ("showASP".equalsIgnoreCase(s)) {
                 bdd = false;
                 showasp = true;
@@ -105,8 +109,10 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
         this.primer = new MDD2PrimeImplicants(ddmanager);
         if (bdd) {
             this.solver = new TrapSpaceSolverBDD(workModel, this);
-        } else {
-        	this.solver = new TrapSpaceSolverASP(workModel, this);
+		} else if (altasp) {
+			this.solver = new TrapSpaceSolverFunctionASP(workModel, this);
+		} else {
+			this.solver = new TrapSpaceSolverASP(workModel, this);
         }
 	}
 

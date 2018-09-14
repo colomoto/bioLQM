@@ -10,11 +10,13 @@ import org.kohsuke.MetaInfServices;
 @MetaInfServices(ModelToolService.class)
 public class TrapSpaceService extends AbstractToolService<TrapSpaceList, TrapSpaceTask> {
 
+	public static final String UID = "trapspaces";
+	public static final String[] ALIASES = { "trapspace" };
 	public static final String HELP_LINE = "Search trap spaces using ASP or BDDs";
 	public static final String HELP_MESSAGE = "arguments: (all,percolate) ; (BDD,ASP,showASP) ; (raw,terminal,diag)";
 	
 	public TrapSpaceService() {
-		super("trapspace", HELP_LINE, HELP_MESSAGE, MultivaluedSupport.MULTIVALUED);
+		super(UID, ALIASES, HELP_LINE, HELP_MESSAGE, MultivaluedSupport.MULTIVALUED);
 	}
 
 	@Override
