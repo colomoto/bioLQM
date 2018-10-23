@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.tool.simulation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,20 +10,18 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityClasses;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasses;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestUpdaters {
 
@@ -183,12 +183,15 @@ public class TestUpdaters {
 	@Test
 	public void testPriorityUpdater() throws IOException {
 		LogicalModel model = getOtherModel();
-		PriorityClasses pcs = new PriorityClasses();
-		int[] pc = {0,0,1,0,2,0,3,0,4,0};
-		
 		// One class Sync
-		pcs.add(pc, true);
-		PriorityUpdater updater = new PriorityUpdater(model, pcs);
+		ModelPriorityClasses mpc = new ModelPriorityClasses(model,
+				"A" + ModelPriorityClasses.SEPVAR + 
+				"B" + ModelPriorityClasses.SEPVAR + 
+				"C" + ModelPriorityClasses.SEPVAR + 
+				"D" + ModelPriorityClasses.SEPVAR + 
+				"E");
+		
+		PriorityUpdater updater = new PriorityUpdater(model, mpc);
 		byte[] state = {1,1,0,1,0};
 		List<byte[]> lNext = updater.getSuccessors(state);
 		assertEquals(1, lNext.size());
@@ -199,19 +202,26 @@ public class TestUpdaters {
 		assertEquals(1, lNext.get(0)[4]);
 		
 		// One class Async
-		pcs = new PriorityClasses();
-		pcs.add(pc, false);
-		updater = new PriorityUpdater(model, pcs);
+		mpc = new ModelPriorityClasses(model,
+				"A" + ModelPriorityClasses.SEPGROUP + 
+				"B" + ModelPriorityClasses.SEPGROUP + 
+				"C" + ModelPriorityClasses.SEPGROUP + 
+				"D" + ModelPriorityClasses.SEPGROUP + 
+				"E");
+		updater = new PriorityUpdater(model, mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(3, lNext.size());
 
 		// Two class s[B-E+] s[AB+CDE-]
-		pcs = new PriorityClasses();
-		int[] pc1 = {1,-1,4,1};
-		pcs.add(pc1, true);
-		int[] pc2 = {0,0,1,1,2,0,3,0,4,-1};
-		pcs.add(pc2, true);
-		updater = new PriorityUpdater(model, pcs);
+		mpc = new ModelPriorityClasses(model,
+				"B[-]" + ModelPriorityClasses.SEPVAR + 
+				"E[+]" + ModelPriorityClasses.SEPCLASS + 
+				"A" + ModelPriorityClasses.SEPVAR + 
+				"B[+]" + ModelPriorityClasses.SEPVAR + 
+				"C" + ModelPriorityClasses.SEPVAR + 
+				"D" + ModelPriorityClasses.SEPVAR + 
+				"E[-]");
+		updater = new PriorityUpdater(model, mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(1, lNext.size());
 		assertEquals(1, lNext.get(0)[0]);
@@ -219,6 +229,5 @@ public class TestUpdaters {
 		assertEquals(0, lNext.get(0)[2]);
 		assertEquals(1, lNext.get(0)[3]);
 		assertEquals(1, lNext.get(0)[4]);
-
 	}
 }
