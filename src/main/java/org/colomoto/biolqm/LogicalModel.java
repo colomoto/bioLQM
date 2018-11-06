@@ -103,7 +103,9 @@ public interface LogicalModel {
 	 */
 	LogicalModel clone();
 
-	
+	LogicalModel clone(boolean keepExtra);
+
+
 	/**
 	 * Get a logical model with the same nodes but a different order for the core components.
 	 * 

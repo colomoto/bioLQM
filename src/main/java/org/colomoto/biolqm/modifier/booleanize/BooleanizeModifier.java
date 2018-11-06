@@ -56,8 +56,8 @@ public class BooleanizeModifier extends BaseModifier {
         this.newCoreFunctions = new int[ newCore.size() ];
         this.newExtraFunctions = new int[ newExtra.size() ];
 
-        transformFunctions(core, coreFunctions, newCoreFunctions);
-        transformFunctions(extra, extraFunctions, newExtraFunctions);
+        transformFunctions(core, coreFunctions, newCoreFunctions, false);
+        transformFunctions(extra, extraFunctions, newExtraFunctions, true);
 
         return new LogicalModelImpl( newDDM, newCore, newCoreFunctions, newExtra, newExtraFunctions);
     }
@@ -127,7 +127,7 @@ public class BooleanizeModifier extends BaseModifier {
     }
 
 
-    private void transformFunctions( List<NodeInfo> nodes, int[] srcFunctions, int[] targetFunctions) {
+    private void transformFunctions( List<NodeInfo> nodes, int[] srcFunctions, int[] targetFunctions, boolean focalOnly) {
 
         int s = 0;
         int t = 0;
@@ -140,8 +140,10 @@ public class BooleanizeModifier extends BaseModifier {
             } else {
                 for (int i=0 ; i<bnodes.length ; i++) {
                     int bf = transform(f, i+1);
-                    // The generated function should already be properly restricted, but let's make sure of it
-                    bf = restrictFunction(newDDM, bnodes, bf, i);
+                    if (!focalOnly) {
+                        // The generated function should already be properly restricted, but let's make sure of it
+                        bf = restrictFunction(newDDM, bnodes, bf, i);
+                    }
                     targetFunctions[t++] = bf;
                 }
             }

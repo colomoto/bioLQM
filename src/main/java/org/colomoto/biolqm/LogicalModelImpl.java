@@ -80,7 +80,15 @@ public class LogicalModelImpl implements LogicalModel {
 	public LogicalModel clone() {
 		return new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), cloneNodes(extraNodes), extraFunctions.clone());
 	}
-	
+
+	@Override
+	public LogicalModel clone(boolean keepExtra) {
+		if (keepExtra) {
+			return new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), cloneNodes(extraNodes), extraFunctions.clone());
+		}
+		return new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), new ArrayList<>(), new int[0]);
+	}
+
 	private List<NodeInfo> cloneNodes(List<NodeInfo> source) {
 		List<NodeInfo> result = new ArrayList<NodeInfo>(source.size());
 		for (NodeInfo ni: source) {

@@ -15,6 +15,8 @@ public class ReductionModifier extends BaseModifier {
 
     public boolean handleOutputs = false;
 
+    public boolean keepExtra = true;
+
     public StatePattern pattern = null;
     public boolean forcePattern = false;
 
@@ -42,6 +44,8 @@ public class ReductionModifier extends BaseModifier {
                 handleDuplicates = true;
             } else if ("output".equalsIgnoreCase(o)) {
                 handleOutputs = true;
+            } else if ("no-extra".equalsIgnoreCase(o)) {
+                keepExtra = false;
             }
         }
     }
@@ -76,6 +80,10 @@ public class ReductionModifier extends BaseModifier {
 
         if (handleDuplicates) {
             result = DuplicateRemover.removeDuplicateComponents(result);
+        }
+
+        if (!keepExtra && result.getExtraComponents().size() > 0) {
+            result = result.clone(false);
         }
 
         return result;
