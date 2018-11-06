@@ -20,13 +20,18 @@ public class ModelPriorityClasses {
 	public static final String COMPLETE = "@";
 	public static final String SEQUENTIAL = "&";
 	public static final String SEPVAR = ",";
-	public static final String SEPGROUP = ";";
+	public static final String SEPGROUP = "/";
 	public static final String SEPCLASS = ":";
 
 	protected LogicalModel model;
 	private boolean isSequential; // Priority (default) vs Sequential
 	private boolean isComplete; // Async (default) vs Complete
 	private List<PriorityClass> pcList;
+
+
+	public ModelPriorityClasses(LogicalModel m) {
+		this(m, false, false);
+	}
 
 	// OK
 	public ModelPriorityClasses(LogicalModel m, boolean isSequential, boolean isComplete) {
@@ -88,6 +93,28 @@ public class ModelPriorityClasses {
 	// OK
 	public LogicalModel getModel() {
 		return this.model;
+	}
+
+
+	public int[][] getDeterministicBlocks() {
+		int n = this.pcList.size();
+		int[][] blocks = new int[n][];
+		int idx = 0;
+		for (PriorityClass cl: this.pcList) {
+			int l = 0;
+			for (PriorityClassGroup grp: cl.groups) {
+				l += grp.vars.length;
+			}
+			int[] cur = new int[l];
+			int pos = 0;
+			for (PriorityClassGroup grp: cl.groups) {
+				System.arraycopy(grp.vars, 0, cur, pos, grp.vars.length);
+				pos += grp.vars.length;
+			}
+			blocks[idx] = cur;
+			idx++;
+		}
+		return blocks;
 	}
 
 	// OK
