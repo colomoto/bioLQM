@@ -32,13 +32,12 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 		 * basal state
 		 */
 		List<byte[]> currStates = addSuccessor(null, state);
-		List<byte[]> succStates = null;
 
 		// Iterate over the priority classes
 		for (int p = 0; p < this.pclist.size(); p++) {
 			PriorityClass pc = this.pclist.getClass(p);
 
-			List<byte[]> lTmpSucc = new ArrayList<byte[]>();
+			List<byte[]> lTmpSucc = new ArrayList<>();
 			for (int g = 0; g < pc.size(); g++) {
 				int[] pcVars = pc.getGroupValues(g);
 
@@ -48,21 +47,20 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 				lTmpSucc.addAll(this.computeSuccStates(pcVars, currStates));
 			}
 
-			succStates = lTmpSucc;
+			List<byte[]> succStates = lTmpSucc;
 			// stop if previous block already generated successors
 			if (!this.pclist.isSequential() && succStates != null) {
 				currStates = succStates;
 				break;
 			}
 			currStates = succStates;
-			succStates = null;
 		}
 
 		return currStates;
 	}
 
 	private List<byte[]> computeSuccStates(int[] pcVars, List<byte[]> currStates) {
-		List<byte[]> lTmp = new ArrayList<byte[]>();
+		List<byte[]> lTmp = new ArrayList<>();
 		for (byte[] currState : currStates) {
 			byte[] succState = null;
 
