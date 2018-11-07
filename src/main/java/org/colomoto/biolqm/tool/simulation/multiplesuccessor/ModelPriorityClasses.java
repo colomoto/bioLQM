@@ -17,28 +17,18 @@ public class ModelPriorityClasses {
 
 	public static final String INC = "[+]";
 	public static final String DEC = "[-]";
-	public static final String COMPLETE = "@";
-	public static final String SEQUENTIAL = "&";
 	public static final String SEPVAR = ",";
 	public static final String SEPGROUP = "/";
 	public static final String SEPCLASS = ":";
 
 	protected LogicalModel model;
-	private boolean isSequential; // Priority (default) vs Sequential
-	private boolean isComplete; // Async (default) vs Complete
 	private List<PriorityClass> pcList;
 
 
 	public ModelPriorityClasses(LogicalModel m) {
-		this(m, false, false);
-	}
-
-	// OK
-	public ModelPriorityClasses(LogicalModel m, boolean isSequential, boolean isComplete) {
 		this.model = m;
-		this.isSequential = isSequential;
-		this.isComplete = isComplete;
-		this.pcList = new ArrayList<PriorityClass>();
+		this.pcList = new ArrayList<>();
+
 		// Init single class with a single synchronous group
 		int coreVars = 0;
 		for (int n = 0; n < this.model.getComponents().size(); n++) {
@@ -61,21 +51,7 @@ public class ModelPriorityClasses {
 	// OK
 	public ModelPriorityClasses(LogicalModel m, String textFormat) {
 		this.model = m;
-
-		// Format: &@varA,varB[+];varC:varB[-],varD <- Sequential & Complete
-		int p = textFormat.indexOf(COMPLETE);
-		if (p >= 0) { // any position in the string
-			textFormat = textFormat.substring(0, p) + textFormat.substring(p + 1);
-		}
-		this.isComplete = (p >= 0);
-		p = textFormat.indexOf(SEQUENTIAL);
-		if (p >= 0) { // any position in the string
-			textFormat = textFormat.substring(0, p) + textFormat.substring(p + 1);
-		}
-		this.isSequential = (p >= 0);
-
-		// initiate the priority classes
-		this.pcList = new ArrayList<PriorityClass>();
+		this.pcList = new ArrayList<>();
 		String[] saPCs = textFormat.split(SEPCLASS);
 		for (String sPC : saPCs) {
 			this.pcList.add(new PriorityClass(m, sPC));
@@ -83,10 +59,8 @@ public class ModelPriorityClasses {
 	}
 
 	// OK
-	private ModelPriorityClasses(LogicalModel m, boolean isSequential, boolean isComplete, List<PriorityClass> pcList) {
+	private ModelPriorityClasses(LogicalModel m, List<PriorityClass> pcList) {
 		this.model = m;
-		this.isSequential = isSequential;
-		this.isComplete = isComplete;
 		this.pcList = pcList;
 	}
 
@@ -118,30 +92,12 @@ public class ModelPriorityClasses {
 	}
 
 	// OK
-	public boolean isComplete() {
-		return this.isComplete;
-	}
-
-	public void setSequential(boolean flag) {
-		this.isSequential = flag;
-	}
-
-	public void setComplete(boolean flag) {
-		this.isComplete = flag;
-	}
-
-	// OK
-	public boolean isSequential() {
-		return this.isSequential;
-	}
-
-	// OK
 	public ModelPriorityClasses clone() {
 		List<PriorityClass> pcNew = new ArrayList<PriorityClass>();
 		for (PriorityClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		}
-		return new ModelPriorityClasses(this.model, this.isSequential, this.isComplete, pcNew);
+		return new ModelPriorityClasses(this.model, pcNew);
 	}
 
 	public void switchClasses(int i, int j) {
@@ -168,8 +124,8 @@ public class ModelPriorityClasses {
 		if (this.isValid(idxPC)) {
 			tmp = this.pcList.get(idxPC).getVars(this.model);
 		} else {
-			tmp = new ArrayList<List<String>>();
-			tmp.add(new ArrayList<String>());
+			tmp = new ArrayList<>();
+			tmp.add(new ArrayList<>());
 		}
 		return tmp;
 	}
@@ -413,12 +369,13 @@ public class ModelPriorityClasses {
 	// OK TODO
 	public boolean equals(Object a) {
 		ModelPriorityClasses outMPC = (ModelPriorityClasses) a;
-		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()
-				|| outMPC.isSequential != this.isSequential || outMPC.isComplete != this.isComplete)
+		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()) {
 			return false;
+		}
 		for (int i = 0; i < this.size(); i++) {
-			if (!outMPC.pcList.get(i).equals(this.pcList.get(i)))
+			if (!outMPC.pcList.get(i).equals(this.pcList.get(i))) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -430,7 +387,7 @@ public class ModelPriorityClasses {
 				sTmp += SEPCLASS;
 			sTmp += pc;
 		}
-		return (this.isComplete ? COMPLETE : "") + (this.isSequential ? SEQUENTIAL : "") + sTmp;
+		return sTmp;
 	}
 
 	/**
@@ -444,13 +401,13 @@ public class ModelPriorityClasses {
 		private List<PriorityClassGroup> groups;
 
 		public PriorityClass(PriorityClassGroup pcg) {
-			this.groups = new ArrayList<PriorityClassGroup>();
+			this.groups = new ArrayList<>();
 			this.groups.add(pcg);
 		}
 
 		// OK
 		public PriorityClass(LogicalModel m, String textFormat) {
-			this.groups = new ArrayList<PriorityClassGroup>();
+			this.groups = new ArrayList<>();
 			String[] saPCGs = textFormat.split(SEPGROUP);
 			for (String sPCG : saPCGs) {
 				this.groups.add(new PriorityClassGroup(m, sPCG));
@@ -532,7 +489,8 @@ public class ModelPriorityClasses {
 		/**
 		 * Splits a variable in two (in the current/selected class).
 		 *
-		 * @param idx
+		 * @param idxGrp
+		 * @param idxVar
 		 */
 		public boolean split(int idxGrp, int idxVar) {
 			return this.groups.get(idxGrp).split(idxVar);
@@ -542,8 +500,9 @@ public class ModelPriorityClasses {
 		 * Marks a given variable as not split. The caller method is responsible for
 		 * finding the variable complement on the other classes (or the present one).
 		 *
-		 * @param idx
-		 * @param split
+		 * @param idxGrp
+		 * @param idxVar
+		 * @param splitFlag
 		 * @return
 		 */
 		public boolean unsplit(int idxGrp, int idxVar, int splitFlag) {
@@ -554,8 +513,9 @@ public class ModelPriorityClasses {
 		 * Removes a given variable/split pair from a class, if it exists. Usually
 		 * called for the complement of a previously unsplit variable.
 		 *
-		 * @param idx
-		 * @param split
+		 * @param idxGrp
+		 * @param idxVar
+		 * @param splitFlag
 		 * @return
 		 */
 		public boolean remove(int idxGrp, int idxVar, int splitFlag) {

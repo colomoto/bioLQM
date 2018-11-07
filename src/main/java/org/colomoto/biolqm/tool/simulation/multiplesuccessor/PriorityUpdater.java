@@ -19,6 +19,8 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasse
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	private final ModelPriorityClasses pclist;
+	private final boolean isComplete = false;
+	private final boolean isSequential = false;
 
 	public PriorityUpdater(LogicalModel model, ModelPriorityClasses pcs) {
 		super(model);
@@ -41,7 +43,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			for (int g = 0; g < pc.size(); g++) {
 				int[] pcVars = pc.getGroupValues(g);
 
-				if (this.pclist.isComplete()) {
+				if (this.isComplete) {
 					lTmpSucc.addAll(this.computeSuccStates(pcVars, lTmpSucc));
 				}
 				lTmpSucc.addAll(this.computeSuccStates(pcVars, currStates));
@@ -49,7 +51,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 			List<byte[]> succStates = lTmpSucc;
 			// stop if previous block already generated successors
-			if (!this.pclist.isSequential() && succStates != null) {
+			if (!this.isSequential && succStates != null) {
 				currStates = succStates;
 				break;
 			}

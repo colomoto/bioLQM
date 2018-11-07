@@ -18,13 +18,11 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -67,108 +65,6 @@ public class PriorityClassPanel extends JPanel {
 		this.jbDecGroup = this.getNoMargins("↓");
 
 		JPanel jpTopCenter = new JPanel(new BorderLayout());
-
-		// LEFT PANEL
-		JPanel jpLeft = new JPanel(new GridBagLayout());
-		jpLeft.setBorder(BorderFactory.createTitledBorder("Update policy"));
-
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		jpLeft.add(Box.createVerticalStrut(10), gbc);
-
-		gbc.gridy++;
-		jpLeft.add(new JLabel("Between groups:"), gbc);
-
-		// Async
-		JRadioButton jrbAsync = new JRadioButton("Asynchronous");
-		jrbAsync.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JRadioButton jrb = (JRadioButton) e.getSource();
-				if (jrb.isSelected()) {
-					setComplete(false);
-				}
-			}
-		});
-		gbc.gridy++;
-		jpLeft.add(jrbAsync, gbc);
-
-		// Complete
-		JRadioButton jrbComplete = new JRadioButton("Complete");
-		jrbComplete.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JRadioButton jrb = (JRadioButton) e.getSource();
-				if (jrb.isSelected()) {
-					setComplete(true);
-				}
-			}
-		});
-		gbc.gridy++;
-		jpLeft.add(jrbComplete, gbc);
-
-		ButtonGroup bgGroups = new ButtonGroup();
-		bgGroups.add(jrbAsync);
-		bgGroups.add(jrbComplete);
-		if (mpc.isComplete()) {
-			jrbComplete.setSelected(true);
-		} else {
-			jrbAsync.setSelected(true);
-		}
-
-		gbc.gridy++;
-		jpLeft.add(Box.createVerticalStrut(10), gbc);
-
-		// Class options panel
-		gbc.gridy++;
-		jpLeft.add(new JLabel("Between classes:"), gbc);
-
-		// Priority
-		JRadioButton jrbPriority = new JRadioButton("Priority");
-		jrbPriority.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JRadioButton jrb = (JRadioButton) e.getSource();
-				if (jrb.isSelected()) {
-					setComplete(false);
-				}
-			}
-		});
-		gbc.gridy++;
-		jpLeft.add(jrbPriority, gbc);
-
-		// Sequential
-		JRadioButton jrbSequential = new JRadioButton("Sequential");
-		jrbSequential.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JRadioButton jrb = (JRadioButton) e.getSource();
-				if (jrb.isSelected()) {
-					setSequential(true);
-				}
-			}
-		});
-		gbc.gridy++;
-		jpLeft.add(jrbSequential, gbc);
-
-		gbc.gridy++;
-		gbc.weighty = 1.0;
-		jpLeft.add(Box.createVerticalGlue(), gbc);
-
-		ButtonGroup bgClass = new ButtonGroup();
-		bgClass.add(jrbPriority);
-		bgClass.add(jrbSequential);
-		if (mpc.isSequential()) {
-			jrbSequential.setSelected(true);
-		} else {
-			jrbPriority.setSelected(true);
-		}
-
-		if (this.guiMultipSuc) {
-			jpTopCenter.add(jpLeft, BorderLayout.LINE_START);
-		}
 
 		// CENTER PANEL
 		this.jpCenter = new JPanel(new GridBagLayout());
@@ -245,14 +141,6 @@ public class PriorityClassPanel extends JPanel {
 		jpSouthCenter.add(jbSingle);
 		this.add(jpSouthCenter, BorderLayout.SOUTH);
 		jpSouthCenter.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-	}
-
-	private void setComplete(boolean flag) {
-		this.mpc.setComplete(flag);
-	}
-
-	private void setSequential(boolean flag) {
-		this.mpc.setSequential(flag);
 	}
 
 	public void updatePriorityList() {
