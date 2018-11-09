@@ -3,8 +3,10 @@ package org.colomoto.biolqm.tool.simulation;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicPriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
-import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -42,13 +44,13 @@ public class TestOrdering {
 
 
     @Test
-    public void testOrdering() throws IOException {
+    public void testOrdering() {
 
         LogicalModel model = getModel();
-        String s_grouping = "C[+] C[-],A B[+],B[-]";
-        DeterministicGrouping grouping = new DeterministicGrouping(model, s_grouping);
+        String s_grouping = "C[+]:C[-],A:B[+],B[-]";
+        ModelGrouping grouping = new ModelGrouping(model, s_grouping);
 
-        DeterministicUpdater updater = grouping.getBlockSequentialUpdater();
+        DeterministicUpdater updater = new BlockSequentialUpdater(grouping);
         byte[] state = {0,0,1};
 
         byte[] next = updater.getSuccessor(state);
@@ -66,7 +68,7 @@ public class TestOrdering {
 
 
 
-        updater = grouping.getPriorityUpdater();
+        updater = new DeterministicPriorityUpdater(grouping);
         state = new byte[] {0,0,1};
 
         next = updater.getSuccessor(state);

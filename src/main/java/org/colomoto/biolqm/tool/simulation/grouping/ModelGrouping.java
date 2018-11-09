@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
+package org.colomoto.biolqm.tool.simulation.grouping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,12 +8,10 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 
 /**
- *
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
- *
  */
-public class ModelPriorityClasses {
+public class ModelGrouping {
 
 	public static final String INC = "[+]";
 	public static final String DEC = "[-]";
@@ -22,10 +20,10 @@ public class ModelPriorityClasses {
 	public static final String SEPCLASS = ":";
 
 	protected LogicalModel model;
-	private List<PriorityClass> pcList;
+	private List<RankedClass> pcList;
 
 
-	public ModelPriorityClasses(LogicalModel m) {
+	public ModelGrouping(LogicalModel m) {
 		this.model = m;
 		this.pcList = new ArrayList<>();
 
@@ -45,21 +43,21 @@ public class ModelPriorityClasses {
 			vars[i + 1] = 0;
 			i += 2;
 		}
-		this.pcList.add(new PriorityClass(new PriorityClassGroup(vars)));
+		this.pcList.add(new RankedClass(new RankedClassGroup(vars)));
 	}
 
 	// OK
-	public ModelPriorityClasses(LogicalModel m, String textFormat) {
+	public ModelGrouping(LogicalModel m, String textFormat) {
 		this.model = m;
 		this.pcList = new ArrayList<>();
 		String[] saPCs = textFormat.split(SEPCLASS);
 		for (String sPC : saPCs) {
-			this.pcList.add(new PriorityClass(m, sPC));
+			this.pcList.add(new RankedClass(m, sPC));
 		}
 	}
 
 	// OK
-	private ModelPriorityClasses(LogicalModel m, List<PriorityClass> pcList) {
+	private ModelGrouping(LogicalModel m, List<RankedClass> pcList) {
 		this.model = m;
 		this.pcList = pcList;
 	}
@@ -74,14 +72,14 @@ public class ModelPriorityClasses {
 		int n = this.pcList.size();
 		int[][] blocks = new int[n][];
 		int idx = 0;
-		for (PriorityClass cl: this.pcList) {
+		for (RankedClass cl: this.pcList) {
 			int l = 0;
-			for (PriorityClassGroup grp: cl.groups) {
+			for (RankedClassGroup grp: cl.groups) {
 				l += grp.vars.length;
 			}
 			int[] cur = new int[l];
 			int pos = 0;
-			for (PriorityClassGroup grp: cl.groups) {
+			for (RankedClassGroup grp: cl.groups) {
 				System.arraycopy(grp.vars, 0, cur, pos, grp.vars.length);
 				pos += grp.vars.length;
 			}
@@ -92,16 +90,16 @@ public class ModelPriorityClasses {
 	}
 
 	// OK
-	public ModelPriorityClasses clone() {
-		List<PriorityClass> pcNew = new ArrayList<PriorityClass>();
-		for (PriorityClass pc : this.pcList) {
+	public ModelGrouping clone() {
+		List<RankedClass> pcNew = new ArrayList<RankedClass>();
+		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		}
-		return new ModelPriorityClasses(this.model, pcNew);
+		return new ModelGrouping(this.model, pcNew);
 	}
 
 	public void switchClasses(int i, int j) {
-		PriorityClass pc = this.getClass(i);
+		RankedClass pc = this.getClass(i);
 		this.pcList.remove(i);
 		this.pcList.add(j, pc);
 	}
@@ -112,7 +110,7 @@ public class ModelPriorityClasses {
 	}
 
 	// OK
-	public PriorityClass getClass(int idxPC) {
+	public RankedClass getClass(int idxPC) {
 		if (!this.isValid(idxPC))
 			return null;
 		return this.pcList.get(idxPC);
@@ -156,7 +154,7 @@ public class ModelPriorityClasses {
 						int[] newvars = new int[2];
 						newvars[0] = idx;
 						newvars[1] = splitFlag;
-						this.pcList.add(new PriorityClass(new PriorityClassGroup(newvars)));
+						this.pcList.add(new RankedClass(new RankedClassGroup(newvars)));
 					} else {
 						this.pcList.get(idxPC + 1).add(0, idx, splitFlag);
 					}
@@ -192,7 +190,7 @@ public class ModelPriorityClasses {
 							int[] newVars = new int[2];
 							newVars[0] = idx;
 							newVars[1] = splitFlag;
-							this.pcList.get(idxPC).addGrp(idxGrp + 1, new PriorityClassGroup(newVars));
+							this.pcList.get(idxPC).addGrp(idxGrp + 1, new RankedClassGroup(newVars));
 						} else {
 							this.pcList.get(idxPC).add(idxGrp + 1, idx, splitFlag);
 						}
@@ -229,7 +227,7 @@ public class ModelPriorityClasses {
 							int[] newVars = new int[2];
 							newVars[0] = idx;
 							newVars[1] = splitFlag;
-							this.pcList.get(idxPC).addGrp(0, new PriorityClassGroup(newVars));
+							this.pcList.get(idxPC).addGrp(0, new RankedClassGroup(newVars));
 							idxGrp++;
 						} else {
 							this.pcList.get(idxPC).add(idxGrp - 1, idx, splitFlag);
@@ -279,7 +277,7 @@ public class ModelPriorityClasses {
 			this.pcList.get(idxPC).remove(idxGrp, newvars[0], newvars[1]);
 			// If a new class is needed
 			if (idxPC == 0) {
-				this.pcList.add(0, new PriorityClass(new PriorityClassGroup(newvars)));
+				this.pcList.add(0, new RankedClass(new RankedClassGroup(newvars)));
 				idxPC++;
 			} else {
 				this.pcList.get(idxPC - 1).add(0, newvars[0], newvars[1]);
@@ -305,10 +303,10 @@ public class ModelPriorityClasses {
 
 	// OK
 	public void collapseAll() {
-		PriorityClass pc0 = this.pcList.get(0);
+		RankedClass pc0 = this.pcList.get(0);
 		for (int c = this.size() - 1; c > 0; c--) {
 			while (this.pcList.get(c).size() > 0) {
-				PriorityClassGroup pcg = this.pcList.get(c).removeGrp(0);
+				RankedClassGroup pcg = this.pcList.get(c).removeGrp(0);
 				pc0.addGrp(0, pcg);
 			}
 			this.pcList.remove(c);
@@ -368,7 +366,7 @@ public class ModelPriorityClasses {
 
 	// OK TODO
 	public boolean equals(Object a) {
-		ModelPriorityClasses outMPC = (ModelPriorityClasses) a;
+		ModelGrouping outMPC = (ModelGrouping) a;
 		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()) {
 			return false;
 		}
@@ -382,7 +380,7 @@ public class ModelPriorityClasses {
 
 	public String toString() {
 		String sTmp = "";
-		for (PriorityClass pc : this.pcList) {
+		for (RankedClass pc : this.pcList) {
 			if (!sTmp.isEmpty())
 				sTmp += SEPCLASS;
 			sTmp += pc;
@@ -396,21 +394,21 @@ public class ModelPriorityClasses {
 	 * @author Pedro L. Varela
 	 *
 	 */
-	public class PriorityClass {
+	public class RankedClass {
 
-		private List<PriorityClassGroup> groups;
+		private List<RankedClassGroup> groups;
 
-		public PriorityClass(PriorityClassGroup pcg) {
+		public RankedClass(RankedClassGroup pcg) {
 			this.groups = new ArrayList<>();
 			this.groups.add(pcg);
 		}
 
 		// OK
-		public PriorityClass(LogicalModel m, String textFormat) {
+		public RankedClass(LogicalModel m, String textFormat) {
 			this.groups = new ArrayList<>();
 			String[] saPCGs = textFormat.split(SEPGROUP);
 			for (String sPCG : saPCGs) {
-				this.groups.add(new PriorityClassGroup(m, sPCG));
+				this.groups.add(new RankedClassGroup(m, sPCG));
 			}
 		}
 
@@ -431,15 +429,15 @@ public class ModelPriorityClasses {
 			return this.groups.get(idxGrp).contains(idxVar, splitFlag);
 		}
 
-		public PriorityClassGroup removeGrp(int idxGrp) {
+		public RankedClassGroup removeGrp(int idxGrp) {
 			if (!this.isValid(idxGrp))
 				return null;
-			PriorityClassGroup pcg = this.groups.get(idxGrp);
+			RankedClassGroup pcg = this.groups.get(idxGrp);
 			this.groups.remove(idxGrp);
 			return pcg;
 		}
 
-		public void addGrp(int pos, PriorityClassGroup pcg) {
+		public void addGrp(int pos, RankedClassGroup pcg) {
 			this.groups.add(pos, pcg);
 		}
 
@@ -453,7 +451,7 @@ public class ModelPriorityClasses {
 		// OK
 		public List<List<String>> getVars(LogicalModel m) {
 			List<List<String>> lVars = new ArrayList<List<String>>();
-			for (PriorityClassGroup pcg : this.groups) {
+			for (RankedClassGroup pcg : this.groups) {
 				lVars.add(pcg.getVars(m));
 			}
 			return lVars;
@@ -472,14 +470,14 @@ public class ModelPriorityClasses {
 
 		// OK
 		public void expand() {
-			List<PriorityClassGroup> lPCGs = new ArrayList<PriorityClassGroup>();
-			for (PriorityClassGroup pcg : this.groups) {
+			List<RankedClassGroup> lPCGs = new ArrayList<RankedClassGroup>();
+			for (RankedClassGroup pcg : this.groups) {
 				int[] vars = pcg.array();
 				for (int i = 0; i < vars.length; i += 2) {
 					int[] newVars = new int[2];
 					newVars[0] = vars[i];
 					newVars[1] = vars[i + 1];
-					PriorityClassGroup pcgNew = new PriorityClassGroup(newVars);
+					RankedClassGroup pcgNew = new RankedClassGroup(newVars);
 					lPCGs.add(pcgNew);
 				}
 			}
@@ -535,8 +533,8 @@ public class ModelPriorityClasses {
 			return this.groups.get(idxGrp).add(idxVar, splitFlag);
 		}
 
-		public PriorityClass clone() {
-			PriorityClass pc = new PriorityClass(this.groups.get(0).clone());
+		public RankedClass clone() {
+			RankedClass pc = new RankedClass(this.groups.get(0).clone());
 			for (int g = 1; g < this.groups.size(); g++) {
 				pc.addGrp(g, this.groups.get(g).clone());
 			}
@@ -547,7 +545,7 @@ public class ModelPriorityClasses {
 		 * Considers both classes with same ordered groups
 		 */
 		public boolean equals(Object o) {
-			PriorityClass outPC = (PriorityClass) o;
+			RankedClass outPC = (RankedClass) o;
 			if (outPC.size() != this.size())
 				return false;
 			for (int i = 0; i < this.size(); i++) {
@@ -559,7 +557,7 @@ public class ModelPriorityClasses {
 
 		public String toString() {
 			String sPC = "";
-			for (PriorityClassGroup pcg : this.groups) {
+			for (RankedClassGroup pcg : this.groups) {
 				if (!sPC.isEmpty())
 					sPC += SEPGROUP;
 				String sG = "";
@@ -585,16 +583,16 @@ public class ModelPriorityClasses {
 	 * @author Pedro L. Varela
 	 *
 	 */
-	public class PriorityClassGroup {
+	public class RankedClassGroup {
 		// 2*n positions for n variables
 		private int[] vars;
 
-		public PriorityClassGroup(int[] vars) {
+		public RankedClassGroup(int[] vars) {
 			this.vars = vars;
 		}
 
 		// OK
-		public PriorityClassGroup(LogicalModel m, String textFormat) {
+		public RankedClassGroup(LogicalModel m, String textFormat) {
 			String[] saVars = textFormat.split(SEPVAR);
 			List<int[]> lVars = new ArrayList<int[]>();
 
@@ -750,12 +748,12 @@ public class ModelPriorityClasses {
 			return true;
 		}
 
-		public PriorityClassGroup clone() {
-			return new PriorityClassGroup(this.vars.clone());
+		public RankedClassGroup clone() {
+			return new RankedClassGroup(this.vars.clone());
 		}
 
 		public boolean equals(Object o) {
-			PriorityClassGroup outPC = (PriorityClassGroup) o;
+			RankedClassGroup outPC = (RankedClassGroup) o;
 			return Arrays.equals(this.vars, outPC.vars);
 		}
 	}

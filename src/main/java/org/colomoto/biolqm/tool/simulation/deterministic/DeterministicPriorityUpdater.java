@@ -2,7 +2,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasses;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 
 public class DeterministicPriorityUpdater extends BaseUpdater implements DeterministicUpdater {
 
@@ -13,7 +13,7 @@ public class DeterministicPriorityUpdater extends BaseUpdater implements Determi
         this.blocks = blocks;
     }
 
-    public DeterministicPriorityUpdater(ModelPriorityClasses mpc) {
+    public DeterministicPriorityUpdater(ModelGrouping mpc) {
         super(mpc.getModel());
         this.blocks = mpc.getDeterministicBlocks();
     }

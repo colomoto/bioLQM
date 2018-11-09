@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.tool.simulation.ordering;
+package org.colomoto.biolqm.tool.simulation.grouping;
 
 public enum SplittingType {
 

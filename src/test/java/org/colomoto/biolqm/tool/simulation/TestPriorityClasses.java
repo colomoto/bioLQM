@@ -9,7 +9,7 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasses;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -54,54 +54,54 @@ public class TestPriorityClasses {
 	public void testPriorityClasses1() throws IOException {
 		LogicalModel model = getOtherModel();
 		// One class Async
-		ModelPriorityClasses mpc = new ModelPriorityClasses(model,
-				"A" + ModelPriorityClasses.SEPGROUP + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
+		ModelGrouping mpc = new ModelGrouping(model,
+				"A" + ModelGrouping.SEPGROUP +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
 				"E");
-		assertEquals("A" + ModelPriorityClasses.SEPGROUP + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
+		assertEquals("A" + ModelGrouping.SEPGROUP +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
 				"E", mpc.toString());
 
 		List<String> lTmp = new ArrayList<String>();
 		lTmp.add("A");
 		lTmp.add("B");
 		mpc.incPriorities(0, 0, lTmp);
-		assertEquals("A" + ModelPriorityClasses.SEPCLASS + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
+		assertEquals("A" + ModelGrouping.SEPCLASS +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
 				"E", mpc.toString());
 
 		mpc.split(0, 0, "A");
 		mpc.split(1, 3, "E");
-		assertEquals("A[-]" + ModelPriorityClasses.SEPVAR +
-				"A[+]" + ModelPriorityClasses.SEPCLASS + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
-				"E[-]"+ ModelPriorityClasses.SEPVAR + 
+		assertEquals("A[-]" + ModelGrouping.SEPVAR +
+				"A[+]" + ModelGrouping.SEPCLASS +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
+				"E[-]"+ ModelGrouping.SEPVAR +
 				"E[+]", mpc.toString());
 
 		lTmp.clear();
 		lTmp.add("A[+]");
 		mpc.decGroup(0, 0, lTmp);
-		assertEquals("A[-]" + ModelPriorityClasses.SEPGROUP +
-				"A[+]" + ModelPriorityClasses.SEPCLASS + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
-				"E[-]"+ ModelPriorityClasses.SEPVAR + 
+		assertEquals("A[-]" + ModelGrouping.SEPGROUP +
+				"A[+]" + ModelGrouping.SEPCLASS +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
+				"E[-]"+ ModelGrouping.SEPVAR +
 				"E[+]", mpc.toString());
 		
 		mpc.collapseAll();
-		assertEquals("E" + ModelPriorityClasses.SEPVAR + 
-				"A" + ModelPriorityClasses.SEPVAR + 
-				"B" + ModelPriorityClasses.SEPVAR + 
-				"C"+ ModelPriorityClasses.SEPVAR + 
+		assertEquals("E" + ModelGrouping.SEPVAR +
+				"A" + ModelGrouping.SEPVAR +
+				"B" + ModelGrouping.SEPVAR +
+				"C"+ ModelGrouping.SEPVAR +
 				"D", mpc.toString());
 	}
 	
@@ -110,15 +110,15 @@ public class TestPriorityClasses {
 		LogicalModel model = getOtherModel();
 		model.getComponents().get(0).setInput(true);
 		// One class Async
-		ModelPriorityClasses mpc = new ModelPriorityClasses(model,
-				"A" + ModelPriorityClasses.SEPGROUP + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
+		ModelGrouping mpc = new ModelGrouping(model,
+				"A" + ModelGrouping.SEPGROUP +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
 				"E");
-		assertEquals("B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
+		assertEquals("B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
 				"E", mpc.toString());
 	}
 }

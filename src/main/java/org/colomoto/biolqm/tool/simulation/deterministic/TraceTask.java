@@ -3,11 +3,11 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
-import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 
 public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
 
-    DeterministicGrouping grouping = null;
+    ModelGrouping grouping = null;
     boolean isSequential = false;
     byte[] state = null;
     int max_steps = 1000;
@@ -92,13 +92,13 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
 
         if (s.startsWith("sequential ")) {
             isSequential = true;
-            grouping = new DeterministicGrouping(model, s.substring(11));
+            grouping = new ModelGrouping(model, s.substring(11));
             return;
         }
 
         if (s.startsWith("priority ")) {
             isSequential = false;
-            grouping = new DeterministicGrouping(model, s.substring(9));
+            grouping = new ModelGrouping(model, s.substring(9));
             return;
         }
 
@@ -118,9 +118,9 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
     public DeterministicUpdater getUpdater() {
         if (grouping != null) {
             if (isSequential) {
-                return grouping.getBlockSequentialUpdater();
+                return new BlockSequentialUpdater(grouping);
             }
-            return grouping.getPriorityUpdater();
+            return new DeterministicPriorityUpdater(grouping);
         }
 
         if (isSequential) {

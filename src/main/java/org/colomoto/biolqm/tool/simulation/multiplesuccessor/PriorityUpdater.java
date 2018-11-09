@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasses.PriorityClass;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
 
 /**
  * Draft for a priority random: components are grouped in groups, which can be
@@ -18,11 +19,11 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasse
 // April 2015 - Pedro added support for split transitions.
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
-	private final ModelPriorityClasses pclist;
+	private final ModelGrouping pclist;
 	private final boolean isComplete = false;
 	private final boolean isSequential = false;
 
-	public PriorityUpdater(LogicalModel model, ModelPriorityClasses pcs) {
+	public PriorityUpdater(LogicalModel model, ModelGrouping pcs) {
 		super(model);
 		this.pclist = pcs;
 	}
@@ -37,7 +38,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 		// Iterate over the priority classes
 		for (int p = 0; p < this.pclist.size(); p++) {
-			PriorityClass pc = this.pclist.getClass(p);
+			RankedClass pc = this.pclist.getClass(p);
 
 			List<byte[]> lTmpSucc = new ArrayList<>();
 			for (int g = 0; g < pc.size(); g++) {

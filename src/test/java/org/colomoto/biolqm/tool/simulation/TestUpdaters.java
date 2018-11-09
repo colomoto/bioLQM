@@ -9,14 +9,15 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasses;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
-import org.colomoto.biolqm.tool.simulation.ordering.DeterministicGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -116,9 +117,9 @@ public class TestUpdaters {
 		LogicalModel model = getOtherModel();
 		
 		// create the block sequential scheme
-		int[] scheme = {1,2,1,1,2};
-		DeterministicGrouping grouping = new DeterministicGrouping(model, scheme);
-        DeterministicUpdater updater = grouping.getBlockSequentialUpdater();
+		String scheme = "A,C,D:B,E"; //{1,2,1,1,2};
+		ModelGrouping grouping = new ModelGrouping(model, scheme);
+        DeterministicUpdater updater = new BlockSequentialUpdater(grouping);
 		byte[] state = {1,1,1,1,1};
         byte[] next = updater.getSuccessor(state);
 		
@@ -128,9 +129,10 @@ public class TestUpdaters {
 		assertEquals(0, next[3]);
 		assertEquals(1, next[4]);
 
-		int[] scheme1 = {1,1,1,1,2};
-		grouping = new DeterministicGrouping(model, scheme1);
-		updater = grouping.getBlockSequentialUpdater();
+//		int[] scheme1 = {1,1,1,1,2};
+		String scheme1 = "A,B,C,D:E";
+		grouping = new ModelGrouping(model, scheme1);
+		updater = new BlockSequentialUpdater(grouping);
         next = updater.getSuccessor(state);
 		
 		assertEquals(1, next[0]);
@@ -139,9 +141,10 @@ public class TestUpdaters {
 		assertEquals(0, next[3]);
 		assertEquals(1, next[4]);
 
-		int[] scheme2 = {1,2,3,4,5};
-		grouping = new DeterministicGrouping(model, scheme2);
-		updater = grouping.getBlockSequentialUpdater();
+//		int[] scheme2 = {1,2,3,4,5};
+		String scheme2 = "A:B:C:D:E";
+		grouping = new ModelGrouping(model, scheme2);
+		updater = new BlockSequentialUpdater(grouping);
         next = updater.getSuccessor(state);
 
         DeterministicUpdater updater1 = new SequentialUpdater(model);
@@ -184,11 +187,11 @@ public class TestUpdaters {
 	public void testPriorityUpdater() throws IOException {
 		LogicalModel model = getOtherModel();
 		// One class Sync
-		ModelPriorityClasses mpc = new ModelPriorityClasses(model,
-				"A" + ModelPriorityClasses.SEPVAR + 
-				"B" + ModelPriorityClasses.SEPVAR + 
-				"C" + ModelPriorityClasses.SEPVAR + 
-				"D" + ModelPriorityClasses.SEPVAR + 
+		ModelGrouping mpc = new ModelGrouping(model,
+				"A" + ModelGrouping.SEPVAR +
+				"B" + ModelGrouping.SEPVAR +
+				"C" + ModelGrouping.SEPVAR +
+				"D" + ModelGrouping.SEPVAR +
 				"E");
 		
 		PriorityUpdater updater = new PriorityUpdater(model, mpc);
@@ -202,24 +205,24 @@ public class TestUpdaters {
 		assertEquals(1, lNext.get(0)[4]);
 		
 		// One class Async
-		mpc = new ModelPriorityClasses(model,
-				"A" + ModelPriorityClasses.SEPGROUP + 
-				"B" + ModelPriorityClasses.SEPGROUP + 
-				"C" + ModelPriorityClasses.SEPGROUP + 
-				"D" + ModelPriorityClasses.SEPGROUP + 
+		mpc = new ModelGrouping(model,
+				"A" + ModelGrouping.SEPGROUP +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
 				"E");
 		updater = new PriorityUpdater(model, mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(3, lNext.size());
 
 		// Two class s[B-E+] s[AB+CDE-]
-		mpc = new ModelPriorityClasses(model,
-				"B[-]" + ModelPriorityClasses.SEPVAR + 
-				"E[+]" + ModelPriorityClasses.SEPCLASS + 
-				"A" + ModelPriorityClasses.SEPVAR + 
-				"B[+]" + ModelPriorityClasses.SEPVAR + 
-				"C" + ModelPriorityClasses.SEPVAR + 
-				"D" + ModelPriorityClasses.SEPVAR + 
+		mpc = new ModelGrouping(model,
+				"B[-]" + ModelGrouping.SEPVAR +
+				"E[+]" + ModelGrouping.SEPCLASS +
+				"A" + ModelGrouping.SEPVAR +
+				"B[+]" + ModelGrouping.SEPVAR +
+				"C" + ModelGrouping.SEPVAR +
+				"D" + ModelGrouping.SEPVAR +
 				"E[-]");
 		updater = new PriorityUpdater(model, mpc);
 		lNext = updater.getSuccessors(state);

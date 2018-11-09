@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 
 /**
  * Updater for a block-sequential scheme: there are groups of nodes updated in 
@@ -29,6 +30,10 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 	
 	// cached state to save the current state after updating each block
 	private final byte[] tmp_state;
+
+	public BlockSequentialUpdater(ModelGrouping grouping) {
+		this(grouping.getModel(), grouping.getDeterministicBlocks());
+	}
 
 	public BlockSequentialUpdater(LogicalModel model, int[][] blocks) {
 		super(model);

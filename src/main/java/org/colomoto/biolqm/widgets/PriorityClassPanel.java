@@ -28,7 +28,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.ModelPriorityClasses;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 
 public class PriorityClassPanel extends JPanel {
 	private static final long serialVersionUID = -6249588129185682333L;
@@ -38,7 +38,7 @@ public class PriorityClassPanel extends JPanel {
 	private boolean guiMultipSuc;
 
 	private List<List<JList<String>>> guiClasses;
-	private ModelPriorityClasses mpc;
+	private ModelGrouping mpc;
 
 	private JPanel jpCenter;
 	private JButton jbIncClass;
@@ -52,7 +52,7 @@ public class PriorityClassPanel extends JPanel {
 		return jb;
 	}
 
-	public PriorityClassPanel(ModelPriorityClasses mpc, boolean guiMultipSuc) {
+	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc) {
 		this.mpc = mpc;
 		this.guiMultipSuc = guiMultipSuc;
 		
