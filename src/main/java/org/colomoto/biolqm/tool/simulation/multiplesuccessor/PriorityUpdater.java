@@ -8,7 +8,7 @@ import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
 
 /**
- * Draft for a priority random: components are grouped in groups, which can be
+ * Draft for a priority updater: components are grouped in groups, which can be
  * updated synchronously or asynchronously. Only components from the first group
  * with updated components will be taken into account
  *
@@ -21,10 +21,13 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	private final ModelGrouping pclist;
 	private final boolean isComplete = false;
-	private final boolean isSequential = false;
 
-	public PriorityUpdater(LogicalModel model, ModelGrouping pcs) {
-		super(model);
+	public PriorityUpdater(LogicalModel model, String setup) {
+		this(new ModelGrouping(model, setup));
+	}
+
+	public PriorityUpdater(ModelGrouping pcs) {
+		super(pcs.getModel());
 		this.pclist = pcs;
 	}
 
@@ -52,7 +55,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 			List<byte[]> succStates = lTmpSucc;
 			// stop if previous block already generated successors
-			if (!this.isSequential && succStates != null) {
+			if (succStates != null) {
 				currStates = succStates;
 				break;
 			}

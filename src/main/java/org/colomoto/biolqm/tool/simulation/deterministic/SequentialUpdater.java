@@ -1,7 +1,10 @@
 package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+
+import java.util.List;
 
 /**
  * Updater for the sequential scheme: all components are updated one after the other in a single successor.
@@ -14,9 +17,9 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
 	private final int[] order;
 	
 	/**
-	 * Create a new sequential random, using the default order
+	 * Create a new sequential updater, using the default order
 	 * 
-	 * @param model the model for which the random is constructed
+	 * @param model the model for which the updater is constructed
 	 */
 	public SequentialUpdater(LogicalModel model) {
 		super(model);
@@ -25,11 +28,47 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
 			order[i] = i;
 		}
 	}
-	
+
+	/**
+	 * Create a new sequential updater, using a custom order
+	 *
+	 * @param model the model for which the updater is constructed
+	 * @param s_order the ordering for sequential updates
+	 */
+	public SequentialUpdater(LogicalModel model, String s_order) {
+		this(model);
+		String[] nodes = s_order.split(",");
+		int idx = 0;
+		List<NodeInfo> components = model.getComponents();
+		boolean[] ordered = new boolean[components.size()];
+		for (String node: nodes) {
+			// Skip mistyped and repeated components
+			NodeInfo ni = model.getComponent(node.trim());
+			if (ni == null) {
+				continue;
+			}
+			int k = components.indexOf(ni);
+			if (ordered[k]) {
+				continue;
+			}
+
+			// Add this component at the end of the sequential ordering
+			ordered[k] = true;
+			this.order[idx++] = k;
+		}
+
+		// Add unlisted components at the end of the order (following the internal ordering)
+		for (int k=0 ; k<size ; k++) {
+			if (!ordered[k]) {
+				this.order[idx++] = k;
+			}
+		}
+	}
+
 	/**
 	 * Create a new sequential updater, using a custom order
 	 * 
-	 * @param model the model for which the random is constructed
+	 * @param model the model for which the updater is constructed
 	 * @param order the ordering for sequential updates
 	 */
 	public SequentialUpdater(LogicalModel model, int[] order) {

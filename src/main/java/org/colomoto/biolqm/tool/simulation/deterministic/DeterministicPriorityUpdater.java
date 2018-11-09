@@ -13,6 +13,10 @@ public class DeterministicPriorityUpdater extends BaseUpdater implements Determi
         this.blocks = blocks;
     }
 
+    public DeterministicPriorityUpdater(LogicalModel model, String config) {
+        this(new ModelGrouping(model,config));
+    }
+
     public DeterministicPriorityUpdater(ModelGrouping mpc) {
         super(mpc.getModel());
         this.blocks = mpc.getDeterministicBlocks();

@@ -3,13 +3,14 @@ package org.colomoto.biolqm.tool.simulation.random;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
+import org.colomoto.biolqm.tool.simulation.UpdaterFactory;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.CompleteUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 
 public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
 
-    boolean isComplete = false;
+    String updater_config = null;
     byte[] state = null;
     int max_steps = 1000;
 
@@ -50,7 +51,7 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
 
                 switch (s.charAt(1)) {
                     case 'u':
-                        parseUpdater(next);
+                        updater_config = next;
                         continue;
                     case 'm':
                         parseMax(next);
@@ -70,38 +71,14 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
         max_steps = Integer.parseInt(s);
     }
 
-    public void parseUpdater(String s) {
-        if (s.equalsIgnoreCase("complete")) {
-            isComplete = true;
-            return;
-        }
-
-        if (s.equalsIgnoreCase("asynchronous")) {
-            isComplete = false;
-            return;
-        }
-
-        throw new RuntimeException("Unrecognized updater: "+s);
-    }
-
     public RandomWalkSimulation getSimulation() {
         byte[] state = this.state;
         if (state == null) {
             state = new byte[model.getComponents().size()];
         }
 
-        RandomUpdater updater = getUpdater();
+        RandomUpdater updater = UpdaterFactory.getRandomUpdater(model, updater_config);
         return new RandomWalkSimulation(updater, state, max_steps);
-    }
-
-    public RandomUpdater getUpdater() {
-        MultipleSuccessorsUpdater updater;
-        if (isComplete) {
-            updater = new CompleteUpdater(model);
-        } else {
-            updater = new AsynchronousUpdater(model);
-        }
-        return new RandomUpdaterWrapper(updater);
     }
 
     @Override

@@ -3,12 +3,11 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.UpdaterFactory;
 
 public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
 
-    ModelGrouping grouping = null;
-    boolean isSequential = false;
+    String updater_config = null;
     byte[] state = null;
     int max_steps = 1000;
     int length = 100;
@@ -50,7 +49,7 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
 
                 switch (s.charAt(1)) {
                     case 'u':
-                        parseUpdater(next);
+                        updater_config = next;
                         continue;
                     case 'm':
                         parseMax(next);
@@ -77,60 +76,18 @@ public class TraceTask extends AbstractToolTask<DeterministicSimulation> {
         length = Integer.parseInt(s);
     }
 
-    private void parseUpdater(String s) {
-        if (s.equalsIgnoreCase("sequential")) {
-            isSequential = true;
-            grouping = null;
-            return;
-        }
-
-        if (s.equalsIgnoreCase("synchronous")) {
-            isSequential = false;
-            grouping = null;
-            return;
-        }
-
-        if (s.startsWith("sequential ")) {
-            isSequential = true;
-            grouping = new ModelGrouping(model, s.substring(11));
-            return;
-        }
-
-        if (s.startsWith("priority ")) {
-            isSequential = false;
-            grouping = new ModelGrouping(model, s.substring(9));
-            return;
-        }
-
-        throw new RuntimeException("Unrecognized updater: "+s);
-    }
-
     public DeterministicSimulation getSimulation() {
         byte[] state = this.state;
         if (state == null) {
             state = new byte[model.getComponents().size()];
         }
 
-        DeterministicUpdater updater = getUpdater();
+        DeterministicUpdater updater = UpdaterFactory.getDeterministicUpdater(model, updater_config);
         return new DeterministicSimulation(updater, state, length, max_steps);
     }
 
-    public DeterministicUpdater getUpdater() {
-        if (grouping != null) {
-            if (isSequential) {
-                return new BlockSequentialUpdater(grouping);
-            }
-            return new DeterministicPriorityUpdater(grouping);
-        }
-
-        if (isSequential) {
-            return new SequentialUpdater(model);
-        }
-        return new SynchronousUpdater(model);
-    }
-
     @Override
-    protected DeterministicSimulation performTask() throws Exception {
+    protected DeterministicSimulation performTask() {
         return getSimulation();
     }
 

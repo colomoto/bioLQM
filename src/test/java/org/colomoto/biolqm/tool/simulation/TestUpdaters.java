@@ -17,7 +17,6 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -117,7 +116,7 @@ public class TestUpdaters {
 		LogicalModel model = getOtherModel();
 		
 		// create the block sequential scheme
-		String scheme = "A,C,D:B,E"; //{1,2,1,1,2};
+		String scheme = "A,C,D:B,E";
 		ModelGrouping grouping = new ModelGrouping(model, scheme);
         DeterministicUpdater updater = new BlockSequentialUpdater(grouping);
 		byte[] state = {1,1,1,1,1};
@@ -129,7 +128,6 @@ public class TestUpdaters {
 		assertEquals(0, next[3]);
 		assertEquals(1, next[4]);
 
-//		int[] scheme1 = {1,1,1,1,2};
 		String scheme1 = "A,B,C,D:E";
 		grouping = new ModelGrouping(model, scheme1);
 		updater = new BlockSequentialUpdater(grouping);
@@ -141,7 +139,6 @@ public class TestUpdaters {
 		assertEquals(0, next[3]);
 		assertEquals(1, next[4]);
 
-//		int[] scheme2 = {1,2,3,4,5};
 		String scheme2 = "A:B:C:D:E";
 		grouping = new ModelGrouping(model, scheme2);
 		updater = new BlockSequentialUpdater(grouping);
@@ -171,7 +168,7 @@ public class TestUpdaters {
 	}
 
 	@Test
-	public void testCustomSequentialUpdater() throws IOException {
+	public void testCustomSequentialUpdater() {
 		LogicalModel model = getModel();
 		int[] order = {1,2,0};
         DeterministicUpdater updater = new SequentialUpdater(model, order);
@@ -184,7 +181,7 @@ public class TestUpdaters {
 	}
 	
 	@Test
-	public void testPriorityUpdater() throws IOException {
+	public void testPriorityUpdater() {
 		LogicalModel model = getOtherModel();
 		// One class Sync
 		ModelGrouping mpc = new ModelGrouping(model,
@@ -194,7 +191,7 @@ public class TestUpdaters {
 				"D" + ModelGrouping.SEPVAR +
 				"E");
 		
-		PriorityUpdater updater = new PriorityUpdater(model, mpc);
+		PriorityUpdater updater = new PriorityUpdater(mpc);
 		byte[] state = {1,1,0,1,0};
 		List<byte[]> lNext = updater.getSuccessors(state);
 		assertEquals(1, lNext.size());
@@ -211,7 +208,7 @@ public class TestUpdaters {
 				"C" + ModelGrouping.SEPGROUP +
 				"D" + ModelGrouping.SEPGROUP +
 				"E");
-		updater = new PriorityUpdater(model, mpc);
+		updater = new PriorityUpdater(mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(3, lNext.size());
 
@@ -224,7 +221,7 @@ public class TestUpdaters {
 				"C" + ModelGrouping.SEPVAR +
 				"D" + ModelGrouping.SEPVAR +
 				"E[-]");
-		updater = new PriorityUpdater(model, mpc);
+		updater = new PriorityUpdater(mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(1, lNext.size());
 		assertEquals(1, lNext.get(0)[0]);

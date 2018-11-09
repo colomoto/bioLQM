@@ -41,6 +41,10 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 		tmp_state = new byte[model.getComponents().size()];
 	}
 
+	public BlockSequentialUpdater(LogicalModel model, String config) {
+		this( new ModelGrouping(model, config) );
+	}
+
 	@Override
     public byte[] getSuccessor(byte[] state) {
 		/*
