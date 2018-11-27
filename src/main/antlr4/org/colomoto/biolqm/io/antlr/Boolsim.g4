@@ -13,7 +13,7 @@ not: NOT;
 var: ID ;
 
 // spaces and line breaks
-WS : [' ' '\t' '\r' ]+ -> channel(HIDDEN);
+WS : [ \t\r]+ -> skip;
 NEWLINE : COMMENT? '\r'? ('\n' | EOF) ;
 COMMENT: '#' ~('\r' | '\n')+;
 

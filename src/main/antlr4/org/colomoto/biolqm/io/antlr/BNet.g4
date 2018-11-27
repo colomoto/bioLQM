@@ -19,7 +19,7 @@ val: VALUE;
 // to avoid "implicit token definition in parser" errors
 ID: IDENT;
 
-WS : [' ' '\t' '\r']+ -> channel(HIDDEN);
+WS : [ \t\r]+ -> skip;
 NEWLINE : COMMENT? '\r'? ('\n' | EOF) ;
 VALUE: '0' | '1';
 COMMENT: '#' ~('\r' | '\n')+;

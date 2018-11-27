@@ -35,16 +35,16 @@ public class ErrorListener extends BaseErrorListener {
 
     @Override
     public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
-        errors.add("Ambiguous");
+        errors.add("Ambiguous: "+startIndex+","+stopIndex);
     }
 
     @Override
     public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
-        errors.add("Attempt Full Context");
+        errors.add("Attempt Full Context: "+startIndex+","+stopIndex);
     }
 
     @Override
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
-        errors.add("Context-sensitive");
+        errors.add("Context-sensitive: "+startIndex+","+stopIndex);
     }
 }

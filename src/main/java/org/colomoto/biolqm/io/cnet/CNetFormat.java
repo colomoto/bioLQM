@@ -3,6 +3,7 @@ package org.colomoto.biolqm.io.cnet;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.AbstractFormat;
 import org.colomoto.biolqm.io.LogicalModelFormat;
+import org.colomoto.biolqm.io.truthtable.TruthTableImport;
 import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.kohsuke.MetaInfServices;
 
@@ -20,4 +21,9 @@ public class CNetFormat extends AbstractFormat {
         return new CNetExport(model);
     }
 
+
+    @Override
+    public CNetImport getLoader() {
+        return new CNetImport();
+    }
 }

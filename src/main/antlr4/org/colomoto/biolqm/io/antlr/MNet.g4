@@ -20,7 +20,7 @@ ID: IDENT ;
 TS: TSEP;
 VALUE: DIGIT;
 
-WS : [' ' '\t' '\r']+ -> channel(HIDDEN);
+WS : [ \t\r]+ -> skip;
 NEWLINE : COMMENT? '\r'? ('\n' | EOF) ;
 COMMENT: '#' ~('\r' | '\n')+;
 
