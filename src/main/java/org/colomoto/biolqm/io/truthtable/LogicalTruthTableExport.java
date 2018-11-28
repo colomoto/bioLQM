@@ -44,16 +44,16 @@ public class LogicalTruthTableExport extends BaseExporter {
             byte[] implicant = implicants.setNode(functions[i]);
             int[] regulators = implicants.getRegulatorList();
 
-            // Header line: ID of the component and its regulators
-            writer.write(ni.getNodeID());
-            int max = ni.getMax();
-            if (max > 1) {
-                writer.write("["+max+"]");
-            }
-            writer.write(":");
+            // Header line: the list of regulators and the target component
             for (int j=0; j<regulators.length; j++) {
-                writer.write(" ");
                 writer.write(components.get(regulators[j]).getNodeID());
+                writer.write(" ");
+            }
+            // Add a separator before the target component
+            writer.write(": ");
+            writer.write(ni.getNodeID());
+            if (ni.getMax() > 1) {
+                writer.write("["+ni.getMax()+"]");
             }
             writer.write("\n");
 
@@ -65,8 +65,6 @@ public class LogicalTruthTableExport extends BaseExporter {
                 }
                 char[] row = new char[len];
                 int k=0;
-                row[k++] = (char)('0'+v);
-                row[k++] = ':';
                 for ( int value: implicant) {
                     // -1 stands for don't care
                     if (value < 0) {
@@ -75,6 +73,8 @@ public class LogicalTruthTableExport extends BaseExporter {
                         row[k++] = (char)('0'+value);
                     }
                 }
+                row[k++] = ':';
+                row[k++] = (char)('0'+v);
                 row[k++] = '\n';
                 writer.write(row);
             }

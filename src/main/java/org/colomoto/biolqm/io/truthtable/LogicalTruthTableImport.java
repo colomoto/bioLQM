@@ -62,12 +62,11 @@ public class LogicalTruthTableImport extends BaseLoader {
         // Load all functions
         int[] functions = new int[nbvar];
         for (LTTParser.TableContext ttx: mtx.table()) {
-            int curComponent = id2index.get( ttx.curvar().getText());
-
-            List<LTTParser.VaridContext> regulatorIDs = ttx.varid();
+            int curComponent = id2index.get( ttx.curvar().getText() );
+            List<LTTParser.VarContext> regulatorIDs = ttx.var();
             int[] regulators = new int[regulatorIDs.size()];
             int i = 0;
-            for (LTTParser.VaridContext vtx: regulatorIDs) {
+            for (LTTParser.VarContext vtx: regulatorIDs) {
                 regulators[i++] = id2index.get(vtx.getText());
             }
 

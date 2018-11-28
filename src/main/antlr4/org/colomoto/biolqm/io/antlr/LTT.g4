@@ -1,12 +1,12 @@
 grammar LTT;
 
 model:   NEWLINE* table+;
-table:   curvar ('[' max ']')? SEP varid* NEWLINE+ line*;
-line:    target SEP ttline NEWLINE+;
+table:   var* SEP curvar ('[' max ']')? NEWLINE+ line*;
+line:    ttline SEP target NEWLINE+;
 ttline:  (VALUE | JOKER)*;
-curvar:  varid;
-varid:   ID;
+curvar:  var;
 target:  VALUE;
+var:     ID;
 max:     VALUE;
 
 VALUE:   DIGIT;
