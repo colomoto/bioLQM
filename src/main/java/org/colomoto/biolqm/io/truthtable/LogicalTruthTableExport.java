@@ -46,7 +46,11 @@ public class LogicalTruthTableExport extends BaseExporter {
 
             // Header line: ID of the component and its regulators
             writer.write(ni.getNodeID());
-            writer.write(":"+ni.getMax()+":");
+            int max = ni.getMax();
+            if (max > 1) {
+                writer.write("["+max+"]");
+            }
+            writer.write(":");
             for (int j=0; j<regulators.length; j++) {
                 writer.write(" ");
                 writer.write(components.get(regulators[j]).getNodeID());

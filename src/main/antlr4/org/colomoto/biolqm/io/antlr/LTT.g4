@@ -1,7 +1,7 @@
 grammar LTT;
 
 model:   NEWLINE* table+;
-table:   curvar SEP max SEP varid* NEWLINE+ line*;
+table:   curvar ('[' max ']')? SEP varid* NEWLINE+ line*;
 line:    target SEP ttline NEWLINE+;
 ttline:  (VALUE | JOKER)*;
 curvar:  varid;

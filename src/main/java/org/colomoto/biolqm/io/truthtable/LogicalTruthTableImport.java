@@ -43,7 +43,12 @@ public class LogicalTruthTableImport extends BaseLoader {
             LTTParser.TableContext ttx = tables.get(idx);
             String id = ttx.curvar().getText();
             id2index.put(id, idx);
-            byte curmax = Byte.parseByte( ttx.max().getText() );
+            byte curmax = 1;
+            try {
+                curmax = Byte.parseByte( ttx.max().getText() );
+            } catch (Exception e) {
+                // no max was defined
+            }
             NodeInfo ni = new NodeInfo(id, curmax);
             components.add(ni);
             if (curmax > max) {
