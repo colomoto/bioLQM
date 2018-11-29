@@ -1,0 +1,44 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="format-implicant-tables">
+    <info>
+        <link type="guide" xref="index#formats"/>
+        <link type="guide" xref="formats#list"/>
+        <revision status="draft" date="2018-11-28"/>
+        <desc>Import/Export logical models as lists of implicant tables</desc>
+    </info>
+
+    <title>Implicant tables format</title>
+
+    <p>The implicant tables format supports importing and exporting models a list of implicants 
+       (truth table entries with jokers). Each component of the model is described as a separate 
+       table depending on its own regulators. It is similar to the CNET format but supports
+       multi-valued models and components identifiers are part of the format.
+    </p>
+
+    <p>
+       Each implicant table starts with a line listing the regulators and ending with the ID of the target component.
+       Similarly, each line of the table gives the value of each regulator (or '-' to match any value) and
+       ends with the target value. Lines with a target value of '0' can be skipped.
+       The '#' characters denote line-comments: everything following it on the same line is ignored.
+       Spacing characters are ignored and each value uses a single character (i.e. values higher than 9 are not supported).
+    </p>
+
+    <p>Sample file defining a Boolean model with three components:</p>
+
+<code>
+# Sample model defined as a list of implicant tables
+# [A, B, D]
+
+A : A
+1:1
+
+A : B
+0:1
+
+A B : D
+11:1
+</code>
+
+</page>
+

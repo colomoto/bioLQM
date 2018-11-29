@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # config: set source doc and output
 DOC="doc"

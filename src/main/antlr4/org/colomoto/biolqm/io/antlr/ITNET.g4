@@ -1,4 +1,4 @@
-grammar LTT;
+grammar ITNET;
 
 model:   NEWLINE* table+;
 table:   var* SEP curvar ('[' max ']')? NEWLINE+ line*;

@@ -1,12 +1,10 @@
-package org.colomoto.biolqm.io.truthtable;
+package org.colomoto.biolqm.io.implicanttables;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.helper.implicants.RestrictedPathSearcher;
 import org.colomoto.biolqm.io.BaseExporter;
 import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
-import org.colomoto.mddlib.PathSearcher;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -14,32 +12,30 @@ import java.util.List;
 
 
 /**
- * Export logical model into cnet truth tables.
+ * Export logical model into lists of implicant tables.
  *
- * @author Hannes Klarner (minor modifications to a file of Aurelien Naldi)
+ * @author Hannes Klarner
+ * @author Aurelien Naldi
  */
-public class LogicalTruthTableExport extends BaseExporter {
+public class ImplicantTableExport extends BaseExporter {
 
-    public LogicalTruthTableExport(LogicalModel model) {
+    public ImplicantTableExport(LogicalModel model) {
         super(model);
     }
 
     public void export() throws IOException {
         MDDManager ddmanager = model.getMDDManager();
-        MDDVariable[] variables = ddmanager.getAllVariables();
-        PathSearcher searcher = new PathSearcher(ddmanager);
-
         int[] functions = model.getLogicalFunctions();
         List<NodeInfo> components = model.getComponents();
 
         Writer writer = streams.writer();
-        writer.write("# Model stored as a collection of truth tables\n");
+        writer.write("# Logical model defined as a collection of implicant tables\n");
         writer.write("# "+components+"\n\n");
 
         RestrictedPathSearcher implicants = new RestrictedPathSearcher(ddmanager);
 
         for (int i=0; i<components.size(); i++) {
-            // Truth table for component i
+            // Implicant table for component i
             NodeInfo ni = components.get(i);
             byte[] implicant = implicants.setNode(functions[i]);
             int[] regulators = implicants.getRegulatorList();

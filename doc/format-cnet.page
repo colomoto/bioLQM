@@ -12,7 +12,7 @@
 
     <p>Format used by <link href="https://people.kth.se/~dubrova/bns.html">BNS</link>, a tool for the
 	identification of synchronous attractors. 
-       Models are represented as a list of partial truth tables, similar to the Berkeley Logic Interchange Format.
+       Models are represented as a list of implicants (truth table entries with jokers) for each component, similar to the Berkeley Logic Interchange Format.
     </p>
 
 <code><![CDATA[

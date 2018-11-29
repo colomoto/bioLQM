@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.io.truthtable;
+package org.colomoto.biolqm.io.implicanttables;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -7,8 +7,8 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.biolqm.io.antlr.LTTLexer;
-import org.colomoto.biolqm.io.antlr.LTTParser;
+import org.colomoto.biolqm.io.antlr.ITNETLexer;
+import org.colomoto.biolqm.io.antlr.ITNETParser;
 import org.colomoto.biolqm.io.antlr.ErrorListener;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -20,27 +20,27 @@ import java.util.List;
 import java.util.Map;
 
 
-public class LogicalTruthTableImport extends BaseLoader {
+public class ImplicantTableImport extends BaseLoader {
 
     @Override
     protected LogicalModel performTask() throws Exception {
 
         CharStream input = new ANTLRInputStream(streams.reader());
-        CommonTokenStream tokens = new CommonTokenStream( new LTTLexer(input) );
-        LTTParser parser = new LTTParser( tokens );
+        CommonTokenStream tokens = new CommonTokenStream( new ITNETLexer(input) );
+        ITNETParser parser = new ITNETParser( tokens );
         ErrorListener errors = new ErrorListener();
         parser.addErrorListener(errors);
-        LTTParser.ModelContext mtx = parser.model();
+        ITNETParser.ModelContext mtx = parser.model();
 
         // Peak forward to create all components and prepare the MDD manager
-        List<LTTParser.TableContext> tables = mtx.table();
+        List<ITNETParser.TableContext> tables = mtx.table();
         int nbvar = tables.size();
         List<NodeInfo> components = new ArrayList<>(nbvar);
         Map<String,Integer> id2index = new HashMap<>();
         MDDVariableFactory mvf = new MDDVariableFactory();
         int max = 5;
         for (int idx=0 ; idx<nbvar ; idx++) {
-            LTTParser.TableContext ttx = tables.get(idx);
+            ITNETParser.TableContext ttx = tables.get(idx);
             String id = ttx.curvar().getText();
             id2index.put(id, idx);
             byte curmax = 1;
@@ -61,19 +61,19 @@ public class LogicalTruthTableImport extends BaseLoader {
 
         // Load all functions
         int[] functions = new int[nbvar];
-        for (LTTParser.TableContext ttx: mtx.table()) {
+        for (ITNETParser.TableContext ttx: mtx.table()) {
             int curComponent = id2index.get( ttx.curvar().getText() );
-            List<LTTParser.VarContext> regulatorIDs = ttx.var();
+            List<ITNETParser.VarContext> regulatorIDs = ttx.var();
             int[] regulators = new int[regulatorIDs.size()];
             int i = 0;
-            for (LTTParser.VarContext vtx: regulatorIDs) {
+            for (ITNETParser.VarContext vtx: regulatorIDs) {
                 regulators[i++] = id2index.get(vtx.getText());
             }
 
-            List<LTTParser.LineContext> ttlines = ttx.line();
+            List<ITNETParser.LineContext> ttlines = ttx.line();
             List<byte[]> states = new ArrayList<>( ttlines.size());
             int count = regulators.length;
-            for (LTTParser.LineContext ltx: ttlines) {
+            for (ITNETParser.LineContext ltx: ttlines) {
                 int targetValue = Integer.parseInt( ltx.target().getText() );
                 if (targetValue == 0) {
                     continue;
@@ -81,7 +81,7 @@ public class LogicalTruthTableImport extends BaseLoader {
 
                 String line = ltx.ttline().getText().trim();
                 if (line.length() != count) {
-                    throw new RuntimeException("Wrong number of values in truth table line: "+line.length() +" expected "+ count);
+                    throw new RuntimeException("Wrong number of values in implicant table line: "+line.length() +" expected "+ count);
                 }
 
                 byte[] vals = new byte[count];
