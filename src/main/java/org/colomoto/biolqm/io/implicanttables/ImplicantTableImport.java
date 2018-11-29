@@ -13,6 +13,7 @@ import org.colomoto.biolqm.io.antlr.ErrorListener;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariableFactory;
+import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,8 +72,8 @@ public class ImplicantTableImport extends BaseLoader {
             }
 
             List<ITNETParser.LineContext> ttlines = ttx.line();
-            List<byte[]> states = new ArrayList<>( ttlines.size());
             int count = regulators.length;
+            int f = 0;
             for (ITNETParser.LineContext ltx: ttlines) {
                 int targetValue = Integer.parseInt( ltx.target().getText() );
                 if (targetValue == 0) {
@@ -96,12 +97,17 @@ public class ImplicantTableImport extends BaseLoader {
                 for (int k=0 ; k<regulators.length ; k++) {
                     state[ regulators[k] ] = vals[k];
                 }
-                states.add( state );
+
+                // Extend the logical function
+                // Here we do a simple OR as implicants should not overlap
+                int newNode = ddmanager.nodeFromState(state, targetValue);
+                int nextNode = MDDBaseOperators.OR.combine(ddmanager, f, newNode);
+                ddmanager.free(newNode);
+                ddmanager.free(f);
+                f = nextNode;
             }
 
             // Save the full function
-            // FIXME: handle multi-valued!
-            int f = ddmanager.nodeFromStates(states, 1);
             functions[curComponent] = f;
         }
 
