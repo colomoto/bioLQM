@@ -67,6 +67,19 @@ public class PatternStateIterator implements Iterator<byte[]> {
         nextJoker = 0;
     }
 
+    /**
+     * Assign a new pattern to this iterator and start over.
+     *
+     * @param pattern the new pattern to expand. Jokers are represented by negative values.
+     */
+    public void reset(int[] pattern) {
+        byte[] bpattern = new byte[pattern.length];
+        for (int i=0 ; i<pattern.length ; i++) {
+            bpattern[i] = (byte)pattern[i];
+        }
+        this.reset(bpattern);
+    }
+
     private void buildNext() {
         // Find the first joker position which can be increased
         for (int j: jokers) {
