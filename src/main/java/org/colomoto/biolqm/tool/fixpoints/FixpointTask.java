@@ -93,7 +93,7 @@ public class FixpointTask extends AbstractToolTask<FixpointList> {
                 for (int i=0 ; i<max.length ; i++) {
                     max[i] = components.get(i).getMax();
                 }
-                new PatternStateIterator(max, max);
+                expander = new PatternStateIterator(max, max);
             }
 
             // Enumerate all paths in the result MDD

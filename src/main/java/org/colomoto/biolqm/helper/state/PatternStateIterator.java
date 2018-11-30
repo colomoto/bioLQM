@@ -51,7 +51,7 @@ public class PatternStateIterator implements Iterator<byte[]> {
         this.next = pattern.clone();
         int nb_jokers = 0;
         for (byte v: pattern) {
-            if (v < 0) {
+            if (v == StateList.JOKER) {
                 nb_jokers++;
             }
         }
@@ -59,7 +59,7 @@ public class PatternStateIterator implements Iterator<byte[]> {
         jokers = new int[nb_jokers];
         int idx_joker = 0;
         for (int idx=0 ; idx_joker<nb_jokers ; idx++) {
-            if (pattern[idx] < 0) {
+            if (pattern[idx] == StateList.JOKER) {
                 jokers[idx_joker++] = idx;
                 next[idx] = 0;
             }
