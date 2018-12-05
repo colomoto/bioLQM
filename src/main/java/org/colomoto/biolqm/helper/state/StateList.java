@@ -46,4 +46,17 @@ public interface StateList {
      * @return a filled array, if possible it will be identical to the one given as parameter
      */
     byte[] fillState(byte[] state, int index);
+
+
+    /**
+     * Project the list of states on a subset of components
+     *
+     * @param selectedComponents
+     * @return
+     */
+    default StateListProjection project_on_subset(Iterable<String> selectedComponents) {
+        return new StateListProjection(this, selectedComponents);
+    }
+
+
 }
