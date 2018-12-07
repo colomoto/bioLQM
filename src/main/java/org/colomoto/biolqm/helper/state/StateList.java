@@ -54,7 +54,7 @@ public interface StateList {
      * @param selectedComponents
      * @return
      */
-    default StateListProjection project_on_subset(Iterable<String> selectedComponents) {
+    default StateListProjection project_on_components(Iterable<String> selectedComponents) {
         return new StateListProjection(this, selectedComponents);
     }
 
