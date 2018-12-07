@@ -40,7 +40,7 @@ public class FixpointList extends ArrayList<byte[]> implements StateList {
 		this.extraFunctions = extraFunctions;
 	}
 
-	private static NodeInfo[] extractIDs(List<NodeInfo> list) {
+	public static NodeInfo[] extractIDs(List<NodeInfo> list) {
 		if (list == null) {
 			return null;
 		}

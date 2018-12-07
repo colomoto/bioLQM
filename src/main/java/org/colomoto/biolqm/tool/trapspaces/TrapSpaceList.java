@@ -5,16 +5,18 @@ import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.helper.state.StateList;
+import org.colomoto.biolqm.tool.fixpoints.FixpointList;
 
 
-public class TrapSpaceList extends ArrayList<TrapSpace> {
+public class TrapSpaceList extends ArrayList<TrapSpace> implements StateList {
 
 	public final boolean terminal;
-	public final List<NodeInfo> nodes;
+	public final NodeInfo[] nodes;
 	
 	public TrapSpaceList(TrapSpaceTask settings, LogicalModel model) {
 		this.terminal = settings.terminal;
-		this.nodes = model.getComponents();
+		this.nodes = FixpointList.extractIDs( model.getComponents() );
 	}
 
 	public boolean addPattern(byte[] pattern, boolean[] variant) {
@@ -298,4 +300,33 @@ public class TrapSpaceList extends ArrayList<TrapSpace> {
 		return get(0).length;
 	}
 
+	@Override
+	public NodeInfo[] getComponents() {
+		return this.nodes;
+	}
+
+	@Override
+	public byte get(int row, int col) {
+		return get(row).pattern[col];
+	}
+
+	@Override
+	public boolean setExtra(boolean extra) {
+		// TODO: handle extra components
+		return false;
+	}
+
+	@Override
+	public byte[] fillState(byte[] state, int index) {
+		int l = getComponents().length;
+		if (state == null || state.length != l) {
+			state = new byte[l];
+		}
+
+		byte[] innerstate = get(index).pattern;
+		int ofset = innerstate.length;
+		System.arraycopy(innerstate, 0, state, 0, ofset);
+
+		return state;
+	}
 }
