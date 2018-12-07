@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.tool.trapspaces;
 
+import org.colomoto.biolqm.helper.state.StateList;
+
 public class TrapSpace {
 
 	public final int length;
@@ -7,11 +9,11 @@ public class TrapSpace {
 	public final byte[] pattern;
 	public final boolean[] percolated;
 	
-	public TrapSpace(byte[] pattern) {
+	protected TrapSpace(byte[] pattern) {
 		this(pattern, null);
 	}
 	
-	public TrapSpace(byte[] pattern, boolean[] percolated) {
+	protected TrapSpace(byte[] pattern, boolean[] percolated) {
 		this.length = pattern.length;
 		this.pattern = pattern;
 		if (percolated == null) {
@@ -36,15 +38,23 @@ public class TrapSpace {
 		String s = "";
     	for (int i=0 ; i<length ; i++) {
     		byte v = pattern[i];
-    		if (v < 0) {
-				s += "- ";
-    		} else {
-    			s += v;
-    			if (percolated[i]) {
-    				s += "'";
-    			} else {
-    				s += " ";
-    			}
+    		switch (v) {
+				case StateList.FREE:
+					s += "- ";
+					break;
+				case StateList.JOKER:
+					s += "* ";
+					break;
+				case StateList.UNDEFINED:
+					s += "? ";
+					break;
+				default:
+					s += v;
+					if (percolated[i]) {
+						s += "'";
+					} else {
+						s += " ";
+					}
     		}
     	}
     	return s;

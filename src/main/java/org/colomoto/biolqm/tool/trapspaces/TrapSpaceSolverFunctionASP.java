@@ -6,6 +6,7 @@ import org.colomoto.biolqm.helper.clingo.ClingoLauncher;
 import org.colomoto.biolqm.helper.clingo.ClingoResult;
 import org.colomoto.biolqm.helper.clingo.ClingoResultHandler;
 import org.colomoto.biolqm.helper.implicants.Formula;
+import org.colomoto.biolqm.helper.state.StateList;
 
 import java.io.IOException;
 import java.util.*;
@@ -151,7 +152,7 @@ public class TrapSpaceSolverFunctionASP implements TrapSpaceSolver, ClingoResult
 			if (hit.containsKey(uid)) {
 				pattern[idx] = hit.get(uid).byteValue();
 			} else {
-				pattern[idx] = -1;
+				pattern[idx] = StateList.FREE;
 			}
 		}
 		

@@ -13,6 +13,7 @@ import org.colomoto.biolqm.helper.clingo.ClingoLauncher;
 import org.colomoto.biolqm.helper.clingo.ClingoResult;
 import org.colomoto.biolqm.helper.clingo.ClingoResultHandler;
 import org.colomoto.biolqm.helper.implicants.Formula;
+import org.colomoto.biolqm.helper.state.StateList;
 
 /**
  * Use the clingo ASP solver to identify trap spaces.
@@ -181,7 +182,7 @@ public class TrapSpaceSolverASP implements TrapSpaceSolver, ClingoResultHandler 
 					isPercolated[idx] = false;
 				}
 			} else {
-				pattern[idx] = -1;
+				pattern[idx] = StateList.FREE;
 				isPercolated[idx] = false;
 			}
 		}

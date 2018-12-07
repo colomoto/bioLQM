@@ -5,6 +5,7 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.helper.implicants.Formula;
+import org.colomoto.biolqm.helper.state.StateList;
 import org.colomoto.biolqm.tool.fixpoints.StructuralNodeOrderer;
 
 import net.sf.javabdd.BDD;
@@ -118,7 +119,7 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 					s[idx] = 0;
 				} else if (b[vidx] < 0) {
 					if (b[vidx+1] < 0) {
-						s[idx] = -1;
+						s[idx] = StateList.FREE;
 						variants[idx] = true;
 					} else {
 						s[idx] = 1;
@@ -128,7 +129,7 @@ public class TrapSpaceSolverBDD implements TrapSpaceSolver {
 					s[idx] = 0;
 					variants[idx] = true;
 				} else {
-					s[idx] = -1;
+					s[idx] = StateList.FREE;
 				}
 			}
 			
