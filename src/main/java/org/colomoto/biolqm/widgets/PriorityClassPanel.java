@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -163,12 +164,12 @@ public class PriorityClassPanel extends JPanel {
 
 			// Increase Class if not first
 			JButton jbInc = this.getNoMargins("←");
-			jbInc.setActionCommand("" + idxPC);
+			jbInc.setToolTipText("" + idxPC);
 			jbInc.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JButton jb = (JButton) e.getSource();
-					int pos = Integer.parseInt(jb.getActionCommand());
+					int pos = Integer.parseInt(jb.getToolTipText());
 					mpc.switchClasses(pos, pos - 1);
 					fireActionEvent();
 					updatePriorityList();
@@ -181,12 +182,12 @@ public class PriorityClassPanel extends JPanel {
 
 			// Decrease Class if not last
 			JButton jbDec = this.getNoMargins("→");
-			jbDec.setActionCommand("" + idxPC);
+			jbDec.setToolTipText("" + idxPC);
 			jbDec.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JButton jb = (JButton) e.getSource();
-					int pos = Integer.parseInt(jb.getActionCommand());
+					int pos = Integer.parseInt(jb.getToolTipText());
 					mpc.switchClasses(pos, pos + 1);
 					fireActionEvent();
 					updatePriorityList();
