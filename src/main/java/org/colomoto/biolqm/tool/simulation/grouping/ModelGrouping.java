@@ -13,15 +13,12 @@ import org.colomoto.biolqm.NodeInfo;
  */
 public class ModelGrouping {
 
-	public static final String INC = "[+]";
-	public static final String DEC = "[-]";
 	public static final String SEPVAR = ",";
 	public static final String SEPGROUP = "/";
 	public static final String SEPCLASS = ":";
 
 	protected LogicalModel model;
 	private List<RankedClass> pcList;
-
 
 	public ModelGrouping(LogicalModel m) {
 		this.model = m;
@@ -46,7 +43,6 @@ public class ModelGrouping {
 		this.pcList.add(new RankedClass(new RankedClassGroup(vars)));
 	}
 
-	// OK
 	public ModelGrouping(LogicalModel m, String textFormat) {
 		this.model = m;
 		this.pcList = new ArrayList<>();
@@ -56,30 +52,27 @@ public class ModelGrouping {
 		}
 	}
 
-	// OK
 	private ModelGrouping(LogicalModel m, List<RankedClass> pcList) {
 		this.model = m;
 		this.pcList = pcList;
 	}
 
-	// OK
 	public LogicalModel getModel() {
 		return this.model;
 	}
-
 
 	public int[][] getDeterministicBlocks() {
 		int n = this.pcList.size();
 		int[][] blocks = new int[n][];
 		int idx = 0;
-		for (RankedClass cl: this.pcList) {
+		for (RankedClass cl : this.pcList) {
 			int l = 0;
-			for (RankedClassGroup grp: cl.groups) {
+			for (RankedClassGroup grp : cl.groups) {
 				l += grp.vars.length;
 			}
 			int[] cur = new int[l];
 			int pos = 0;
-			for (RankedClassGroup grp: cl.groups) {
+			for (RankedClassGroup grp : cl.groups) {
 				System.arraycopy(grp.vars, 0, cur, pos, grp.vars.length);
 				pos += grp.vars.length;
 			}
@@ -89,7 +82,6 @@ public class ModelGrouping {
 		return blocks;
 	}
 
-	// OK
 	public ModelGrouping clone() {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
@@ -104,19 +96,16 @@ public class ModelGrouping {
 		this.pcList.add(j, pc);
 	}
 
-	// OK
 	private boolean isValid(int idxPC) {
 		return idxPC >= 0 && this.pcList.size() > idxPC;
 	}
 
-	// OK
 	public RankedClass getClass(int idxPC) {
 		if (!this.isValid(idxPC))
 			return null;
 		return this.pcList.get(idxPC);
 	}
 
-	// OK
 	public List<List<String>> getClassVars(int idxPC) {
 		List<List<String>> tmp;
 		if (this.isValid(idxPC)) {
@@ -128,19 +117,18 @@ public class ModelGrouping {
 		return tmp;
 	}
 
-	// OK
 	public void decPriorities(int idxPC, int idxGrp, List<String> vars) {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
 			return;
 		for (String varMm : vars) {
 			int splitFlag = 0;
 			String var = varMm;
-			if (varMm.endsWith(INC)) {
+			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
 				splitFlag = 1;
-				var = varMm.substring(0, varMm.length() - INC.length());
-			} else if (varMm.endsWith(DEC)) {
+				var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+			} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
 				splitFlag = -1;
-				var = varMm.substring(0, varMm.length() - DEC.length());
+				var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
 			}
 			for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 				// If var is valid
@@ -173,12 +161,12 @@ public class ModelGrouping {
 		for (String varMm : vars) {
 			int splitFlag = 0;
 			String var = varMm;
-			if (varMm.endsWith(INC)) {
+			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
 				splitFlag = 1;
-				var = varMm.substring(0, varMm.length() - INC.length());
-			} else if (varMm.endsWith(DEC)) {
+				var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+			} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
 				splitFlag = -1;
-				var = varMm.substring(0, varMm.length() - DEC.length());
+				var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
 			}
 			for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 				// If var is valid
@@ -210,12 +198,12 @@ public class ModelGrouping {
 		for (String varMm : vars) {
 			int splitFlag = 0;
 			String var = varMm;
-			if (varMm.endsWith(INC)) {
+			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
 				splitFlag = 1;
-				var = varMm.substring(0, varMm.length() - INC.length());
-			} else if (varMm.endsWith(DEC)) {
+				var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+			} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
 				splitFlag = -1;
-				var = varMm.substring(0, varMm.length() - DEC.length());
+				var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
 			}
 			for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 				// If var is valid
@@ -242,7 +230,6 @@ public class ModelGrouping {
 		}
 	}
 
-	// OK
 	public void incPriorities(int idxPC, int idxGrp, List<String> vars) {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
 			return;
@@ -250,12 +237,12 @@ public class ModelGrouping {
 		for (String varMm : vars) {
 			int splitFlag = 0;
 			String var = varMm;
-			if (varMm.endsWith(INC)) {
+			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
 				splitFlag = 1;
-				var = varMm.substring(0, varMm.length() - INC.length());
-			} else if (varMm.endsWith(DEC)) {
+				var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+			} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
 				splitFlag = -1;
-				var = varMm.substring(0, varMm.length() - DEC.length());
+				var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
 			}
 			for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 				// If var is valid
@@ -301,7 +288,6 @@ public class ModelGrouping {
 		this.pcList.get(idxPC).collapse();
 	}
 
-	// OK
 	public void collapseAll() {
 		RankedClass pc0 = this.pcList.get(0);
 		for (int c = this.size() - 1; c > 0; c--) {
@@ -328,7 +314,6 @@ public class ModelGrouping {
 		return this.pcList.size();
 	}
 
-	// OK
 	public void split(int idxPC, int idxGrp, String var) {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
 			return;
@@ -340,13 +325,13 @@ public class ModelGrouping {
 		}
 	}
 
-	// OK
 	public void unsplit(int idxPC, int idxGrp, String varMm) {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp)
-				|| !varMm.endsWith(INC) && !varMm.endsWith(DEC))
+				|| !varMm.endsWith(SplittingType.POSITIVE.toString())
+						&& !varMm.endsWith(SplittingType.NEGATIVE.toString()))
 			return;
-		String var = varMm.substring(0, varMm.length() - INC.length());
-		int splitFlag = varMm.endsWith(INC) ? 1 : -1;
+		String var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+		int splitFlag = varMm.endsWith(SplittingType.POSITIVE.toString()) ? 1 : -1;
 		for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 			if (this.model.getComponents().get(idx).getNodeID().equals(var)) {
 				this.pcList.get(idxPC).unsplit(idxGrp, idx, splitFlag);
@@ -364,7 +349,6 @@ public class ModelGrouping {
 		}
 	}
 
-	// OK TODO
 	public boolean equals(Object a) {
 		ModelGrouping outMPC = (ModelGrouping) a;
 		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()) {
@@ -403,7 +387,6 @@ public class ModelGrouping {
 			this.groups.add(pcg);
 		}
 
-		// OK
 		public RankedClass(LogicalModel m, String textFormat) {
 			this.groups = new ArrayList<>();
 			String[] saPCGs = textFormat.split(SEPGROUP);
@@ -412,7 +395,6 @@ public class ModelGrouping {
 			}
 		}
 
-		// OK
 		public boolean isValid(int idxGrp) {
 			return idxGrp >= 0 && this.groups.size() > idxGrp;
 		}
@@ -448,7 +430,6 @@ public class ModelGrouping {
 			return null;
 		}
 
-		// OK
 		public List<List<String>> getVars(LogicalModel m) {
 			List<List<String>> lVars = new ArrayList<List<String>>();
 			for (RankedClassGroup pcg : this.groups) {
@@ -457,7 +438,6 @@ public class ModelGrouping {
 			return lVars;
 		}
 
-		// OK
 		public void collapse() {
 			for (int g = this.size() - 1; g > 0; g--) {
 				int[] vars = this.getGroupValues(g);
@@ -468,7 +448,6 @@ public class ModelGrouping {
 			}
 		}
 
-		// OK
 		public void expand() {
 			List<RankedClassGroup> lPCGs = new ArrayList<RankedClassGroup>();
 			for (RankedClassGroup pcg : this.groups) {
@@ -566,9 +545,9 @@ public class ModelGrouping {
 						sG += SEPVAR;
 					sG += model.getComponents().get(pcg.vars[i]).getNodeID();
 					if (pcg.vars[i + 1] == 1) {
-						sG += INC;
+						sG += SplittingType.POSITIVE.toString();
 					} else if (pcg.vars[i + 1] == -1) {
-						sG += DEC;
+						sG += SplittingType.NEGATIVE.toString();
 					}
 				}
 				sPC += sG;
@@ -591,7 +570,6 @@ public class ModelGrouping {
 			this.vars = vars;
 		}
 
-		// OK
 		public RankedClassGroup(LogicalModel m, String textFormat) {
 			String[] saVars = textFormat.split(SEPVAR);
 			List<int[]> lVars = new ArrayList<int[]>();
@@ -599,12 +577,12 @@ public class ModelGrouping {
 			vars: for (int i = 0; i < saVars.length; i++) {
 				String var = saVars[i];
 				int split = 0;
-				if (saVars[i].endsWith(DEC)) {
+				if (saVars[i].endsWith(SplittingType.NEGATIVE.toString())) {
 					split = -1;
-					var = saVars[i].substring(0, var.length() - DEC.length());
-				} else if (saVars[i].endsWith(INC)) {
+					var = saVars[i].substring(0, var.length() - SplittingType.NEGATIVE.toString().length());
+				} else if (saVars[i].endsWith(SplittingType.POSITIVE.toString())) {
 					split = 1;
-					var = saVars[i].substring(0, var.length() - INC.length());
+					var = saVars[i].substring(0, var.length() - SplittingType.POSITIVE.toString().length());
 				}
 				for (int idx = 0; idx < m.getComponents().size(); idx++) {
 					NodeInfo node = m.getComponents().get(idx);
@@ -649,15 +627,14 @@ public class ModelGrouping {
 			return false;
 		}
 
-		// OK
 		public List<String> getVars(LogicalModel m) {
 			List<String> lVars = new ArrayList<String>();
 			for (int i = 0; i < this.vars.length; i += 2) {
 				String var = m.getComponents().get(this.vars[i]).getNodeID();
 				if (this.vars[i + 1] == 1) {
-					var += INC;
+					var += SplittingType.POSITIVE.toString();
 				} else if (this.vars[i + 1] == -1) {
-					var += DEC;
+					var += SplittingType.NEGATIVE.toString();
 				}
 				lVars.add(var);
 			}
