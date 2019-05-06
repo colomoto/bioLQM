@@ -23,7 +23,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 	private final boolean isComplete = false;
 
 	public PriorityUpdater(LogicalModel model, String setup) {
-		this(new ModelGrouping(model, setup));
+		this((setup == null) ? new ModelGrouping(model) : new ModelGrouping(model, setup));
 	}
 
 	public PriorityUpdater(ModelGrouping pcs) {
@@ -53,13 +53,11 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 				lTmpSucc.addAll(this.computeSuccStates(pcVars, currStates));
 			}
 
-			List<byte[]> succStates = lTmpSucc;
 			// stop if previous block already generated successors
-			if (succStates != null) {
-				currStates = succStates;
+			if (currStates != null) {
+				currStates = lTmpSucc;
 				break;
 			}
-			currStates = succStates;
 		}
 
 		return currStates;
