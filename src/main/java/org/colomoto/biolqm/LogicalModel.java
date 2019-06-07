@@ -136,4 +136,16 @@ public interface LogicalModel {
 	 * @return a list of booleanized groups
 	 */
 	Map<String, NodeInfo[]> getBooleanizedMap();
+
+	/**
+	 * Check if this model has associated layout information.
+	 * @return true if some layout information is available
+	 */
+	boolean hasLayout();
+
+	/**
+	 * Retrieve the associated layout information.
+	 * @return the existing layout information. Create it if it does not exist.
+	 */
+	ModelLayout getLayout();
 }

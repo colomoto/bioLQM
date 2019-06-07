@@ -21,14 +21,16 @@ public class LogicalModelImpl implements LogicalModel {
 	
 	private final List<NodeInfo> extraNodes;
 	private final int[] extraFunctions;
-	
+
+	private ModelLayout layout = null;
+
 	public LogicalModelImpl(MDDManager ddmanager, List<NodeInfo> coreNodes, int[] coreFunctions, List<NodeInfo> extraNodes, int[] extraFunctions) {
 		this.ddmanager = ddmanager.getManager(coreNodes);
 		this.coreNodes = coreNodes;
 		this.coreFunctions = coreFunctions;
 		
 		if (extraNodes == null) {
-			this.extraNodes = new ArrayList<NodeInfo>();
+			this.extraNodes = new ArrayList<>();
 			this.extraFunctions = new int[0];
 		} else {
 			this.extraNodes = extraNodes;
@@ -90,7 +92,7 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 
 	private List<NodeInfo> cloneNodes(List<NodeInfo> source) {
-		List<NodeInfo> result = new ArrayList<NodeInfo>(source.size());
+		List<NodeInfo> result = new ArrayList<>(source.size());
 		for (NodeInfo ni: source) {
 			result.add(ni.clone());
 		}
@@ -175,7 +177,7 @@ public class LogicalModelImpl implements LogicalModel {
 			NodeInfo[] group = ni.getBooleanizedGroup();
 			if (group != null && group[0] == ni) {
 				if (bmap == null) {
-					bmap = new HashMap<String, NodeInfo[]>();
+					bmap = new HashMap<>();
 				}
 				String key = ni.getNodeID();
 				if (key.endsWith("_b1")) {
@@ -185,5 +187,18 @@ public class LogicalModelImpl implements LogicalModel {
 			}
 		}
 		return bmap;
+	}
+
+	@Override
+	public boolean hasLayout() {
+		return this.layout != null;
+	}
+
+	@Override
+	public ModelLayout getLayout() {
+		if (this.layout == null) {
+			this.layout = new ModelLayout();
+		}
+		return this.layout;
 	}
 }
