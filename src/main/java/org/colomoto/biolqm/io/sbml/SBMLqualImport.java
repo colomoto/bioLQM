@@ -149,10 +149,10 @@ public class SBMLqualImport extends BaseLoader {
         LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
 
         // Load the layout information if available
-        ModelLayout llayout = model.getLayout();
         if (qualBundle.lmodel != null) {
             ListOf<Layout> layouts = qualBundle.lmodel.getListOfLayouts();
             if (layouts != null && layouts.size() > 0) {
+                ModelLayout llayout = model.getLayout();
                 Layout layout = layouts.get(0);
 
                 for (GraphicalObject graphics: layout.getListOfAdditionalGraphicalObjects()) {
@@ -165,19 +165,17 @@ public class SBMLqualImport extends BaseLoader {
                     if (ni == null) {
                         continue;
                     }
-                    try {
+                    if (glyph.isSetBoundingBox()) {
                         BoundingBox bb = glyph.getBoundingBox();
-                        Point pos = bb.getPosition();
-                        llayout.setPosition(ni, (int)pos.getX(), (int)pos.getY());
-
-                        System.out.println("Add layout infor for " + ni + ": "+llayout);
-
-                        Dimensions dim = bb.getDimensions();
-                        if (dim != null) {
-                            // FIXME: also handle dimension
+                        if (bb.isSetPosition()) {
+                            Point pos = bb.getPosition();
+                            ModelLayout.LayoutInfo li = llayout.setPosition(ni, (int) pos.getX(), (int) pos.getY());
+                            if (bb.isSetDimensions()) {
+                                Dimensions dim = bb.getDimensions();
+                                li.width = (int) dim.getWidth();
+                                li.height = (int) dim.getHeight();
+                            }
                         }
-                    } catch (Exception e) {
-
                     }
                 }
             }

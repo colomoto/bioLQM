@@ -16,7 +16,20 @@ public class ModelLayout {
         return this.layout.get(ni);
     }
 
-    public void setPosition(NodeInfo ni, int x, int y) {
+    public LayoutInfo setPosition(NodeInfo ni, int x, int y) {
+        LayoutInfo li = layout.get(ni);
+        if (li == null) {
+            li = new LayoutInfo(x,y);
+            layout.put(ni, li);
+            return li;
+        }
+
+        li.x = x;
+        li.y = y;
+        return li;
+    }
+
+    public void set(NodeInfo ni, int x, int y, int width, int height) {
         LayoutInfo li = layout.get(ni);
         if (li == null) {
             li = new LayoutInfo(x,y);
