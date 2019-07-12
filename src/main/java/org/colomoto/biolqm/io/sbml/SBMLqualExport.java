@@ -2,6 +2,7 @@ package org.colomoto.biolqm.io.sbml;
 
 import org.colomoto.biolqm.ConnectivityMatrix;
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseExporter;
 import org.colomoto.mddlib.MDDManager;
@@ -12,6 +13,7 @@ import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.ext.layout.*;
 import org.sbml.jsbml.ext.qual.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -42,7 +44,7 @@ public class SBMLqualExport extends BaseExporter {
     private String tr_prefix = "tr_";
 
     public SBMLqualExport(LogicalModel model) {
-        this(model, false);
+        this(model, model.hasLayout());
     }
 
     public SBMLqualExport(LogicalModel model, boolean addLayout) {
@@ -155,6 +157,49 @@ public class SBMLqualExport extends BaseExporter {
                 // add its transition
                 addTransition(ni, function, matrix.getRegulators(i, true));
                 i++;
+            }
+
+            // Add layout information if available
+            if (model.hasLayout()) {
+                ModelLayout mlayout = model.getLayout();
+                Layout layout = new Layout();
+                layout.setId("__layout__");
+                qualBundle.lmodel.addLayout(layout);
+
+                double width = 0;
+                double height = 0;
+                for (NodeInfo ni: model.getComponents()) {
+                    ModelLayout.LayoutInfo li = mlayout.getInfo(ni);
+                    int x = li.x;
+                    int w = li.width;
+                    int y = li.y;
+                    int h = li.height;
+                    String id = getSpecies(ni).getId();
+                    GeneralGlyph glyph = new GeneralGlyph();
+                    glyph.setReference(id);
+                    glyph.setId("_ly_"+id);
+                    BoundingBox bb = new BoundingBox();
+                    Point pos = bb.createPosition();
+                    pos.setX(x);
+                    pos.setY(y);
+                    Dimensions dim = bb.createDimensions();
+                    dim.setWidth(w);
+                    dim.setHeight(h);
+
+                    if (x+w > width) {
+                        width = x + w;
+                    }
+                    if (y+h > height) {
+                        height = y + h;
+                    }
+                    glyph.setBoundingBox(bb);
+                    layout.addGeneralGlyph(glyph);
+                }
+                Dimensions dims = new Dimensions();
+                dims.setWidth(width);
+                dims.setHeight(height);
+                layout.setDimensions(dims);
+
             }
         }
     }

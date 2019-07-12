@@ -2,6 +2,7 @@ package org.colomoto.biolqm.io.sbml;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
+import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
 import org.colomoto.mddlib.*;
@@ -9,8 +10,10 @@ import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.ext.layout.*;
 import org.sbml.jsbml.ext.qual.*;
 
+import javax.xml.soap.Node;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +52,7 @@ public class SBMLqualImport extends BaseLoader {
             return null;
         }
 
-        identifier2index = new HashMap<String, Integer>();
+        identifier2index = new HashMap<>();
 
 
         List<NodeInfo> variables = getVariables();
@@ -144,6 +147,40 @@ public class SBMLqualImport extends BaseLoader {
             idx++;
         }
         LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
+
+        // Load the layout information if available
+        if (qualBundle.lmodel != null) {
+            ListOf<Layout> layouts = qualBundle.lmodel.getListOfLayouts();
+            if (layouts != null && layouts.size() > 0) {
+                ModelLayout llayout = model.getLayout();
+                Layout layout = layouts.get(0);
+
+                for (GraphicalObject graphics: layout.getListOfAdditionalGraphicalObjects()) {
+                    if (!(graphics instanceof GeneralGlyph)) {
+                        continue;
+                    }
+                    GeneralGlyph glyph = (GeneralGlyph)graphics;
+                    String sid = glyph.getReference();
+                    NodeInfo ni = model.getComponent(sid);
+                    if (ni == null) {
+                        continue;
+                    }
+                    if (glyph.isSetBoundingBox()) {
+                        BoundingBox bb = glyph.getBoundingBox();
+                        if (bb.isSetPosition()) {
+                            Point pos = bb.getPosition();
+                            ModelLayout.LayoutInfo li = llayout.setPosition(ni, (int) pos.getX(), (int) pos.getY());
+                            if (bb.isSetDimensions()) {
+                                Dimensions dim = bb.getDimensions();
+                                li.width = (int) dim.getWidth();
+                                li.height = (int) dim.getHeight();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return model;
     }
 
