@@ -89,6 +89,15 @@ public class ModelGrouping {
 		}
 		return new ModelGrouping(this.model, pcNew);
 	}
+	
+	// FIXME: hack for EpiLog to pass modified/perturbed models to the PriorityUpdater
+	public ModelGrouping cloneWithModel(LogicalModel modifiedModel) {
+		List<RankedClass> pcNew = new ArrayList<RankedClass>();
+		for (RankedClass pc : this.pcList) {
+			pcNew.add(pc.clone());
+		}
+		return new ModelGrouping(modifiedModel, pcNew);
+	}
 
 	public void switchClasses(int i, int j) {
 		RankedClass pc = this.getClass(i);
