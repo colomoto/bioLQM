@@ -41,6 +41,14 @@ public class ModelLayout {
         li.y = y;
     }
 
+    public void copy(NodeInfo ni, LayoutInfo source) {
+        if (source == null) {
+            layout.remove(ni);
+            return;
+        }
+        this.set(ni, source.x, source.y, source.width, source.height);
+    }
+
     public class LayoutInfo {
         public int x,y;
         public int width, height;

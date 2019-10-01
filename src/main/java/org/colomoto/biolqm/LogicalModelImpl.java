@@ -85,10 +85,36 @@ public class LogicalModelImpl implements LogicalModel {
 
 	@Override
 	public LogicalModel clone(boolean keepExtra) {
+		LogicalModel newModel;
 		if (keepExtra) {
-			return new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), cloneNodes(extraNodes), extraFunctions.clone());
+			newModel = new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), cloneNodes(extraNodes), extraFunctions.clone());
+		} else {
+			newModel = new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), new ArrayList<>(), new int[0]);
 		}
-		return new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), new ArrayList<>(), new int[0]);
+
+		// Transfer the booleanized groups to the cloned model
+		cloneBooleanizedInfo(coreNodes);
+		if (keepExtra) {
+			cloneBooleanizedInfo(extraNodes);
+		}
+
+		// Also copy the model layout
+		if (this.hasLayout()) {
+			ModelLayout mlayout = getLayout();
+			ModelLayout newLayout = newModel.getLayout();
+			copyLayout(getComponents(), newModel.getComponents(), mlayout, newLayout);
+			if (keepExtra) {
+				copyLayout(getExtraComponents(), newModel.getExtraComponents(), mlayout, newLayout);
+			}
+		}
+		return newModel;
+	}
+
+	private void copyLayout(List<NodeInfo> sourceNodes, List<NodeInfo> targetNodes, ModelLayout sourceLayout, ModelLayout targetLayout) {
+		int n = targetNodes.size();
+		for (int i=0 ; i<n ; i++) {
+			targetLayout.copy(targetNodes.get(i), sourceLayout.getInfo( sourceNodes.get(i)));
+		}
 	}
 
 	private List<NodeInfo> cloneNodes(List<NodeInfo> source) {
@@ -97,6 +123,20 @@ public class LogicalModelImpl implements LogicalModel {
 			result.add(ni.clone());
 		}
 		return result;
+	}
+
+	private void cloneBooleanizedInfo(List<NodeInfo> source) {
+		for (NodeInfo ni: source) {
+			NodeInfo[] grp = ni.getBooleanizedGroup();
+			if (grp != null) {
+				NodeInfo[] result = new NodeInfo[grp.length];
+				NodeInfo target = this.getComponent(ni.getNodeID());
+				for (int i=0 ; i< grp.length ; i++) {
+					result[i] = this.getComponent(grp[i].getNodeID());
+				}
+				target.setBooleanizedGroup(result);
+			}
+		}
 	}
 
 	@Override
