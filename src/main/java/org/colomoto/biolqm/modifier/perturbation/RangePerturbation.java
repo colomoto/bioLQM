@@ -10,7 +10,7 @@ import org.colomoto.biolqm.NodeInfo;
  * 
  * @author Aurelien Naldi
  */
-public class RangePerturbation extends AbstractPerturbation {
+public class RangePerturbation implements LogicalModelPerturbation {
 
 	public final int min, max;
 	public final NodeInfo component;

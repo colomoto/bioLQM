@@ -51,7 +51,7 @@ public class ConnectivityMatrix {
 	 * 
 	 * @param ddmanager the MDD manager
 	 * @param functions all functions
-	 * @param the identified matrix of regulators
+	 * @return the matrix of identified regulators
 	 */
 	private int[][] fillRegulators(MDDManager ddmanager, int[] functions) {
 		int[][] regulators = new int[functions.length][];

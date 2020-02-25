@@ -13,7 +13,7 @@ import org.colomoto.mddlib.MDDVariable;
  * 
  * @author Aurelien Naldi
  */
-public class InteractionPerturbation extends AbstractPerturbation {
+public class InteractionPerturbation implements LogicalModelPerturbation {
 
 	public final int regValue;
 	public final NodeInfo target;

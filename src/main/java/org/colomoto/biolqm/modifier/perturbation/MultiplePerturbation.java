@@ -10,7 +10,7 @@ import org.colomoto.biolqm.NodeInfo;
  * 
  * @author Aurelien Naldi
  */
-public class MultiplePerturbation<P extends LogicalModelPerturbation> extends AbstractPerturbation {
+public class MultiplePerturbation<P extends LogicalModelPerturbation> implements LogicalModelPerturbation {
 
 	public final List<P> perturbations;
 

@@ -10,7 +10,7 @@ import org.colomoto.biolqm.NodeInfo;
  * 
  * @author Aurelien Naldi
  */
-public class FixedValuePerturbation extends AbstractPerturbation {
+public class FixedValuePerturbation implements LogicalModelPerturbation {
 
 	public final int value;
 	public final NodeInfo component;

@@ -80,7 +80,7 @@ public class LogicalModelImpl implements LogicalModel {
 
 	@Override
 	public LogicalModel clone() {
-		return new LogicalModelImpl(ddmanager, cloneNodes(coreNodes), coreFunctions.clone(), cloneNodes(extraNodes), extraFunctions.clone());
+		return this.clone(true);
 	}
 
 	@Override

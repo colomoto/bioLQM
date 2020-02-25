@@ -44,7 +44,11 @@ public interface LogicalModelPerturbation {
 	 * @param model the model to modify
 	 * @return the modified model after applying the perturbation
 	 */
-	LogicalModel apply(LogicalModel model);
+	default LogicalModel apply(LogicalModel model) {
+		LogicalModel newModel = model.clone();
+		update(newModel);
+		return newModel;
+	}
 
 	/**
 	 * @return a simple serialised description of the perturbation
