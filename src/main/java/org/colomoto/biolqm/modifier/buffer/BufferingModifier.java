@@ -34,10 +34,43 @@ public class BufferingModifier extends BaseModifier implements IndexMapper {
     }
 
     @Override
-    public LogicalModel performTask() {
-        if (model.isBoolean()) {
-            return model;
+    public void setParameter(String param) {
+        if (param.equalsIgnoreCase(":buffer")) {
+            this.addAllSingleBuffers();
+            return;
         }
+
+        if (param.equalsIgnoreCase(":delay")) {
+            this.addDelayBuffers();
+            return;
+        }
+
+        String[] cfg = param.split(":");
+        if (cfg.length != 2) {
+            System.err.println("Unrecognized parameter for the buffer modifier: "+ param);
+            return;
+        }
+
+        // TODO: handle shared buffers by splitting the target further
+
+        int src = model.getComponentIndex(cfg[0]);
+        int tgt = model.getComponentIndex(cfg[1]);
+
+        if (src < 0  || tgt < 0) {
+            System.err.println("Unrecognized component(s) for the buffer modifier: "+ param);
+            return;
+        }
+
+        this.addSingleBuffer(src, tgt);
+    }
+
+    @Override
+    public LogicalModel performTask() {
+        this.ddm = model.getMDDManager();
+        this.core = model.getComponents();
+        this.extra = model.getExtraComponents();
+        this.coreFunctions = model.getLogicalFunctions();
+        this.extraFunctions = model.getExtraLogicalFunctions();
 
         // Lock the configuration to get final positions
         int size = core.size();
@@ -50,11 +83,11 @@ public class BufferingModifier extends BaseModifier implements IndexMapper {
             }
         }
 
-        this.ddm = model.getMDDManager();
-        this.core = model.getComponents();
-        this.extra = model.getExtraComponents();
-        this.coreFunctions = model.getLogicalFunctions();
-        this.extraFunctions = model.getExtraLogicalFunctions();
+        if (curPosition == size) {
+            return model;
+        }
+
+        this.nbBuffers = curPosition - size;
 
         this.newCore = getComponents(core, true);
         this.newExtra = getComponents(extra, false);
@@ -115,8 +148,8 @@ public class BufferingModifier extends BaseModifier implements IndexMapper {
 
         this.curTarget = shift;
         for (int i=0 ; i<functions.length ; i++) {
-            this.curTarget++;
             newFunctions[i] = mapper.mapMDD(functions[i]);
+            this.curTarget++;
         }
 
         if (shift == 0) {
@@ -171,6 +204,14 @@ public class BufferingModifier extends BaseModifier implements IndexMapper {
     @Override
     public int get(int i) {
         return this.get(i, curTarget);
+    }
+
+    public void addAllSingleBuffers() {
+        // FIXME: add a buffer on ALL interactions
+    }
+
+    public void addDelayBuffers() {
+        // FIXME: add a shared buffer after all regulators
     }
 
     public void addSingleBuffer(int source, int target) {

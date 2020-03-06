@@ -193,7 +193,7 @@ public class LogicalModelImpl implements LogicalModel {
 		if (id == null) {
 			return null;
 		}
-		
+
 		for (NodeInfo ni: getComponents()) {
 			if (id.equals(ni.getNodeID())) {
 				return ni;
@@ -204,8 +204,30 @@ public class LogicalModelImpl implements LogicalModel {
 				return ni;
 			}
 		}
-		
+
 		return null;
+	}
+
+	@Override
+	public int getComponentIndex(String id) {
+		if (id == null) {
+			return -1;
+		}
+
+		int idx = 0;
+		for (NodeInfo ni: getComponents()) {
+			if (id.equals(ni.getNodeID())) {
+				return idx;
+			}
+			idx++;
+		}
+		for (NodeInfo ni: getExtraComponents()) {
+			if (id.equals(ni.getNodeID())) {
+				return idx;
+			}
+			idx++;
+		}
+		return -1;
 	}
 
 	@Override

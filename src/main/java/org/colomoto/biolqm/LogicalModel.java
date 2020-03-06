@@ -129,7 +129,15 @@ public interface LogicalModel {
      * @return the component or null if not found
      */
 	NodeInfo getComponent(String s_source);
-	
+
+	/**
+	 * Retrieve a component by name.
+	 *
+	 * @param s_source the name of the component
+	 * @return the component or null if not found
+	 */
+	int getComponentIndex(String s_source);
+
 	/**
 	 * Get the Boolean - multi-valued mapping information for booleanized models.
 	 * 

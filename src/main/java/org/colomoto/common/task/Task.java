@@ -41,9 +41,14 @@ public interface Task<T> extends Callable<T> {
      */
     void background(TaskListener listener);
 
+    default void setParameter(String param) {
+        System.err.println("Unsupported parameter: "+ param);
+    }
 
     default void setParameters(String[] parameters) {
-
+        for (String s: parameters) {
+            this.setParameter(s);
+        }
     }
 
     default void setParameters(String parameters) {
