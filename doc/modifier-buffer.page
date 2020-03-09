@@ -1,0 +1,70 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="modifier-buffer">
+    <info>
+      <link type="guide" xref="index#modifiers"/>
+      <link type="guide" xref="modifiers#list"/>
+      <revision status="draft" date="2020-03-09"/>
+      <desc>Add buffer components between a regulator and its target(s)</desc>
+    </info>
+
+    <title>Buffering</title>
+
+    <section>
+        <title>Description</title>
+
+        <p>This model modification enables the introduction of delay between a component and its regulators
+through the addition of buffer components. These buffers mirror the value of the source component and replace
+it in the logical functions of its targets. They can be either specific to a single interaction or shared 
+between several targets.
+        </p>
+
+        <p>The buffers can be added for every interaction in the model or for a user-defined subset.
+        </p>
+
+        <p>Note that we can retrieve the original model by applying model reduction to the buffered model.
+        </p>
+
+    </section>
+
+
+    <section>
+        <title>Usage</title>
+
+        <p>The buffering modifier can be called using the
+           <cmd>-m buffer "[parameter]"</cmd> switch on the <link xref="cli">command line</link> or
+           <code>lqm.modifyModel(model, "buffer", "[parameter]")</code> in <link xref="scripting">scripts</link>.
+        </p>
+
+       <p>The <code>"[parameter]"</code> argument, further described bellow, is used to define the added buffers.
+           If it empty or missing, no change is performed.
+       </p>
+
+        <section>
+            <title>Adding a buffer for each interaction</title>
+            <p>To add a separate buffer component for each interaction, use the <code>:buffer</code> parameter.</p>
+        </section>
+
+        <section>
+            <title>Adding a shared buffer for each regulator</title>
+            <p>To add a shared buffer between each regulator and all of its targets, use the <code>:delay</code> parameter.</p>
+        </section>
+
+        <section>
+            <title>Manual selection of the introduced buffers</title>
+            <p>For more flexibility, we can also provide an explicit list of buffers by defining the source component and the (list of) targets.
+              For example, if the component A regulated B,C,D and E, we can add a single buffer before B, let C and D share another buffer, and keep
+              the direct effect on E using the <code>"A:B A:C,D"</code> parameter.
+            </p>
+        </section>
+
+    </section>
+
+    <section>
+        <title>Going further</title>
+        <p>This service is provided by the <link href="../apidocs/index.html?org/colomoto/biolqm/modifier/buffer/BufferingService.html">BufferingService</link>.
+        </p>
+    </section>
+
+</page>
+
