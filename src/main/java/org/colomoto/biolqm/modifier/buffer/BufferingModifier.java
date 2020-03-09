@@ -1,5 +1,6 @@
 package org.colomoto.biolqm.modifier.buffer;
 
+import org.colomoto.biolqm.ConnectivityMatrix;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
@@ -207,11 +208,37 @@ public class BufferingModifier extends BaseModifier implements IndexMapper {
     }
 
     public void addAllSingleBuffers() {
-        // FIXME: add a buffer on ALL interactions
+        ConnectivityMatrix matrix = new ConnectivityMatrix(model);
+        int ncore = model.getComponents().size();
+        for (int src=0 ; src<ncore ; src++) {
+            int[] targets = matrix.getCoreTargets(src, false);
+            for (int tgt: targets) {
+                addSingleBuffer(src, tgt);
+            }
+            targets = matrix.getCoreTargets(src, true);
+            for (int tgt: targets) {
+                addSingleBuffer(src, tgt+ncore);
+            }
+        }
     }
 
     public void addDelayBuffers() {
-        // FIXME: add a shared buffer after all regulators
+        ConnectivityMatrix matrix = new ConnectivityMatrix(model);
+        int ncore = model.getComponents().size();
+        for (int src=0 ; src<ncore ; src++) {
+            int[] coreTargets = matrix.getCoreTargets(src, false);
+            int[] extraTargets = matrix.getCoreTargets(src, true);
+            List<Integer> allTargets = new ArrayList<>(coreTargets.length + extraTargets.length);
+            for (int tgt: coreTargets) {
+                allTargets.add(tgt);
+            }
+            for (int tgt: extraTargets) {
+                allTargets.add(tgt+ncore);
+            }
+            if (allTargets.size() > 0) {
+                addMultipleBuffer(src, allTargets);
+            }
+        }
     }
 
     public void addSingleBuffer(int source, int target) {

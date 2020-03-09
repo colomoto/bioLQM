@@ -18,7 +18,7 @@ public class BufferingService extends BaseService implements ModelModifierServic
     /** The identifier used to retrieve this service by name */
     public static final String ID = "buffer";
     private static final String NAME = "add buffer components to a model";
-    private static final String DESCR = "(Work In Progress)";
+    private static final String DESCR = ":buffer | :delay | source:target1,target2";
 
     /**
      * Public constructor which should only be used for service discovery.

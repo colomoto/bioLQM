@@ -1,11 +1,8 @@
 package org.colomoto.biolqm;
 
-import org.apache.logging.log4j.core.util.Booleans;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.VariableEffect;
-
-import java.util.BitSet;
 
 /**
  * Build and consult regulatory relations between variables in a Logical Model.
