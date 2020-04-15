@@ -4,15 +4,13 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.AbstractToolTask;
 import org.colomoto.biolqm.tool.simulation.InitialStateFactory;
 import org.colomoto.biolqm.tool.simulation.UpdaterFactory;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.CompleteUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 
 public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
 
     String updater_config = null;
     byte[] state = null;
     int max_steps = 1000;
+    int seed = -1;
 
     public RandomWalkTask(LogicalModel model) {
         super(model);
@@ -56,6 +54,9 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
                     case 'm':
                         parseMax(next);
                         continue;
+                    case 's':
+                        parseSeed(next);
+                        continue;
                     case 'i':
                         this.state = InitialStateFactory.parseInitialState(this.model, next);
                         continue;
@@ -71,6 +72,10 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
         max_steps = Integer.parseInt(s);
     }
 
+    public void parseSeed(String s) {
+        seed = Integer.parseInt(s);
+    }
+
     public RandomWalkSimulation getSimulation() {
         byte[] state = this.state;
         if (state == null) {
@@ -78,6 +83,9 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
         }
 
         RandomUpdater updater = UpdaterFactory.getRandomUpdater(model, updater_config);
+        if (this.seed >= 0) {
+            updater.setSeed(this.seed);
+        }
         return new RandomWalkSimulation(updater, state, max_steps);
     }
 

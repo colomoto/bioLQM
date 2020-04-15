@@ -1,7 +1,6 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 
 import java.util.Iterator;
 import java.util.List;

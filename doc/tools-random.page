@@ -21,12 +21,21 @@
     <section id="usage">
         <title>Usage</title>
 
-        <p></p>
         <code>java -jar bioLQM.jar model.sbml -r random -u asynchronous -i 001011 -m 100</code>
         
         <p>The output is a list of successive states. The simulation stops when reaching a stable state
         or the maximal number of steps.
         </p>
+
+	<section>
+		<title>Options</title>
+		<list>
+			<item><p><code>-u</code> select the updater</p></item>
+			<item><p><code>-i</code> select the initial state (defaults to <code>000...000</code>)</p></item>
+			<item><p><code>-m</code> select the max number of steps</p></item>
+			<item><p><code>-s</code> set the random seed (use only for testing)</p></item>
+		</list>
+	</section>
     </section>
 
 </page>
