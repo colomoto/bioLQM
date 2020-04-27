@@ -29,5 +29,7 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Build with Maven
-      run: mvn -B deploy -Dregistry=https://maven.pkg.github.com/colomoto -Dtoken={{secrets.GITHUB_TOKEN}}
+      run: mvn -B deploy
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

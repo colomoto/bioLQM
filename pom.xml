@@ -197,8 +197,9 @@
   -->
   <distributionManagement>
     <repository>
-      <id>local.repository</id>
-      <url>${local.repository.url}</url>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/colomoto/bioLQM</url>
     </repository>
   </distributionManagement>
 
