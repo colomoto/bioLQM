@@ -16,15 +16,15 @@ public class ModelLayout {
         return this.layout.get(ni);
     }
 
-    public void crop() {
-        this.crop(5);
+    public ModelLayout crop() {
+        return this.crop(5);
     }
 
-    public void crop(int margin) {
-        this.crop(margin, margin);
+    public ModelLayout crop(int margin) {
+        return this.crop(margin, margin);
     }
 
-    public void crop(int marginx, int marginy) {
+    public ModelLayout crop(int marginx, int marginy) {
 
         // Find the min values
         int minx = Integer.MAX_VALUE;
@@ -47,17 +47,20 @@ public class ModelLayout {
             info.x = info.x - minx;
             info.y = info.y - miny;
         }
+
+        return this;
     }
 
-    public void scale(float scale) {
-        this.scale(scale, scale);
+    public ModelLayout scale(float scale) {
+        return this.scale(scale, scale);
     }
 
-    public void scale(float scalex, float scaley) {
+    public ModelLayout scale(float scalex, float scaley) {
         for (LayoutInfo info: this.layout.values()) {
             info.x *= scalex;
             info.y *= scaley;
         }
+        return this;
     }
 
     public LayoutInfo setPosition(NodeInfo ni, int x, int y) {
@@ -73,24 +76,27 @@ public class ModelLayout {
         return li;
     }
 
-    public void set(NodeInfo ni, int x, int y, int width, int height) {
+    public ModelLayout set(NodeInfo ni, int x, int y, int width, int height) {
         LayoutInfo li = layout.get(ni);
         if (li == null) {
             li = new LayoutInfo(x,y);
             layout.put(ni, li);
-            return;
+            return this;
         }
 
         li.x = x;
         li.y = y;
+
+        return this;
     }
 
-    public void copy(NodeInfo ni, LayoutInfo source) {
+    public ModelLayout copy(NodeInfo ni, LayoutInfo source) {
         if (source == null) {
             layout.remove(ni);
-            return;
+            return this;
         }
         this.set(ni, source.x, source.y, source.width, source.height);
+        return this;
     }
 
     public class LayoutInfo {
