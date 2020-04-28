@@ -20,13 +20,12 @@
   </properties>
 
   <repositories>
-    <!-- GINsim repository provides ready-to-use jars for MDDlib  -->
     <repository>
-       <id>ginsim_snapshot</id>
-       <snapshots><enabled>true</enabled></snapshots>
-       <releases><enabled>false</enabled></releases>
-       <name>GINsim snapshot repository</name>
-       <url>http://ginsim.org/maven/snapshot</url>
+       <id>colomoto</id>
+       <snapshots><enabled>false</enabled></snapshots>
+       <releases><enabled>true</enabled></releases>
+       <name>The colomoto maven repository</name>
+       <url>https://colomoto.github.io/colomoto-maven-repository</url>
     </repository>
   </repositories>
 
@@ -50,7 +49,7 @@
     <dependency>
         <groupId>org.colomoto</groupId>
         <artifactId>MDDlib</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.4.1</version>
     </dependency>
 
     <dependency>
