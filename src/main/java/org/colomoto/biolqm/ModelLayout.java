@@ -16,6 +16,50 @@ public class ModelLayout {
         return this.layout.get(ni);
     }
 
+    public void crop() {
+        this.crop(5);
+    }
+
+    public void crop(int margin) {
+        this.crop(margin, margin);
+    }
+
+    public void crop(int marginx, int marginy) {
+
+        // Find the min values
+        int minx = Integer.MAX_VALUE;
+        int miny = Integer.MAX_VALUE;
+        for (LayoutInfo info: this.layout.values()) {
+            if (info.x < minx) {
+                minx = info.x;
+            }
+            if (info.y < miny) {
+                miny = info.y;
+            }
+        }
+
+        // Apply the margin
+        minx -= marginx;
+        miny -= marginy;
+
+        // Shift every position
+        for (LayoutInfo info: this.layout.values()) {
+            info.x = info.x - minx;
+            info.y = info.y - miny;
+        }
+    }
+
+    public void scale(float scale) {
+        this.scale(scale, scale);
+    }
+
+    public void scale(float scalex, float scaley) {
+        for (LayoutInfo info: this.layout.values()) {
+            info.x *= scalex;
+            info.y *= scaley;
+        }
+    }
+
     public LayoutInfo setPosition(NodeInfo ni, int x, int y) {
         LayoutInfo li = layout.get(ni);
         if (li == null) {
