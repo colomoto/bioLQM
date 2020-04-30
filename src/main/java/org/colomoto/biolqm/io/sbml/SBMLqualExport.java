@@ -233,7 +233,7 @@ public class SBMLqualExport extends BaseExporter {
     private void addTransition(NodeInfo ni, int function, int[] regulators) {
 
         String trID = tr_prefix+ni.getNodeID();
-        Transition tr = qualBundle.qmodel.createTransition(trID);
+        Transition tr = qualBundle.qmodel.createTransition(trID+"_");
         tr.createOutput(trID+"_out", node2species.get(ni), OutputTransitionEffect.assignmentLevel);
 
         if (ddmanager.isleaf(function)) {
