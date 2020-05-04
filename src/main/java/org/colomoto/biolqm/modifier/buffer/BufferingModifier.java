@@ -36,12 +36,12 @@ public class BufferingModifier extends BaseModifier implements IndexMapper {
 
     @Override
     public void setParameter(String param) {
-        if (param.equalsIgnoreCase(":buffer")) {
+        if (param.equalsIgnoreCase("buffer")) {
             this.addAllSingleBuffers();
             return;
         }
 
-        if (param.equalsIgnoreCase(":delay")) {
+        if (param.equalsIgnoreCase("delay")) {
             this.addDelayBuffers();
             return;
         }
