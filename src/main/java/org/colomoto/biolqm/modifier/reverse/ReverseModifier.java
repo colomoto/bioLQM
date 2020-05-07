@@ -33,6 +33,9 @@ public class ReverseModifier extends BaseModifier {
 	@Override
 	public LogicalModel performTask() throws Exception {
 
+		// Start by ensuring to work with a Boolean model
+		LogicalModel model = new BooleanizeModifier(this.model).call();
+
 		// Retrieve all functions
 		MDDManager ddmanager = model.getMDDManager();
 		ReverseOperation  revOp = new ReverseOperation(ddmanager);
@@ -51,9 +54,6 @@ public class ReverseModifier extends BaseModifier {
 				+ extrafunctions.length - 1); i++) {
 			allFunctions[i] = extrafunctions[i - functions.length];
 		}
-
-		// Start by ensuring to work with a Boolean model
-		LogicalModel model = new BooleanizeModifier(this.model).call();
 
 		// Find reversed functions for all components
 		for (int varIdx = 0; varIdx < variables.length; varIdx++) {
