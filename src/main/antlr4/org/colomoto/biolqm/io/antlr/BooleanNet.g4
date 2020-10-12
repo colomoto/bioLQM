@@ -25,9 +25,9 @@ fragment IDENT: ALPHA (ALPHA|DIGIT)* ;
 
 
 // token definitions
-AND: 'and';
-OR: 'or';
-NOT: 'not';
+AND: [aA][nN][dD];
+OR: [oO][rR];
+NOT: [nN][oO][tT];
+VALUE: DIGIT | [tT][rR][uU][eE] | [fF][aA][lL][sS][eE] ;
 ID: IDENT ;
-VALUE: DIGIT | 'true' | 'false' ;
 

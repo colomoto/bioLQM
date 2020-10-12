@@ -128,7 +128,7 @@ class BooleanNetParserListener extends BooleanNetBaseListener {
         }
 
         if ("false".equalsIgnoreCase(s)) {
-            stack.value( Value.TRUE );
+            stack.value( Value.FALSE );
             return;
         }
 
