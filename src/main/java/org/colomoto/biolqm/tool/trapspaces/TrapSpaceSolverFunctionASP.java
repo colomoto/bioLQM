@@ -115,6 +115,7 @@ public class TrapSpaceSolverFunctionASP implements TrapSpaceSolver, ClingoResult
 		this.solutions = solutions;
 		ClingoLauncher launcher = new ClingoLauncher(this, asp);
 		launcher.setMinsolutions(settings.terminal);
+		launcher.setMaxsolutions(settings.generic);
 		try {
 			launcher.run();
 		} catch (IOException e) {

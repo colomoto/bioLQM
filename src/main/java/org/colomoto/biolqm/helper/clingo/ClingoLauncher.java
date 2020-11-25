@@ -16,7 +16,8 @@ public class ClingoLauncher {
 
 	private int n = 0;
 	private boolean minsolutions = false;
-	
+	private boolean maxsolutions = false;
+
 	public static boolean isAvailable() {
 		return CLINGO.isAvailable();
 	}
@@ -27,7 +28,17 @@ public class ClingoLauncher {
 	}
 
 	public void setMinsolutions(boolean min) {
+		if (min) {
+			this.maxsolutions = false;
+		}
 		this.minsolutions = min;
+	}
+
+	public void setMaxsolutions(boolean max) {
+		if (max) {
+			this.minsolutions = false;
+		}
+		this.maxsolutions = max;
 	}
 
 	public void setSolutionLimit(int n) {
@@ -38,6 +49,8 @@ public class ClingoLauncher {
 		ProcessBuilder pb;
 		if (minsolutions) {
 			pb = CLINGO.getProcessBuilder("-n", "" + n, "--enum-mode=domRec", "--heuristic=Domain", "--dom-mod=3,16");
+		} else if (maxsolutions) {
+			pb = CLINGO.getProcessBuilder("-n", "" + n, "--enum-mode=domRec", "--heuristic=Domain", "--dom-mod=5,16");
 		} else {
 			pb = CLINGO.getProcessBuilder("-n", "" + n);
 		}

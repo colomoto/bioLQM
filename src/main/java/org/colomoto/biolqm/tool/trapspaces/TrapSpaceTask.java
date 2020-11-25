@@ -33,6 +33,7 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
 	public boolean showasp = false;
 
 	public boolean terminal = true;
+	public boolean generic = false;
 	public boolean diag = false;
 
 	public String[] focusComponents = null;
@@ -54,14 +55,21 @@ public class TrapSpaceTask extends AbstractToolTask<TrapSpaceList> {
             if (focus) {
                 focusComponents = s.split(",");
                 focus = false;
-            } else if ("terminal".equalsIgnoreCase(s)) {
-                terminal = true;
-                diag = false;
+			} else if ("terminal".equalsIgnoreCase(s)) {
+				generic = false;
+				terminal = true;
+				diag = false;
+			} else if ("generic".equalsIgnoreCase(s)) {
+				generic = true;
+				terminal = false;
+				diag = false;
             } else if ("raw".equalsIgnoreCase(s)) {
                 terminal = false;
+                generic = false;
                 diag = false;
             } else if ("diag".equalsIgnoreCase(s) || "tree".equalsIgnoreCase(s)) {
                 terminal = false;
+				generic = false;
                 diag = true;
 
             } else if ("percolate".equalsIgnoreCase(s)) {
