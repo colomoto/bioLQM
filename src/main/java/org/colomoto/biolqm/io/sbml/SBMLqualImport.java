@@ -13,7 +13,6 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ext.layout.*;
 import org.sbml.jsbml.ext.qual.*;
 
-import javax.xml.soap.Node;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.ArrayList;
