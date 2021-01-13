@@ -5,6 +5,8 @@ import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.Index;
 
+import org.colomoto.biolqm.NodeInfo;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -19,7 +21,7 @@ public class AnnotationModule {
 	public ModelConstants modelConstants;
 	
 	public Index modelIndex;
-	//public Map<Object, Index> elementsIndex;
+	public Map<NodeInfo, Index> nodesIndex;
 	
 	// constructors
 	public AnnotationModule() {
@@ -29,6 +31,19 @@ public class AnnotationModule {
 		this.modelIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(modelIndex, modelMetadata);
 		
-		//this.elementsIndex = new HashMap<Object, Index>();
+		this.nodesIndex = new HashMap<NodeInfo, Index>();
+	}
+	
+	
+	// functions
+	public Metadata createMetadataOfNode(NodeInfo node) {
+		
+		Metadata nodeMetadata = new Metadata(this.modelConstants, "species");
+		Index nodeIndex = new Index(this.modelConstants.getIncrement());
+		this.modelConstants.getListMetadata().put(nodeIndex, nodeMetadata);
+		
+		this.nodesIndex.put(node, nodeIndex);
+		
+		return nodeMetadata;
 	}
 }

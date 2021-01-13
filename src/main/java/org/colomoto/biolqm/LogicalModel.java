@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
 
+import org.colomoto.biolqm.metadata.AnnotationModule;
+import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
  * A LogicalModel is a ready to use object containing all necessary information to perform simulations and analysis,
@@ -156,4 +158,8 @@ public interface LogicalModel {
 	 * @return the existing layout information. Create it if it does not exist.
 	 */
 	ModelLayout getLayout();
+	
+	Metadata getMetadataOfModel();
+	
+	Metadata getMetadataOfNode(NodeInfo node);
 }

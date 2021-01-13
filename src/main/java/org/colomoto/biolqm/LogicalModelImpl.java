@@ -7,6 +7,9 @@ import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
 
+import org.colomoto.biolqm.metadata.AnnotationModule;
+import org.colomoto.biolqm.metadata.annotations.Metadata;
+
 /**
  * Implementation of the LogicalModel interface.
  * 
@@ -23,6 +26,8 @@ public class LogicalModelImpl implements LogicalModel {
 	private final int[] extraFunctions;
 
 	private ModelLayout layout = null;
+	
+	private AnnotationModule annotationModule;
 
 	public LogicalModelImpl(MDDManager ddmanager, List<NodeInfo> coreNodes, int[] coreFunctions, List<NodeInfo> extraNodes, int[] extraFunctions) {
 		this.ddmanager = ddmanager.getManager(coreNodes);
@@ -43,6 +48,8 @@ public class LogicalModelImpl implements LogicalModel {
 		for (int f: this.extraFunctions) {
 			this.ddmanager.use(f);
 		}
+		
+		this.annotationModule = new AnnotationModule();
 	}
 	
 	public LogicalModelImpl(List<NodeInfo> nodeOrder, MDDManager ddmanager, int[] functions) {
@@ -262,5 +269,22 @@ public class LogicalModelImpl implements LogicalModel {
 			this.layout = new ModelLayout();
 		}
 		return this.layout;
+	}
+	
+	@Override
+	public Metadata getMetadataOfModel() {
+		
+		return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.modelIndex);
+	}
+	
+	@Override
+	public Metadata getMetadataOfNode(NodeInfo node) {
+		
+		if (this.annotationModule.nodesIndex.containsKey(node)) {
+			return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.nodesIndex.get(node));
+		}
+		else {
+			return this.annotationModule.createMetadataOfNode(node);
+		}
 	}
 }
