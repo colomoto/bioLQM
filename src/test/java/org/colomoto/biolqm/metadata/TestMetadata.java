@@ -38,12 +38,12 @@ public class TestMetadata {
 		modelMetadata.addURI("lalaland", "unipro", "224587");
 		modelMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
-		Metadata uriMetadata = modelMetadata.getMetadataOfURI("lalaland", "unipro", "224587");
+		Metadata lalalandMetadata = modelMetadata.getMetadataOfQualifier("lalaland");
 		
-		uriMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
+		lalalandMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
 		System.out.println(modelMetadata.getDescriptionMetadata());
-		System.out.println(uriMetadata.getDescriptionMetadata());
+		System.out.println(lalalandMetadata.getDescriptionMetadata());
 		
 		// test componentMetadata
 		NodeInfo node = model.getComponents().get(0);

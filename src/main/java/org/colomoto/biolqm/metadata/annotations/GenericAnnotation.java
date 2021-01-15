@@ -31,9 +31,7 @@ class GenericAnnotation extends Annotation {
 	private Set<String> listOfTags;
 	private Map<String, ArrayList<String>> listOfKeysValues;
 	
-	private Map<URI, Index> listOfIndexOfURIs;
-	private Map<String, Index> listOfIndexOfTags;
-	private Map<Map<String, String>, Index> listOfIndexOfKeysValues;
+	private Index indexOfGeneric;
 	
 	// constructors
 	protected GenericAnnotation() {
@@ -41,9 +39,7 @@ class GenericAnnotation extends Annotation {
 		this.listOfTags = new HashSet<String>();
 		this.listOfKeysValues = new HashMap<String, ArrayList<String>>();
 		
-		this.listOfIndexOfURIs = new HashMap<URI, Index>();
-		this.listOfIndexOfTags = new HashMap<String, Index>();
-		this.listOfIndexOfKeysValues = new HashMap<Map<String, String>, Index>();
+		this.indexOfGeneric = null;
 	}
 	
 	// getters
@@ -60,6 +56,20 @@ class GenericAnnotation extends Annotation {
 	}
 
 	// functions
+	private void removeIndexParent(Index index) {
+		Index indexParent = index.getIndexOfParent();
+		indexParent.setIndexOfChildren(index);
+	}
+	
+	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
+		for (Index indexChild: index.getIndexOfChildren()) {
+			if (indexChild.getIndexOfChildren().size() != 0) {
+				removeIndexChildren(modelConstants, indexChild);
+			}
+			modelConstants.getListMetadata().remove(indexChild);
+		}
+	}
+	
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
@@ -100,20 +110,6 @@ class GenericAnnotation extends Annotation {
 		}
 	}
 	
-	private void removeIndexParent(Index index) {
-		Index indexParent = index.getIndexOfParent();
-		indexParent.setIndexOfChildren(index);
-	}
-	
-	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
-		for (Index indexChild: index.getIndexOfChildren()) {
-			if (indexChild.getIndexOfChildren().size() != 0) {
-				removeIndexChildren(modelConstants, indexChild);
-			}
-			modelConstants.getListMetadata().remove(indexChild);
-		}
-	}
-	
 	@Override
 	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
@@ -123,16 +119,6 @@ class GenericAnnotation extends Annotation {
 					System.out.println("This uri has not been defined yet for this qualifier." + "\n");
 				}
 				else {
-					if (this.listOfIndexOfURIs.containsKey(uri)) {
-						Index index = this.listOfIndexOfURIs.get(uri);
-						
-						this.removeIndexParent(index);
-						this.removeIndexChildren(modelConstants, index);
-						
-						this.listOfIndexOfURIs.remove(uri);
-						modelConstants.getListMetadata().remove(index);
-					}
-					
 					this.listOfURIs.remove(uri);
 				}
 				break;
@@ -142,16 +128,6 @@ class GenericAnnotation extends Annotation {
 					System.out.println("This tag has not been defined yet for this qualifier." + "\n");
 				}
 				else {
-					if (this.listOfIndexOfTags.containsKey(tag)) {
-						Index index = this.listOfIndexOfTags.get(tag);
-						
-						this.removeIndexParent(index);
-						this.removeIndexChildren(modelConstants, index);
-						
-						this.listOfIndexOfTags.remove(tag);
-						modelConstants.getListMetadata().remove(index);
-					}
-					
 					this.listOfTags.remove(tag);
 				}
 				break;
@@ -164,20 +140,7 @@ class GenericAnnotation extends Annotation {
 				else if (!this.listOfKeysValues.get(key).contains(value)) {
 					System.out.println("This pair key-value has not been defined yet for this qualifier." + "\n");
 				}
-				else {
-					Map<String, String> obj = new HashMap<String, String>();
-					obj.put(key, value);
-					
-					if (this.listOfIndexOfKeysValues.containsKey(obj)) {
-						Index index = this.listOfIndexOfKeysValues.get(obj);
-						
-						this.removeIndexParent(index);
-						this.removeIndexChildren(modelConstants, index);
-						
-						this.listOfIndexOfKeysValues.remove(obj);
-						modelConstants.getListMetadata().remove(index);
-					}
-					
+				else {					
 					this.listOfKeysValues.get(key).remove(value);
 					
 					if (this.listOfKeysValues.get(key).size() == 0) {
@@ -188,6 +151,11 @@ class GenericAnnotation extends Annotation {
 		}
 		
 		if (this.listOfURIs.size() == 0 && this.listOfTags.size() == 0 && this.listOfKeysValues.size() == 0) {
+			this.removeIndexParent(indexOfGeneric);
+			this.removeIndexChildren(modelConstants, indexOfGeneric);
+					
+			modelConstants.getListMetadata().remove(indexOfGeneric);
+			
 			return true;
 		}
 		return false;
@@ -195,26 +163,21 @@ class GenericAnnotation extends Annotation {
 	
 	@Override
 	protected String getValue() {
+		
 		String chaine = "";
+		if (this.indexOfGeneric != null) {
+			chaine += " (nested)";
+		}
+		chaine += ":\n";
 		
 		chaine += "\tURIs :\n";
 		for (URI uri : this.listOfURIs) {
-			String nested = "";
-			if (this.listOfIndexOfURIs.containsKey(uri)) {
-				nested = " (nested)";
-			}
-			
-			chaine += "\t\t" + uri.getCollection() + ":" + uri.getIdentifier() + nested + "\n";
+			chaine += "\t\t" + uri.getCollection() + ":" + uri.getIdentifier() + "\n";
 		}
 		
 		chaine += "\tTags :\n";
 		for (String tag : this.listOfTags) {
-			String nested = "";
-			if (this.listOfIndexOfTags.containsKey(tag)) {
-				nested = " (nested)";
-			}
-			
-			chaine += "\t\t" + tag + nested + "\n";
+			chaine += "\t\t" + tag + "\n";
 		}
 		
 		chaine += "\tKeysValues :\n";
@@ -228,12 +191,6 @@ class GenericAnnotation extends Annotation {
 				}
 				
 				joint += value;
-				
-				Map<String, String> obj = new HashMap<String, String>();
-				obj.put(key, value);
-				if (this.listOfIndexOfKeysValues.containsKey(obj)) {
-					joint += " (nested)";
-				}
 			}
 			
 			chaine += "\t\t" + key + ":[" + joint + "]\n";
@@ -243,87 +200,22 @@ class GenericAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected Index getIndex(ModelConstants modelConstants, Index indexParent, String[] contentAnnotation) {
-		switch (contentAnnotation[0]) {
-			case "uri":
-				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
-				
-				if (!this.listOfURIs.contains(uri)) {
-					System.out.println("This uri has not been defined yet for this qualifier, so there can be no metadata object attached to it." + "\n");
-					return null;
-				}
-				else {
-					Index existingIndex = null;
-					
-					if (this.listOfIndexOfURIs.containsKey(uri)) {
-						existingIndex = this.listOfIndexOfURIs.get(uri);
-					}
-					else {
-						existingIndex = new Index(indexParent, modelConstants.getIncrement());
-						
-						indexParent.setIndexOfChildren(existingIndex);
-						
-						this.listOfIndexOfURIs.put(uri, existingIndex);
-						modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
-					}
-					
-					return existingIndex;
-				}
-			case "tag":
-				String tag = contentAnnotation[1];
-				if (!this.listOfTags.contains(tag)) {
-					System.out.println("This tag has not been defined yet for this qualifier, so there can be no metadata object attached to it." + "\n");
-					return null;
-				}
-				else {
-					Index existingIndex = null;
-					
-					if (this.listOfIndexOfTags.containsKey(tag)) {
-						existingIndex = this.listOfIndexOfTags.get(tag);
-					}
-					else {
-						existingIndex = new Index(indexParent, modelConstants.getIncrement());
-						
-						indexParent.setIndexOfChildren(existingIndex);
-						
-						this.listOfIndexOfTags.put(tag, existingIndex);
-						modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
-					}
-					
-					return existingIndex;
-				}
-			case "keyvalue":
-				String key = contentAnnotation[1];
-				String value = contentAnnotation[2];
-				if (!this.listOfKeysValues.containsKey(key)) {
-					System.out.println("This key has not been defined yet for this qualifier, so there can be no metadata object attached to it." + "\n");
-					return null;
-				}
-				else if (!this.listOfKeysValues.get(key).contains(value)) {
-					System.out.println("This pair key-value has not been defined yet for this qualifier." + "\n");
-				}
-				else {
-					Index existingIndex = null;
-					
-					Map<String, String> obj = new HashMap<String, String>();
-					obj.put(key, value);
-					
-					if (this.listOfIndexOfKeysValues.containsKey(obj)) {
-						existingIndex = this.listOfIndexOfKeysValues.get(obj);
-					}
-					else {
-						existingIndex = new Index(indexParent, modelConstants.getIncrement());
-						
-						indexParent.setIndexOfChildren(existingIndex);
-						
-						this.listOfIndexOfKeysValues.put(obj, existingIndex);
-						modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
-					}
-					
-					return existingIndex;
-				}
+	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
+
+		Index existingIndex;
+		
+		if (this.indexOfGeneric != null) {
+			existingIndex = this.indexOfGeneric;
+		}
+		else {
+			existingIndex = new Index(indexParent, modelConstants.getIncrement());
+			
+			indexParent.setIndexOfChildren(existingIndex);
+			
+			this.indexOfGeneric = existingIndex;
+			modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
 		}
 		
-		return null;
+		return existingIndex;
 	}
 }

@@ -47,15 +47,21 @@ class DistributionAnnotation extends Annotation {
 	
 	@Override
 	protected String getValue() {
-		String chaine = "\t\t" + "Terms of distribution : " + this.distribution + "\n";
+		
+		String chaine = "";
+		if (this.indexOfDistribution != null) {
+			chaine += " (nested)";
+		}
+		chaine += ":\n";
+		
+		chaine += "\t\t" + "Terms of distribution : " + this.distribution + "\n";
 		
 		return chaine;
 	}
 	
 	@Override
-	protected Index getIndex(ModelConstants modelConstants, Index indexParent, String[] contentAnnotation) {
-		String distribution = contentAnnotation[0];
-		
+	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
+
 		Index existingIndex;
 		
 		if (this.indexOfDistribution != null) {

@@ -47,15 +47,21 @@ class DateAnnotation extends Annotation {
 	
 	@Override
 	protected String getValue() {
-		String chaine = "\t\t" + "Date : " + this.date + "\n";
+		
+		String chaine = "";
+		if (this.indexOfDate != null) {
+			chaine += " (nested)";
+		}
+		chaine += ":\n";
+		
+		chaine += "\t\t" + "Date : " + this.date + "\n";
 		
 		return chaine;
 	}
 	
 	@Override
-	protected Index getIndex(ModelConstants modelConstants, Index indexParent, String[] contentAnnotation) {
-		String date = contentAnnotation[0];
-		
+	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
+
 		Index existingIndex;
 		
 		if (this.indexOfDate != null) {

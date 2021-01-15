@@ -23,13 +23,13 @@ class AuthorsAnnotation extends Annotation {
 	// variables
 	private ArrayList<Author> listOfAuthors;
 	
-	private Map<Author, Index> listOfIndexOfAuthors;
+	private Index indexOfAuthors;
 	
 	// constructors
 	protected AuthorsAnnotation() {
 		this.listOfAuthors = new ArrayList<Author>();
 		
-		this.listOfIndexOfAuthors = new HashMap<Author, Index>();
+		this.indexOfAuthors = null;
 	}
 		
 	// getters
@@ -38,13 +38,6 @@ class AuthorsAnnotation extends Annotation {
 	}
 	
 	// functions
-	@Override
-	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
-
-		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
-		this.listOfAuthors.add(author);
-	}
-	
 	private void removeIndexParent(Index index) {
 		Index indexParent = index.getIndexOfParent();
 		indexParent.setIndexOfChildren(index);
@@ -60,27 +53,29 @@ class AuthorsAnnotation extends Annotation {
 	}
 
 	@Override
+	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+
+		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
+		this.listOfAuthors.add(author);
+	}
+
+	@Override
 	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 
 		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
 		if (!this.listOfAuthors.contains(author)) {
 			System.out.println("This value has not been defined yet for this qualifier." + "\n");
 		}
-		else {
-			if (this.listOfIndexOfAuthors.containsKey(author)) {
-				Index index = this.listOfIndexOfAuthors.get(author);
-				
-				this.removeIndexParent(index);
-				this.removeIndexChildren(modelConstants, index);
-						
-				this.listOfIndexOfAuthors.remove(author);
-				modelConstants.getListMetadata().remove(index);
-			}
-			
+		else {		
 			this.listOfAuthors.remove(author);
 		}
 		
 		if (this.listOfAuthors.size() == 0) {
+			this.removeIndexParent(indexOfAuthors);
+			this.removeIndexChildren(modelConstants, indexOfAuthors);
+					
+			modelConstants.getListMetadata().remove(indexOfAuthors);
+			
 			return true;
 		}
 		return false;
@@ -88,7 +83,12 @@ class AuthorsAnnotation extends Annotation {
 
 	@Override
 	protected String getValue() {
+		
 		String chaine = "";
+		if (this.indexOfAuthors != null) {
+			chaine += " (nested)";
+		}
+		chaine += ":\n";
 		
 		chaine += "\tAuthors :\n";
 		for (Author author : this.listOfAuthors) {
@@ -99,29 +99,22 @@ class AuthorsAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected Index getIndex(ModelConstants modelConstants, Index indexParent, String[] contentAnnotation) {
-		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
+	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
+
+		Index existingIndex;
 		
-		if (!this.listOfAuthors.contains(author)) {
-			System.out.println("This author has not been defined yet for this qualifier, so there can be no metadata object attached to it." + "\n");
-			return null;
+		if (this.indexOfAuthors != null) {
+			existingIndex = this.indexOfAuthors;
 		}
 		else {
-			Index existingIndex = null;
+			existingIndex = new Index(indexParent, modelConstants.getIncrement());
 			
-			if (this.listOfIndexOfAuthors.containsKey(author)) {
-				existingIndex = this.listOfIndexOfAuthors.get(author);
-			}
-			else {
-				existingIndex = new Index(indexParent, modelConstants.getIncrement());
-				
-				indexParent.setIndexOfChildren(existingIndex);
-						
-				this.listOfIndexOfAuthors.put(author, existingIndex);
-				modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
-			}
+			indexParent.setIndexOfChildren(existingIndex);
 			
-			return existingIndex;
+			this.indexOfAuthors = existingIndex;
+			modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
 		}
+		
+		return existingIndex;
 	}
 }

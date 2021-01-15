@@ -328,7 +328,7 @@ public class Metadata {
 	 */	
 	public String getDescriptionAnnotation(String termDesired) {
 		if (this.listOfAnnotations.containsKey(termDesired)) {
-			return termDesired + ":\n" + this.listOfAnnotations.get(termDesired).getValue();
+			return termDesired + this.listOfAnnotations.get(termDesired).getValue();
 		}
 		return "This type of annotation has not been defined for this component" + "\n";
 	}
@@ -346,14 +346,14 @@ public class Metadata {
 		while (it.hasNext()) {
 			String termDesired = (String) it.next();
 
-			description += termDesired + ":\n" + this.listOfAnnotations.get(termDesired).getValue();
+			description += termDesired + this.listOfAnnotations.get(termDesired).getValue();
 		}
 		
 		return description;
 	}
 	
 	
-	// the function to get help on how to annotate properly
+	// the functions to get help on how to annotate properly
 	/**
 	 * Retrieve a String containing suggestions on how to annotate the component for a given qualifier
 	 * 
@@ -420,15 +420,22 @@ public class Metadata {
 	}
 	
 	
-	// The functions to build a nested annotation, ie pur an annotation in an annotation
-	private Metadata getMetadataOfAnnotation(String termDesired, String... contentAnnotation) {
+	// the function to build a nested annotation, ie an annotation in an annotation
+	/**
+	 * Get a Metadata object linked to a qualifier used in the parent Metadata
+	 * Permits to annotate the qualifier content like you would annotate a component (model, node, transition...)
+	 *
+	 * @param termDesired the qualifier one wants to retrieve
+	 */	
+	public Metadata getMetadataOfQualifier(String termDesired) {
 
 		if (this.listOfAnnotations.containsKey(termDesired)) {
 			Index indexParent = this.getLocalIndex();
 			
-			Index index = this.listOfAnnotations.get(termDesired).getIndex(modelConstants, indexParent, contentAnnotation);
+			Index index = this.listOfAnnotations.get(termDesired).getIndex(modelConstants, indexParent);
 			
 			// if the index is null to that point, that means the annotation required doesn't exist and we return null
+			// else we return the metadata of this annotation
 			if (index != null) {
 				return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
 			}
@@ -440,72 +447,5 @@ public class Metadata {
 			
 			return null;
 		}
-	}
-
-	/**
-	 * Get a Metadata object linked to a URI
-	 * Permits to annotate the URI like you would annotate a component (model, node, transition...)
-	 *
-	 * @param termDesired the qualifier one wants to retrieve
-	 * @param collection the collection of the uri one wants to retrieve
-	 * @param identifier the entry in the collection one wants to retrieve
-	 */	
-	public Metadata getMetadataOfURI(String termDesired, String collection, String identifier) {
-		return this.getMetadataOfAnnotation(termDesired, "uri", collection, identifier);
-	}
-	/**
-	 * Get a Metadata object linked to a tag
-	 * Permits to annotate the tag like you would annotate a component (model, node, transition...)
-	 *
-	 * @param termDesired the qualifier one wants to retrieve
-	 * @param tag the tag one wants to retrieve
-	 */	
-	public Metadata getMetadataOfTag(String termDesired, String tag) {
-		return this.getMetadataOfAnnotation(termDesired, "tag", tag);
-	}
-	/**
-	 * Get a Metadata object linked to a pair key-value
-	 * Permits to annotate the pair key-value like you would annotate a component (model, node, transition...)
-	 *
-	 * @param termDesired the qualifier one wants to retrieve
-	 * @param key the place where one wants to retrieve a value
-	 * @param value the value one wants to retrieve
-	 */	
-	public Metadata getMetadataOfKeyValue(String termDesired, String key, String value) {
-		return this.getMetadataOfAnnotation(termDesired, "keyvalue", key, value);
-	}
-	/**
-	 * Get a Metadata object linked to an author
-	 * Permits to annotate the author like you would annotate a component (model, node, transition...)
-	 *
-	 * @param termDesired the qualifier one wants to retrieve
-	 * @param name the name of the author
-	 * @param surname the surname of the author
-	 * @param email the email of the author
-	 * @param organisation the organisation of the author
-	 * @param orcid the orcid of the author
-	 */
-	public Metadata getMetadataOfAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
-		return this.getMetadataOfAnnotation(termDesired, name, surname, email, organisation, orcid);
-	}
-	/**
-	 * Get a Metadata object linked to a date
-	 * Permits to annotate the date like you would annotate a component (model, node, transition...)
-	 *
-	 * @param termDesired the qualifier one wants to retrieve
-	 * @param date the date one wants to retrieve
-	 */	
-	public Metadata getMetadataOfDate(String termDesired) {
-		return this.getMetadataOfAnnotation(termDesired, "");
-	}
-	/**
-	 * Get a Metadata object linked to a distribution
-	 * Permits to annotate the distribution like you would annotate a component (model, node, transition...)
-	 * 
-	 * @param termDesired the qualifier one wants to retrieve
-	 * @param distribution the terms of distribution one wants to retrieve
-	 */	
-	public Metadata getMetadataOfDistribution(String termDesired) {
-		return this.getMetadataOfAnnotation(termDesired, "");
 	}
 }
