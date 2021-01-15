@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="example_minimal">
+    <listOfUnitDefinitions>
+      <unitDefinition id="substance_per_volume">
+        <listOfUnits>
+          <unit scale="0" kind="litre" multiplier="1" exponent="-1" />
+          <unit scale="0" kind="mole" multiplier="1" exponent="1" />
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="substance_per_time">
+        <listOfUnits>
+          <unit scale="0" kind="mole" multiplier="1" exponent="1" />
+          <unit scale="0" kind="second" multiplier="1" exponent="-1" />
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment constant="true" id="compartment_0" size="1" metaid="metaid0" spatialDimensions="3">
+        <annotation>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+	<rdf:Description rdf:about="#metaid0">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/fma/FMA:72562" />
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+            </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" constant="false" metaid="metaid1" hasOnlySubstanceUnits="false" compartment="compartment_0" id="A" initialConcentration="0.6">
+        <annotation>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+	<rdf:Description rdf:about="#metaid1">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="https://identifiers.org/chebi/CHEBI:145558" />
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+            </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter constant="true" id="cell" value="1E-15" />
+      <parameter constant="false" id="B" units="substance_per_volume" value="0.3" />
+      <parameter constant="true" id="k" value="1" />
+      <parameter constant="false" id="AinB" units="substance_per_time" />
+      <parameter constant="true" id="Reaction_AinB_k" value="0.1" />
+    </listOfParameters>
+    <listOfRules>
+      <rateRule variable="B">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <apply>
+            <divide />
+            <apply>
+              <plus />
+              <ci> AinB </ci>
+            </apply>
+            <ci> cell </ci>
+          </apply>
+        </math>
+            </rateRule>
+      <assignmentRule variable="AinB">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <apply>
+            <ci> cell </ci>
+            <ci> Reaction_AinB.k </ci>
+            <ci> A </ci>
+          </apply>
+        </math>
+            </assignmentRule>
+    </listOfRules>
+  </model>
+</sbml>

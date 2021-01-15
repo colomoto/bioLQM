@@ -3,26 +3,42 @@ package org.colomoto.biolqm.metadata;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.ReferenceModels;
-import org.junit.jupiter.api.Test;
-
+import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
-
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.TestHelper;
+import org.colomoto.biolqm.io.LogicalModelFormat;
+
+import java.io.File;
+
+import org.junit.jupiter.api.Test;
 
 public class TestMetadata {
 
 	@Test
 	public void testMetadataManagement() throws Exception {
-		LogicalModel model = ReferenceModels.getModel("simpleFunctions.txt");
+		
+		File dir = TestHelper.getTestResource("reference_models");
+		
+		LogicalModelFormat format = LQMServiceManager.getFormat("sbml");
+		
+		if (!dir.isDirectory()) {
+			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
+		}
+		
+		if (format == null || !format.canLoad()) {
+			throw new RuntimeException("Could not find the reference format");
+		}
+		
+		LogicalModel model = format.load(new File(dir, "export_test_ginsim.sbml"));
 
 		// test modelMetadata
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
 		modelMetadata.addURI("lalaland", "unipro", "224587");
-		Metadata uriMetadata = modelMetadata.getMetadataOfURI("lalaland", "unipro", "224587");
+		modelMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
-		uriMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111444466668888");
+		Metadata uriMetadata = modelMetadata.getMetadataOfURI("lalaland", "unipro", "224587");
 		
 		uriMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
@@ -39,10 +55,14 @@ public class TestMetadata {
 		nodeMetadata.addTag("isDescribedBy", "doi2");
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		
-		System.out.println(nodeMetadata.getDescriptionMetadata());
+		for (NodeInfo element: model.getComponents()) {
+			Metadata elementMetadata = model.getMetadataOfNode(element);
+			System.out.println(elementMetadata.getDescriptionMetadata());
+		}
 		
-		nodeMetadata.removeTag("isDescribedBy", "doi");
-		
-		System.out.println(nodeMetadata.getDescriptionMetadata());
+		for (NodeInfo element: model.getExtraComponents()) {
+			Metadata elementMetadata = model.getMetadataOfNode(element);
+			System.out.println(elementMetadata.getDescriptionMetadata());
+		}
 	}
 }

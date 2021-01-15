@@ -98,11 +98,17 @@ public class Metadata {
 	}
 	
 	private boolean isValidEmail(String email) {
-		return email.matches("^(.+)@(.+)$");
+		if (email != null) {
+			return email.matches("^(.+)@(.+)$");
+		}
+		return true;
 	}
 	
 	private boolean isValidOrcid(String orcid) {
-		return orcid.matches("\\d{4}-\\d{4}-\\d{4}-\\d{4}");
+		if (orcid != null) {
+			return orcid.matches("\\d{4}-\\d{4}-\\d{4}-\\d{4}");
+		}
+		return true;
 	}
 
 

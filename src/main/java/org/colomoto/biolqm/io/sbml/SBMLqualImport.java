@@ -7,11 +7,18 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
 import org.colomoto.mddlib.*;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
+import org.colomoto.biolqm.metadata.annotations.Metadata;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ext.layout.*;
 import org.sbml.jsbml.ext.qual.*;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Annotation;
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.History;
+import org.sbml.jsbml.Creator;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -19,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 
 /**
  * Crude SBML import using JSBML and the qual extension.
@@ -146,6 +154,8 @@ public class SBMLqualImport extends BaseLoader {
             idx++;
         }
         LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
+		
+		this.importAllMetadata(model, variables);
 
         // Load the layout information if available
         if (qualBundle.lmodel != null) {
@@ -907,5 +917,67 @@ public class SBMLqualImport extends BaseLoader {
 
         throw new RuntimeException("Multi-valued is not handled here!");
     }
-
+	
+    private void importElementCVTerms(Annotation annotation, Metadata metadata) {
+		
+		// to deal with terms of bqbiol and bqmodel
+		for (CVTerm cvterm: annotation.getListOfCVTerms()) {
+			String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+			
+			for (String uri: cvterm.getResources()) {
+				int colon = uri.lastIndexOf(':');
+				String collection = uri.substring(0, colon);
+				String identifier = uri.substring(colon+1);
+				
+				metadata.addURI(qualifier, collection, identifier);
+			}
+		}
+	}
+		
+    private void importElementHistory(Annotation annotation, Metadata metadata) {
+		
+		// to deal with terms of dcterms
+		if (annotation.isSetHistory()) {		
+			History history = annotation.getHistory();
+			
+			String pattern = "yyyy-MM-dd";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+						
+			metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+			
+			// we don't use the old modifiedDate for the "modified" qualifier because we use the current date
+			// it's okay because this change will affect the model only if it is saved, indicating it has indeed been modified
+			// metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
+			
+			for (Creator creator: history.getListOfCreators()) {
+				metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), creator.getEmail(), creator.getOrganisation(), null);
+			}
+		}
+	}
+	
+	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) {
+		
+		SBase elementModel = (SBase) this.qualBundle.document.getModel();
+		
+		if (elementModel.isSetAnnotation()) {
+			Annotation annotationModel = elementModel.getAnnotation();
+			
+			Metadata metadataModel = model.getMetadataOfModel();
+			
+			this.importElementCVTerms(annotationModel, metadataModel);
+			this.importElementHistory(annotationModel, metadataModel);
+		}
+		
+		for (QualitativeSpecies elementSpecies: this.qualBundle.qmodel.getListOfQualitativeSpecies()) {
+			
+			if (elementSpecies.isSetAnnotation()) {
+				Annotation annotationSpecies = elementSpecies.getAnnotation();
+				
+				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
+				Metadata metadataSpecies = model.getMetadataOfNode(node);
+				
+				this.importElementCVTerms(annotationSpecies, metadataSpecies);
+			}
+		}
+	}
 }
