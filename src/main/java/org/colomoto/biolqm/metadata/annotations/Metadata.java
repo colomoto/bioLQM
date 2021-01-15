@@ -422,8 +422,9 @@ public class Metadata {
 	
 	// the function to build a nested annotation, ie an annotation in an annotation
 	/**
-	 * Get a Metadata object linked to a qualifier used in the parent Metadata
-	 * Permits to annotate the qualifier content like you would annotate a component (model, node, transition...)
+	 * Get the Metadata object associated to a given qualifier used in the parent Metadata
+	 * The Metadata returned constitutes a nested annotation for the parent Metadata
+	 * It can be modified exactly as the parent Metadata
 	 *
 	 * @param termDesired the qualifier one wants to retrieve
 	 */	

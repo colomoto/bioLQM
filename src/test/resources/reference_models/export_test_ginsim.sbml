@@ -102,7 +102,29 @@
 		  </rdf:RDF>
 	    </annotation>
 	  </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies qual:maxLevel="2" qual:compartment="comp1" qual:constant="false" qual:id="Mdm2cyt"/>
+      <qual:qualitativeSpecies qual:maxLevel="2" qual:compartment="comp1" qual:constant="false" qual:id="Mdm2cyt">
+	    <annotation>
+		  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+			<rdf:Description rdf:about="#metaid2">
+			<bqbiol:occursIn>
+			  <rdf:Bag>
+				<rdf:li rdf:resource="https://identifiers.org/go/GO:0005764"/>
+				<bqbiol:isDescribedBy>
+				  <rdf:Bag>
+					<rdf:li rdf:resource="https://identifiers.org/pubmed/1111111"/>
+				  </rdf:Bag>
+				</bqbiol:isDescribedBy>
+				<bqbiol:isDescribedBy>
+				  <rdf:Bag>
+					<rdf:li rdf:resource="https://identifiers.org/eco/ECO:0000004"/>
+				  </rdf:Bag>
+				</bqbiol:isDescribedBy>
+			  </rdf:Bag>
+			</bqbiol:occursIn>
+			</rdf:Description>
+		  </rdf:RDF>
+		</annotation>
+	  </qual:qualitativeSpecies>
       <qual:qualitativeSpecies qual:maxLevel="1" qual:compartment="comp1" qual:constant="false" qual:id="Mdm2nuc"/>
       <qual:qualitativeSpecies qual:maxLevel="1" qual:compartment="comp1" qual:constant="false" qual:id="DNAdam"/>
     </qual:listOfQualitativeSpecies>

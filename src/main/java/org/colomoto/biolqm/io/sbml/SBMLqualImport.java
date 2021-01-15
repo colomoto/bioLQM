@@ -918,25 +918,31 @@ public class SBMLqualImport extends BaseLoader {
         throw new RuntimeException("Multi-valued is not handled here!");
     }
 	
-    private void importElementCVTerms(Annotation annotation, Metadata metadata) {
+	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
 		
-		// to deal with terms of bqbiol and bqmodel
-		for (CVTerm cvterm: annotation.getListOfCVTerms()) {
-			String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+		
+		// we add all the uris for this qualifier
+		for (String uri: cvterm.getResources()) {
+			int colon = uri.lastIndexOf(':');
+			String collection = uri.substring(0, colon);
+			String identifier = uri.substring(colon+1);
 			
-			for (String uri: cvterm.getResources()) {
-				int colon = uri.lastIndexOf(':');
-				String collection = uri.substring(0, colon);
-				String identifier = uri.substring(colon+1);
-				
-				metadata.addURI(qualifier, collection, identifier);
+			metadata.addURI(qualifier, collection, identifier);
+		}
+		
+		// and then we add the nested annotation recursively
+		if (cvterm.isSetListOfNestedCVTerms()) {
+			Metadata metadataNested = metadata.getMetadataOfQualifier(qualifier);
+			
+			for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
+				this.importElementCVTerm(cvtermNested, metadataNested);
 			}
 		}
 	}
 		
     private void importElementHistory(Annotation annotation, Metadata metadata) {
 		
-		// to deal with terms of dcterms
 		if (annotation.isSetHistory()) {		
 			History history = annotation.getHistory();
 			
@@ -961,10 +967,14 @@ public class SBMLqualImport extends BaseLoader {
 		
 		if (elementModel.isSetAnnotation()) {
 			Annotation annotationModel = elementModel.getAnnotation();
-			
 			Metadata metadataModel = model.getMetadataOfModel();
 			
-			this.importElementCVTerms(annotationModel, metadataModel);
+			// to deal with terms of bqbiol and bqmodel
+			for (CVTerm cvterm: annotationModel.getListOfCVTerms()) {
+				this.importElementCVTerm(cvterm, metadataModel);
+			}
+			
+			// to deal with terms of dcterms
 			this.importElementHistory(annotationModel, metadataModel);
 		}
 		
@@ -972,11 +982,13 @@ public class SBMLqualImport extends BaseLoader {
 			
 			if (elementSpecies.isSetAnnotation()) {
 				Annotation annotationSpecies = elementSpecies.getAnnotation();
-				
 				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
 				Metadata metadataSpecies = model.getMetadataOfNode(node);
-				
-				this.importElementCVTerms(annotationSpecies, metadataSpecies);
+					
+				// to deal with terms of bqbiol and bqmodel
+				for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
+					this.importElementCVTerm(cvterm, metadataSpecies);
+				}
 			}
 		}
 	}

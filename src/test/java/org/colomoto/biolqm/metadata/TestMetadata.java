@@ -56,13 +56,23 @@ public class TestMetadata {
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		
 		for (NodeInfo element: model.getComponents()) {
+			System.out.println(element.getNodeID());
+			
 			Metadata elementMetadata = model.getMetadataOfNode(element);
 			System.out.println(elementMetadata.getDescriptionMetadata());
 		}
 		
 		for (NodeInfo element: model.getExtraComponents()) {
+			System.out.println(element.getNodeID());
+			
 			Metadata elementMetadata = model.getMetadataOfNode(element);
 			System.out.println(elementMetadata.getDescriptionMetadata());
 		}
+		
+		NodeInfo node2 = model.getComponents().get(1);
+		
+		Metadata elementMetadata = model.getMetadataOfNode(node2);
+		Metadata nestedMetadata = elementMetadata.getMetadataOfQualifier("occursIn");
+		System.out.println(nestedMetadata.getDescriptionMetadata());
 	}
 }
