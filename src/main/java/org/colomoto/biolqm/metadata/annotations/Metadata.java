@@ -183,9 +183,9 @@ public class Metadata {
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param name the name of the author
 	 * @param surname the surname of the author
-	 * @param email the email of the author
-	 * @param organisation the organisation of the author
-	 * @param orcid the orcid of the author
+	 * @param email the email of the author (optional: put null if you don't want to define it)
+	 * @param organisation the organisation of the author (optional: put null if you don't want to define it)
+	 * @param orcid the orcid of the author (optional: put null if you don't want to define it)
 	 */	
 	public void addAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
 		if (!this.isValidEmail(email)) {
@@ -292,9 +292,9 @@ public class Metadata {
 	 * @param termDesired the qualifier one wants to remove
 	 * @param name the name of the author
 	 * @param surname the surname of the author
-	 * @param email the email of the author
-	 * @param organisation the organisation of the author
-	 * @param orcid the orcid of the author
+	 * @param email the email of the author (optional: put null if you don't want to define it)
+	 * @param organisation the organisation of the author (optional: put null if you don't want to define it)
+	 * @param orcid the orcid of the author (optional: put null if you don't want to define it)
 	 */	
 	public void removeAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
 		String javaClassDesired = "AuthorsAnnotation";

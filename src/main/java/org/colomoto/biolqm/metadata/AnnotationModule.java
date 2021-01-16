@@ -34,8 +34,13 @@ public class AnnotationModule {
 		this.nodesIndex = new HashMap<NodeInfo, Index>();
 	}
 	
-	
 	// functions
+	/**
+	 * Create a Metadata object for a node of the model
+	 *
+	 * @param node the node you want to annotate
+	 * @return the Metadata object you created for the node
+	 */
 	public Metadata createMetadataOfNode(NodeInfo node) {
 		
 		Metadata nodeMetadata = new Metadata(this.modelConstants, "species");

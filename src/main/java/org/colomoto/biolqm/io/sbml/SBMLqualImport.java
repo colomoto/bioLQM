@@ -19,6 +19,7 @@ import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.xml.XMLNode;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -155,7 +156,11 @@ public class SBMLqualImport extends BaseLoader {
         }
         LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
 		
-		this.importAllMetadata(model, variables);
+		try {
+			this.importAllMetadata(model, variables);
+		} catch (XMLStreamException e) {
+			System.err.println("Error importing model annotations");
+		}
 
         // Load the layout information if available
         if (qualBundle.lmodel != null) {
@@ -961,33 +966,51 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 	
-	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) {
+	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) throws XMLStreamException {
 		
 		SBase elementModel = (SBase) this.qualBundle.document.getModel();
 		
-		if (elementModel.isSetAnnotation()) {
-			Annotation annotationModel = elementModel.getAnnotation();
+		if (elementModel.isSetAnnotation() || elementModel.isSetNotes()) {
 			Metadata metadataModel = model.getMetadataOfModel();
 			
-			// to deal with terms of bqbiol and bqmodel
-			for (CVTerm cvterm: annotationModel.getListOfCVTerms()) {
-				this.importElementCVTerm(cvterm, metadataModel);
+			if (elementModel.isSetAnnotation()) {
+				Annotation annotationModel = elementModel.getAnnotation();
+				
+				// to deal with terms of bqbiol and bqmodel
+				for (CVTerm cvterm: annotationModel.getListOfCVTerms()) {
+					this.importElementCVTerm(cvterm, metadataModel);
+				}
+				
+				// to deal with terms of dcterms
+				this.importElementHistory(annotationModel, metadataModel);
 			}
-			
-			// to deal with terms of dcterms
-			this.importElementHistory(annotationModel, metadataModel);
+			if (elementModel.isSetNotes()) {
+				XMLNode notesModel = elementModel.getNotes();
+				
+				// to deal with the notes incorporated
+				metadataModel.setNotes(notesModel.getChildCount() + notesModel.toXMLString());
+			}
 		}
 		
 		for (QualitativeSpecies elementSpecies: this.qualBundle.qmodel.getListOfQualitativeSpecies()) {
 			
-			if (elementSpecies.isSetAnnotation()) {
-				Annotation annotationSpecies = elementSpecies.getAnnotation();
+			if (elementSpecies.isSetAnnotation() || elementSpecies.isSetNotes()) {
 				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
 				Metadata metadataSpecies = model.getMetadataOfNode(node);
+				
+				if (elementSpecies.isSetAnnotation()) {					
+					Annotation annotationSpecies = elementSpecies.getAnnotation();
+						
+					// to deal with terms of bqbiol and bqmodel
+					for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
+						this.importElementCVTerm(cvterm, metadataSpecies);
+					}
+				}
+				if (elementSpecies.isSetNotes()) {
+					XMLNode notesSpecies = elementSpecies.getNotes();
 					
-				// to deal with terms of bqbiol and bqmodel
-				for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
-					this.importElementCVTerm(cvterm, metadataSpecies);
+					// to deal with the notes incorporated
+					metadataSpecies.setNotes(notesSpecies.toXMLString());
 				}
 			}
 		}

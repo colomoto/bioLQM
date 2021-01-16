@@ -155,11 +155,22 @@ public interface LogicalModel {
 
 	/**
 	 * Retrieve the associated layout information.
+	 * 
 	 * @return the existing layout information. Create it if it does not exist.
 	 */
 	ModelLayout getLayout();
 	
+	/**
+	 * Retrieve the Metadata object of the model
+	 * @return the existing Metadata of the model
+	 */
 	Metadata getMetadataOfModel();
 	
+	/**
+	 * Retrieve the Metadata object of the node
+	 * 
+	 * @param node the node you want to annotate
+	 * @return the existing Metadata of the node. Create it if it does not exist.
+	 */
 	Metadata getMetadataOfNode(NodeInfo node);
 }

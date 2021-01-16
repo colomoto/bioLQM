@@ -74,5 +74,7 @@ public class TestMetadata {
 		Metadata elementMetadata = model.getMetadataOfNode(node2);
 		Metadata nestedMetadata = elementMetadata.getMetadataOfQualifier("occursIn");
 		System.out.println(nestedMetadata.getDescriptionMetadata());
+		
+		System.out.println(modelMetadata.getNotes());
 	}
 }
