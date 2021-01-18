@@ -42,8 +42,8 @@ public class TestMetadata {
 		
 		lalalandMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
-		System.out.println(modelMetadata.getDescriptionMetadata());
-		System.out.println(lalalandMetadata.getDescriptionMetadata());
+		// System.out.println(modelMetadata.getDescriptionMetadata());
+		// System.out.println(lalalandMetadata.getDescriptionMetadata());
 		
 		// test componentMetadata
 		NodeInfo node = model.getComponents().get(0);
@@ -55,26 +55,21 @@ public class TestMetadata {
 		nodeMetadata.addTag("isDescribedBy", "doi2");
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		
-		for (NodeInfo element: model.getComponents()) {
-			System.out.println(element.getNodeID());
+		// for (NodeInfo element: model.getComponents()) {
+			// System.out.println(element.getNodeID());
 			
-			Metadata elementMetadata = model.getMetadataOfNode(element);
-			System.out.println(elementMetadata.getDescriptionMetadata());
-		}
+			// Metadata elementMetadata = model.getMetadataOfNode(element);
+			// System.out.println(elementMetadata.getDescriptionMetadata());
+		// }
+
+		// NodeInfo node2 = model.getComponents().get(1);
 		
-		for (NodeInfo element: model.getExtraComponents()) {
-			System.out.println(element.getNodeID());
-			
-			Metadata elementMetadata = model.getMetadataOfNode(element);
-			System.out.println(elementMetadata.getDescriptionMetadata());
-		}
+		// Metadata elementMetadata = model.getMetadataOfNode(node2);
+		// Metadata nestedMetadata = elementMetadata.getMetadataOfQualifier("occursIn");
+		// System.out.println(nestedMetadata.getDescriptionMetadata());
 		
-		NodeInfo node2 = model.getComponents().get(1);
+		// System.out.println(modelMetadata.getNotes());
 		
-		Metadata elementMetadata = model.getMetadataOfNode(node2);
-		Metadata nestedMetadata = elementMetadata.getMetadataOfQualifier("occursIn");
-		System.out.println(nestedMetadata.getDescriptionMetadata());
-		
-		System.out.println(modelMetadata.getNotes());
+		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output", "sbml");
 	}
 }

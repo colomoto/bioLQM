@@ -8,6 +8,8 @@ import org.colomoto.biolqm.io.BaseExporter;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
+import org.colomoto.biolqm.metadata.annotations.Metadata;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Compartment;
@@ -15,12 +17,26 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.layout.*;
 import org.sbml.jsbml.ext.qual.*;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Annotation;
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.History;
+import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.CVTerm.Qualifier;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.Set;
+import java.text.ParseException;
 
 /**
  * SBML export using JSBML and the "qual" extension.
@@ -201,6 +217,13 @@ public class SBMLqualExport extends BaseExporter {
                 layout.setDimensions(dims);
 
             }
+			
+			// add the annotations from the SBML model
+			try {
+				this.exportAllMetadata();
+			} catch (XMLStreamException e) {
+				System.err.println("Error exporting the annotations in sbml");
+			}
         }
     }
 
@@ -353,4 +376,146 @@ public class SBMLqualExport extends BaseExporter {
             tr.addFunctionTerm(ft);
         }
     }
+	
+	private ArrayList<CVTerm> exportNestedMetadata(Metadata metadata) {
+		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
+		
+		for (String qualifierName: metadata.getListOfQualifiers()) {
+			
+			String qualifierFullClass = metadata.getClassOfQualifier(qualifierName);
+			int colon = qualifierFullClass.lastIndexOf('.');
+			String qualifierClass = qualifierFullClass.substring(colon+1);
+			
+			if (qualifierClass.equals("GenericAnnotation")) {
+				CVTerm cvterm = new CVTerm();
+				
+				Qualifier qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
+				cvterm.setQualifier(qualifier);
+				
+				ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName);
+				if (listOfResources.size() > 0) {
+	
+					for (ArrayList<String> resource: listOfResources) {
+						cvterm.addResource(resource.get(0)+":"+resource.get(1));
+					}
+					
+					if (metadata.isSetMetadataOfQualifier(qualifierName)) {
+						Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName);
+						
+						ArrayList<CVTerm> nestedCVTerms = this.exportNestedMetadata(metadataQualifier);
+						for (CVTerm nestedCVTerm : nestedCVTerms) {
+							cvterm.addNestedCVTerm(nestedCVTerm);
+						}
+					}
+				
+					listOfCVTerms.add(cvterm);
+				}
+			}
+		}
+		
+		return listOfCVTerms;
+	}
+	
+	private Annotation exportElementMetadata(String type, Metadata metadata) {
+		
+		Annotation annotation = new Annotation();
+		History history = new History();
+		
+		for (String qualifierName: metadata.getListOfQualifiers()) {
+			
+			String qualifierFullClass = metadata.getClassOfQualifier(qualifierName);
+			int colon = qualifierFullClass.lastIndexOf('.');
+			String qualifierClass = qualifierFullClass.substring(colon+1);
+			
+			if (qualifierClass.equals("GenericAnnotation")) {
+				CVTerm cvterm = new CVTerm();
+				
+				Qualifier qualifier;
+				if (type.equals("model")) {
+					qualifier = CVTerm.Qualifier.getModelQualifierFor(qualifierName);
+				}
+				else {
+					qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
+				}
+				cvterm.setQualifier(qualifier);
+			
+				ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName);
+				if (listOfResources.size() > 0) {
+	
+					for (ArrayList<String> resource: listOfResources) {
+						cvterm.addResource(resource.get(0)+":"+resource.get(1));
+					}
+					
+					if (metadata.isSetMetadataOfQualifier(qualifierName)) {
+						Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName);
+						
+						ArrayList<CVTerm> nestedCVTerms = this.exportNestedMetadata(metadataQualifier);
+						for (CVTerm nestedCVTerm : nestedCVTerms) {
+							cvterm.addNestedCVTerm(nestedCVTerm);
+						}
+					}
+				
+					annotation.addCVTerm(cvterm);
+				}
+			}
+			else if (qualifierClass.equals("AuthorsAnnotation") && type.equals("model")) {
+				ArrayList<ArrayList<String>> listOfAuthors = metadata.getResourcesOfQualifier(qualifierName);
+				
+				for (ArrayList<String> author: listOfAuthors) {
+					Creator creator = new Creator(author.get(0), author.get(1), author.get(2), author.get(3));
+					history.addCreator(creator);
+				}
+			}
+			else if (qualifierClass.equals("DateAnnotation") && type.equals("model")) {
+				String date = metadata.getResourcesOfQualifier(qualifierName).get(0).get(0);
+				
+				String pattern = "yyyy-MM-dd";
+				
+				try {
+					Date simpleDateFormat = new SimpleDateFormat(pattern).parse(date);
+				
+					if (qualifierName == "created") {
+						history.setCreatedDate(simpleDateFormat);
+					}
+					else if (qualifierName == "modified") {
+						history.setModifiedDate(simpleDateFormat);
+					}
+				} catch (ParseException e) {
+					System.err.println("Error parsing a date contained in an annotation of the model");
+				}
+			}
+		}
+		
+		if (type.equals("model")) { 
+			annotation.setHistory(history);
+		}
+		return annotation;
+	}
+	
+	private void exportAllMetadata() throws XMLStreamException {
+		
+		Metadata metadataModel = this.model.getMetadataOfModel();
+		
+		if (metadataModel.isMetadataEmpty()) {
+			Model elementModel = qualBundle.document.getModel();
+			
+			elementModel.setMetaId("meta_"+elementModel.getId());
+			elementModel.setAnnotation(this.exportElementMetadata("model", metadataModel));
+		}
+		
+		for (Map.Entry<NodeInfo, QualitativeSpecies> entry : this.node2species.entrySet()) {
+			NodeInfo node = entry.getKey();
+			
+			if (this.model.isSetMetadataOfNode(node)) {
+				Metadata metadataSpecies = this.model.getMetadataOfNode(node);
+				
+				if (metadataSpecies.isMetadataEmpty()) {
+					QualitativeSpecies elementSpecies = entry.getValue();
+					
+					elementSpecies.setMetaId("meta_"+elementSpecies.getId());
+					elementSpecies.setAnnotation(this.exportElementMetadata("species", metadataSpecies));
+				}
+			}
+		}
+	}
 }

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 /**
  * One instance per component (model, node, transition...)
@@ -109,6 +110,18 @@ public class Metadata {
 			return orcid.matches("\\d{4}-\\d{4}-\\d{4}-\\d{4}");
 		}
 		return true;
+	}
+
+	/**
+	 * Check if the metadata object is empty or contains annotation
+	 *
+	 * @return false if the metadata object is empty, true otherwise
+	 */	
+	public boolean isMetadataEmpty() {
+		if (this.listOfAnnotations.size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 
@@ -420,7 +433,23 @@ public class Metadata {
 	}
 	
 	
-	// the function to build a nested annotation, ie an annotation in an annotation
+	// the functions to manage a nested annotation, ie an annotation in an annotation
+	/**
+	 * Check if a metadata object exists for a qualifier
+	 *
+	 * @param termDesired the name of the qualifier you want to check
+	 * @return true if it exists, false otherwise
+	 */	
+	public boolean isSetMetadataOfQualifier(String termDesired) {
+
+		if (this.listOfAnnotations.containsKey(termDesired)) {
+			Index indexParent = this.getLocalIndex();
+			
+			return this.listOfAnnotations.get(termDesired).isSetIndex(modelConstants, indexParent);
+		}
+		return false;
+	}
+	
 	/**
 	 * Get the Metadata object associated to a given qualifier used in the parent Metadata
 	 * The Metadata returned constitutes a nested annotation for the parent Metadata
@@ -448,5 +477,36 @@ public class Metadata {
 			
 			return null;
 		}
+	}
+	
+	
+	// the functions used to export the metadata towards the sbml format
+	/**
+	 * Get the list of qualifiers used in this metadata
+	 *
+	 * @return a list of String with the names of the qualifiers
+	 */	
+	public Set<String> getListOfQualifiers() {
+		return this.listOfAnnotations.keySet();
+	}
+
+	/**
+	 * Get the class of annotation associated to a qualifier
+	 *
+	 * @param qualifierName the name of the qualifier you're interested in
+	 * @return a String with the name of the class
+	 */	
+	public String getClassOfQualifier(String qualifierName) {
+		return this.listOfAnnotations.get(qualifierName).getClass().getName();
+	}
+	
+	/**
+	 * Get the list of resources associated to a qualifier
+	 *
+	 * @param qualifierName the name of the qualifier you're interested in
+	 * @return the list of resources (can be a list of uris, of authors or only a date depending on the qualifier)
+	 */	
+	public ArrayList<ArrayList<String>> getResourcesOfQualifier(String qualifierName) {
+		return this.listOfAnnotations.get(qualifierName).getResources();
 	}
 }

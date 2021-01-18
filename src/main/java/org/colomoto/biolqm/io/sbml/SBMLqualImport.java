@@ -155,12 +155,6 @@ public class SBMLqualImport extends BaseLoader {
             idx++;
         }
         LogicalModel model = new LogicalModelImpl(variables, ddmanager, functions);
-		
-		try {
-			this.importAllMetadata(model, variables);
-		} catch (XMLStreamException e) {
-			System.err.println("Error importing model annotations");
-		}
 
         // Load the layout information if available
         if (qualBundle.lmodel != null) {
@@ -194,6 +188,13 @@ public class SBMLqualImport extends BaseLoader {
                 }
             }
         }
+		
+		// load the annotations from the SBML model
+		try {
+			this.importAllMetadata(model, variables);
+		} catch (XMLStreamException e) {
+			System.err.println("Error importing model annotations");
+		}
 
         return model;
     }

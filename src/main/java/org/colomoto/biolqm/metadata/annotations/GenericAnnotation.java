@@ -200,6 +200,14 @@ class GenericAnnotation extends Annotation {
 	}
 	
 	@Override
+	protected boolean isSetIndex(ModelConstants modelConstants, Index indexParent) {
+		if (this.indexOfGeneric != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
 
 		Index existingIndex;
@@ -217,5 +225,20 @@ class GenericAnnotation extends Annotation {
 		}
 		
 		return existingIndex;
+	}
+	
+	@Override
+	protected ArrayList<ArrayList<String>> getResources() {
+		ArrayList<ArrayList<String>> resources = new ArrayList<ArrayList<String>>();
+		
+		for (URI uri : this.listOfURIs) {
+			ArrayList<String> resource = new ArrayList<String>();
+			resource.add(uri.getCollection());
+			resource.add(uri.getIdentifier());
+			
+			resources.add(resource);
+		}
+		
+		return resources;
 	}
 }

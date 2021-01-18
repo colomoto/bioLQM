@@ -7,6 +7,9 @@ import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
 import org.colomoto.biolqm.metadata.constants.Index;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Special class of annotations
  * This contains the terms of distribution of the model
@@ -33,6 +36,20 @@ class DistributionAnnotation extends Annotation {
 	}
 	
 	// functions
+	private void removeIndexParent(Index index) {
+		Index indexParent = index.getIndexOfParent();
+		indexParent.setIndexOfChildren(index);
+	}
+	
+	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
+		for (Index indexChild: index.getIndexOfChildren()) {
+			if (indexChild.getIndexOfChildren().size() != 0) {
+				removeIndexChildren(modelConstants, indexChild);
+			}
+			modelConstants.getListMetadata().remove(indexChild);
+		}
+	}
+
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
@@ -41,7 +58,11 @@ class DistributionAnnotation extends Annotation {
 	
 	@Override
 	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
-
+		this.removeIndexParent(indexOfDistribution);
+		this.removeIndexChildren(modelConstants, indexOfDistribution);
+				
+		modelConstants.getListMetadata().remove(indexOfDistribution);
+		
 		return true;
 	}
 	
@@ -57,6 +78,14 @@ class DistributionAnnotation extends Annotation {
 		chaine += "\t\t" + "Terms of distribution : " + this.distribution + "\n";
 		
 		return chaine;
+	}
+	
+	@Override
+	protected boolean isSetIndex(ModelConstants modelConstants, Index indexParent) {
+		if (this.indexOfDistribution != null) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -77,5 +106,13 @@ class DistributionAnnotation extends Annotation {
 		}
 		
 		return existingIndex;
+	}
+
+	@Override
+	protected ArrayList<ArrayList<String>> getResources() {
+		ArrayList<ArrayList<String>> resources = new ArrayList<ArrayList<String>>();
+		ArrayList<String> resource = new ArrayList<String>(Arrays.asList(distribution));
+		resources.add(resource);
+		return resources;
 	}
 }

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
 
-import org.colomoto.biolqm.metadata.AnnotationModule;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
@@ -165,6 +164,14 @@ public interface LogicalModel {
 	 * @return the existing Metadata of the model
 	 */
 	Metadata getMetadataOfModel();
+	
+	/**
+	 * Check if a metadata object exists for a node
+	 *
+	 * @param node the node you want to check
+	 * @return true if it exists, false otherwise
+	 */	
+	boolean isSetMetadataOfNode(NodeInfo node);
 	
 	/**
 	 * Retrieve the Metadata object of the node

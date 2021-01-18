@@ -99,6 +99,14 @@ class AuthorsAnnotation extends Annotation {
 	}
 	
 	@Override
+	protected boolean isSetIndex(ModelConstants modelConstants, Index indexParent) {
+		if (this.indexOfAuthors != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
 
 		Index existingIndex;
@@ -116,5 +124,22 @@ class AuthorsAnnotation extends Annotation {
 		}
 		
 		return existingIndex;
+	}
+	
+	@Override
+	protected ArrayList<ArrayList<String>> getResources() {
+		ArrayList<ArrayList<String>> resources = new ArrayList<ArrayList<String>>();
+		
+		for (Author author : this.listOfAuthors) {
+			ArrayList<String> resource = new ArrayList<String>();
+			resource.add(author.getName());
+			resource.add(author.getSurname());
+			resource.add(author.getOrganisation());
+			resource.add(author.getEmail());
+			
+			resources.add(resource);
+		}
+		
+		return resources;
 	}
 }

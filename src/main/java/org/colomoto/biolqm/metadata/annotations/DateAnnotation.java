@@ -7,6 +7,9 @@ import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
 import org.colomoto.biolqm.metadata.constants.Index;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Special class of annotations
  * This contains the annotations relative to the date of creation of the model and the last date of modification
@@ -33,6 +36,20 @@ class DateAnnotation extends Annotation {
 	}
 	
 	// functions
+	private void removeIndexParent(Index index) {
+		Index indexParent = index.getIndexOfParent();
+		indexParent.setIndexOfChildren(index);
+	}
+	
+	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
+		for (Index indexChild: index.getIndexOfChildren()) {
+			if (indexChild.getIndexOfChildren().size() != 0) {
+				removeIndexChildren(modelConstants, indexChild);
+			}
+			modelConstants.getListMetadata().remove(indexChild);
+		}
+	}
+	
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
@@ -41,7 +58,11 @@ class DateAnnotation extends Annotation {
 	
 	@Override
 	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
-
+		this.removeIndexParent(indexOfDate);
+		this.removeIndexChildren(modelConstants, indexOfDate);
+				
+		modelConstants.getListMetadata().remove(indexOfDate);
+		
 		return true;
 	}
 	
@@ -57,6 +78,14 @@ class DateAnnotation extends Annotation {
 		chaine += "\t\t" + "Date : " + this.date + "\n";
 		
 		return chaine;
+	}
+	
+	@Override
+	protected boolean isSetIndex(ModelConstants modelConstants, Index indexParent) {
+		if (this.indexOfDate != null) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -77,5 +106,13 @@ class DateAnnotation extends Annotation {
 		}
 		
 		return existingIndex;
+	}
+	
+	@Override
+	protected ArrayList<ArrayList<String>> getResources() {
+		ArrayList<ArrayList<String>> resources = new ArrayList<ArrayList<String>>();
+		ArrayList<String> resource = new ArrayList<String>(Arrays.asList(date));
+		resources.add(resource);
+		return resources;
 	}
 }

@@ -278,6 +278,14 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 	
 	@Override
+	public boolean isSetMetadataOfNode(NodeInfo node) {
+		if (this.annotationModule.nodesIndex.containsKey(node)) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	public Metadata getMetadataOfNode(NodeInfo node) {
 		
 		if (this.annotationModule.nodesIndex.containsKey(node)) {
