@@ -70,6 +70,15 @@ public class TestMetadata {
 		
 		// System.out.println(modelMetadata.getNotes());
 		
+		NodeInfo node2 = model.getComponents().get(2);
+		
+		Metadata elementMetadata = model.getMetadataOfNode(node2);
+		
+		elementMetadata.addTag("isDescribedBy", "doi");
+		elementMetadata.addTag("isDescribedBy", "doi2");
+		
+		elementMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
+		
 		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output", "sbml");
 	}
 }

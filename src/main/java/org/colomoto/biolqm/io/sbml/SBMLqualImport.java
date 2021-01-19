@@ -989,7 +989,7 @@ public class SBMLqualImport extends BaseLoader {
 				XMLNode notesModel = elementModel.getNotes();
 				
 				// to deal with the notes incorporated
-				metadataModel.setNotes(notesModel.getChildCount() + notesModel.toXMLString());
+				metadataModel.setNotes(notesModel.toXMLString());
 			}
 		}
 		

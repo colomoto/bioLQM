@@ -24,6 +24,7 @@ import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
 import org.sbml.jsbml.CVTerm.Qualifier;
+import org.sbml.jsbml.xml.XMLNode;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -496,11 +497,21 @@ public class SBMLqualExport extends BaseExporter {
 		
 		Metadata metadataModel = this.model.getMetadataOfModel();
 		
-		if (metadataModel.isMetadataEmpty()) {
+		if (metadataModel.isMetadataEmpty() || metadataModel.getNotes() != "") {
 			Model elementModel = qualBundle.document.getModel();
 			
-			elementModel.setMetaId("meta_"+elementModel.getId());
-			elementModel.setAnnotation(this.exportElementMetadata("model", metadataModel));
+			if (metadataModel.isMetadataEmpty()) {
+				Annotation annotationModel = this.exportElementMetadata("model", metadataModel);
+				
+				if (!annotationModel.isEmpty()) {
+					elementModel.setMetaId("meta_"+elementModel.getId());
+					elementModel.setAnnotation(annotationModel);
+				}
+			}
+			if (metadataModel.getNotes() != "") {
+				XMLNode xmlnode = XMLNode.convertStringToXMLNode(metadataModel.getNotes());
+				elementModel.setNotes(xmlnode);
+			}
 		}
 		
 		for (Map.Entry<NodeInfo, QualitativeSpecies> entry : this.node2species.entrySet()) {
@@ -509,11 +520,21 @@ public class SBMLqualExport extends BaseExporter {
 			if (this.model.isSetMetadataOfNode(node)) {
 				Metadata metadataSpecies = this.model.getMetadataOfNode(node);
 				
-				if (metadataSpecies.isMetadataEmpty()) {
+				if (metadataSpecies.isMetadataEmpty() || metadataSpecies.getNotes() != "") {
 					QualitativeSpecies elementSpecies = entry.getValue();
 					
-					elementSpecies.setMetaId("meta_"+elementSpecies.getId());
-					elementSpecies.setAnnotation(this.exportElementMetadata("species", metadataSpecies));
+					if (metadataSpecies.isMetadataEmpty()) {
+						Annotation annotationSpecies = this.exportElementMetadata("species", metadataSpecies);
+						
+						if (!annotationSpecies.isEmpty()) {
+							elementSpecies.setMetaId("meta_"+elementSpecies.getId());
+							elementSpecies.setAnnotation(annotationSpecies);
+						}
+					}
+					if (metadataSpecies.getNotes() != "") {
+						XMLNode xmlnode = XMLNode.convertStringToXMLNode(metadataSpecies.getNotes());
+						elementSpecies.setNotes(xmlnode);
+					}
 				}
 			}
 		}
