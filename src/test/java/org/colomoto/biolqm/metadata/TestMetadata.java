@@ -14,11 +14,11 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 
 public class TestMetadata {
-
+	
 	@Test
 	public void testMetadataManagement() throws Exception {
 		
-		File dir = TestHelper.getTestResource("reference_models");
+		File dir = TestHelper.getTestResource("sbml_models");
 		
 		LogicalModelFormat format = LQMServiceManager.getFormat("sbml");
 		
