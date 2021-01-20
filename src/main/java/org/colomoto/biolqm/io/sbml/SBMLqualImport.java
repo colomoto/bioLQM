@@ -928,18 +928,23 @@ public class SBMLqualImport extends BaseLoader {
 		
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
 		
+		int alternative = 0;
+		if (metadata.isSetQualifier(qualifier)) {
+			alternative = metadata.createAlternative(qualifier);
+		}
+		
 		// we add all the uris for this qualifier
 		for (String uri: cvterm.getResources()) {
 			int colon = uri.lastIndexOf(':');
 			String collection = uri.substring(0, colon);
 			String identifier = uri.substring(colon+1);
 			
-			metadata.addURI(qualifier, collection, identifier);
+			metadata.addURI(qualifier, alternative, collection, identifier);
 		}
 		
 		// and then we add the nested annotation recursively
 		if (cvterm.isSetListOfNestedCVTerms()) {
-			Metadata metadataNested = metadata.getMetadataOfQualifier(qualifier);
+			Metadata metadataNested = metadata.getMetadataOfQualifier(qualifier, alternative);
 			
 			for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
 				this.importElementCVTerm(cvtermNested, metadataNested);

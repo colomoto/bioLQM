@@ -388,28 +388,31 @@ public class SBMLqualExport extends BaseExporter {
 			String qualifierClass = qualifierFullClass.substring(colon+1);
 			
 			if (qualifierClass.equals("GenericAnnotation")) {
-				CVTerm cvterm = new CVTerm();
-				
-				Qualifier qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
-				cvterm.setQualifier(qualifier);
-				
-				ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName);
-				if (listOfResources.size() > 0) {
-	
-					for (ArrayList<String> resource: listOfResources) {
-						cvterm.addResource(resource.get(0)+":"+resource.get(1));
-					}
+				for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
 					
-					if (metadata.isSetMetadataOfQualifier(qualifierName)) {
-						Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName);
-						
-						ArrayList<CVTerm> nestedCVTerms = this.exportNestedMetadata(metadataQualifier);
-						for (CVTerm nestedCVTerm : nestedCVTerms) {
-							cvterm.addNestedCVTerm(nestedCVTerm);
+					CVTerm cvterm = new CVTerm();
+					
+					Qualifier qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
+					cvterm.setQualifier(qualifier);
+					
+					ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName, alternative);
+					if (listOfResources.size() > 0) {
+		
+						for (ArrayList<String> resource: listOfResources) {
+							cvterm.addResource(resource.get(0)+":"+resource.get(1));
 						}
+						
+						if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
+							Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
+							
+							ArrayList<CVTerm> nestedCVTerms = this.exportNestedMetadata(metadataQualifier);
+							for (CVTerm nestedCVTerm : nestedCVTerms) {
+								cvterm.addNestedCVTerm(nestedCVTerm);
+							}
+						}
+					
+						listOfCVTerms.add(cvterm);
 					}
-				
-					listOfCVTerms.add(cvterm);
 				}
 			}
 		}
@@ -429,38 +432,41 @@ public class SBMLqualExport extends BaseExporter {
 			String qualifierClass = qualifierFullClass.substring(colon+1);
 			
 			if (qualifierClass.equals("GenericAnnotation")) {
-				CVTerm cvterm = new CVTerm();
-				
-				Qualifier qualifier;
-				if (type.equals("model")) {
-					qualifier = CVTerm.Qualifier.getModelQualifierFor(qualifierName);
-				}
-				else {
-					qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
-				}
-				cvterm.setQualifier(qualifier);
-			
-				ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName);
-				if (listOfResources.size() > 0) {
-	
-					for (ArrayList<String> resource: listOfResources) {
-						cvterm.addResource(resource.get(0)+":"+resource.get(1));
-					}
+				for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
 					
-					if (metadata.isSetMetadataOfQualifier(qualifierName)) {
-						Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName);
-						
-						ArrayList<CVTerm> nestedCVTerms = this.exportNestedMetadata(metadataQualifier);
-						for (CVTerm nestedCVTerm : nestedCVTerms) {
-							cvterm.addNestedCVTerm(nestedCVTerm);
-						}
+					CVTerm cvterm = new CVTerm();
+					
+					Qualifier qualifier;
+					if (type.equals("model")) {
+						qualifier = CVTerm.Qualifier.getModelQualifierFor(qualifierName);
 					}
+					else {
+						qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
+					}
+					cvterm.setQualifier(qualifier);
 				
-					annotation.addCVTerm(cvterm);
+					ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName, alternative);
+					if (listOfResources.size() > 0) {
+		
+						for (ArrayList<String> resource: listOfResources) {
+							cvterm.addResource(resource.get(0)+":"+resource.get(1));
+						}
+						
+						if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
+							Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
+							
+							ArrayList<CVTerm> nestedCVTerms = this.exportNestedMetadata(metadataQualifier);
+							for (CVTerm nestedCVTerm : nestedCVTerms) {
+								cvterm.addNestedCVTerm(nestedCVTerm);
+							}
+						}
+					
+						annotation.addCVTerm(cvterm);
+					}
 				}
 			}
 			else if (qualifierClass.equals("AuthorsAnnotation") && type.equals("model")) {
-				ArrayList<ArrayList<String>> listOfAuthors = metadata.getResourcesOfQualifier(qualifierName);
+				ArrayList<ArrayList<String>> listOfAuthors = metadata.getResourcesOfQualifier(qualifierName, 0);
 				
 				for (ArrayList<String> author: listOfAuthors) {
 					Creator creator = new Creator(author.get(0), author.get(1), author.get(2), author.get(3));
@@ -468,7 +474,7 @@ public class SBMLqualExport extends BaseExporter {
 				}
 			}
 			else if (qualifierClass.equals("DateAnnotation") && type.equals("model")) {
-				String date = metadata.getResourcesOfQualifier(qualifierName).get(0).get(0);
+				String date = metadata.getResourcesOfQualifier(qualifierName, 0).get(0).get(0);
 				
 				String pattern = "yyyy-MM-dd";
 				

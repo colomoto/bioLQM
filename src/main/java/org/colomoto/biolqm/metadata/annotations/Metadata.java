@@ -31,7 +31,7 @@ public class Metadata {
 	// variables
 	private String type;
 	private String notes;
-	private Map<String, Annotation> listOfAnnotations;
+	private Map<String, ArrayList<Annotation>> listOfAnnotations;
 	
 	private ModelConstants modelConstants;
 	
@@ -41,7 +41,7 @@ public class Metadata {
 	{
 		this.type = newType;
 		this.notes = "";
-		this.listOfAnnotations = new HashMap<String, Annotation>();
+		this.listOfAnnotations = new HashMap<String, ArrayList<Annotation>>();
 		
 		this.modelConstants = newModelConstants;
 		
@@ -111,22 +111,10 @@ public class Metadata {
 		}
 		return true;
 	}
-
-	/**
-	 * Check if the metadata object is empty or contains annotation
-	 *
-	 * @return false if the metadata object is empty, true otherwise
-	 */	
-	public boolean isMetadataEmpty() {
-		if (this.listOfAnnotations.size() > 0) {
-			return true;
-		}
-		return false;
-	}
-
-
-	// the functions to add an annotation
-	private void addAnnotation(String termDesired, String javaClassDesired, String... contentAnnotation) {
+	
+	
+	// the functions to manage the alternatives
+	private void createQualifier(String termDesired, String javaClassDesired) {
 
 		// we find the javaClass dedicated for this qualifier
 		String javaClass = this.suitedJavaClass(termDesired);
@@ -140,17 +128,11 @@ public class Metadata {
 		
 		// if the javaClass for this qualifier match the javaClass asked by the user we create the annotation
 		if (javaClass.equals(javaClassDesired)) {
-			if (!this.listOfAnnotations.containsKey(termDesired)) {
-				AnnotationFactory factory = new AnnotationFactory();
-				Annotation newAnnotation = factory.getInstance(javaClass);
-				
-				newAnnotation.addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
-				
-				this.listOfAnnotations.put(termDesired, newAnnotation);
-			}
-			else {
-				this.listOfAnnotations.get(termDesired).addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
-			}
+			AnnotationFactory factory = new AnnotationFactory();
+			Annotation newAnnotation = factory.getInstance(javaClass);
+			
+			this.listOfAnnotations.put(termDesired, new ArrayList<Annotation>());
+			this.listOfAnnotations.get(termDesired).add(newAnnotation);
 		}
 		// else we print a warning
 		else {
@@ -159,6 +141,63 @@ public class Metadata {
 	}
 	
 	/**
+	 * Create a new alternative for a qualifier
+	 *
+	 * @param termDesired the qualifier one wants to annotate
+	 * @return the number of the alternative created
+	 */	
+	public int createAlternative(String termDesired) {
+
+		String fullJavaClass = this.getClassOfQualifier(termDesired);
+		int colon = fullJavaClass.lastIndexOf('.');
+		String javaClass = fullJavaClass.substring(colon+1);
+		
+		AnnotationFactory factory = new AnnotationFactory();
+		Annotation newAnnotation = factory.getInstance(javaClass);
+		
+		this.listOfAnnotations.get(termDesired).add(newAnnotation);
+		
+		return this.listOfAnnotations.get(termDesired).size()-1;
+	}
+
+
+	// the functions to add an annotation
+	private void addAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) {
+			
+		// if it's a new qualifier we create a first alternative
+		if (!this.listOfAnnotations.containsKey(termDesired) && alternative == 0) {
+			this.createQualifier(termDesired, javaClassDesired);
+		}
+		// if the qualifier doesn't exist and the alternative is not 0 there is an issue
+		else if (!this.listOfAnnotations.containsKey(termDesired)) {
+			System.out.println("You have to create this qualifier with the alternative 0 (or with no alternative which is an implicit 0)." + "\n");
+			
+			return;
+		}
+		
+		// now if it's an alternative that does exist
+		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
+				this.listOfAnnotations.get(termDesired).get(alternative).addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
+		}
+		// else it is an alternative that doesn't exist yet
+		else {
+			System.out.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
+		}
+	}
+
+	/**
+	 * Add a new URI to the component
+	 *
+	 * @param termDesired the qualifier one wants to annotate
+	 * @param alternative the number of the alternative one wants to modify
+	 * @param collection the collection of the uri one wants to create (uniprot, chebi...)
+	 * @param identifier the entry one wants to point at in the collection
+	 */	
+	public void addURI(String termDesired, int alternative, String collection, String identifier) {
+		String javaClassDesired = "GenericAnnotation";
+		this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+	}
+	/**
 	 * Add a new URI to the component
 	 *
 	 * @param termDesired the qualifier one wants to annotate
@@ -166,9 +205,20 @@ public class Metadata {
 	 * @param identifier the entry one wants to point at in the collection
 	 */	
 	public void addURI(String termDesired, String collection, String identifier) {
-		String javaClassDesired = "GenericAnnotation";
-		this.addAnnotation(termDesired, javaClassDesired, "uri", collection, identifier);
+		this.addURI(termDesired, 0, collection, identifier);
 	}
+
+	/**
+	 * Add a new tag to the component
+	 *
+	 * @param termDesired the qualifier one wants to annotate
+	 * @param alternative the number of the alternative one wants to modify
+	 * @param tag the tag one wants to add
+	 */	
+	public void addTag(String termDesired, int alternative, String tag) {
+		String javaClassDesired = "GenericAnnotation";
+		this.addAnnotation(termDesired, alternative, javaClassDesired, "tag", tag);
+	}	
 	/**
 	 * Add a new tag to the component
 	 *
@@ -176,8 +226,20 @@ public class Metadata {
 	 * @param tag the tag one wants to add
 	 */	
 	public void addTag(String termDesired, String tag) {
+		this.addTag(termDesired, 0, tag);
+	}
+	
+	/**
+	 * Add a new pair key-value to the component
+	 *
+	 * @param termDesired the qualifier one wants to annotate
+	 * @param alternative the number of the alternative one wants to modify
+	 * @param key the place where one wants to store the value
+	 * @param value the value one wants to store
+	 */	
+	public void addKeyValue(String termDesired, int alternative, String key, String value) {
 		String javaClassDesired = "GenericAnnotation";
-		this.addAnnotation(termDesired, javaClassDesired, "tag", tag);
+		this.addAnnotation(termDesired, alternative, javaClassDesired, "keyvalue", key, value);
 	}
 	/**
 	 * Add a new pair key-value to the component
@@ -187,9 +249,9 @@ public class Metadata {
 	 * @param value the value one wants to store
 	 */	
 	public void addKeyValue(String termDesired, String key, String value) {
-		String javaClassDesired = "GenericAnnotation";
-		this.addAnnotation(termDesired, javaClassDesired, "keyvalue", key, value);
+		this.addKeyValue(termDesired, 0, key, value);
 	}
+	
 	/**
 	 * Add a new author to the component
 	 *
@@ -211,8 +273,9 @@ public class Metadata {
 		}
 		
 		String javaClassDesired = "AuthorsAnnotation";
-		this.addAnnotation(termDesired, javaClassDesired, name, surname, email, organisation, orcid);
+		this.addAnnotation(termDesired, 0, javaClassDesired, name, surname, email, organisation, orcid);
 	}
+	
 	/**
 	 * Add a new date to the component
 	 *
@@ -224,12 +287,13 @@ public class Metadata {
 
 		if (validator.isValid(date)) { 		
 			String javaClassDesired = "DateAnnotation";
-			this.addAnnotation(termDesired, javaClassDesired, date);
+			this.addAnnotation(termDesired, 0, javaClassDesired, date);
 		}
 		else {
 			System.out.println("The date is not valid. It should follow the format YYYY-MM-DD" + "\n");
 		}
 	}
+	
 	/**
 	 * Add new terms of distribution to the component
 	 *
@@ -238,35 +302,47 @@ public class Metadata {
 	 */	
 	public void addDistribution(String termDesired, String distribution) {
 		String javaClassDesired = "DistributionAnnotation";
-		this.addAnnotation(termDesired, javaClassDesired, distribution);
+		this.addAnnotation(termDesired, 0, javaClassDesired, distribution);
 	}
 	
 	
 	// the functions to remove an annotation
-	private void removeAnnotation(String termDesired, String javaClassDesired, String... contentAnnotation) {
-		// we find the javaClass dedicated for this qualifier
-		String javaClass = this.suitedJavaClass(termDesired);
+	private void removeAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) {
 		
-		if (javaClass == null) {
-			System.out.println("This qualifier doesn't exist." + "\n");
+		if (!this.listOfAnnotations.containsKey(termDesired)) {
+			System.out.println("This type of qualifier has not been defined for this component." + "\n");
 		}
-		else if (javaClass.equals(javaClassDesired)) {
-			if (!this.listOfAnnotations.containsKey(termDesired)) {
-				System.out.println("This qualifier has not been defined yet." + "\n");
+		else if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
+			// we find the javaClass dedicated for this qualifier
+			String javaClass = this.suitedJavaClass(termDesired);
+			
+			if (javaClass == null) {
+				System.out.println("This qualifier doesn't exist." + "\n");
 			}
-			else {			
-				boolean emptyAnnotation = this.listOfAnnotations.get(termDesired).removeAnnotation(this.modelConstants, contentAnnotation);
-				
-				if (emptyAnnotation) {
-					this.listOfAnnotations.remove(termDesired);
-				}
+			else if (javaClass.equals(javaClassDesired)) {		
+				this.listOfAnnotations.get(termDesired).get(alternative).removeAnnotation(this.modelConstants, contentAnnotation);
+			}
+			else {
+				System.out.println("You cannot remove this kind of annotation for this qualifier." + "\n");
 			}
 		}
 		else {
-			System.out.println("You cannot remove this kind of annotation for this qualifier." + "\n");
+			System.out.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
 		}
 	}
 	
+	/**
+	 * Remove an URI from the component
+	 *
+	 * @param termDesired the qualifier one wants to remove
+	 * @param alternative the number of the alternative one wants to modify
+	 * @param collection the collection of the uri one wants to remove
+	 * @param identifier the entry in the collection one wants to remove
+	 */	
+	public void removeURI(String termDesired, int alternative, String collection, String identifier) {
+		String javaClassDesired = "GenericAnnotation";
+		this.removeAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+	}
 	/**
 	 * Remove an URI from the component
 	 *
@@ -275,8 +351,19 @@ public class Metadata {
 	 * @param identifier the entry in the collection one wants to remove
 	 */	
 	public void removeURI(String termDesired, String collection, String identifier) {
+		this.removeURI(termDesired, 0, collection, identifier);
+	}
+	
+	/**
+	 * Remove a tag from the component
+	 *
+	 * @param termDesired the qualifier one wants to remove
+	 * @param alternative the number of the alternative one wants to modify
+	 * @param tag the tag one wants to remove
+	 */	
+	public void removeTag(String termDesired, int alternative, String tag) {
 		String javaClassDesired = "GenericAnnotation";
-		this.removeAnnotation(termDesired, javaClassDesired, "uri", collection, identifier);
+		this.removeAnnotation(termDesired, alternative, javaClassDesired, "tag", tag);
 	}
 	/**
 	 * Remove a tag from the component
@@ -285,8 +372,20 @@ public class Metadata {
 	 * @param tag the tag one wants to remove
 	 */	
 	public void removeTag(String termDesired, String tag) {
+		this.removeTag(termDesired, 0, tag);
+	}
+	
+	/**
+	 * Remove a pair key-value from the component
+	 *
+	 * @param termDesired the qualifier one wants to remove
+	 * @param alternative the number of the alternative one wants to modify
+	 * @param key the place where one wants to remove a value
+	 * @param value the value one wants to remove
+	 */	
+	public void removeKeyValue(String termDesired, int alternative, String key, String value) {
 		String javaClassDesired = "GenericAnnotation";
-		this.removeAnnotation(termDesired, javaClassDesired, "tag", tag);
+		this.removeAnnotation(termDesired, alternative, javaClassDesired, "keyvalue", key, value);
 	}
 	/**
 	 * Remove a pair key-value from the component
@@ -296,9 +395,9 @@ public class Metadata {
 	 * @param value the value one wants to remove
 	 */	
 	public void removeKeyValue(String termDesired, String key, String value) {
-		String javaClassDesired = "GenericAnnotation";
-		this.removeAnnotation(termDesired, javaClassDesired, "keyvalue", key, value);
+		this.removeKeyValue(termDesired, 0, key, value);
 	}
+	
 	/**
 	 * Remove an author from the component
 	 *
@@ -311,8 +410,9 @@ public class Metadata {
 	 */	
 	public void removeAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
 		String javaClassDesired = "AuthorsAnnotation";
-		this.removeAnnotation(termDesired, javaClassDesired, name, surname, email, organisation, orcid);
+		this.removeAnnotation(termDesired, 0, javaClassDesired, name, surname, email, organisation, orcid);
 	}
+	
 	/**
 	 * Remove a date from the component
 	 *
@@ -320,8 +420,9 @@ public class Metadata {
 	 */	
 	public void removeDate(String termDesired) {
 		String javaClassDesired = "DateAnnotation";
-		this.removeAnnotation(termDesired, javaClassDesired, "");
+		this.removeAnnotation(termDesired, 0, javaClassDesired, "");
 	}
+	
 	/**
 	 * Remove the terms of distribution from the component
 	 * 
@@ -329,7 +430,7 @@ public class Metadata {
 	 */	
 	public void removeDistribution(String termDesired) {
 		String javaClassDesired = "DistributionAnnotation";
-		this.removeAnnotation(termDesired, javaClassDesired, "");
+		this.removeAnnotation(termDesired, 0, javaClassDesired, "");
 	}
 	
 	
@@ -340,10 +441,16 @@ public class Metadata {
 	 * @param termDesired the qualifier one wants to get the description of
 	 */	
 	public String getDescriptionAnnotation(String termDesired) {
+		String description = "";
+		
 		if (this.listOfAnnotations.containsKey(termDesired)) {
-			return termDesired + this.listOfAnnotations.get(termDesired).getValue();
+			for (int alternative = 0; alternative < this.listOfAnnotations.get(termDesired).size(); alternative++) {
+				description += termDesired + " (alternative " + alternative + ")" + this.listOfAnnotations.get(termDesired).get(alternative).getValue();
+			}
+			
+			return description;
 		}
-		return "This type of annotation has not been defined for this component" + "\n";
+		return "This type of qualifier has not been defined for this component" + "\n";
 	}
 
 	/**
@@ -358,8 +465,10 @@ public class Metadata {
 		Iterator it = keys.iterator();
 		while (it.hasNext()) {
 			String termDesired = (String) it.next();
-
-			description += termDesired + this.listOfAnnotations.get(termDesired).getValue();
+			
+			for (int alternative = 0; alternative < this.listOfAnnotations.get(termDesired).size(); alternative++) {
+				description += termDesired + " (alternative " + alternative + ")" + this.listOfAnnotations.get(termDesired).get(alternative).getValue();
+			}
 		}
 		
 		return description;
@@ -438,18 +547,60 @@ public class Metadata {
 	 * Check if a metadata object exists for a qualifier
 	 *
 	 * @param termDesired the name of the qualifier you want to check
+	 * @param alternative the number of the alternative you want to check
+	 * @return true if it exists, false otherwise
+	 */	
+	public boolean isSetMetadataOfQualifier(String termDesired, int alternative) {
+
+		if (this.listOfAnnotations.containsKey(termDesired) && alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
+			Index indexParent = this.getLocalIndex();
+			
+			return this.listOfAnnotations.get(termDesired).get(alternative).isSetIndex(modelConstants, indexParent);
+		}
+		return false;
+	}
+	/**
+	 * Check if a metadata object exists for a qualifier
+	 *
+	 * @param termDesired the name of the qualifier you want to check
 	 * @return true if it exists, false otherwise
 	 */	
 	public boolean isSetMetadataOfQualifier(String termDesired) {
 
-		if (this.listOfAnnotations.containsKey(termDesired)) {
-			Index indexParent = this.getLocalIndex();
-			
-			return this.listOfAnnotations.get(termDesired).isSetIndex(modelConstants, indexParent);
-		}
-		return false;
+		return this.isSetMetadataOfQualifier(termDesired, 0);
 	}
 	
+	/**
+	 * Get the Metadata object associated to a given qualifier used in the parent Metadata
+	 * The Metadata returned constitutes a nested annotation for the parent Metadata
+	 * It can be modified exactly as the parent Metadata
+	 *
+	 * @param termDesired the qualifier one wants to retrieve
+	 * @param alternative the number of the alternative you want to check
+	 */	
+	public Metadata getMetadataOfQualifier(String termDesired, int alternative) {
+
+		if (!this.listOfAnnotations.containsKey(termDesired)) {
+			System.out.println("This qualifier doesn't exist, so there can be no metadata object attached to it." + "\n");
+			return null;
+		}
+		else if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
+			Index indexParent = this.getLocalIndex();
+			
+			Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
+			
+			// if the index is null to that point, that means the annotation required doesn't exist and we return null
+			// else we return the metadata of this annotation
+			if (index != null) {
+				return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
+			}
+			return null;
+		}
+		else {
+			System.out.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
+			return null;
+		}
+	}
 	/**
 	 * Get the Metadata object associated to a given qualifier used in the parent Metadata
 	 * The Metadata returned constitutes a nested annotation for the parent Metadata
@@ -459,28 +610,23 @@ public class Metadata {
 	 */	
 	public Metadata getMetadataOfQualifier(String termDesired) {
 
-		if (this.listOfAnnotations.containsKey(termDesired)) {
-			Index indexParent = this.getLocalIndex();
-			
-			Index index = this.listOfAnnotations.get(termDesired).getIndex(modelConstants, indexParent);
-			
-			// if the index is null to that point, that means the annotation required doesn't exist and we return null
-			// else we return the metadata of this annotation
-			if (index != null) {
-				return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
-			}
-			
-			return null;
-		}
-		else {
-			System.out.println("This qualifier doesn't exist, so there can be no metadata object attached to it." + "\n");
-			
-			return null;
-		}
+		return this.getMetadataOfQualifier(termDesired, 0);
 	}
 	
 	
 	// the functions used to export the metadata towards the sbml format
+	/**
+	 * Check if the metadata object is empty or contains annotation
+	 *
+	 * @return false if the metadata object is empty, true otherwise
+	 */	
+	public boolean isMetadataEmpty() {
+		if (this.listOfAnnotations.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Get the list of qualifiers used in this metadata
 	 *
@@ -497,7 +643,17 @@ public class Metadata {
 	 * @return a String with the name of the class
 	 */	
 	public String getClassOfQualifier(String qualifierName) {
-		return this.listOfAnnotations.get(qualifierName).getClass().getName();
+		return this.listOfAnnotations.get(qualifierName).get(0).getClass().getName();
+	}
+	
+	/**
+	 * Get the number of alternatives for a given qualifier
+	 *
+	 * @param qualifierName the name of the qualifier you're interested in
+	 * @return the number of alternatives for this qualifier
+	 */	
+	public int getNumberOfAlternatives(String qualifierName) {
+		return this.listOfAnnotations.get(qualifierName).size();
 	}
 	
 	/**
@@ -506,7 +662,19 @@ public class Metadata {
 	 * @param qualifierName the name of the qualifier you're interested in
 	 * @return the list of resources (can be a list of uris, of authors or only a date depending on the qualifier)
 	 */	
-	public ArrayList<ArrayList<String>> getResourcesOfQualifier(String qualifierName) {
-		return this.listOfAnnotations.get(qualifierName).getResources();
+	public ArrayList<ArrayList<String>> getResourcesOfQualifier(String qualifierName, int alternative) {
+		return this.listOfAnnotations.get(qualifierName).get(alternative).getResources();
+	}
+	
+	/**
+	 * Check if a qualifier already exists in the metadata
+	 *
+	 * @return false if the metadata object is empty, true otherwise
+	 */	
+	public boolean isSetQualifier(String qualifierName) {
+		if (this.listOfAnnotations.containsKey(qualifierName)) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -107,14 +107,18 @@ public class QualifiersAvailable {
 		
 		switch (javaClassDesired) {
 			case "GenericAnnotation":
+				help += "You can create several alternatives for a given qualifier in a component with createAlternative().\n";
+				help += "It returns the number of the alternative you created.\n";
 				help += "This qualifier accepts URIs, Tags, Keys-Values. To create them you use :\n";
-				help += "- addURI(the qualifier, the collection, its identifier)\n";
-				help += "- addTag(the qualifier, the tag)\n";
-				help += "- addKeyValue(the qualifier, the key, the value)\n";
+				help += "- addURI(the qualifier, the alternative (optional, 0 if not defined), the collection, its identifier)\n";
+				help += "- addTag(the qualifier, the alternative (optional, 0 if not defined), the tag)\n";
+				help += "- addKeyValue(the qualifier, the alternative (optional, 0 if not defined), the key, the value)\n";
 				help += "To remove them you use :\n";
-				help += "- removeURI(the qualifier, the collection, its identifier)\n";
-				help += "- removeTag(the qualifier, the tag)\n";
-				help += "- removeKeyValue(the qualifier, the key, the value)\n";
+				help += "- removeURI(the qualifier, the alternative (optional, 0 if not defined), the collection, its identifier)\n";
+				help += "- removeTag(the qualifier, the alternative (optional, 0 if not defined), the tag)\n";
+				help += "- removeKeyValue(the qualifier, the alternative (optional, 0 if not defined), the key, the value)\n";
+				help += "You can also start a nested annotation in this qualifier with getMetadataOfQualifier(the qualifier, the alternative (optional, 0 if not defined)).\n";
+				help += "It returns the Metadata object corresponding to the nested annotation.\n";
 				break;
 			case "AuthorsAnnotation":
 				help += "This qualifier accepts Authors. To create them you use :\n";
@@ -122,18 +126,24 @@ public class QualifiersAvailable {
 				help += "To remove them you use :\n";
 				help += "- removeAuthor(the qualifier, the name of the author, its surname, its email, its organisation, its orcid)\n";
 				help += "You can put null in a field if you don't know the value.\n";
+				help += "You can also start a nested annotation in this qualifier with getMetadataOfQualifier(the qualifier).\n";
+				help += "It returns the Metadata object corresponding to the nested annotation.\n";
 				break;
 			case "DateAnnotation":
 				help += "This qualifier accepts a date. To create it you use :\n";
 				help += "- addDate(the qualifier, a date following the standard of the W3C)\n";
 				help += "To remove it you use :\n";
 				help += "- removeDate(the qualifier, a date following the standard of the W3C)\n";
+				help += "You can also start a nested annotation in this qualifier with getMetadataOfQualifier(the qualifier).\n";
+				help += "It returns the Metadata object corresponding to the nested annotation.\n";
 				break;
 			case "DistributionAnnotation":
 				help += "This qualifier accepts the distribution terms. To create them you use :\n";
 				help += "- addDistribution(the qualifier, the distribution terms)\n";
 				help += "To remove them you use :\n";
 				help += "- removeDistribution(the qualifier, the distribution terms)\n";
+				help += "You can also start a nested annotation in this qualifier with getMetadataOfQualifier(the qualifier).\n";
+				help += "It returns the Metadata object corresponding to the nested annotation.\n";
 				break;
 		}
 		

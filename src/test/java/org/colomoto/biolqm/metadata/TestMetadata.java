@@ -55,6 +55,27 @@ public class TestMetadata {
 		nodeMetadata.addTag("isDescribedBy", "doi2");
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		
+		nodeMetadata.createAlternative("is");
+		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
+		
+		nodeMetadata.createAlternative("isDescribedBy");
+		nodeMetadata.addURI("isDescribedBy", 1, "doi", "surtoutpastintinaupaysdelornoir");
+		
+		Metadata nodenestedMetadata = nodeMetadata.getMetadataOfQualifier("is", 1);
+		
+		nodenestedMetadata.addURI("isDescribedBy", "doi", "maissicesttintinaupaysdelornoir");
+		nodenestedMetadata.addTag("isDescribedBy", "doi");
+		nodenestedMetadata.addTag("isDescribedBy", "doi2");
+		nodenestedMetadata.addTag("isDescribedBy", "doi");
+		
+		nodenestedMetadata.createAlternative("isDescribedBy");
+		nodenestedMetadata.addURI("isDescribedBy", 1, "doi", "jesaispassicesttintinaupaysdelornoir");
+		
+		Metadata nodenestedMetadata2 = nodenestedMetadata.getMetadataOfQualifier("isDescribedBy", 1);
+		nodenestedMetadata2.addURI("is", "doi", "ahbahnoncestspirou");
+		
+		nodenestedMetadata2.addTag("isDescribedBy", "doi");
+		
 		// for (NodeInfo element: model.getComponents()) {
 			// System.out.println(element.getNodeID());
 			
