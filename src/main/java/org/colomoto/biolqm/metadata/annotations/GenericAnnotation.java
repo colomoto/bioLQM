@@ -64,27 +64,52 @@ class GenericAnnotation extends Annotation {
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
 			case "uri":
-				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
-				this.listOfURIs.add(uri);
+				String compactId = contentAnnotation[1]+":"+contentAnnotation[2];
+				String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
 				
-				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
-				
-				if (termDesired == "isDescribedBy") {										
-					if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
-						String url = "https://api.crossref.org/works/"+contentAnnotation[2];
+				try {
+					JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
+					
+					if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
+						URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
+						this.listOfURIs.add(uri);
+						
+						modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
+						
+						if (termDesired == "isDescribedBy") {										
+							if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
+								String url = "https://api.crossref.org/works/"+contentAnnotation[2];
 
-						try {
-							JSONObject json = JsonReader.readJsonFromUrl(url);
-							JSONObject jsonMessage = json.getJSONObject("message");
-							
-							String title = jsonMessage.getJSONArray("title").getString(0).toString();
-							int year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
-							
-							modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
-						} catch (IOException e) {
-							System.err.println("Error retrieving the metadata of the doi.");
+								try {
+									JSONObject json = JsonReader.readJsonFromUrl(url);
+									JSONObject jsonMessage = json.getJSONObject("message");
+									
+									String title = null;
+									Integer year = null;
+									if (jsonMessage.has("title") && !jsonMessage.isNull("title")) {
+										title = jsonMessage.getJSONArray("title").getString(0).toString();
+									}
+									if (jsonMessage.has("created") && !jsonMessage.isNull("created")) {
+										year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
+									}
+									
+									if (title != null && year != null) {
+										modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
+									}
+									else {
+										System.err.println("Error retrieving the metadata of the doi: at least one of the characteristics couldn't be fetched." + "\n");
+									}	
+								} catch (IOException e) {
+									System.err.println("Error retrieving the metadata of the doi." + "\n");
+								}
+							}
 						}
 					}
+					else {
+						System.err.println("The URI is not valid." + "\n");
+					}
+				} catch (IOException e) {
+					System.err.println("Error checking the uri." + "\n");
 				}
 				break;
 			case "tag":
@@ -109,7 +134,7 @@ class GenericAnnotation extends Annotation {
 				modelConstants.getInstanceOfTagsKeysAvailable().updateKeysValuesAvailable(key, new ArrayList<String>(Arrays.asList(value)));
 				break;
 			default:
-				System.out.println("You have to specify the type of annotation you want to create after the qualifier : uri, tag or keyvalue." + "\n");
+				System.err.println("You have to specify the type of annotation you want to create after the qualifier : uri, tag or keyvalue." + "\n");
 				break;
 		}
 	}
@@ -120,7 +145,7 @@ class GenericAnnotation extends Annotation {
 			case "uri":
 				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
 				if (!this.listOfURIs.contains(uri)) {
-					System.out.println("This uri has not been defined yet for this qualifier." + "\n");
+					System.err.println("This uri has not been defined yet for this qualifier." + "\n");
 				}
 				else {
 					this.listOfURIs.remove(uri);
@@ -129,7 +154,7 @@ class GenericAnnotation extends Annotation {
 			case "tag":
 				String tag = contentAnnotation[1];
 				if (!this.listOfTags.contains(tag)) {
-					System.out.println("This tag has not been defined yet for this qualifier." + "\n");
+					System.err.println("This tag has not been defined yet for this qualifier." + "\n");
 				}
 				else {
 					this.listOfTags.remove(tag);
@@ -139,10 +164,10 @@ class GenericAnnotation extends Annotation {
 				String key = contentAnnotation[1];
 				String value = contentAnnotation[2];
 				if (!this.listOfKeysValues.containsKey(key)) {
-					System.out.println("This key has not been defined yet for this qualifier." + "\n");
+					System.err.println("This key has not been defined yet for this qualifier." + "\n");
 				}
 				else if (!this.listOfKeysValues.get(key).contains(value)) {
-					System.out.println("This pair key-value has not been defined yet for this qualifier." + "\n");
+					System.err.println("This pair key-value has not been defined yet for this qualifier." + "\n");
 				}
 				else {					
 					this.listOfKeysValues.get(key).remove(value);

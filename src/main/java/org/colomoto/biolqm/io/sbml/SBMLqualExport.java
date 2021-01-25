@@ -223,7 +223,7 @@ public class SBMLqualExport extends BaseExporter {
 			try {
 				this.exportAllMetadata();
 			} catch (XMLStreamException e) {
-				System.err.println("Error exporting the annotations in sbml");
+				System.err.println("Error exporting the annotations in sbml." + "\n");
 			}
         }
     }
@@ -492,7 +492,7 @@ public class SBMLqualExport extends BaseExporter {
 						history.setModifiedDate(simpleDateFormat);
 					}
 				} catch (ParseException e) {
-					System.err.println("Error parsing a date contained in an annotation of the model");
+					System.err.println("Error parsing a date contained in an annotation of the model" + "\n");
 				}
 			}
 		}

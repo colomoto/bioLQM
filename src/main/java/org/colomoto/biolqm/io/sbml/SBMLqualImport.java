@@ -193,7 +193,7 @@ public class SBMLqualImport extends BaseLoader {
 		try {
 			this.importAllMetadata(model, variables);
 		} catch (XMLStreamException e) {
-			System.err.println("Error importing model annotations");
+			System.err.println("Error importing model annotations." + "\n");
 		}
 
         return model;
@@ -936,8 +936,13 @@ public class SBMLqualImport extends BaseLoader {
 		// we add all the uris for this qualifier
 		for (String uri: cvterm.getResources()) {
 			int colon = uri.lastIndexOf(':');
-			String collection = uri.substring(0, colon);
-			String identifier = uri.substring(colon+1);
+			int slash = uri.lastIndexOf('/');
+			int index = Math.max(colon, slash);
+			
+			int index2 = uri.lastIndexOf('/', index-1);
+			
+			String collection = uri.substring(index2+1, index);
+			String identifier = uri.substring(index+1);
 			
 			metadata.addURI(qualifier, alternative, collection, identifier);
 		}

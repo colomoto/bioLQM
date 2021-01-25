@@ -28,7 +28,7 @@ public class ListMetadata {
 			return this.listMetadata.get(index);
 		}
 		
-		System.out.println("This index does not exist yet." + "\n");
+		System.err.println("This index does not exist yet." + "\n");
 		return null;
 	}
 }

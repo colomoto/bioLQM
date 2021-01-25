@@ -50,7 +50,7 @@ class AuthorsAnnotation extends Annotation {
 
 		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
 		if (!this.listOfAuthors.contains(author)) {
-			System.out.println("This value has not been defined yet for this qualifier." + "\n");
+			System.err.println("This value has not been defined yet for this qualifier." + "\n");
 		}
 		else {		
 			this.listOfAuthors.remove(author);

@@ -139,7 +139,7 @@ public class Metadata {
 		}
 		// else we print a warning
 		else {
-			System.out.println("You cannot create this type of annotation for this qualifier." + "\n");
+			System.err.println("You cannot create this type of annotation for this qualifier." + "\n");
 		}
 	}
 	
@@ -164,7 +164,7 @@ public class Metadata {
 			return this.listOfAnnotations.get(termDesired).size()-1;
 		}
 		else {
-			System.out.println("You have to create this qualifier before creating an alternative." + "\n");
+			System.err.println("You have to create this qualifier before creating an alternative." + "\n");
 			
 			return -1;
 		}
@@ -180,7 +180,7 @@ public class Metadata {
 		}
 		// if the qualifier doesn't exist and the alternative is not 0 there is an issue
 		else if (!this.listOfAnnotations.containsKey(termDesired)) {
-			System.out.println("You have to create this qualifier with the alternative 0 (or with no alternative which is an implicit 0)." + "\n");
+			System.err.println("You have to create this qualifier with the alternative 0 (or with no alternative which is an implicit 0)." + "\n");
 			
 			return;
 		}
@@ -191,7 +191,7 @@ public class Metadata {
 		}
 		// else it is an alternative that doesn't exist yet
 		else {
-			System.out.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
+			System.err.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
 		}
 	}
 
@@ -274,15 +274,15 @@ public class Metadata {
 	 */	
 	public void addAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
 		if (name == null || surname == null) {
-			System.out.println("The name and the surname of the author are compulsory." + "\n");
+			System.err.println("The name and the surname of the author are compulsory." + "\n");
 			return;
 		}
 		if (!this.isValidEmail(email)) {
-			System.out.println("The email is not valid. It should contain an @ (at the very least)" + "\n");
+			System.err.println("The email is not valid. It should contain an @ (at the very least)." + "\n");
 			return;
 		}
 		if (!this.isValidOrcid(orcid)) {
-			System.out.println("The orcid is not valid. It should follow the format ****-****-****-**** with * a number" + "\n");
+			System.err.println("The orcid is not valid. It should follow the format ****-****-****-**** with * a number." + "\n");
 			return;
 		}
 		
@@ -304,7 +304,7 @@ public class Metadata {
 			this.addAnnotation(termDesired, 0, javaClassDesired, date);
 		}
 		else {
-			System.out.println("The date is not valid. It should follow the format YYYY-MM-DD" + "\n");
+			System.err.println("The date is not valid. It should follow the format YYYY-MM-DD." + "\n");
 		}
 	}
 	
@@ -324,24 +324,24 @@ public class Metadata {
 	private void removeAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) {
 		
 		if (!this.listOfAnnotations.containsKey(termDesired)) {
-			System.out.println("This type of qualifier has not been defined for this component." + "\n");
+			System.err.println("This type of qualifier has not been defined for this component." + "\n");
 		}
 		else if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
 			// we find the javaClass dedicated for this qualifier
 			String javaClass = this.suitedJavaClass(termDesired);
 			
 			if (javaClass == null) {
-				System.out.println("This qualifier doesn't exist." + "\n");
+				System.err.println("This qualifier doesn't exist." + "\n");
 			}
 			else if (javaClass.equals(javaClassDesired)) {		
 				this.listOfAnnotations.get(termDesired).get(alternative).removeAnnotation(this.modelConstants, contentAnnotation);
 			}
 			else {
-				System.out.println("You cannot remove this kind of annotation for this qualifier." + "\n");
+				System.err.println("You cannot remove this kind of annotation for this qualifier." + "\n");
 			}
 		}
 		else {
-			System.out.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
+			System.err.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
 		}
 	}
 	
@@ -603,7 +603,7 @@ public class Metadata {
 	public Metadata getMetadataOfQualifier(String termDesired, int alternative) {
 
 		if (!this.listOfAnnotations.containsKey(termDesired)) {
-			System.out.println("This qualifier doesn't exist, so there can be no metadata object attached to it." + "\n");
+			System.err.println("This qualifier doesn't exist, so there can be no metadata object attached to it." + "\n");
 			return null;
 		}
 		else if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
@@ -619,7 +619,7 @@ public class Metadata {
 			return null;
 		}
 		else {
-			System.out.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
+			System.err.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
 			return null;
 		}
 	}
