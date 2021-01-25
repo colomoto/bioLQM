@@ -56,20 +56,6 @@ class GenericAnnotation extends Annotation {
 	}
 
 	// functions
-	private void removeIndexParent(Index index) {
-		Index indexParent = index.getIndexOfParent();
-		indexParent.setIndexOfChildren(index);
-	}
-	
-	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
-		for (Index indexChild: index.getIndexOfChildren()) {
-			if (indexChild.getIndexOfChildren().size() != 0) {
-				removeIndexChildren(modelConstants, indexChild);
-			}
-			modelConstants.getListMetadata().remove(indexChild);
-		}
-	}
-	
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
@@ -111,7 +97,7 @@ class GenericAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
+	protected void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
 			case "uri":
 				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
@@ -149,16 +135,6 @@ class GenericAnnotation extends Annotation {
 				}
 				break;
 		}
-		
-		if (this.listOfURIs.size() == 0 && this.listOfTags.size() == 0 && this.listOfKeysValues.size() == 0) {
-			this.removeIndexParent(indexOfGeneric);
-			this.removeIndexChildren(modelConstants, indexOfGeneric);
-					
-			modelConstants.getListMetadata().remove(indexOfGeneric);
-			
-			return true;
-		}
-		return false;
 	}
 	
 	@Override

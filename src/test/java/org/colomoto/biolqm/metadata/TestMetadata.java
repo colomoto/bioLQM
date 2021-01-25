@@ -36,11 +36,11 @@ public class TestMetadata {
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
 		modelMetadata.addURI("lalaland", "unipro", "224587");
-		modelMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
+		modelMetadata.addAuthor("creator", "Martin", "", null, null, "1111-4444-6666-8888");
 		
 		Metadata lalalandMetadata = modelMetadata.getMetadataOfQualifier("lalaland");
 		
-		lalalandMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
+		lalalandMetadata.addAuthor("creator", "Martin", null, null, "Inria", "1111-4444-6666-8888");
 		
 		// System.out.println(modelMetadata.getDescriptionMetadata());
 		// System.out.println(lalalandMetadata.getDescriptionMetadata());
@@ -50,16 +50,17 @@ public class TestMetadata {
 		
 		Metadata nodeMetadata = model.getMetadataOfNode(node);
 		
-		nodeMetadata.addURI("isDescribedBy", "doi", "tintinaupaysdelornoir");
+		modelMetadata.addURI("isDescribedBy", "doi", "tintinaupaysdelornoir");
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		nodeMetadata.addTag("isDescribedBy", "doi2");
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		
+		nodeMetadata.createAlternative("occursIn");
 		nodeMetadata.createAlternative("is");
 		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
 		
 		nodeMetadata.createAlternative("isDescribedBy");
-		nodeMetadata.addURI("isDescribedBy", 1, "doi", "surtoutpastintinaupaysdelornoir");
+		modelMetadata.addURI("isDescribedBy", 1, "doi", "surtoutpastintinaupaysdelornoir");
 		
 		Metadata nodenestedMetadata = nodeMetadata.getMetadataOfQualifier("is", 1);
 		
@@ -97,6 +98,10 @@ public class TestMetadata {
 		
 		elementMetadata.addTag("isDescribedBy", "doi");
 		elementMetadata.addTag("isDescribedBy", "doi2");
+		
+		nodenestedMetadata.removeTag("isDescribedBy", "doi");
+		nodenestedMetadata.removeURI("isDescribedBy", 1, "doi", "jesintinaupaysdelornoir");
+		nodenestedMetadata.removeURI("isDescribedBy", 1, "doi", "jesaispassicesttintinaupaysdelornoir");
 		
 		elementMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		

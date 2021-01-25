@@ -36,20 +36,6 @@ class DistributionAnnotation extends Annotation {
 	}
 	
 	// functions
-	private void removeIndexParent(Index index) {
-		Index indexParent = index.getIndexOfParent();
-		indexParent.setIndexOfChildren(index);
-	}
-	
-	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
-		for (Index indexChild: index.getIndexOfChildren()) {
-			if (indexChild.getIndexOfChildren().size() != 0) {
-				removeIndexChildren(modelConstants, indexChild);
-			}
-			modelConstants.getListMetadata().remove(indexChild);
-		}
-	}
-
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
@@ -57,13 +43,8 @@ class DistributionAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
-		this.removeIndexParent(indexOfDistribution);
-		this.removeIndexChildren(modelConstants, indexOfDistribution);
-				
-		modelConstants.getListMetadata().remove(indexOfDistribution);
+	protected void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 		
-		return true;
 	}
 	
 	@Override

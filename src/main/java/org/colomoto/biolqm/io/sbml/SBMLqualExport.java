@@ -469,7 +469,11 @@ public class SBMLqualExport extends BaseExporter {
 				ArrayList<ArrayList<String>> listOfAuthors = metadata.getResourcesOfQualifier(qualifierName, 0);
 				
 				for (ArrayList<String> author: listOfAuthors) {
-					Creator creator = new Creator(author.get(0), author.get(1), author.get(2), author.get(3));
+					Creator creator = new Creator();
+					creator.setGivenName(author.get(0));
+					creator.setFamilyName(author.get(1));
+					if (author.get(2) != null) { creator.setOrganisation(author.get(2)); }
+					if (author.get(3) != null) { creator.setEmail(author.get(3)); }
 					history.addCreator(creator);
 				}
 			}

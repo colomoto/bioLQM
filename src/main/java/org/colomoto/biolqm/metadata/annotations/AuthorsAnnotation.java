@@ -38,20 +38,6 @@ class AuthorsAnnotation extends Annotation {
 	}
 	
 	// functions
-	private void removeIndexParent(Index index) {
-		Index indexParent = index.getIndexOfParent();
-		indexParent.setIndexOfChildren(index);
-	}
-	
-	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
-		for (Index indexChild: index.getIndexOfChildren()) {
-			if (indexChild.getIndexOfChildren().size() != 0) {
-				removeIndexChildren(modelConstants, indexChild);
-			}
-			modelConstants.getListMetadata().remove(indexChild);
-		}
-	}
-
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
@@ -60,7 +46,7 @@ class AuthorsAnnotation extends Annotation {
 	}
 
 	@Override
-	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
+	protected void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 
 		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
 		if (!this.listOfAuthors.contains(author)) {
@@ -69,16 +55,6 @@ class AuthorsAnnotation extends Annotation {
 		else {		
 			this.listOfAuthors.remove(author);
 		}
-		
-		if (this.listOfAuthors.size() == 0) {
-			this.removeIndexParent(indexOfAuthors);
-			this.removeIndexChildren(modelConstants, indexOfAuthors);
-					
-			modelConstants.getListMetadata().remove(indexOfAuthors);
-			
-			return true;
-		}
-		return false;
 	}
 
 	@Override

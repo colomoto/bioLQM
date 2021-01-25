@@ -35,21 +35,7 @@ class DateAnnotation extends Annotation {
 		return this.date;
 	}
 	
-	// functions
-	private void removeIndexParent(Index index) {
-		Index indexParent = index.getIndexOfParent();
-		indexParent.setIndexOfChildren(index);
-	}
-	
-	private void removeIndexChildren(ModelConstants modelConstants, Index index) {
-		for (Index indexChild: index.getIndexOfChildren()) {
-			if (indexChild.getIndexOfChildren().size() != 0) {
-				removeIndexChildren(modelConstants, indexChild);
-			}
-			modelConstants.getListMetadata().remove(indexChild);
-		}
-	}
-	
+	// functions	
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
@@ -57,13 +43,8 @@ class DateAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
-		this.removeIndexParent(indexOfDate);
-		this.removeIndexChildren(modelConstants, indexOfDate);
-				
-		modelConstants.getListMetadata().remove(indexOfDate);
+	protected void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 		
-		return true;
 	}
 	
 	@Override

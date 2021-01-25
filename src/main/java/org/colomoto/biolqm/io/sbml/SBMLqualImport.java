@@ -967,7 +967,11 @@ public class SBMLqualImport extends BaseLoader {
 			// metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
 			
 			for (Creator creator: history.getListOfCreators()) {
-				metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), creator.getEmail(), creator.getOrganisation(), null);
+				String email = null;
+				if (creator.isSetEmail()) { email = creator.getEmail(); }
+				String organisation = null;
+				if (creator.isSetOrganisation()) { organisation = creator.getOrganisation(); }
+				metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), email, organisation, null);
 			}
 		}
 	}

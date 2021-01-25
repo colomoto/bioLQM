@@ -17,7 +17,7 @@ abstract class Annotation {
 	
 	// functions
 	protected abstract void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation);
-	protected abstract boolean removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation);
+	protected abstract void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation);
 	protected abstract String getValue();
 	protected abstract boolean isSetIndex(ModelConstants modelConstants, Index indexParent);
 	protected abstract Index getIndex(ModelConstants modelConstants, Index indexParent);

@@ -147,17 +147,24 @@ public class Metadata {
 	 * @return the number of the alternative created
 	 */	
 	public int createAlternative(String termDesired) {
-
-		String fullJavaClass = this.getClassOfQualifier(termDesired);
-		int colon = fullJavaClass.lastIndexOf('.');
-		String javaClass = fullJavaClass.substring(colon+1);
 		
-		AnnotationFactory factory = new AnnotationFactory();
-		Annotation newAnnotation = factory.getInstance(javaClass);
-		
-		this.listOfAnnotations.get(termDesired).add(newAnnotation);
-		
-		return this.listOfAnnotations.get(termDesired).size()-1;
+		if (this.listOfAnnotations.containsKey(termDesired)) {
+			String fullJavaClass = this.getClassOfQualifier(termDesired);
+			int colon = fullJavaClass.lastIndexOf('.');
+			String javaClass = fullJavaClass.substring(colon+1);
+			
+			AnnotationFactory factory = new AnnotationFactory();
+			Annotation newAnnotation = factory.getInstance(javaClass);
+			
+			this.listOfAnnotations.get(termDesired).add(newAnnotation);
+			
+			return this.listOfAnnotations.get(termDesired).size()-1;
+		}
+		else {
+			System.out.println("You have to create this qualifier before creating an alternative." + "\n");
+			
+			return -1;
+		}
 	}
 
 
@@ -263,6 +270,10 @@ public class Metadata {
 	 * @param orcid the orcid of the author (optional: put null if you don't want to define it)
 	 */	
 	public void addAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
+		if (name == null || surname == null) {
+			System.out.println("The name and the surname of the author are compulsory." + "\n");
+			return;
+		}
 		if (!this.isValidEmail(email)) {
 			System.out.println("The email is not valid. It should contain an @ (at the very least)" + "\n");
 			return;
