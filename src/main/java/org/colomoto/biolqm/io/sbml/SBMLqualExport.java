@@ -420,7 +420,7 @@ public class SBMLqualExport extends BaseExporter {
 		return listOfCVTerms;
 	}
 	
-	private Annotation exportElementMetadata(String type, Metadata metadata) {
+	private Annotation exportElementMetadata(Metadata metadata) {
 		
 		Annotation annotation = new Annotation();
 		History history = new History();
@@ -437,7 +437,7 @@ public class SBMLqualExport extends BaseExporter {
 					CVTerm cvterm = new CVTerm();
 					
 					Qualifier qualifier;
-					if (type.equals("model")) {
+					if (metadata.getType().equals("model")) {
 						qualifier = CVTerm.Qualifier.getModelQualifierFor(qualifierName);
 					}
 					else {
@@ -465,7 +465,7 @@ public class SBMLqualExport extends BaseExporter {
 					}
 				}
 			}
-			else if (qualifierClass.equals("AuthorsAnnotation") && type.equals("model")) {
+			else if (qualifierClass.equals("AuthorsAnnotation")) {
 				ArrayList<ArrayList<String>> listOfAuthors = metadata.getResourcesOfQualifier(qualifierName, 0);
 				
 				for (ArrayList<String> author: listOfAuthors) {
@@ -477,7 +477,7 @@ public class SBMLqualExport extends BaseExporter {
 					history.addCreator(creator);
 				}
 			}
-			else if (qualifierClass.equals("DateAnnotation") && type.equals("model")) {
+			else if (qualifierClass.equals("DateAnnotation")) {
 				String date = metadata.getResourcesOfQualifier(qualifierName, 0).get(0).get(0);
 				
 				String pattern = "yyyy-MM-dd";
@@ -497,9 +497,7 @@ public class SBMLqualExport extends BaseExporter {
 			}
 		}
 		
-		if (type.equals("model")) { 
-			annotation.setHistory(history);
-		}
+		annotation.setHistory(history);
 		return annotation;
 	}
 	
@@ -511,7 +509,7 @@ public class SBMLqualExport extends BaseExporter {
 			Model elementModel = qualBundle.document.getModel();
 			
 			if (metadataModel.isMetadataEmpty()) {
-				Annotation annotationModel = this.exportElementMetadata("model", metadataModel);
+				Annotation annotationModel = this.exportElementMetadata(metadataModel);
 				
 				if (!annotationModel.isEmpty()) {
 					elementModel.setMetaId("meta_"+elementModel.getId());
@@ -534,7 +532,7 @@ public class SBMLqualExport extends BaseExporter {
 					QualitativeSpecies elementSpecies = entry.getValue();
 					
 					if (metadataSpecies.isMetadataEmpty()) {
-						Annotation annotationSpecies = this.exportElementMetadata("species", metadataSpecies);
+						Annotation annotationSpecies = this.exportElementMetadata(metadataSpecies);
 						
 						if (!annotationSpecies.isEmpty()) {
 							elementSpecies.setMetaId("meta_"+elementSpecies.getId());

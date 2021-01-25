@@ -3,6 +3,7 @@ package org.colomoto.biolqm.metadata.annotations;
 import org.colomoto.biolqm.metadata.annotations.Annotation;
 import org.colomoto.biolqm.metadata.annotations.URI;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
+import org.colomoto.biolqm.metadata.annotations.JsonReader;
 
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
@@ -11,12 +12,15 @@ import org.colomoto.biolqm.metadata.constants.QualifiersAvailable;
 import org.colomoto.biolqm.metadata.constants.TagsKeysAvailable;
 import org.colomoto.biolqm.metadata.constants.Index;
 
+import org.json.JSONObject;
+
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.io.IOException;
 
 /**
  * Generic class for the annotations
@@ -65,8 +69,22 @@ class GenericAnnotation extends Annotation {
 				
 				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
 				
-				if (termDesired == "isDescribedBy") {
-					modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, "bibtex");
+				if (termDesired == "isDescribedBy") {										
+					if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
+						String url = "https://api.crossref.org/works/"+contentAnnotation[2];
+
+						try {
+							JSONObject json = JsonReader.readJsonFromUrl(url);
+							JSONObject jsonMessage = json.getJSONObject("message");
+							
+							String title = jsonMessage.getJSONArray("title").getString(0).toString();
+							int year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
+							
+							modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
+						} catch (IOException e) {
+							System.err.println("Error retrieving the metadata of the doi.");
+						}
+					}
 				}
 				break;
 			case "tag":

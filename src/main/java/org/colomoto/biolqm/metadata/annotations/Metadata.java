@@ -60,6 +60,9 @@ public class Metadata {
 	public String getNotes() {
 		return this.notes;
 	}
+	public String getType() {
+		return this.type;
+	}
 	
 	
 	// setters
@@ -501,6 +504,10 @@ public class Metadata {
 			help += this.modelConstants.getInstanceOfQualifiersAvailable().getParametersQualifier(this.type, termDesired);
 			
 			help += "Characteristics:\n" + this.modelConstants.getInstanceOfQualifiersAvailable().getHelpQualifier(this.type, termDesired);
+			
+			if (termDesired == "isDescribedBy") {
+				help += "DOIs already used in the model:\n" + this.modelConstants.getInstanceOfExternalMetadata().getDescription();
+			}
 		
 			help += "Tags available:\n" + "\t" + this.modelConstants.getTagsAvailable().toString() + "\n";
 			
@@ -536,6 +543,10 @@ public class Metadata {
 			Qualifier qual = listQualifiersComponent.get(term);
 			
 			help += "-" + term + ":\n" + this.modelConstants.getInstanceOfQualifiersAvailable().getHelpQualifier(this.type, term);
+			
+			if (term.equals("isDescribedBy")) {
+				help += "Extra: DOIs already used in the model:\n" + this.modelConstants.getInstanceOfExternalMetadata().getDescription();
+			}
 		}
 		
 		help += "Tags available:\n" + "\t" + this.modelConstants.getTagsAvailable().toString() + "\n";

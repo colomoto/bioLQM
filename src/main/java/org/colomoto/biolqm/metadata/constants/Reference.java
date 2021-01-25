@@ -8,20 +8,20 @@ package org.colomoto.biolqm.metadata.constants;
 public class Reference {
 	
 	// variables
-	private String bibtex;
+	private String title;
+	private String year;
 	
 	// constructors
-	public Reference(String newBibtex) {
-		this.bibtex = newBibtex;
+	public Reference(String newTitle, String newYear) {
+		this.title = newTitle;
+		this.year = newYear;
 	}
 	
 	// getters
-	public String getBibtex() {
-		return this.bibtex;
+	public String getTitle() {
+		return this.title;
 	}
-	
-	// setters
-	public void setBibtex(String newBibtex) {
-		this.bibtex = newBibtex;
+	public String getYear() {
+		return this.year;
 	}
 }

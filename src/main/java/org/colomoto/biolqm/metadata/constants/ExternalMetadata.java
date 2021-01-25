@@ -5,6 +5,7 @@ import org.colomoto.biolqm.metadata.constants.Reference;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * One instance per model opened to keep a trace of the external metadata involved
@@ -23,9 +24,26 @@ public class ExternalMetadata {
 	}
 
 	// functions
-	public void updateExternalMetadata(URI uri, String bibtex) {
-		if (!this.externalMetadata.containsKey(uri)) {
-			this.externalMetadata.put(uri, new Reference(bibtex));
+	public boolean isSetExternalMetadata(URI uri) {
+		if (this.externalMetadata.containsKey(uri)) {
+			return true;
 		}
+		return false;
+	}
+	
+	public void updateExternalMetadata(URI uri, String title, String year) {
+		if (!this.externalMetadata.containsKey(uri)) {
+			this.externalMetadata.put(uri, new Reference(title, year));
+		}
+	}
+	
+	public String getDescription() {
+		String help = "";
+		
+		for (Map.Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
+			help += "\t" + entry.getKey().getIdentifier() + ": " + entry.getValue().getTitle() + ", " + entry.getValue().getYear() + "\n"; 
+		}
+		
+		return help;
 	}
 }

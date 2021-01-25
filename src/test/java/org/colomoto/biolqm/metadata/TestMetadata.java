@@ -55,12 +55,13 @@ public class TestMetadata {
 		nodeMetadata.addTag("isDescribedBy", "doi2");
 		nodeMetadata.addTag("isDescribedBy", "doi");
 		
+		nodeMetadata.addAuthor("creator", "Aurelien", "Naldi", "aureliennaldi@inria.fr", "Inria", "1111-4444-6666-8888");
+		
 		nodeMetadata.createAlternative("occursIn");
 		nodeMetadata.createAlternative("is");
 		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
 		
-		nodeMetadata.createAlternative("isDescribedBy");
-		modelMetadata.addURI("isDescribedBy", 1, "doi", "surtoutpastintinaupaysdelornoir");
+		modelMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		
 		Metadata nodenestedMetadata = nodeMetadata.getMetadataOfQualifier("is", 1);
 		
@@ -105,6 +106,12 @@ public class TestMetadata {
 		
 		elementMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
-		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output", "sbml");
+		elementMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
+		elementMetadata.addURI("isDescribedBy", "doi", "10.1093/ajae/aaq063");
+		
+		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
+		
+		System.out.println(elementMetadata.getHelpAnnotation("isDescribedBy"));
+		System.out.println(elementMetadata.getHelpMetadata());
 	}
 }

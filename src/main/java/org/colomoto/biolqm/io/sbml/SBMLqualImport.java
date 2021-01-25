@@ -1015,6 +1015,9 @@ public class SBMLqualImport extends BaseLoader {
 					for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
 						this.importElementCVTerm(cvterm, metadataSpecies);
 					}
+					
+					// to deal with terms of dcterms
+					this.importElementHistory(annotationSpecies, metadataSpecies);
 				}
 				if (elementSpecies.isSetNotes()) {
 					XMLNode notesSpecies = elementSpecies.getNotes();
