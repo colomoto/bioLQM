@@ -13,6 +13,7 @@ import org.colomoto.biolqm.metadata.constants.TagsKeysAvailable;
 import org.colomoto.biolqm.metadata.constants.Index;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.util.HashSet;
 import java.util.HashMap;
@@ -259,5 +260,53 @@ class GenericAnnotation extends Annotation {
 		}
 		
 		return resources;
+	}
+	
+	@Override
+	protected JSONObject getJSONOfAnnotation() {
+		JSONObject json = new JSONObject();
+		
+		if (this.listOfURIs.size()>0) {
+			JSONArray arrayURIs = new JSONArray();
+			
+			for (URI uri : this.listOfURIs) {
+				JSONObject jsonURI = new JSONObject();
+				
+				jsonURI.put("collection", uri.getCollection());
+				jsonURI.put("identifier", uri.getIdentifier());
+				
+				arrayURIs.put(jsonURI);
+			}
+			
+			json.put("uris", arrayURIs);
+		}
+		
+		if (this.listOfTags.size()>0) {
+			JSONArray arrayTags = new JSONArray();
+			
+			for (String tag : this.listOfTags) {
+				arrayTags.put(tag);
+			}
+			
+			json.put("tags", arrayTags);
+		}
+		
+		if (this.listOfKeysValues.size()>0) {
+			JSONArray arrayKeysValues = new JSONArray();
+			
+			for (String key : this.listOfKeysValues.keySet()) {
+				
+				JSONObject jsonKey = new JSONObject();
+				
+				jsonKey.put("key", key);
+				jsonKey.put("values", this.listOfKeysValues.get(key));
+				
+				arrayKeysValues.put(jsonKey);
+			}
+			
+			json.put("keysvalues", arrayKeysValues);
+		}
+		
+		return json;
 	}
 }

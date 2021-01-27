@@ -505,10 +505,10 @@ public class SBMLqualExport extends BaseExporter {
 		
 		Metadata metadataModel = this.model.getMetadataOfModel();
 		
-		if (metadataModel.isMetadataEmpty() || metadataModel.getNotes() != "") {
+		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
 			Model elementModel = qualBundle.document.getModel();
 			
-			if (metadataModel.isMetadataEmpty()) {
+			if (metadataModel.isMetadataNotEmpty()) {
 				Annotation annotationModel = this.exportElementMetadata(metadataModel);
 				
 				if (!annotationModel.isEmpty()) {
@@ -528,10 +528,10 @@ public class SBMLqualExport extends BaseExporter {
 			if (this.model.isSetMetadataOfNode(node)) {
 				Metadata metadataSpecies = this.model.getMetadataOfNode(node);
 				
-				if (metadataSpecies.isMetadataEmpty() || metadataSpecies.getNotes() != "") {
+				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 					QualitativeSpecies elementSpecies = entry.getValue();
 					
-					if (metadataSpecies.isMetadataEmpty()) {
+					if (metadataSpecies.isMetadataNotEmpty()) {
 						Annotation annotationSpecies = this.exportElementMetadata(metadataSpecies);
 						
 						if (!annotationSpecies.isEmpty()) {

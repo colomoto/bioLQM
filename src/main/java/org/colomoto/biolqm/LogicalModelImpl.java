@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import org.colomoto.mddlib.MDDManager;
 
@@ -294,5 +299,77 @@ public class LogicalModelImpl implements LogicalModel {
 		else {
 			return this.annotationModule.createMetadataOfNode(node);
 		}
+	}
+	
+	private void exportElementMetadata(Metadata metadata, JSONObject json) {
+		
+		// if there is some metadata we add the json representation in the json object
+		if (metadata.isMetadataNotEmpty()) {
+			
+			json.put("annotation", metadata.getJSONOfMetadata());
+		}
+		// if there is some notes we add the json representation in the json object
+		if (metadata.getNotes() != "") {
+			
+			json.put("notes", metadata.getNotes());
+		}
+	}
+	
+	@Override
+	public void exportMetadata(String filename) {
+		
+		JSONObject json = new JSONObject();
+		
+		Metadata metadataModel = this.getMetadataOfModel();
+		
+		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
+			this.exportElementMetadata(metadataModel, json);
+		}
+		
+		JSONArray jsonArray = new JSONArray();
+		
+		for (NodeInfo node: this.coreNodes) {
+			
+			if (this.isSetMetadataOfNode(node)) {
+				Metadata metadataSpecies = this.getMetadataOfNode(node);
+				
+				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
+					JSONObject jsonNode = new JSONObject();
+					
+					jsonNode.put("id", node.getNodeID());
+					exportElementMetadata(metadataSpecies, jsonNode);
+					
+					jsonArray.put(jsonNode);
+				}
+			}
+		}
+		
+		for (NodeInfo node: this.extraNodes) {
+			
+			if (this.isSetMetadataOfNode(node)) {
+				Metadata metadataSpecies = this.getMetadataOfNode(node);
+				
+				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
+					JSONObject jsonNode = new JSONObject();
+					
+					jsonNode.put("id", node.getNodeID());
+					exportElementMetadata(metadataSpecies, jsonNode);
+					
+					jsonArray.put(jsonNode);
+				}
+			}
+		}
+		
+		json.put("nodes", jsonArray);
+		
+        // Write JSON file
+        try (FileWriter file = new FileWriter(filename+".json")) {
+ 
+            file.write(json.toString());
+            file.flush();
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 }

@@ -7,6 +7,8 @@ import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
 import org.colomoto.biolqm.metadata.constants.Index;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -95,5 +97,14 @@ class DistributionAnnotation extends Annotation {
 		ArrayList<String> resource = new ArrayList<String>(Arrays.asList(distribution));
 		resources.add(resource);
 		return resources;
+	}
+	
+	@Override
+	protected JSONObject getJSONOfAnnotation() {
+		JSONObject json = new JSONObject();
+		
+		json.put("distribution", this.distribution);
+		
+		return json;
 	}
 }

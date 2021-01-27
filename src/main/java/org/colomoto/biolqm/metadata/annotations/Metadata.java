@@ -12,6 +12,9 @@ import org.colomoto.biolqm.metadata.constants.Qualifier;
 
 import org.colomoto.biolqm.metadata.validations.DateValidator;
 
+import org.json.JSONObject;
+import org.json.JSONArray;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -636,13 +639,13 @@ public class Metadata {
 	}
 	
 	
-	// the functions used to export the metadata towards the sbml format
+	// the functions used to export the metadata towards the sbml format or the json format
 	/**
 	 * Check if the metadata object is empty or contains annotation
 	 *
 	 * @return false if the metadata object is empty, true otherwise
 	 */	
-	public boolean isMetadataEmpty() {
+	public boolean isMetadataNotEmpty() {
 		if (this.listOfAnnotations.size() > 0) {
 			return true;
 		}
@@ -698,5 +701,65 @@ public class Metadata {
 			return true;
 		}
 		return false;
+	}
+	
+	public JSONArray getJSONOfMetadata() {
+		
+		JSONArray arrayQualifiers = new JSONArray();
+		
+		for (String qualifierName: this.getListOfQualifiers()) {
+			
+			String qualifierFullClass = this.getClassOfQualifier(qualifierName);
+			int colon = qualifierFullClass.lastIndexOf('.');
+			String qualifierClass = qualifierFullClass.substring(colon+1);
+			
+			JSONObject jsonQualifier = new JSONObject();
+			
+			jsonQualifier.put("qualifier", qualifierName);
+			jsonQualifier.put("type", qualifierClass);
+			
+			JSONArray arrayAlternatives = new JSONArray();
+			
+			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
+				
+				JSONObject jsonContent = this.listOfAnnotations.get(qualifierName).get(alternative).getJSONOfAnnotation();
+				
+				if (!jsonContent.isEmpty()) {
+					JSONObject jsonAlternative = new JSONObject();
+					
+					jsonAlternative.put("number", alternative);
+					jsonAlternative.put("content", jsonContent);
+					
+					// to check if the alternative contains a nested metadata
+					if (this.isSetMetadataOfQualifier(qualifierName, alternative)) {
+						Metadata metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
+						
+						JSONObject jsonNested = new JSONObject();
+						
+						// if there is some metadata we add the json representation in the json object
+						if (metadataNested.isMetadataNotEmpty()) {
+							jsonNested.put("annotation", metadataNested.getJSONOfMetadata());
+						}
+						// if there is some notes we add the json representation in the json object
+						if (metadataNested.getNotes() != "") {
+							jsonNested.put("notes", metadataNested.getNotes());
+						}
+						
+						if (!jsonNested.isEmpty()) {
+							jsonAlternative.put("nested", jsonNested);
+						}
+					}
+					
+					arrayAlternatives.put(jsonAlternative);
+				}
+			}
+			
+			if (!arrayAlternatives.isEmpty()) {
+				jsonQualifier.put("alternatives", arrayAlternatives);
+				arrayQualifiers.put(jsonQualifier);
+			}
+		}
+		
+		return arrayQualifiers;
 	}
 }

@@ -61,7 +61,11 @@ public class TestMetadata {
 		nodeMetadata.createAlternative("is");
 		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
 		
-		modelMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
+		nodeMetadata.addURI("is", 1, "doi", "10.1002/0470841559.ch1");
+		
+		nodeMetadata.addKeyValue("is", 1, "coucou", "1");
+		nodeMetadata.addKeyValue("is", 1, "coucou", "2");
+		nodeMetadata.addKeyValue("is", 1, "hello", "2");
 		
 		Metadata nodenestedMetadata = nodeMetadata.getMetadataOfQualifier("is", 1);
 		
@@ -111,7 +115,12 @@ public class TestMetadata {
 		
 		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
 		
-		System.out.println(elementMetadata.getHelpAnnotation("isDescribedBy"));
-		System.out.println(elementMetadata.getHelpMetadata());
+		System.out.println(modelMetadata.getDescriptionMetadata());
+		System.out.println(lalalandMetadata.getDescriptionMetadata());
+		System.out.println(nodeMetadata.getDescriptionMetadata());
+		System.out.println(nodenestedMetadata.getDescriptionMetadata());
+		System.out.println(nodenestedMetadata2.getDescriptionMetadata());
+		
+		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
 	}
 }

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 /**
  * Crude SBML import using JSBML and the qual extension.
@@ -965,7 +966,8 @@ public class SBMLqualImport extends BaseLoader {
 			String pattern = "yyyy-MM-dd";
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 						
-			metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+			if (history.isSetCreatedDate()) { metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate())); }
+			if (history.isSetModifiedDate()) { metadata.addDate("modified", LocalDate.now().toString()); }
 			
 			// we don't use the old modifiedDate for the "modified" qualifier because we use the current date
 			// it's okay because this change will affect the model only if it is saved, indicating it has indeed been modified

@@ -180,4 +180,11 @@ public interface LogicalModel {
 	 * @return the existing Metadata of the node. Create it if it does not exist.
 	 */
 	Metadata getMetadataOfNode(NodeInfo node);
+	
+	/**
+	 * Export all the metadata of the model in a structured json file
+	 * 
+	 * @param filename the name of the json file
+	 */
+	void exportMetadata(String filename);
 }

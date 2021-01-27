@@ -8,6 +8,9 @@ import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
 import org.colomoto.biolqm.metadata.constants.Index;
 
+import org.json.JSONObject;
+import org.json.JSONArray;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -117,5 +120,30 @@ class AuthorsAnnotation extends Annotation {
 		}
 		
 		return resources;
+	}
+	
+	@Override
+	protected JSONObject getJSONOfAnnotation() {
+		JSONObject json = new JSONObject();
+		
+		if (this.listOfAuthors.size()>0) {
+			JSONArray arrayAuthors = new JSONArray();
+			
+			for (Author author : this.listOfAuthors) {
+				JSONObject jsonAuthor = new JSONObject();
+				
+				jsonAuthor.put("name", author.getName());
+				jsonAuthor.put("surname", author.getSurname());
+				jsonAuthor.put("mail", author.getEmail());
+				jsonAuthor.put("organisation", author.getOrganisation());
+				jsonAuthor.put("orcid", author.getOrcid());
+				
+				arrayAuthors.put(jsonAuthor);
+			}
+			
+			json.put("authors", arrayAuthors);
+		}
+		
+		return json;
 	}
 }
