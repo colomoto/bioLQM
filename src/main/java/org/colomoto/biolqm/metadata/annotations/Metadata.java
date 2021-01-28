@@ -2,6 +2,7 @@ package org.colomoto.biolqm.metadata.annotations;
 
 import org.colomoto.biolqm.metadata.annotations.Annotation;
 import org.colomoto.biolqm.metadata.annotations.AnnotationFactory;
+import org.colomoto.biolqm.metadata.annotations.JsonReader;
 
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.io.IOException;
 
 /**
  * One instance per component (model, node, transition...)
@@ -118,6 +120,26 @@ public class Metadata {
 		return true;
 	}
 	
+	private boolean isValidURI(String collection, String identifier) {
+		
+		String compactId = collection+":"+identifier;
+		String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
+		
+		try {
+			JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
+			
+			if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
+				return true;
+			}
+			else {
+				System.err.println("The URI is not valid." + "\n");
+			}
+		} catch (IOException e) {
+			System.err.println("Error checking the uri." + "\n");
+		}
+		return false;
+	}	
+	
 	
 	// the functions to manage the alternatives
 	private void createQualifier(String termDesired, String javaClassDesired) {
@@ -207,6 +229,11 @@ public class Metadata {
 	 * @param identifier the entry one wants to point at in the collection
 	 */	
 	public void addURI(String termDesired, int alternative, String collection, String identifier) {
+		if (!this.isValidURI(collection, identifier)) {
+			System.err.println("The uri is not valid: it should be a valid entry for identifiers.org." + "\n");
+			return;
+		}
+		
 		String javaClassDesired = "GenericAnnotation";
 		this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
 	}
@@ -610,16 +637,22 @@ public class Metadata {
 			return null;
 		}
 		else if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
-			Index indexParent = this.getLocalIndex();
-			
-			Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
-			
-			// if the index is null to that point, that means the annotation required doesn't exist and we return null
-			// else we return the metadata of this annotation
-			if (index != null) {
-				return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
+			if (this.listOfAnnotations.get(termDesired).get(alternative).isAnnotationNotEmpty()) {
+				Index indexParent = this.getLocalIndex();
+				
+				Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
+				
+				// if the index is null to that point, that means the annotation required doesn't exist and we return null
+				// else we return the metadata of this annotation
+				if (index != null) {
+					return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
+				}
+				return null;
 			}
-			return null;
+			else {
+				System.err.println("This alternative is empty so you cannot add a metadata to it yet." + "\n");
+				return null;
+			}
 		}
 		else {
 			System.err.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
@@ -678,6 +711,9 @@ public class Metadata {
 	 * @return the number of alternatives for this qualifier
 	 */	
 	public int getNumberOfAlternatives(String qualifierName) {
+		if (!this.listOfAnnotations.containsKey(qualifierName)) {
+			return 0;
+		}
 		return this.listOfAnnotations.get(qualifierName).size();
 	}
 	
@@ -722,13 +758,9 @@ public class Metadata {
 			
 			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
 				
-				JSONObject jsonContent = this.listOfAnnotations.get(qualifierName).get(alternative).getJSONOfAnnotation();
+				JSONObject jsonAlternative = this.listOfAnnotations.get(qualifierName).get(alternative).getJSONOfAnnotation();
 				
-				if (!jsonContent.isEmpty()) {
-					JSONObject jsonAlternative = new JSONObject();
-					
-					jsonAlternative.put("number", alternative);
-					jsonAlternative.put("content", jsonContent);
+				if (!jsonAlternative.isEmpty()) {
 					
 					// to check if the alternative contains a nested metadata
 					if (this.isSetMetadataOfQualifier(qualifierName, alternative)) {

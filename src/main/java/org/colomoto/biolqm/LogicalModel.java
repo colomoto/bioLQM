@@ -187,4 +187,11 @@ public interface LogicalModel {
 	 * @param filename the name of the json file
 	 */
 	void exportMetadata(String filename);
+	
+	/**
+	 * Import a structured json file to populate the metadata of the model
+	 * 
+	 * @param filename the name of the json file
+	 */
+	void importMetadata(String filename);
 }

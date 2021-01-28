@@ -107,4 +107,9 @@ class DistributionAnnotation extends Annotation {
 		
 		return json;
 	}
+	
+	@Override
+	protected boolean isAnnotationNotEmpty() {
+		return false;
+	}
 }

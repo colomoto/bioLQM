@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONTokener;
 
 import org.colomoto.mddlib.MDDManager;
 
@@ -369,6 +374,153 @@ public class LogicalModelImpl implements LogicalModel {
             file.flush();
  
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	private void importElementMetadata(Metadata metadata, JSONObject json) {
+		
+		// if there is some metadata we add the json representation in the json object
+		if (json.has("annotation") && !json.isNull("annotation")) {
+			
+			JSONArray arrayQualifiers = json.getJSONArray("annotation");
+			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++)
+			{
+				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
+				
+				String qualifierName = jsonQualifier.getString("qualifier");
+				String qualifierClass = jsonQualifier.getString("type");
+				
+				JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
+
+				if (qualifierClass.equals("GenericAnnotation")) {
+					
+					int numberAlternative = metadata.getNumberOfAlternatives(qualifierName);
+					for(int idAlternative = 0; idAlternative < arrayAlternatives.length(); idAlternative++)
+					{
+						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
+						if (numberAlternative > 0) {
+							metadata.createAlternative(qualifierName);
+						}
+						
+						if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
+							JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
+							for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
+							{
+								JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
+								metadata.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
+							}
+						}
+						if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
+							JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
+							for(int idTag = 0; idTag < arrayTags.length(); idTag++)
+							{
+								String tag = arrayTags.getString(idTag);
+								metadata.addTag(qualifierName, numberAlternative, tag);
+							}
+						}
+						if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
+							JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
+							for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
+							{
+								JSONObject key = arrayKeys.getJSONObject(idKey);
+								JSONArray arrayValues = key.getJSONArray("values");
+								
+								for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
+									metadata.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
+								}
+							}
+						}
+							
+						if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
+							
+							Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, numberAlternative);
+							
+							this.importElementMetadata(metadataQualifier, jsonAlternative.getJSONObject("nested"));
+						}
+						
+						numberAlternative += 1;
+					}
+				}
+				else {
+					JSONObject jsonAlternative = arrayAlternatives.getJSONObject(0);
+					
+					if (qualifierClass.equals("AuthorsAnnotation")) {
+						
+						JSONArray arrayAuthors = jsonAlternative.getJSONArray("authors");
+						for(int idAuthor = 0; idAuthor < arrayAuthors.length(); idAuthor++)
+						{
+							JSONObject author = arrayAuthors.getJSONObject(idAuthor);
+							
+							String email = null;
+							if (author.has("email") && !author.isNull("email")) { email = author.getString("email"); }
+							String organisation = null;
+							if (author.has("organisation") && !author.isNull("organisation")) { organisation = author.getString("organisation"); }
+							String orcid = null;
+							if (author.has("orcid") && !author.isNull("orcid")) { orcid = author.getString("orcid"); }
+							
+							metadata.addAuthor(qualifierName, author.getString("name"), author.getString("surname"), email, organisation, orcid);
+						}
+					}
+					else if (qualifierClass.equals("DateAnnotation")) {
+						
+						metadata.addDate(qualifierName, jsonAlternative.getString("date"));
+					}
+					else if (qualifierClass.equals("DistributionAnnotation")) {
+
+						metadata.addDistribution(qualifierName, jsonAlternative.getString("distribution"));
+					}
+					
+					if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
+						
+						Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName);
+						
+						this.importElementMetadata(metadataQualifier, jsonAlternative.getJSONObject("nested"));
+					}
+				}
+			}
+		}
+		// if there is some notes we add the json representation in the json object
+		if (json.has("notes") && !json.isNull("notes")) {
+			
+			String existingNotes = metadata.getNotes();
+			metadata.setNotes(existingNotes + json.get("notes"));
+		}
+	}
+	
+	@Override
+	public void importMetadata(String filename) {
+		try {
+			// we load the json file
+			File initialFile = new File(filename+".json");
+			InputStream is = new FileInputStream(initialFile);
+			JSONTokener tokener = new JSONTokener(is);
+			JSONObject json = new JSONObject(tokener);
+			
+			// we import the metadata concerning the model
+			if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
+				Metadata metadataModel = this.getMetadataOfModel();
+				
+				this.importElementMetadata(metadataModel, json);
+			}
+			
+			// we import the metadata concerning each node
+			JSONArray arrayNodes = json.getJSONArray("nodes");
+			for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
+			{
+				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
+				NodeInfo node = this.getComponent(jsonNode.getString("id"));
+				
+				if (node != null) {
+					Metadata metadataNode = this.getMetadataOfNode(node);
+					
+					this.importElementMetadata(metadataNode, jsonNode);
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
             e.printStackTrace();
         }
 	}

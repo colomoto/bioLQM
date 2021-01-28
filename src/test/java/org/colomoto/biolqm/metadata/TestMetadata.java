@@ -35,12 +35,10 @@ public class TestMetadata {
 		// test modelMetadata
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
-		modelMetadata.addURI("lalaland", "unipro", "224587");
+ 		modelMetadata.addURI("lalaland", "unipro", "224587");
 		modelMetadata.addAuthor("creator", "Martin", "", null, null, "1111-4444-6666-8888");
 		
 		Metadata lalalandMetadata = modelMetadata.getMetadataOfQualifier("lalaland");
-		
-		lalalandMetadata.addAuthor("creator", "Martin", null, null, "Inria", "1111-4444-6666-8888");
 		
 		// System.out.println(modelMetadata.getDescriptionMetadata());
 		// System.out.println(lalalandMetadata.getDescriptionMetadata());
@@ -77,11 +75,6 @@ public class TestMetadata {
 		nodenestedMetadata.createAlternative("isDescribedBy");
 		nodenestedMetadata.addURI("isDescribedBy", 1, "doi", "jesaispassicesttintinaupaysdelornoir");
 		
-		Metadata nodenestedMetadata2 = nodenestedMetadata.getMetadataOfQualifier("isDescribedBy", 1);
-		nodenestedMetadata2.addURI("is", "doi", "ahbahnoncestspirou");
-		
-		nodenestedMetadata2.addTag("isDescribedBy", "doi");
-		
 		// for (NodeInfo element: model.getComponents()) {
 			// System.out.println(element.getNodeID());
 			
@@ -115,12 +108,34 @@ public class TestMetadata {
 		
 		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
 		
-		System.out.println(modelMetadata.getDescriptionMetadata());
-		System.out.println(lalalandMetadata.getDescriptionMetadata());
-		System.out.println(nodeMetadata.getDescriptionMetadata());
-		System.out.println(nodenestedMetadata.getDescriptionMetadata());
-		System.out.println(nodenestedMetadata2.getDescriptionMetadata());
-		
 		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		
+		model.importMetadata(dir.getAbsolutePath()+"\\filename");
+		
+		System.out.println(modelMetadata.getDescriptionMetadata());
+		
+		for (NodeInfo elementNode: model.getComponents()) {
+			System.out.println(elementNode.getNodeID());
+			Metadata elementNodeMetadata = model.getMetadataOfNode(elementNode);
+			printDescriptionElements(elementNodeMetadata);
+		}
+	}
+	
+	public void printDescriptionElements(Metadata metadata) {
+		System.out.println(metadata.getDescriptionMetadata());
+		
+		for (String qualifierName: metadata.getListOfQualifiers()) {
+			
+			int numberAlt = metadata.getNumberOfAlternatives(qualifierName);
+			for (int alternative=0; alternative<numberAlt; alternative++) {
+				
+				if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
+					
+					System.out.println(qualifierName);
+					Metadata nestedMetadata = metadata.getMetadataOfQualifier(qualifierName, alternative);
+					printDescriptionElements(nestedMetadata);
+				}
+			}
+		}
 	}
 }

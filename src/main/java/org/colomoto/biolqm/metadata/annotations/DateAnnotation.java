@@ -107,4 +107,9 @@ class DateAnnotation extends Annotation {
 		
 		return json;
 	}
+	
+	@Override
+	protected boolean isAnnotationNotEmpty() {
+		return false;
+	}
 }

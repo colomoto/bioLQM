@@ -65,52 +65,38 @@ class GenericAnnotation extends Annotation {
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
 			case "uri":
-				String compactId = contentAnnotation[1]+":"+contentAnnotation[2];
-				String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
+				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
+				this.listOfURIs.add(uri);
 				
-				try {
-					JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
-					
-					if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
-						URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
-						this.listOfURIs.add(uri);
-						
-						modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
-						
-						if (termDesired == "isDescribedBy") {										
-							if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
-								String url = "https://api.crossref.org/works/"+contentAnnotation[2];
+				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
+				
+				if (termDesired == "isDescribedBy") {										
+					if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
+						String url = "https://api.crossref.org/works/"+contentAnnotation[2];
 
-								try {
-									JSONObject json = JsonReader.readJsonFromUrl(url);
-									JSONObject jsonMessage = json.getJSONObject("message");
-									
-									String title = null;
-									Integer year = null;
-									if (jsonMessage.has("title") && !jsonMessage.isNull("title")) {
-										title = jsonMessage.getJSONArray("title").getString(0).toString();
-									}
-									if (jsonMessage.has("created") && !jsonMessage.isNull("created")) {
-										year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
-									}
-									
-									if (title != null && year != null) {
-										modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
-									}
-									else {
-										System.err.println("Error retrieving the metadata of the doi: at least one of the characteristics couldn't be fetched." + "\n");
-									}	
-								} catch (IOException e) {
-									System.err.println("Error retrieving the metadata of the doi." + "\n");
-								}
+						try {
+							JSONObject json = JsonReader.readJsonFromUrl(url);
+							JSONObject jsonMessage = json.getJSONObject("message");
+							
+							String title = null;
+							Integer year = null;
+							if (jsonMessage.has("title") && !jsonMessage.isNull("title")) {
+								title = jsonMessage.getJSONArray("title").getString(0).toString();
 							}
+							if (jsonMessage.has("created") && !jsonMessage.isNull("created")) {
+								year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
+							}
+							
+							if (title != null && year != null) {
+								modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
+							}
+							else {
+								System.err.println("Error retrieving the metadata of the doi: at least one of the characteristics couldn't be fetched." + "\n");
+							}	
+						} catch (IOException e) {
+							System.err.println("Error retrieving the metadata of the doi." + "\n");
 						}
 					}
-					else {
-						System.err.println("The URI is not valid." + "\n");
-					}
-				} catch (IOException e) {
-					System.err.println("Error checking the uri." + "\n");
 				}
 				break;
 			case "tag":
@@ -308,5 +294,13 @@ class GenericAnnotation extends Annotation {
 		}
 		
 		return json;
+	}
+	
+	@Override
+	protected boolean isAnnotationNotEmpty() {
+		if (this.listOfURIs.size()>0 || this.listOfTags.size()>0 || this.listOfKeysValues.size()>0) {
+			return true;
+		}
+		return false;
 	}
 }

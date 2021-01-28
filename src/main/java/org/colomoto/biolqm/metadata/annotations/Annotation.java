@@ -25,4 +25,5 @@ abstract class Annotation {
 	protected abstract Index getIndex(ModelConstants modelConstants, Index indexParent);
 	protected abstract ArrayList<ArrayList<String>> getResources();
 	protected abstract JSONObject getJSONOfAnnotation();
+	protected abstract boolean isAnnotationNotEmpty();	
 }
