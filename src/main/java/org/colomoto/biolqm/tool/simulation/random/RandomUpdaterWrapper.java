@@ -1,8 +1,11 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Random;
 
@@ -44,5 +47,10 @@ public class RandomUpdaterWrapper implements RandomUpdater {
     @Override
     public LogicalModel getModel() {
         return updater.getModel();
+    }
+
+    @Override
+    public void setFilter(Map<NodeInfo, SplittingType> filter) {
+        updater.setFilter(filter);
     }
 }
