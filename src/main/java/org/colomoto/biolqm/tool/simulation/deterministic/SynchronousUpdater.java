@@ -19,11 +19,13 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 		super(model);
 	}
 
+	
 	@Override
 	public byte[] getSuccessor(byte[] state) {
 		byte[] nextstate = null;
 		for (int idx=0 ; idx < size ; idx++) {
 			int change = nodeChange(state, idx);
+			// change as -1/+1 ...
             nextstate = update(state, idx, change, nextstate);
 		}
 

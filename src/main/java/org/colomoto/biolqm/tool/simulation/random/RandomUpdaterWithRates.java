@@ -6,7 +6,7 @@ import org.colomoto.biolqm.LogicalModel;
  * Updater picking a random successor in the asynchronous scheme, with optional rates.
  *
  * @author Aurelien Naldi
- */
+ */  
 public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     // the rates associated to each component
@@ -53,7 +53,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
             }
 
             // store the available change
-            double r = this.rates[idx];
+            double r = this.rates[idx]; 
             totalrate += r;
             step_rates[nb_changes] = totalrate;
             step_changes[nb_changes][0] = idx;
@@ -86,15 +86,19 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
             return 0;
         }
 
-        int s = 0;
+        double s = 0;
         int idx = 0;
         double r = totalrate * random.nextDouble();
         for (  ; idx<nb_changes ; idx++) {
-            s += step_rates[idx];
-            if (s > r) {
+            s = step_rates[idx];
+            if (s >= r) {
                 break;
             }
         }
         return idx;
+    }
+    
+    public double[] getRates() {
+    	return this.rates;
     }
 }

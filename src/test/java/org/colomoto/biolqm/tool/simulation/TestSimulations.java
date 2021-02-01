@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,12 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorSi
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.random.RandomWalkSimulation;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
+
+
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -24,13 +31,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimulationTestImpl extends MultipleSuccessorSimulation {
 
 	public HashSet<byte[]> hs;
 
 	public SimulationTestImpl(MultipleSuccessorsUpdater updater) {
-		super(updater);
+		super(updater); 
 		hs = new HashSet<byte[]>();
 	}
 
@@ -63,6 +71,7 @@ class SimulationTestImpl extends MultipleSuccessorSimulation {
 
 public class TestSimulations {
 
+	// cria modelo lógico com três nós + três funções 
 	private LogicalModel getModel() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
@@ -74,6 +83,7 @@ public class TestSimulations {
 		int[] functions = new int[vars.size()];
 		functions[0] = 1;
 		functions[1] = 1;
+		
 		MDDVariable va = manager.getVariableForKey(vars.get(0));
 		MDDVariable vb = manager.getVariableForKey(vars.get(1));
 		int fa = va.getNode(0, 1);
@@ -92,31 +102,39 @@ public class TestSimulations {
 		vars.add(new NodeInfo("D"));
 		vars.add(new NodeInfo("E"));
 		
+		// (keys to be used, number of possible values) in the MDD
 		MDDManager manager = new MDDStoreImpl(vars, 2);
+		
 		int[] functions = new int[vars.size()];
+		
 		MDDVariable va = manager.getVariableForKey(vars.get(0));
 		MDDVariable vb = manager.getVariableForKey(vars.get(1));
 		MDDVariable vc = manager.getVariableForKey(vars.get(2));
 		MDDVariable vd = manager.getVariableForKey(vars.get(3));
+		
+		// (x,x) left child, right child 
+		// returns id of node
 		int fa = va.getNode(0, 1);
 		int fna = va.getNode(1, 0);
+		
 		int fb = vb.getNode(0, 1);
 		int fnb = vb.getNode(1,0);
+		
 		int fc = vc.getNode(0, 1);
 		int fd = vd.getNode(0, 1);
-
+		
 		functions[0] = fa;
 		functions[1] = MDDBaseOperators.AND.combine(manager, fa, fc);
 		functions[2] = fnb;
 		functions[3] = fna;
 		functions[4] = MDDBaseOperators.OR.combine(manager, fb, fd);
-		
 		return new LogicalModelImpl(vars, manager, functions);
 	}
 	
 	@Test
 	public void testMultipleSuccessorsSimulation() throws IOException {
 		LogicalModel model = getModel();
+		// ASYN
 		MultipleSuccessorsUpdater updater = new AsynchronousUpdater(model);
 		byte[] state = {0, 0, 0};
 		SimulationTestImpl simulation = new SimulationTestImpl(updater);
@@ -125,21 +143,145 @@ public class TestSimulations {
 		simulation.runSimulation();
 
 		assertEquals(5, simulation.hs.size());
+		
 	}
-	@Test
+		
+//	@Test
 	public void testSingleSuccessorSimulation() throws IOException {
 		LogicalModel model = getModel();
+		// SYNCHROUNOUS 
 		DeterministicUpdater updater = new SynchronousUpdater(model);
-		byte[] state = {0, 0, 0};
-		byte[] state2 = {1, 1, 0};
-		byte[] state3 = {1, 1, 1};
+		byte[] state = {1, 0, 1};
+//		byte[] state2 = {1, 1, 0};
+//		byte[] state3 = {1, 1, 1};
+		// 100 - max steps
+		DeterministicSimulation simulation = new DeterministicSimulation(updater, state, 100);
+		
+		Iterator<byte[]> it = simulation.iterator();		
+		
+		// 000 > 110 > 111
+//		assertArrayEquals(new byte[] {0,0,0}, it.next());
+//		assertArrayEquals(new byte[] {1,1,0}, it.next());
+//		assertArrayEquals(new byte[] {1,1,1}, it.next());
+		
+		// 010/100 > 110 > 111
+//		assertArrayEquals(new byte[] {0,1,0}, it.next());
+//		assertArrayEquals(new byte[] {1,1,0}, it.next());
+//		assertArrayEquals(new byte[] {1,1,1}, it.next());
+
+		// 110 > 111
+//		assertArrayEquals(new byte[] {1,1,0}, it.next());
+//		assertArrayEquals(new byte[] {1,1,1}, it.next());
+		// next doesnt exist
+//		assertArrayEquals(new byte[] {1,1,1}, it.next());
+
+		// 001 > 110 > 111
+//		assertArrayEquals(new byte[] {0,0,1}, it.next());
+//		assertArrayEquals(new byte[] {1,1,0}, it.next());
+//		assertArrayEquals(new byte[] {1,1,1}, it.next());
+		
+		// 101/011 > 110 > 111 
+		assertArrayEquals(new byte[] {1,0,1}, it.next());
+		assertArrayEquals(new byte[] {1,1,0}, it.next());
+		assertArrayEquals(new byte[] {1,1,1}, it.next());
+
+	}
+	
+	@Test
+	public void testSingleSuccessorSimulationComp() throws IOException {
+		LogicalModel model = getComponents();
+		// SYNCHROUNOUS 
+		DeterministicUpdater updater = new SynchronousUpdater(model);
+//		byte[] state = {0, 0, 0, 0, 0};
+		
+//		byte[] state = {1, 1, 1, 1, 1};
+		byte[] state = {1, 1, 0, 1, 0};
+
+		
+		// 100 - max steps
 		DeterministicSimulation simulation = new DeterministicSimulation(updater, state, 100);
 		
 		Iterator<byte[]> it = simulation.iterator();
 		
-		assertArrayEquals(state, it.next());
-		assertArrayEquals(state2, it.next());
-		assertArrayEquals(state3, it.next());
-
+		//while(it.hasNext()) {
+		//	System.out.println(Arrays.toString(it.next()));
+		//}
+		
 	}
+	@Test
+	public void testRandomAsynSimulation() throws IOException {
+	LogicalModel model = getComponents();
+	
+	byte[] state = {0, 0, 0, 0, 0};
+	// C and D
+	byte[][] states = {{0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}};
+	int[] count = new int[2];
+	
+	RandomUpdaterWrapper updater = new RandomUpdaterWrapper(new AsynchronousUpdater(model));
+		
+	RandomWalkSimulation simulation = new RandomWalkSimulation(updater, state, 100);
+	Iterator<byte[]> it = simulation.iterator();
+	
+	
+	int simRuns = 10000;	
+	for (int run = 0; run < simRuns ; run++) {
+		it = simulation.iterator();
+		it.next();
+		byte[] successor = it.next();
+		if (successor == null) {
+			break;
+		}
+		for (int route = 0; route < 2 ;route++) {
+			if (Arrays.equals(states[route], successor)) {
+			count[route] += 1;
+			}
+		}
+	}
+
+	assertTrue(count[0] > 5000-50 & count[0] < 5000+50);
+	assertTrue(count[1] > 5000-50 & count[1] < 5000+50);
+		
+	}
+	
+	@Test
+	public void testRandomRatesSimulation() throws IOException {
+	LogicalModel model = getComponents();
+	
+	byte[] state = {0, 0, 0, 0, 0};
+	// C and D
+	byte[][] states = {{0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}};
+	int[] count = new int[2];
+	
+	RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model,new double[] {0.4,0.1,0.1,0.2,0.2});
+		
+	RandomWalkSimulation simulation = new RandomWalkSimulation(updater, state, 100);
+	Iterator<byte[]> it = simulation.iterator();
+	
+	
+	int simRuns = 10000;	
+	for (int run = 0; run < simRuns ; run++) {
+		it = simulation.iterator();
+		it.next();
+		byte[] successor = it.next();
+		if (successor == null) {
+			break;
+		}
+		for (int route = 0; route < 2 ;route++) {
+			if (Arrays.equals(states[route], successor)) {
+			count[route] += 1;
+			}
+		}
+	}
+
+	assertTrue(count[0] > 3333-50 & count[0] < 3333+50);
+	assertTrue(count[1] > 6666-50 & count[1] < 6666+50);
+		
+	}
+	
+	
+	
+	
+	
+	
 }
+

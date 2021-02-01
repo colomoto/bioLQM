@@ -29,10 +29,12 @@ public class TestPriorityClasses {
 		
 		MDDManager manager = new MDDStoreImpl(vars, 2);
 		int[] functions = new int[vars.size()];
+		
 		MDDVariable va = manager.getVariableForKey(vars.get(0));
 		MDDVariable vb = manager.getVariableForKey(vars.get(1));
 		MDDVariable vc = manager.getVariableForKey(vars.get(2));
 		MDDVariable vd = manager.getVariableForKey(vars.get(3));
+		
 		int fa = va.getNode(0, 1);
 		int fna = va.getNode(1, 0);
 		int fb = vb.getNode(0, 1);

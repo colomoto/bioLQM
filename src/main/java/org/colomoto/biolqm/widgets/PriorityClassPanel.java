@@ -14,21 +14,27 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
+import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 
 public class PriorityClassPanel extends JPanel {
 	private static final long serialVersionUID = -6249588129185682333L;
@@ -54,7 +60,7 @@ public class PriorityClassPanel extends JPanel {
 
 	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc) {
 		this.mpc = mpc;
-		this.guiMultipSuc = guiMultipSuc;
+		this.guiMultipSuc = true; //
 		
 		this.setLayout(new BorderLayout());
 
@@ -69,6 +75,7 @@ public class PriorityClassPanel extends JPanel {
 		// CENTER PANEL
 		this.jpCenter = new JPanel(new GridBagLayout());
 		jpTopCenter.add(this.jpCenter, BorderLayout.CENTER);
+		this.jpCenter.setBackground(Color.red);
 		this.add(jpTopCenter, BorderLayout.CENTER);
 
 		// SOUTH PANEL
@@ -81,6 +88,7 @@ public class PriorityClassPanel extends JPanel {
 				updateGUI();
 			}
 		});
+		jpSouthCenter.setBackground(Color.DARK_GRAY);
 		jpSouthCenter.add(jbSplit);
 		JButton jbUnsplit = this.getNoMargins("Unsplit");
 		jbUnsplit.addActionListener(new ActionListener() {
@@ -129,7 +137,7 @@ public class PriorityClassPanel extends JPanel {
 			}
 		});
 		jpSouthCenter.add(this.jbDecClass);
-
+ 
 		JButton jbSingle = this.getNoMargins("Collapse All");
 		jbSingle.addActionListener(new ActionListener() {
 			@Override
@@ -143,20 +151,22 @@ public class PriorityClassPanel extends JPanel {
 		jpSouthCenter.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	}
 
-	public void updatePriorityList() {
-		this.guiClasses.clear();
+	public void updatePriorityList() { 
+		this.guiClasses.clear(); 
 		this.jpCenter.removeAll();
 		GridBagConstraints gdcCenter = new GridBagConstraints();
 		gdcCenter.anchor = GridBagConstraints.FIRST_LINE_START;
 		gdcCenter.gridx = 0;
 		gdcCenter.gridy = 0;
 
-		for (int idxPC = 0; idxPC < mpc.size(); idxPC++) {
+		for (int idxPC = 0; idxPC < mpc.size(); idxPC++) { 
 			this.guiClasses.add(new ArrayList<JList<String>>());
 			JPanel jpPClass = new JPanel(new BorderLayout());
 			jpPClass.setAlignmentY(TOP_ALIGNMENT);
 			JPanel jpPClassHeader = new JPanel(new BorderLayout());
 			jpPClass.add(jpPClassHeader, BorderLayout.NORTH);
+			jpPClass.setBackground(Color.blue);
+
 			JLabel jlTmp = new JLabel("   Rank " + (idxPC + 1) + "   ", SwingConstants.CENTER);
 			jlTmp.setToolTipText(idxPC == 0 ? "Fastest class" : (idxPC == (mpc.size() - 1) ? "Slowest class" : ""));
 			jpPClassHeader.add(jlTmp, BorderLayout.CENTER);
@@ -202,22 +212,93 @@ public class PriorityClassPanel extends JPanel {
 			GridBagConstraints gbcG = new GridBagConstraints();
 			gbcG.insets = new Insets(3, 3, 3, 3);
 			gbcG.gridx = 0;
+	
+			
 			// Inside a given group of variables
 			List<List<String>> lGrpVars = mpc.getClassVars(idxPC);
-			for (int g = 0; g < lGrpVars.size(); g++) {
-				List<String> vars = lGrpVars.get(g);
-				DefaultListModel<String> lModel = new DefaultListModel<String>();
+			for (int g = 0 ; g < lGrpVars.size()*2; g = g + 2) {
+				
+				// get supported updaters
+				JComboBox<String> jcbUpdaters = new JComboBox(ModelGrouping.getUpdatersAvailable());
+				jcbUpdaters.addActionListener(new ActionListener() {
+					@Override
+		            public void actionPerformed(ActionEvent e) {
+		                String up = (String) jcbUpdaters.getSelectedItem();
+		                switch (up) {
+		                    case "Synchronous":
+		                        break;
+		                    case "Random uniform":
+		                        break;
+		                    case "Random non uniform":
+		                        break;
+		                    default:
+		                        break;
+		                }
+		            }
+		        });
+				// get the group idx
+				int[] pcGroup = getGroupIdx();
+				// get the updaterName from that group
+				String updaterName = mpc.getGroupUpdaterName(pcGroup[0],pcGroup[1]);
+				jcbUpdaters.setSelectedItem(updaterName);
+				
+				// save node string, rate
+				List<String> vars = lGrpVars.get(g/2);
+				
+				Boolean isRandom = false;
+				// if random uniform or random non uniform, save (node string, name)
+				if (updaterName.equals("Random uniform") || updaterName.equals("Random non uniform")) {
+					isRandom = true;
+					Map<String, Double> rates = new HashMap<String, Double>();
+					Map<JTextField, String> textfields = new HashMap<JTextField, String>();
 
+					// get the updater
+					RandomUpdaterWithRates upWithRates = (RandomUpdaterWithRates) mpc.getUpdater(idxPC, g/2);
+					// get the rates
+					double[] upRates = upWithRates.getRates();
+					
+					for (int e = 0; e < vars.size(); e++) {
+						rates.put(vars.get(e), upRates[e]);
+					}
+					
+					JPanel ratesPanel = new JPanel(new GridBagLayout());
+					GridBagConstraints gbcR = new GridBagConstraints();
+					gbcR.gridy = g + 1;
+					
+					Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
+					for (int d = 0; d < rates.keySet().size(); d++) {
+						String node = vars.get(d);
+						String nodeRate = Double.toString(rates.get(node));
+						
+						JTextField jtf = new JTextField(nodeRate);
+						textfields.put(jtf, node);
+						
+        				jtf.setColumns(3);
+                    	if (updaterName.equals("Random uniform"))
+                    		jtf.disable();
+                    	ratesPanel.add(jtf, gbcR);
+                    	}
+					
+                	gbcG.gridx = 1;
+					jpGroups.add(ratesPanel, gbcG);
+				}
+				
+				DefaultListModel<String> lModel = new DefaultListModel<String>();
 				// -- Order variables alphabetically
-				Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
+				//Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
 				for (String var : vars) {
 					lModel.addElement(var);
 				}
-
+							
 				JList<String> jList = new JList<String>(lModel);
 				jList.setBorder(BorderFactory.createLoweredBevelBorder());
 				jList.setFixedCellWidth(this.GROUP_WIDTH);
 				jList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				jList.setBackground(Color.gray);
+				
+				
+				
+					
 				jList.addMouseListener(new MouseListener() {
 					@Override
 					public void mouseReleased(MouseEvent e) {
@@ -263,9 +344,15 @@ public class PriorityClassPanel extends JPanel {
 					public void mouseDragged(MouseEvent e) {
 					}
 				});
+				
+							    
+				gbcG.gridx = 0;
 				this.guiClasses.get(idxPC).add(jList);
 				gbcG.gridy = g;
+				jpGroups.add(jcbUpdaters, gbcG);
+				gbcG.gridy = g + 1 ;
 				jpGroups.add(jList, gbcG);
+
 			}
 
 			JScrollPane jScroll = new JScrollPane(jpGroups);
@@ -309,7 +396,7 @@ public class PriorityClassPanel extends JPanel {
 				jpPClass.add(jpTmp, BorderLayout.SOUTH);
 			}
 
-			jpPClass.setMinimumSize(new Dimension(GROUP_WIDTH, 5 * GROUP_WIDTH)); // FIXME
+			jpPClass.setMinimumSize(new Dimension( 2 * GROUP_WIDTH, 5 * GROUP_WIDTH)); // FIXME
 			this.jpCenter.add(jpPClass, gdcCenter);
 			gdcCenter.gridx++;
 			this.jpCenter.add(Box.createRigidArea(new Dimension(this.CLASS_SPACING, 10)), gdcCenter);
@@ -349,59 +436,50 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	private void incPriorityOfSelVars() {
-		all: for (int i = 0; i < this.guiClasses.size(); i++) {
-			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
-				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
-				if (!values.isEmpty()) {
-					mpc.incPriorities(i, g, values);
-					fireActionEvent();
-					break all;
-				}
-			}
-		}
+		int[] pcGroup = getGroupIdx();
+		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
+		mpc.incPriorities(pcGroup[0], pcGroup[1], values);
+		fireActionEvent();
 		this.updatePriorityList();
 	}
 
 	private void decPriorityOfSelVars() {
-		all: for (int i = 0; i < this.guiClasses.size(); i++) {
-			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
-				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
-				if (!values.isEmpty()) {
-					mpc.decPriorities(i, g, values);
-					fireActionEvent();
-					break all;
-				}
-			}
-		}
+		
+		int[] pcGroup = getGroupIdx();
+		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
+		mpc.decPriorities(pcGroup[0], pcGroup[1], values);
+		fireActionEvent();
 		this.updatePriorityList();
+
 	}
 
 	private void incGroupOfSelVars() {
-		all: for (int i = 0; i < this.guiClasses.size(); i++) {
-			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
-				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
-				if (!values.isEmpty()) {
-					mpc.incGroup(i, g, values);
-					fireActionEvent();
-					break all;
-				}
-			}
-		}
+		
+		int[] pcGroup = getGroupIdx();
+		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
+		mpc.incGroup(pcGroup[0], pcGroup[1], values);
+		fireActionEvent();
 		this.updatePriorityList();
 	}
 
 	private void decGroupOfSelVars() {
+		int[] pcGroup = getGroupIdx();
+		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
+		mpc.decGroup(pcGroup[0], pcGroup[1], values);
+		fireActionEvent();
+		this.updatePriorityList();
+	}
+	
+	private int[] getGroupIdx() {
 		all: for (int i = 0; i < this.guiClasses.size(); i++) {
 			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
 				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
 				if (!values.isEmpty()) {
-					mpc.decGroup(i, g, values);
-					fireActionEvent();
-					break all;
+					return new int[] {i, g};
 				}
 			}
 		}
-		this.updatePriorityList();
+		return new int[] {0, 0};
 	}
 
 	private void collapseAll() {

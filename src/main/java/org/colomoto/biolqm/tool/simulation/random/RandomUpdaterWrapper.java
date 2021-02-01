@@ -14,7 +14,7 @@ import java.util.Random;
 public class RandomUpdaterWrapper implements RandomUpdater {
 
     private final MultipleSuccessorsUpdater updater;
-    private final Random random = new Random();
+    private final Random random = new Random(); 
 
     public RandomUpdaterWrapper(MultipleSuccessorsUpdater updater) {
         this.updater = updater;
@@ -25,7 +25,7 @@ public class RandomUpdaterWrapper implements RandomUpdater {
         List<byte[]> successors = updater.getSuccessors(state);
 
         if (successors == null || successors.size() == 0) {
-            return null;
+            return null; 
         }
 
         int l = successors.size();

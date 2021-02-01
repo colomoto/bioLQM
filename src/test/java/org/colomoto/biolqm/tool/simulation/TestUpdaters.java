@@ -1,11 +1,5 @@
 package org.colomoto.biolqm.tool.simulation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
@@ -13,18 +7,31 @@ import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
+import org.colomoto.biolqm.tool.simulation.random.RandomAsynchUpdater;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.junit.jupiter.api.Test;
 
-public class TestUpdaters {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class TestUpdaters {
+ 
 	private LogicalModel getModel() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
@@ -77,6 +84,9 @@ public class TestUpdaters {
 		return new LogicalModelImpl(vars, manager, functions);
 	}
 	
+	//private int findChange(byte[] state1, byte[] state2) {
+	//}
+	
 	@Test
 	public void testAsynchronousUpdater() throws IOException {
 		LogicalModel model = getModel();
@@ -84,6 +94,7 @@ public class TestUpdaters {
 		byte[] state = {0,0,0};
 		List<byte[]> successors = updater.getSuccessors(state);
 		assertEquals(2, successors.size());
+
 
 		byte[] next = successors.get(0);
 		assertEquals(1, next[0]);
@@ -96,6 +107,26 @@ public class TestUpdaters {
 		assertEquals(0, next[2]);
 
 	}
+	
+	@Test
+	public void testRandomAsynchronousUpdater() throws IOException {
+		LogicalModel model = getModel();
+		RandomUpdater updater = new RandomAsynchUpdater(model);
+		byte[] state = {0,0,0};
+		byte[] successor = updater.pickSuccessor(state);
+
+
+	}
+	
+	@Test
+	public void testRandomAsynchronousUpdaterOther() throws IOException {
+		LogicalModel model = getOtherModel();
+		RandomUpdater updater = new RandomAsynchUpdater(model);
+		byte[] state = {0,0,0,0,0};
+		byte[] successor = updater.pickSuccessor(state);
+
+	}
+
 
 	@Test
 	public void testSynchronousUpdater() throws IOException {
@@ -216,6 +247,7 @@ public class TestUpdaters {
 		mpc = new ModelGrouping(model,
 				"B[-]" + ModelGrouping.SEPVAR +
 				"E[+]" + ModelGrouping.SEPCLASS +
+				
 				"A" + ModelGrouping.SEPVAR +
 				"B[+]" + ModelGrouping.SEPVAR +
 				"C" + ModelGrouping.SEPVAR +
@@ -230,4 +262,161 @@ public class TestUpdaters {
 		assertEquals(1, lNext.get(0)[3]);
 		assertEquals(1, lNext.get(0)[4]);
 	}
+	
+	@Test
+	public void testRandomUpdaterWithRates() throws IOException {
+		
+				
+		LogicalModel model = getModel();
+		
+		RandomUpdater updater = new RandomUpdaterWithRates(model, new double[] {0.5,0.3,0.2});
+		byte[] state = {0,0,0};
+		// two updatable states A and B
+		// 0.5/0.8 = 0.625
+		// 0.3/0.8 = 0.375
+		
+		byte[] state2 = {1,1,0};
+		// one updatable state, C
+		// 0.3/0.3
+		
+		state = state2.clone();
+		
+		int size = model.getComponents().size();
+
+		int[] simUpdates = new int[size];
+		int simRuns = 10000;
+		
+		int run = 0;
+		for (; run < simRuns ; run++) {
+			byte[] successor = updater.pickSuccessor(state);
+			// System.out.println(Arrays.toString(successor));
+			if (successor == null) {
+				break;
+			}
+			
+			int idx = getIdxChange(state, successor, size);
+			simUpdates[idx] += 1;
+				
+		}
+		
+		// state 1
+		 //assertTrue(simUpdates[0] > 6250-50 & simUpdates[0] < 6250+50);
+		 //assertTrue(simUpdates[1] > 3750-50 & simUpdates[1] < 3750+50);
+		
+		// state 2
+		assertTrue(simUpdates[2] == 10000);
+		
+	}
+	
+	@Test
+	public void testRandomUpdaterWithRatesOther() throws IOException {
+		
+		LogicalModel model = getOtherModel();
+		double[] rates = {0.4,0.1,0.1,0.2,0.2};
+		
+		RandomUpdater updater = new RandomUpdaterWithRates(model, rates);
+		byte[] state = {0,0,0,0,0};
+		// two updatable states C and D
+		// [0, 0, 0.33, 0.66, 0]
+	
+		
+		byte[] state2 = {0,1,0,0,0};
+		// three updatable states, B, D and E
+		// [0, 0.2, 0, 0.4, 0.4]
+		
+		state = state2.clone();
+		
+		int size = model.getComponents().size();
+		int[] simUpdates = new int[size];
+		Set<Integer> updatables = new HashSet<Integer>();
+		int simRuns = 10000;
+		
+		for (int run = 0; run < simRuns ; run++) {
+			byte[] successor = updater.pickSuccessor(state);
+			if (successor == null) {
+				break;
+			}
+			int idx = getIdxChange(state, successor, size);
+			simUpdates[idx] += 1;
+			// save idx of component updated 
+			updatables.add(idx);
+		}
+		
+		double[] newRates = new double[size];
+		double sum = 0.0;
+		// sum of rates of updatable components 
+		for (int id : updatables) {
+			sum += rates[id];
+			}
+		
+		// calculate new rates
+		for (int id : updatables) {
+			newRates[id] = rates[id]/sum;
+		}
+
+		for (int compIdx = 0; compIdx < size; compIdx++) {
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
+		}
+		
+	}
+	
+	
+	//@Test
+	public void testRandomUpdaterWraper() throws IOException {
+		LogicalModel model = getOtherModel();
+		
+		MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
+
+		RandomUpdater updater = new RandomUpdaterWrapper(MultiUpdater);
+		byte[] state = {0,0,0,0,0};
+		// two updatable states C and D
+		
+		int size = model.getComponents().size();
+		int[] simUpdates = new int[size];
+		int simRuns = 10000;
+		
+		
+		for (int run = 0; run < simRuns ; run++) {
+			byte[] successor = updater.pickSuccessor(state);
+			if (successor == null) {
+				break;
+			}
+			int idx = getIdxChange(state, successor, size);
+			simUpdates[idx] += 1;
+		}
+		assertTrue(simUpdates[2] > 5000-50 & simUpdates[2] < 5000+50);
+		assertTrue(simUpdates[3] > 5000-50 & simUpdates[3] < 5000+50);
+		
+	}
+	
+	
+	private int getIdxChange(byte[] state1, byte[] state2, int size) {
+		int idx = 0;
+		boolean foundchange = false;
+		while (!foundchange && idx < size) {
+			if (state2[idx] != state1[idx]) {
+				foundchange = true;
+			}
+			else {
+				idx += 1; 
+			}			
+		}
+		return idx;
+	}	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

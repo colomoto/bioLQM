@@ -67,7 +67,6 @@ public class TestOrdering {
         assertNull(next);
 
 
-
         updater = new DeterministicPriorityUpdater(grouping);
         state = new byte[] {0,0,1};
 

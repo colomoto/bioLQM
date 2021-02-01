@@ -19,7 +19,7 @@ import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
 // April 2015 - Pedro added support for split transitions.
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
-	private final ModelGrouping pclist;
+	private final ModelGrouping pclist; 
 	private final boolean isComplete = false;
 
 	public PriorityUpdater(LogicalModel model, String setup) {
@@ -45,6 +45,9 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 			List<byte[]> lTmpSucc = new ArrayList<>();
 			for (int g = 0; g < pc.size(); g++) {
+				
+				// pcVars
+				// the individual groups are the classes 
 				int[] pcVars = pc.getGroupValues(g);
 
 				if (this.isComplete) {
@@ -59,7 +62,6 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 				break;
 			}
 		}
-
 		return currStates;
 	}
 

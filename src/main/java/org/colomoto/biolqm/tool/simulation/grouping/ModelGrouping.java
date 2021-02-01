@@ -2,11 +2,22 @@ package org.colomoto.biolqm.tool.simulation.grouping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 /**
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
@@ -16,11 +27,26 @@ public class ModelGrouping {
 	public static final String SEPVAR = ",";
 	public static final String SEPGROUP = "/";
 	public static final String SEPCLASS = ":";
+	
+	public static final String SEPUPDATER = "$";
+	public static final String[] updatersList = 
+			new String[] {"Random uniform", "Random non uniform", "Synchronous"};
+	public static final Map<String, String> updatersStrings;
+	static {
+		Map<String, String> upStrings = new HashMap<String, String>();
+		upStrings.put("","Synchronous");
+		upStrings.put(SEPUPDATER + "S","Synchronous");
+		upStrings.put(SEPUPDATER + "RU","Random uniform");
+		upStrings.put(SEPUPDATER + "RN","Random non uniform");
+        updatersStrings = Collections.unmodifiableMap(upStrings);
+	}
+	
 
 	protected LogicalModel model;
 	private List<RankedClass> pcList;
 
-	public ModelGrouping(LogicalModel m) {
+
+	public ModelGrouping(LogicalModel m) { 
 		this.model = m;
 		this.pcList = new ArrayList<>();
 
@@ -29,7 +55,7 @@ public class ModelGrouping {
 		for (int n = 0; n < this.model.getComponents().size(); n++) {
 			if (this.model.getComponents().get(n).isInput())
 				continue;
-			coreVars++;
+			coreVars++; 
 		}
 		// Ignoring input vars
 		int[] vars = new int[coreVars * 2];
@@ -56,6 +82,7 @@ public class ModelGrouping {
 		this.model = m;
 		this.pcList = pcList;
 	}
+	
 
 	public LogicalModel getModel() {
 		return this.model;
@@ -82,6 +109,7 @@ public class ModelGrouping {
 		return blocks;
 	}
 
+	@Override
 	public ModelGrouping clone() {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
@@ -95,7 +123,7 @@ public class ModelGrouping {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
-		}
+		} 
 		return new ModelGrouping(modifiedModel, pcNew);
 	}
 
@@ -119,11 +147,15 @@ public class ModelGrouping {
 		List<List<String>> tmp;
 		if (this.isValid(idxPC)) {
 			tmp = this.pcList.get(idxPC).getVars(this.model);
-		} else {
+		} else { 
 			tmp = new ArrayList<>();
 			tmp.add(new ArrayList<>());
 		}
 		return tmp;
+	}
+	
+	public static String[] getUpdatersAvailable() {
+		return ModelGrouping.updatersList;
 	}
 
 	public void decPriorities(int idxPC, int idxGrp, List<String> vars) {
@@ -168,6 +200,7 @@ public class ModelGrouping {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
 			return;
 		for (String varMm : vars) {
+
 			int splitFlag = 0;
 			String var = varMm;
 			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
@@ -224,9 +257,12 @@ public class ModelGrouping {
 							int[] newVars = new int[2];
 							newVars[0] = idx;
 							newVars[1] = splitFlag;
+							// if it was in the top group, create a new one and make it top
+							// add variable to it
 							this.pcList.get(idxPC).addGrp(0, new RankedClassGroup(newVars));
 							idxGrp++;
 						} else {
+							// if it was in a non top group, add the variable to the previous
 							this.pcList.get(idxPC).add(idxGrp - 1, idx, splitFlag);
 						}
 					}
@@ -296,6 +332,24 @@ public class ModelGrouping {
 	public void groupCollapse(int idxPC) {
 		this.pcList.get(idxPC).collapse();
 	}
+	
+	public String getGroupUpdaterName(int idxPC, int idxGrp) {
+		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
+			return "";
+		return this.pcList.get(idxPC).getGroupUpdaterName(idxGrp);
+	}
+	
+	
+	public LogicalModelUpdater getUpdater(int idxPC, int idxGrp) {
+		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
+			return null;
+		return this.pcList.get(idxPC).getUpdater(idxGrp);
+	}
+	
+	public void addUpdater(int idxPC, int idxGrp, LogicalModelUpdater updater) {
+		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
+			this.pcList.get(idxPC).addUpdater(idxGrp, updater);
+	}
 
 	public void collapseAll() {
 		RankedClass pc0 = this.pcList.get(0);
@@ -357,7 +411,8 @@ public class ModelGrouping {
 			}
 		}
 	}
-
+	
+	@Override
 	public boolean equals(Object a) {
 		ModelGrouping outMPC = (ModelGrouping) a;
 		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()) {
@@ -438,7 +493,28 @@ public class ModelGrouping {
 			}
 			return null;
 		}
-
+		
+		public String getGroupUpdaterName(int idxGrp) {
+			if (idxGrp >= 0 && idxGrp < this.size()) {
+				return this.groups.get(idxGrp).getUpdaterName();
+			}
+			return "";
+		}
+		
+		public LogicalModelUpdater getUpdater(int idxGrp) {
+			if (idxGrp >= 0 && idxGrp < this.size()) {
+				return this.groups.get(idxGrp).getUpdater();
+			}
+			return null;
+		}
+		
+		public void addUpdater(int idxGrp, LogicalModelUpdater updater) {
+			if (idxGrp >= 0 && idxGrp < this.size()) {
+				this.groups.get(idxGrp).addUpdater(updater);
+			}
+		}
+			
+				
 		public List<List<String>> getVars(LogicalModel m) {
 			List<List<String>> lVars = new ArrayList<List<String>>();
 			for (RankedClassGroup pcg : this.groups) {
@@ -560,6 +636,7 @@ public class ModelGrouping {
 					}
 				}
 				sPC += sG;
+				sPC += pcg.getUdaterString();
 			}
 			return sPC;
 		}
@@ -574,17 +651,25 @@ public class ModelGrouping {
 	public class RankedClassGroup {
 		// 2*n positions for n variables
 		private int[] vars;
-
+		private LogicalModelUpdater updater;
+		private String updaterString;
+		
+		
 		public RankedClassGroup(int[] vars) {
 			this.vars = vars;
+			this.updater = new SynchronousUpdater(model);
+			this.updaterString = "";
 		}
+		
 
 		public RankedClassGroup(LogicalModel m, String textFormat) {
-			String[] saVars = textFormat.split(SEPVAR);
+			
+			String[] up = textFormat.split(SEPUPDATER);
+			String[] saVars = up[0].split(SEPVAR);
 			List<int[]> lVars = new ArrayList<int[]>();
 
 			vars: for (int i = 0; i < saVars.length; i++) {
-				String var = saVars[i];
+				String var = saVars[i];				
 				int split = 0;
 				if (saVars[i].endsWith(SplittingType.NEGATIVE.toString())) {
 					split = -1;
@@ -593,8 +678,11 @@ public class ModelGrouping {
 					split = 1;
 					var = saVars[i].substring(0, var.length() - SplittingType.POSITIVE.toString().length());
 				}
+				// last variable, should be followed by $RU, $RN, $S or "".
+				
 				for (int idx = 0; idx < m.getComponents().size(); idx++) {
 					NodeInfo node = m.getComponents().get(idx);
+					// find Node with var nodeID
 					if (node.getNodeID().equals(var)) {
 						if (node.isInput()) {
 							continue vars;
@@ -610,9 +698,51 @@ public class ModelGrouping {
 			}
 			this.vars = new int[lVars.size() * 2];
 			for (int i = 0; i < lVars.size(); i++) {
+				
+				// idx, split, idx, split ...
 				this.vars[i * 2] = lVars.get(i)[0];
 				this.vars[i * 2 + 1] = lVars.get(i)[1];
 			}
+			
+			// get updater
+			if (up.length == 1) {
+				// default, Synchronous
+				this.updaterString = "";
+				this.updater = new SynchronousUpdater(model);
+			} else if (up.length == 2) {
+				// either $S, $RN or $RU
+				if (up[1].equals("S")) {
+					this.updaterString = SEPUPDATER + "S";
+					this.updater = new SynchronousUpdater(model);
+					
+				} else if (up[1].equals("RU")) {
+					this.updaterString = SEPUPDATER + "RU";
+					MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
+					this.updater = new RandomUpdaterWrapper(MultiUpdater);
+					
+				} else if (up[1].equals("C")) {
+					this.updaterString = SEPUPDATER + "C";
+					// ?? 
+				} else if (up[1].equals("BS")) {
+					this.updaterString = SEPUPDATER + "BS";
+					// ?? 
+				} else if (up[1].equals("A")) {
+					this.updaterString = SEPUPDATER + "A";
+					// ?? 
+				} else {
+					this.updaterString =  SEPUPDATER + "RN";
+					// $RN[0.3,0.5,...], get rates
+					String[] rates = up[1].substring(3, up[1].length() - 1).split(",");
+					double[] doubleRates = new double[rates.length];
+		
+					// !!!!! rates only for an entire model ?? 
+					for (int e = 0; e < doubleRates.length; e++) {
+						doubleRates[e] = Double.parseDouble(rates[e]);
+					}
+		
+					this.updater = new RandomUpdaterWithRates(model, doubleRates);
+				}						
+			}				
 		}
 
 		public int[] array() {
@@ -629,6 +759,8 @@ public class ModelGrouping {
 
 		private boolean contains(int idx, int splitFlag) {
 			for (int i = 0; i < this.vars.length; i += 2) {
+				
+				// splitFlag is either +1 or -1
 				if (this.vars[i] == idx && this.vars[i + 1] == splitFlag) {
 					return true;
 				}
@@ -638,6 +770,7 @@ public class ModelGrouping {
 
 		public List<String> getVars(LogicalModel m) {
 			List<String> lVars = new ArrayList<String>();
+			// i += 2 in order to look for only Node idx, skip splitFlag
 			for (int i = 0; i < this.vars.length; i += 2) {
 				String var = m.getComponents().get(this.vars[i]).getNodeID();
 				if (this.vars[i + 1] == 1) {
@@ -668,6 +801,7 @@ public class ModelGrouping {
 					newVars[j + 1] = -1;
 					newVars[j + 2] = this.vars[i];
 					newVars[j + 3] = 1;
+					// skips +4, the idx that was updated
 					j += 2;
 				}
 			}
@@ -733,14 +867,33 @@ public class ModelGrouping {
 			this.vars = newVars;
 			return true;
 		}
+		
+		
+		
+		public void addUpdater(LogicalModelUpdater updater) {
+			this.updater = updater;
+		}
+		
+		public LogicalModelUpdater getUpdater() {
+			return this.updater;
+		}
+		
+		public String getUdaterString() {
+			return this.updaterString;
+		}
+		
+		public String getUpdaterName() {
+			return ModelGrouping.updatersStrings.get(this.updaterString);
+		}
 
 		public RankedClassGroup clone() {
 			return new RankedClassGroup(this.vars.clone());
 		}
-
+		
 		public boolean equals(Object o) {
 			RankedClassGroup outPC = (RankedClassGroup) o;
 			return Arrays.equals(this.vars, outPC.vars);
 		}
 	}
+ 
 }
