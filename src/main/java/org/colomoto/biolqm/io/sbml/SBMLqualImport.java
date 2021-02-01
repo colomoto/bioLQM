@@ -928,9 +928,12 @@ public class SBMLqualImport extends BaseLoader {
 	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
 		
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+		if (qualifier.equals("unknownQualifier")) {
+			qualifier = cvterm.getUnknownQualifierName();
+		}
 		
-		int alternative = 0;
-		if (metadata.isSetQualifier(qualifier)) {
+		int alternative = metadata.getNumberOfAlternatives(qualifier);
+		if (alternative != 0) {
 			alternative = metadata.createAlternative(qualifier);
 		}
 		

@@ -61,17 +61,13 @@ class AuthorsAnnotation extends Annotation {
 	}
 
 	@Override
-	protected String getValue() {
+	protected String getValue(String tab) {
 		
-		String chaine = "";
-		if (this.indexOfAuthors != null) {
-			chaine += " (nested)";
-		}
-		chaine += ":\n";
+		String chaine = ":\n";
 		
-		chaine += "\tAuthors :\n";
+		chaine += tab + "\tAuthors :\n";
 		for (Author author : this.listOfAuthors) {
-			chaine += "\t\t" + author.getName() + ", " + author.getSurname() + ", " + author.getEmail() + ", " + author.getOrganisation() + ", " + author.getOrcid() + "\n";
+			chaine += tab + "\t\t" + author.getName() + ", " + author.getSurname() + ", " + author.getEmail() + ", " + author.getOrganisation() + ", " + author.getOrcid() + "\n";
 		}
 		
 		return chaine;
@@ -104,7 +100,7 @@ class AuthorsAnnotation extends Annotation {
 		
 		return existingIndex;
 	}
-	
+
 	@Override
 	protected ArrayList<ArrayList<String>> getResources() {
 		ArrayList<ArrayList<String>> resources = new ArrayList<ArrayList<String>>();

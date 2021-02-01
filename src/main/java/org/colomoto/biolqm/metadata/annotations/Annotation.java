@@ -8,6 +8,7 @@ import org.colomoto.biolqm.metadata.constants.Index;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Abstract class for the annotations
@@ -20,7 +21,7 @@ abstract class Annotation {
 	// functions
 	protected abstract void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation);
 	protected abstract void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation);
-	protected abstract String getValue();
+	protected abstract String getValue(String tab);
 	protected abstract boolean isSetIndex(ModelConstants modelConstants, Index indexParent);
 	protected abstract Index getIndex(ModelConstants modelConstants, Index indexParent);
 	protected abstract ArrayList<ArrayList<String>> getResources();

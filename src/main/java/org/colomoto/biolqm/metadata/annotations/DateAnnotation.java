@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Special class of annotations
@@ -50,15 +52,11 @@ class DateAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected String getValue() {
+	protected String getValue(String tab) {
 		
-		String chaine = "";
-		if (this.indexOfDate != null) {
-			chaine += " (nested)";
-		}
-		chaine += ":\n";
+		String chaine = ":\n";
 		
-		chaine += "\t\t" + "Date : " + this.date + "\n";
+		chaine += tab + "\t\t" + "Date : " + this.date + "\n";
 		
 		return chaine;
 	}

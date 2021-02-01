@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Special class of annotations
@@ -50,15 +52,11 @@ class DistributionAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected String getValue() {
+	protected String getValue(String tab) {
 		
-		String chaine = "";
-		if (this.indexOfDistribution != null) {
-			chaine += " (nested)";
-		}
-		chaine += ":\n";
+		String chaine = ":\n";
 		
-		chaine += "\t\t" + "Terms of distribution : " + this.distribution + "\n";
+		chaine += tab + "\t\t" + "Terms of distribution : " + this.distribution + "\n";
 		
 		return chaine;
 	}

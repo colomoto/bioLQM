@@ -16,6 +16,13 @@ import org.colomoto.biolqm.metadata.validations.DateValidator;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.History;
+import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.jsbml.xml.XMLTriple;
+import org.sbml.jsbml.xml.XMLAttributes;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,6 +31,11 @@ import java.util.Map.Entry;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.text.ParseException;
+import java.util.stream.Collectors;
+import java.util.AbstractMap;
 
 /**
  * One instance per component (model, node, transition...)
@@ -479,43 +491,94 @@ public class Metadata {
 	
 	
 	// the functions to get a description of the components' annotations
-	/**
-	 * Retrieve a String containing the description of an annotation
-	 * 
-	 * @param termDesired the qualifier one wants to get the description of
-	 */	
-	public String getDescriptionAnnotation(String termDesired) {
-		String description = "";
-		
-		if (this.listOfAnnotations.containsKey(termDesired)) {
-			for (int alternative = 0; alternative < this.listOfAnnotations.get(termDesired).size(); alternative++) {
-				description += termDesired + " (alternative " + alternative + ")" + this.listOfAnnotations.get(termDesired).get(alternative).getValue();
-			}
-			
-			return description;
-		}
-		return "This type of qualifier has not been defined for this component" + "\n";
-	}
-
-	/**
-	 * Retrieve a String containing the description of all the component's annotations
-	 * 
-	 * @param termDesired the qualifier one wants to get the description of
-	 */	
-	public String getDescriptionMetadata() {
+	protected String getDescriptionNestedMetadata(String tab) {
 		String description = "";
 		
 		Set keys = this.listOfAnnotations.keySet();
 		Iterator it = keys.iterator();
 		while (it.hasNext()) {
 			String termDesired = (String) it.next();
-			
-			for (int alternative = 0; alternative < this.listOfAnnotations.get(termDesired).size(); alternative++) {
-				description += termDesired + " (alternative " + alternative + ")" + this.listOfAnnotations.get(termDesired).get(alternative).getValue();
-			}
+			description += commonDescriptionAnnotation(termDesired, true, tab);
 		}
 		
 		return description;
+	}
+	
+	private String commonDescriptionAnnotation(String termDesired, boolean nested, String tab) {
+		String description = "";
+		
+		for (int alternative = 0; alternative < this.listOfAnnotations.get(termDesired).size(); alternative++) {
+			description += tab + termDesired + " (alternative " + alternative + ")";
+			
+			String descriptionNested = "";
+			if (this.isSetMetadataOfQualifier(termDesired, alternative)) {
+				
+				if (nested) {
+					descriptionNested = tab + "\tNested :\n";
+					Metadata nestedMetadata = this.getMetadataOfQualifier(termDesired, alternative);
+					if (nestedMetadata != null) {
+						descriptionNested += nestedMetadata.getDescriptionNestedMetadata(tab + "\t\t");
+					}
+				}
+				else {
+					description += " (nested)";
+				}
+			}
+			
+			description += this.listOfAnnotations.get(termDesired).get(alternative).getValue(tab);
+			
+			description += descriptionNested;
+		}
+		
+		return description;
+	}
+	
+	/**
+	 * Retrieve a String containing the description of an annotation
+	 * 
+	 * @param termDesired the qualifier one wants to get the description of
+	 * @param nested a boolean to precise if you want to describe the nested annotations (true for yes, false for no)
+	 */	
+	public String getDescriptionAnnotation(String termDesired, boolean nested) {
+		String description = "";
+		
+		if (this.listOfAnnotations.containsKey(termDesired)) {
+			description += commonDescriptionAnnotation(termDesired, nested, "");
+			return description;
+		}
+		return "This type of qualifier has not been defined for this component" + "\n";
+	}
+	/**
+	 * Retrieve a String containing the description of an annotation (without the nested parts)
+	 * 
+	 */	
+	public String getDescriptionAnnotation(String termDesired) {
+		return this.getDescriptionAnnotation(termDesired, false);
+	}
+
+	/**
+	 * Retrieve a String containing the description of all the component's annotations
+	 * 
+	 * @param nested a boolean to precise if you want to describe the nested annotations (true for yes, false for no)
+	 */	
+	public String getDescriptionMetadata(boolean nested) {
+		String description = "";
+		
+		Set keys = this.listOfAnnotations.keySet();
+		Iterator it = keys.iterator();
+		while (it.hasNext()) {
+			String termDesired = (String) it.next();
+			description += commonDescriptionAnnotation(termDesired, nested, "");
+		}
+		
+		return description;
+	}
+	/**
+	 * Retrieve a String containing the description of all the component's annotations (without the nested parts)
+	 * 
+	 */	
+	public String getDescriptionMetadata() {
+		return this.getDescriptionMetadata(false);
 	}
 	
 	
@@ -672,7 +735,19 @@ public class Metadata {
 	}
 	
 	
-	// the functions used to export the metadata towards the sbml format or the json format
+	// the functions used to export the metadata towards the sbml format or the json format	
+	private Set<String> getListOfQualifiers() {
+		return this.listOfAnnotations.keySet();
+	}
+
+	private String getClassOfQualifier(String qualifierName) {
+		return this.listOfAnnotations.get(qualifierName).get(0).getClass().getName();
+	}
+	
+	private ArrayList<ArrayList<String>> getResourcesOfQualifier(String qualifierName, int alternative) {
+		return this.listOfAnnotations.get(qualifierName).get(alternative).getResources();
+	}
+
 	/**
 	 * Check if the metadata object is empty or contains annotation
 	 *
@@ -683,25 +758,6 @@ public class Metadata {
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * Get the list of qualifiers used in this metadata
-	 *
-	 * @return a list of String with the names of the qualifiers
-	 */	
-	public Set<String> getListOfQualifiers() {
-		return this.listOfAnnotations.keySet();
-	}
-
-	/**
-	 * Get the class of annotation associated to a qualifier
-	 *
-	 * @param qualifierName the name of the qualifier you're interested in
-	 * @return a String with the name of the class
-	 */	
-	public String getClassOfQualifier(String qualifierName) {
-		return this.listOfAnnotations.get(qualifierName).get(0).getClass().getName();
 	}
 	
 	/**
@@ -716,29 +772,12 @@ public class Metadata {
 		}
 		return this.listOfAnnotations.get(qualifierName).size();
 	}
-	
+
 	/**
-	 * Get the list of resources associated to a qualifier
+	 * Produces a json expression of the metadata object
 	 *
-	 * @param qualifierName the name of the qualifier you're interested in
-	 * @return the list of resources (can be a list of uris, of authors or only a date depending on the qualifier)
-	 */	
-	public ArrayList<ArrayList<String>> getResourcesOfQualifier(String qualifierName, int alternative) {
-		return this.listOfAnnotations.get(qualifierName).get(alternative).getResources();
-	}
-	
-	/**
-	 * Check if a qualifier already exists in the metadata
-	 *
-	 * @return false if the metadata object is empty, true otherwise
-	 */	
-	public boolean isSetQualifier(String qualifierName) {
-		if (this.listOfAnnotations.containsKey(qualifierName)) {
-			return true;
-		}
-		return false;
-	}
-	
+	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
+	 */
 	public JSONArray getJSONOfMetadata() {
 		
 		JSONArray arrayQualifiers = new JSONArray();
@@ -793,5 +832,205 @@ public class Metadata {
 		}
 		
 		return arrayQualifiers;
+	}
+	
+	private XMLNode exportTagsAndKeys(int alternative, Set<String> listOfTags, Map<String, ArrayList<String>> listOfKeysValues, XMLNode xmlNested) {
+
+		XMLAttributes attributesAlternative = new XMLAttributes();
+		attributesAlternative.add("number", String.valueOf(alternative));
+		XMLNode xmlAlternative = new XMLNode(new XMLTriple("alternative"), attributesAlternative);
+		
+		if (listOfTags.size() > 0) {
+			XMLNode xmlTags = new XMLNode(new XMLTriple("tags"));
+			
+			for (String tag: listOfTags) {
+				XMLNode xmlTag = new XMLNode(new XMLTriple("tag"));
+				xmlTag.addChild(new XMLNode(tag));
+				xmlTags.addChild(xmlTag);
+			}
+			
+			xmlAlternative.addChild(xmlTags);
+		}
+		if (listOfKeysValues.size() > 0) {
+			XMLNode xmlKeys = new XMLNode(new XMLTriple("keys"));
+			
+			for (String key : listOfKeysValues.keySet()) {
+				XMLAttributes attributesKey = new XMLAttributes();
+				attributesKey.add("key", String.valueOf(key));
+				XMLNode xmlKey = new XMLNode(new XMLTriple("values"), attributesKey);
+				
+				String values = listOfKeysValues.get(key).stream().map(Object::toString).collect(Collectors.joining(", "));
+				xmlKey.addChild(new XMLNode(values));
+				
+				xmlKeys.addChild(xmlKey);
+			}
+			
+			xmlAlternative.addChild(xmlKeys);
+		}
+		if (xmlNested.getChildCount() > 0) {
+			xmlAlternative.addChild(xmlNested);
+		}
+		return xmlAlternative;
+	}
+	
+	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> exportNestedMetadata(Metadata metadata) {
+		
+		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
+		XMLNode xml = new XMLNode(new XMLTriple("nested"));
+		
+		for (String qualifierName: metadata.getListOfQualifiers()) {
+			
+			String qualifierFullClass = metadata.getClassOfQualifier(qualifierName);
+			int colon = qualifierFullClass.lastIndexOf('.');
+			String qualifierClass = qualifierFullClass.substring(colon+1);
+			
+			if (qualifierClass.equals("GenericAnnotation")) {
+				AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata = this.commonExportMetadata(metadata, xml, qualifierName, qualifierClass);
+				
+				for (CVTerm cvterm: commonExportMetadata.getKey()) {
+					listOfCVTerms.add(cvterm);
+				}
+				xml = commonExportMetadata.getValue();
+			}
+		}
+		
+		return new AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode>(listOfCVTerms, xml);
+	}
+	
+	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata(Metadata metadata, XMLNode xml, String qualifierName, String qualifierClass) {
+		
+		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
+		
+		// XMLNode for the tags and keys of the qualifier
+		XMLAttributes attributesQualifier = new XMLAttributes();
+		attributesQualifier.add("name", qualifierName);
+		attributesQualifier.add("type", qualifierClass);
+		XMLNode xmlQualifier = new XMLNode(new XMLTriple("qualifier"), attributesQualifier);
+		
+		boolean tagsorkeys = false;
+		
+		for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
+			
+			CVTerm cvterm = new CVTerm();
+			
+			org.sbml.jsbml.CVTerm.Qualifier qualifier;
+			if (metadata.getType().equals("model")) {
+				qualifier = CVTerm.Qualifier.getModelQualifierFor(qualifierName);
+			}
+			else {
+				qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
+			}
+			cvterm.setQualifier(qualifier);
+			
+			if (qualifier.getElementNameEquivalent().equals("unknownQualifier")) {
+				cvterm.setUnknownQualifierName(qualifierName);
+			}
+		
+			ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName, alternative);
+
+			for (ArrayList<String> resource: listOfResources) {
+				cvterm.addResource(resource.get(0)+":"+resource.get(1));
+			}
+			
+			// we save the tags and keysvalues in an XMLNode aside
+			GenericAnnotation generic = (GenericAnnotation) metadata.listOfAnnotations.get(qualifierName).get(alternative);
+			Set<String> listOfTags = generic.getListOfTags();
+			Map<String, ArrayList<String>> listOfKeysValues = generic.getListOfKeysValues();
+			XMLNode xmlNested = new XMLNode();
+			
+			if (listOfResources.size() > 0 || listOfTags.size() > 0 || listOfKeysValues.size() > 0) {
+				if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
+					Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
+					
+					AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> nestedMetadata = metadata.exportNestedMetadata(metadataQualifier);
+					
+					ArrayList<CVTerm> nestedCVTerms = nestedMetadata.getKey();
+					for (CVTerm nestedCVTerm : nestedCVTerms) {
+						cvterm.addNestedCVTerm(nestedCVTerm);
+					}
+					xmlNested = nestedMetadata.getValue();
+				}
+			}
+			
+			if (listOfTags.size() > 0 || listOfKeysValues.size() > 0 || xmlNested.getChildCount() > 0) {
+				tagsorkeys = true;
+				xmlQualifier.addChild(metadata.exportTagsAndKeys(alternative, listOfTags, listOfKeysValues, xmlNested));
+			}
+			
+			if (listOfResources.size() > 0) {
+				listOfCVTerms.add(cvterm);
+			}
+		}
+		
+		if (tagsorkeys) {
+			xml.addChild(xmlQualifier);
+		}
+		
+		return new AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode>(listOfCVTerms, xml);
+	}
+	
+	/**
+	 * Produces a jSBML expression of the metadata object
+	 *
+	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
+	 */
+	public org.sbml.jsbml.Annotation getSBMLOfMetadata() {
+		
+		org.sbml.jsbml.Annotation annotation = new org.sbml.jsbml.Annotation();
+		
+		History history = new History();
+		XMLNode xml = new XMLNode(new XMLTriple("nonRDFAnnotation"));
+		
+		for (String qualifierName: this.getListOfQualifiers()) {
+			
+			String qualifierFullClass = this.getClassOfQualifier(qualifierName);
+			int colon = qualifierFullClass.lastIndexOf('.');
+			String qualifierClass = qualifierFullClass.substring(colon+1);
+			
+			if (qualifierClass.equals("GenericAnnotation")) {
+				AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata = this.commonExportMetadata(this, xml, qualifierName, qualifierClass);
+				
+				for (CVTerm cvterm: commonExportMetadata.getKey()) {
+					annotation.addCVTerm(cvterm);
+				}
+				xml = commonExportMetadata.getValue();
+			}
+			else if (qualifierClass.equals("AuthorsAnnotation")) {
+				ArrayList<ArrayList<String>> listOfAuthors = this.getResourcesOfQualifier(qualifierName, 0);
+				for (ArrayList<String> author: listOfAuthors) {
+					Creator creator = new Creator();
+					creator.setGivenName(author.get(0));
+					creator.setFamilyName(author.get(1));
+					if (author.get(2) != null) { creator.setOrganisation(author.get(2)); }
+					if (author.get(3) != null) { creator.setEmail(author.get(3)); }
+					//if (author.get(4) != null) { creator.setOtherAttribute("orcid", author.get(4)); }
+					history.addCreator(creator);
+				}
+			}
+			else if (qualifierClass.equals("DateAnnotation")) {
+				String date = this.getResourcesOfQualifier(qualifierName, 0).get(0).get(0);
+				
+				String pattern = "yyyy-MM-dd";
+				try {
+					Date simpleDateFormat = new SimpleDateFormat(pattern).parse(date);
+				
+					if (qualifierName == "created") {
+						history.setCreatedDate(simpleDateFormat);
+					}
+					else if (qualifierName == "modified") {
+						history.setModifiedDate(simpleDateFormat);
+					}
+				} catch (ParseException e) {
+					System.err.println("Error parsing a date contained in an annotation of the model" + "\n");
+				}
+			}
+		}
+		
+		annotation.setHistory(history);
+		if (xml.getChildCount() > 0) {
+			annotation.setNonRDFAnnotation(xml);
+		}
+		
+		return annotation;
 	}
 }

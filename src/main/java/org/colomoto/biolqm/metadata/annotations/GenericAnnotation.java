@@ -48,7 +48,7 @@ class GenericAnnotation extends Annotation {
 	}
 	
 	// getters
-	protected Set getListOfURIs() {
+	protected Set<URI> getListOfURIs() {
 		return this.listOfURIs;
 	}
 	
@@ -168,25 +168,21 @@ class GenericAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected String getValue() {
+	protected String getValue(String tab) {
 		
-		String chaine = "";
-		if (this.indexOfGeneric != null) {
-			chaine += " (nested)";
-		}
-		chaine += ":\n";
+		String chaine = ":\n";
 		
-		chaine += "\tURIs :\n";
+		chaine += tab + "\tURIs :\n";
 		for (URI uri : this.listOfURIs) {
-			chaine += "\t\t" + uri.getCollection() + ":" + uri.getIdentifier() + "\n";
+			chaine += tab + "\t\t" + uri.getCollection() + ":" + uri.getIdentifier() + "\n";
 		}
 		
-		chaine += "\tTags :\n";
+		chaine += tab + "\tTags :\n";
 		for (String tag : this.listOfTags) {
-			chaine += "\t\t" + tag + "\n";
+			chaine += tab + "\t\t" + tag + "\n";
 		}
 		
-		chaine += "\tKeysValues :\n";
+		chaine += tab + "\tKeysValues :\n";
 		for (String key : this.listOfKeysValues.keySet()) {
 			
 			String joint = "";
@@ -199,7 +195,7 @@ class GenericAnnotation extends Annotation {
 				joint += value;
 			}
 			
-			chaine += "\t\t" + key + ":[" + joint + "]\n";
+			chaine += tab + "\t\t" + key + ":[" + joint + "]\n";
 		}
 		
 		return chaine;

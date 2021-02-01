@@ -35,8 +35,36 @@ public class TestMetadata {
 		// test modelMetadata
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
- 		modelMetadata.addURI("lalaland", "unipro", "224587");
-		modelMetadata.addAuthor("creator", "Martin", "", null, null, "1111-4444-6666-8888");
+ 		modelMetadata.addURI("lalaland", "uniprot", "P0DP23");
+		modelMetadata.addAuthor("creator", "Martin", "Boutroux", "mb@gm.com", "Inria", "1111-4444-6666-8888");
+		
+		System.out.println(modelMetadata.getDescriptionMetadata());
+		
+		// test componentMetadata
+		NodeInfo node = model.getComponents().get(0);
+		
+		Metadata nodeMetadata = model.getMetadataOfNode(node);
+		nodeMetadata.createAlternative("is");
+		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
+		
+		nodeMetadata.addKeyValue("is", 1, "coucou", "1");
+		nodeMetadata.addKeyValue("is", 1, "coucou", "2");
+		nodeMetadata.addKeyValue("is", 1, "hello", "2");
+		
+		Metadata nested5 = nodeMetadata.getMetadataOfQualifier("is", 1);
+		
+		nested5.addKeyValue("is", 0, "coucou", "1");
+		nested5.addKeyValue("is", 0, "coucou", "2");
+		nested5.addTag("is", 0, "gutentag");
+		
+		Metadata nested6 = nested5.getMetadataOfQualifier("is");
+		
+		nested6.addURI("lalaland", "uniprot", "P0DP23");
+		
+		nested5.getDescriptionMetadata();
+		
+		
+/* 		modelMetadata.addAuthor("creator", "Martin", "", null, null, "1111-4444-6666-8888");
 		
 		Metadata lalalandMetadata = modelMetadata.getMetadataOfQualifier("lalaland");
 		
@@ -104,38 +132,20 @@ public class TestMetadata {
 		elementMetadata.addAuthor("creator", "Martin", "Boutroux", "martinb@outlook.fr", "Inria", "1111-4444-6666-8888");
 		
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
-		elementMetadata.addURI("isDescribedBy", "doi", "10.1093/ajae/aaq063");
+		elementMetadata.addURI("isDescribedBy", "doi", "10.1093/ajae/aaq063"); */
 		
 		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
 		
-		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		// model.exportMetadata(dir.getAbsolutePath()+"\\filename");
 		
-		model.importMetadata(dir.getAbsolutePath()+"\\filename");
+		// model.importMetadata(dir.getAbsolutePath()+"\\filename");
 		
-		System.out.println(modelMetadata.getDescriptionMetadata());
+		// System.out.println(modelMetadata.getDescriptionMetadata());
 		
 		for (NodeInfo elementNode: model.getComponents()) {
 			System.out.println(elementNode.getNodeID());
 			Metadata elementNodeMetadata = model.getMetadataOfNode(elementNode);
-			printDescriptionElements(elementNodeMetadata);
-		}
-	}
-	
-	public void printDescriptionElements(Metadata metadata) {
-		System.out.println(metadata.getDescriptionMetadata());
-		
-		for (String qualifierName: metadata.getListOfQualifiers()) {
-			
-			int numberAlt = metadata.getNumberOfAlternatives(qualifierName);
-			for (int alternative=0; alternative<numberAlt; alternative++) {
-				
-				if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
-					
-					System.out.println(qualifierName);
-					Metadata nestedMetadata = metadata.getMetadataOfQualifier(qualifierName, alternative);
-					printDescriptionElements(nestedMetadata);
-				}
-			}
+			System.out.println(elementNodeMetadata.getDescriptionMetadata(true));
 		}
 	}
 }
