@@ -31,16 +31,6 @@ public class ModelGrouping {
 	public static final String SEPUPDATER = "$";
 	public static final String[] updatersList = 
 			new String[] {"Random uniform", "Random non uniform", "Synchronous"};
-	public static final Map<String, String> updatersStrings;
-	static {
-		Map<String, String> upStrings = new HashMap<String, String>();
-		upStrings.put("","Synchronous");
-		upStrings.put(SEPUPDATER + "S","Synchronous");
-		upStrings.put(SEPUPDATER + "RU","Random uniform");
-		upStrings.put(SEPUPDATER + "RN","Random non uniform");
-        updatersStrings = Collections.unmodifiableMap(upStrings);
-	}
-	
 
 	protected LogicalModel model;
 	private List<RankedClass> pcList;
@@ -431,7 +421,7 @@ public class ModelGrouping {
 		for (RankedClass pc : this.pcList) {
 			if (!sTmp.isEmpty())
 				sTmp += SEPCLASS;
-			sTmp += pc;
+			sTmp += pc.toString();
 		}
 		return sTmp;
 	}
@@ -661,6 +651,11 @@ public class ModelGrouping {
 			this.updaterString = "";
 		}
 		
+		public RankedClassGroup(int[] vars, LogicalModelUpdater updater) {
+			this.vars = vars;
+			addUpdater(updater);	
+		}
+		
 
 		public RankedClassGroup(LogicalModel m, String textFormat) {
 			
@@ -739,8 +734,17 @@ public class ModelGrouping {
 					for (int e = 0; e < doubleRates.length; e++) {
 						doubleRates[e] = Double.parseDouble(rates[e]);
 					}
-		
+					
 					this.updater = new RandomUpdaterWithRates(model, doubleRates);
+					
+					double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
+					double[] idxs = new double[this.vars.length/2];
+					for (int i = 0, e = 0; i < idxs.length; e++, i+= 2) {
+						idxs[e] = ratesIdx[this.vars[i]];
+					}
+		
+					this.updaterString += Arrays.toString(idxs);
+
 				}						
 			}				
 		}
@@ -872,6 +876,7 @@ public class ModelGrouping {
 		
 		public void addUpdater(LogicalModelUpdater updater) {
 			this.updater = updater;
+			changeUpdaterString();
 		}
 		
 		public LogicalModelUpdater getUpdater() {
@@ -883,16 +888,41 @@ public class ModelGrouping {
 		}
 		
 		public String getUpdaterName() {
-			return ModelGrouping.updatersStrings.get(this.updaterString);
+			return this.updater.getUpdaterName();
+		}
+		
+		private void changeUpdaterString() {
+			
+		    if (this.updater instanceof RandomUpdaterWrapper){
+				this.updaterString = SEPUPDATER + "RU";
+		    } else if (this.updater instanceof SynchronousUpdater) {
+				this.updaterString = SEPUPDATER + "S";
+		    } else if (this.updater instanceof RandomUpdaterWithRates) {
+				this.updaterString =  SEPUPDATER + "RN";
+				
+				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
+				System.out.println(Arrays.toString(ratesIdx));
+				System.out.println(Arrays.toString(this.vars));
+
+				double[] idxs = new double[this.vars.length/2];
+				for (int i = 0, e = 0; i < idxs.length; e++, i+= 2) {
+					idxs[e] = ratesIdx[this.vars[i]];
+				}
+	
+				this.updaterString += Arrays.toString(idxs);
+		    }
 		}
 
+
 		public RankedClassGroup clone() {
-			return new RankedClassGroup(this.vars.clone());
+			return new RankedClassGroup(this.vars.clone(), this.updater);
 		}
 		
 		public boolean equals(Object o) {
 			RankedClassGroup outPC = (RankedClassGroup) o;
-			return Arrays.equals(this.vars, outPC.vars);
+			if (outPC.toString().equals(this.toString()))
+				return Arrays.equals(this.vars, outPC.vars);
+			return false;
 		}
 	}
  

@@ -14,6 +14,8 @@ import java.util.List;
 public class AsynchronousUpdater extends AbstractMultipleSuccessorUpdater {
 
     private final int[] changes;
+    private final String name = "Asynchronous";
+
 
 	/**
 	 * Create a new asynchronous random.
@@ -52,5 +54,9 @@ public class AsynchronousUpdater extends AbstractMultipleSuccessorUpdater {
 
 		return successors;
 	}
+	
+    public String getUpdaterName() {
+    	return this.name;
+    }
 
 }

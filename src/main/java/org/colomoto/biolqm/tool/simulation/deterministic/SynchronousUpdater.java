@@ -15,6 +15,9 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 	 * 
 	 * @param model the model for which the random is constructed
 	 */
+
+	public String name = "Synchronous";
+	
 	public SynchronousUpdater(LogicalModel model) {
 		super(model);
 	}
@@ -31,5 +34,11 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 
 		return nextstate;
 	}
+
+	@Override
+	public String getUpdaterName() {
+		return this.name;
+	}
+	
 
 }

@@ -9,10 +9,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +36,19 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
 public class PriorityClassPanel extends JPanel {
 	private static final long serialVersionUID = -6249588129185682333L;
+	public static final Color LIGHT_RED = new Color(255, 120, 120);
+
 
 	private final int GROUP_WIDTH = 90;
 	private final int CLASS_SPACING = 15;
@@ -158,6 +169,10 @@ public class PriorityClassPanel extends JPanel {
 		gdcCenter.anchor = GridBagConstraints.FIRST_LINE_START;
 		gdcCenter.gridx = 0;
 		gdcCenter.gridy = 0;
+		
+		Map<JComboBox<String>, int[]> pcIdxGroup = new HashMap<JComboBox<String>, int[]>();
+		Map<JTextField, int[]> idxJtf = new HashMap<JTextField, int[]>();
+
 
 		for (int idxPC = 0; idxPC < mpc.size(); idxPC++) { 
 			this.guiClasses.add(new ArrayList<JList<String>>());
@@ -216,76 +231,140 @@ public class PriorityClassPanel extends JPanel {
 			
 			// Inside a given group of variables
 			List<List<String>> lGrpVars = mpc.getClassVars(idxPC);
-			for (int g = 0 ; g < lGrpVars.size()*2; g = g + 2) {
-				
+			
+			// g += 2
+			// When g is pair it adds a ComboBox, when g is impair it adds the groups
+			// so the group index is g/2 
+			System.out.println("");
+
+			for (int g = 0 ; g < lGrpVars.size()*2; g += 2) {
+				int idxGroup = g/2;
 				// get supported updaters
 				JComboBox<String> jcbUpdaters = new JComboBox(ModelGrouping.getUpdatersAvailable());
+	
+				// get the updaterName from that group
+				String updaterName = mpc.getGroupUpdaterName(idxPC, idxGroup);
+				jcbUpdaters.setSelectedItem(updaterName);
+				
+				// save updater with idxPC and idxGroup !!!!!!!!!!!!!!!!
+				pcIdxGroup.put(jcbUpdaters, new int[] {idxPC, idxGroup});
+				
+				
 				jcbUpdaters.addActionListener(new ActionListener() {
 					@Override
 		            public void actionPerformed(ActionEvent e) {
 		                String up = (String) jcbUpdaters.getSelectedItem();
+	                	LogicalModelUpdater updater = null;
+
+	                	// get the PC index and Group index
+	                	int[] idx = pcIdxGroup.get(e.getSource());
+	                	System.out.println("PC " + idx[0] + " GR " + idx[1]);
+	                	Map<JTextField, String> textfields = null;
+
 		                switch (up) {
 		                    case "Synchronous":
+		                		updater = new SynchronousUpdater(mpc.getModel());
+		                		mpc.addUpdater(idx[0], idx[1], updater);
 		                        break;
+		                        
 		                    case "Random uniform":
+		                    	MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(mpc.getModel());
+		                    	updater = new RandomUpdaterWrapper(MultiUpdater);
+		                		System.out.println(((RandomUpdaterWrapper) updater).getUpdaterName());
+
+		                		mpc.addUpdater(idx[0], idx[1], updater);
 		                        break;
+		                        
 		                    case "Random non uniform":
+		                    	validateTextRates(idx[0],idx[1], textfields);
 		                        break;
 		                    default:
 		                        break;
 		                }
+						fireActionEvent();
+						updatePriorityList();	
+						System.out.println(mpc.toString());
 		            }
 		        });
-				// get the group idx
-				int[] pcGroup = getGroupIdx();
-				// get the updaterName from that group
-				String updaterName = mpc.getGroupUpdaterName(pcGroup[0],pcGroup[1]);
-				jcbUpdaters.setSelectedItem(updaterName);
+		
+				// get the group variables
+				List<String> vars = lGrpVars.get(idxGroup);
 				
-				// save node string, rate
-				List<String> vars = lGrpVars.get(g/2);
+				System.out.println(updaterName);
 				
 				Boolean isRandom = false;
-				// if random uniform or random non uniform, save (node string, name)
 				if (updaterName.equals("Random uniform") || updaterName.equals("Random non uniform")) {
 					isRandom = true;
+					
+					// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 					Map<String, Double> rates = new HashMap<String, Double>();
 					Map<JTextField, String> textfields = new HashMap<JTextField, String>();
+					textfields.clear();
 
-					// get the updater
-					RandomUpdaterWithRates upWithRates = (RandomUpdaterWithRates) mpc.getUpdater(idxPC, g/2);
-					// get the rates
-					double[] upRates = upWithRates.getRates();
-					
-					for (int e = 0; e < vars.size(); e++) {
-						rates.put(vars.get(e), upRates[e]);
+					//updaterName = "Random non uniform";
+					if (updaterName.equals("Random uniform")) {
+						for (int e = 0; e < vars.size(); e++) {
+							 rates.put(vars.get(e), 1.0); 
+							 }
+					} else {
+
+						RandomUpdaterWithRates upWithRates = (RandomUpdaterWithRates) mpc.getUpdater(idxPC, idxGroup);
+						double[] upRates = upWithRates.getRates();
+
+						// put (node string, rate)
+						for (int e = 0; e < vars.size(); e++) {
+							 rates.put(vars.get(e), upRates[e]); 
+							 }
 					}
-					
-					JPanel ratesPanel = new JPanel(new GridBagLayout());
-					GridBagConstraints gbcR = new GridBagConstraints();
-					gbcR.gridy = g + 1;
-					
-					Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
-					for (int d = 0; d < rates.keySet().size(); d++) {
-						String node = vars.get(d);
-						String nodeRate = Double.toString(rates.get(node));
 						
-						JTextField jtf = new JTextField(nodeRate);
-						textfields.put(jtf, node);
-						
-        				jtf.setColumns(3);
-                    	if (updaterName.equals("Random uniform"))
-                    		jtf.disable();
-                    	ratesPanel.add(jtf, gbcR);
-                    	}
+					 JPanel ratesPanel = new JPanel(new GridBagLayout()); 
+					 GridBagConstraints gbcR = new GridBagConstraints(); gbcR.gridx = 0;
+					 
+					 // -- Order variables alphabetically 
+					 Collections.sort(vars,String.CASE_INSENSITIVE_ORDER);
+					 
+					 for (int d = 0; d < rates.keySet().size(); d++) { 
+						 String node = vars.get(d);
+						 String nodeRate = Double.toString(rates.get(node));
+					 
+						 JTextField jtf = new JTextField(nodeRate); 
+						 idxJtf.put(jtf, new int[] {idxPC, idxGroup});
+						 jtf.setToolTipText(node);
+						 jtf.addKeyListener(new KeyListener() {
+							 @Override
+							 public void keyTyped(KeyEvent e) {
+							 }
+							 @Override
+							 public void keyReleased(KeyEvent e) {
+								 int[] idx = idxJtf.get(e.getSource());
+								 validateTextRates(idx[0], idx[1], textfields);
+							}
+							@Override
+							public void keyPressed(KeyEvent e) {
+							}
+				
+						});
+					 
+						 // put(textfield, node string) 
+						 textfields.put(jtf, node);
+	
+						 jtf.setColumns(3); 
+						 if (updaterName.equals("Random uniform")) 
+							 jtf.disable();
+						 
+						 ratesPanel.add(jtf, gbcR); 
+					 }
+					 
+					
+					//JPanel ratesPanel = ratesPanel(vars, rates, textfields, updaterName);
 					
                 	gbcG.gridx = 1;
+                	gbcG.gridy = g + 1;
 					jpGroups.add(ratesPanel, gbcG);
+					
 				}
 				
 				DefaultListModel<String> lModel = new DefaultListModel<String>();
-				// -- Order variables alphabetically
-				//Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
 				for (String var : vars) {
 					lModel.addElement(var);
 				}
@@ -295,8 +374,6 @@ public class PriorityClassPanel extends JPanel {
 				jList.setFixedCellWidth(this.GROUP_WIDTH);
 				jList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				jList.setBackground(Color.gray);
-				
-				
 				
 					
 				jList.addMouseListener(new MouseListener() {
@@ -348,8 +425,10 @@ public class PriorityClassPanel extends JPanel {
 							    
 				gbcG.gridx = 0;
 				this.guiClasses.get(idxPC).add(jList);
+				// add first comboBox
 				gbcG.gridy = g;
 				jpGroups.add(jcbUpdaters, gbcG);
+				// then add group
 				gbcG.gridy = g + 1 ;
 				jpGroups.add(jList, gbcG);
 
@@ -479,8 +558,75 @@ public class PriorityClassPanel extends JPanel {
 				}
 			}
 		}
-		return new int[] {0, 0};
+		return new int[] {0, 0};	}
+	
+
+	private JPanel ratesPanel(List<String> vars,	Map<String, Double> rates, Map<JTextField, String> textfields, String updaterName) {
+		JPanel ratesPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints gbcR = new GridBagConstraints();
+		gbcR.gridx = 0;
+
+		// -- Order variables alphabetically
+		Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
+		
+		for (int d = 0; d < rates.keySet().size(); d++) {
+			String node = vars.get(d);
+			String nodeRate = Double.toString(rates.get(node));
+			
+			JTextField jtf = new JTextField(nodeRate);
+			jtf.setToolTipText(node);
+			
+			// put(textfield, node string)
+			textfields.put(jtf, node);
+			
+			jtf.setColumns(3);
+        	if (updaterName.equals("Random uniform"))
+        		jtf.disable();
+        	ratesPanel.add(jtf, gbcR);
+        	}
+		
+    	return ratesPanel;
+	
 	}
+	
+	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
+		
+		if (textfields == null) {
+			LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel());
+     		mpc.addUpdater(idxPC, idxGrp, updater);
+		} else {
+			double[] rates = new double[textfields.size()];
+			int i = 0;
+			Boolean valid = true;
+			for (JTextField jtf : textfields.keySet()) {
+			
+				String text = jtf.getText();
+				try {
+					Double rate = Double.parseDouble(text);
+					jtf.setBackground(Color.white);
+					rates[i] = rate;
+				}
+				catch(NumberFormatException er) {
+					jtf.setBackground(LIGHT_RED);
+					valid = false;
+					break;
+				}
+				i++;
+			}
+		
+			if (valid) {
+				
+				// rates, falta dos componentes não incluidos no grupo
+				LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel(), rates);
+				mpc.addUpdater(idxPC, idxGrp, updater);
+			} else {
+				LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel());
+				mpc.addUpdater(idxPC, idxGrp, updater);
+			}
+		}
+		
+	}
+	
 
 	private void collapseAll() {
 		this.mpc.collapseAll();

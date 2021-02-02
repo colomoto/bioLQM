@@ -11,6 +11,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     // the rates associated to each component
     private final double[] rates;
+    private final String name = "Random non uniform";
 
 	/**
 	 * Create a new random random
@@ -29,13 +30,21 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
     public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
         super(model);
         if (rates == null) {
-            this.rates = new double[this.size];
-            for (int i=0 ; i<this.rates.length ; i++) {
-                this.rates[i] = 1.0;
-            }
+        	if(this.filter == null || this.filter.length == 0) {
+        		this.rates = new double[this.size];
+        		for (int i=0 ; i<this.rates.length ; i++) {
+        			this.rates[i] = 1.0;
+        		}
+        	} else {
+        		this.rates = new double[this.filter.length];
+        		for (int i=0 ; i<this.filter.length ; i++) {
+        			this.rates[i] = 1.0;
+        		}
+        	}
         } else {
-            this.rates = rates;
-        }
+        		this.rates = rates;
+        	}
+
     }
 
 	@Override
@@ -101,4 +110,9 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
     public double[] getRates() {
     	return this.rates;
     }
+
+	@Override
+	public String getUpdaterName() {
+		return this.name;
+	}
 }
