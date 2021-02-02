@@ -922,7 +922,7 @@ public class Metadata {
 			}
 			cvterm.setQualifier(qualifier);
 			
-			if (qualifier.getElementNameEquivalent().equals("unknownQualifier")) {
+			if (qualifier.getElementNameEquivalent().equals("unknownQualifier") || (qualifier.getElementNameEquivalent().equals("isRelatedTo") && !qualifierName.equals("isRelatedTo"))) {
 				cvterm.setUnknownQualifierName(qualifierName);
 			}
 		
@@ -957,7 +957,7 @@ public class Metadata {
 				xmlQualifier.addChild(metadata.exportTagsAndKeys(alternative, listOfTags, listOfKeysValues, xmlNested));
 			}
 			
-			if (listOfResources.size() > 0) {
+			if (cvterm.getResourceCount() > 0 || cvterm.getNestedCVTermCount() > 0) {
 				listOfCVTerms.add(cvterm);
 			}
 		}

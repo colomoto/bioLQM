@@ -11,8 +11,6 @@ import org.colomoto.biolqm.metadata.constants.Index;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 
 /**

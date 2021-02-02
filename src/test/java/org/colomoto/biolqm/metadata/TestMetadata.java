@@ -44,6 +44,8 @@ public class TestMetadata {
 		NodeInfo node = model.getComponents().get(0);
 		
 		Metadata nodeMetadata = model.getMetadataOfNode(node);
+		nodeMetadata.addURI("pussycat", "doi", "10.1093/ajae/aaq063");
+		
 		nodeMetadata.createAlternative("is");
 		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
 		
@@ -62,7 +64,6 @@ public class TestMetadata {
 		nested6.addURI("lalaland", "uniprot", "P0DP23");
 		
 		nested5.getDescriptionMetadata();
-		
 		
 /* 		modelMetadata.addAuthor("creator", "Martin", "", null, null, "1111-4444-6666-8888");
 		

@@ -8,7 +8,6 @@ import org.colomoto.biolqm.metadata.constants.Index;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Abstract class for the annotations

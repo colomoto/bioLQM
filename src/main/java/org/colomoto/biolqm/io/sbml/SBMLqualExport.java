@@ -213,6 +213,7 @@ public class SBMLqualExport extends BaseExporter {
 			
 			// add the annotations from the SBML model
 			this.exportAllMetadata();
+			System.out.println("Beware: only the official instances of dcterms will be saved (the qualifiers 'creator', 'created' and 'modified'). Moreover, nested annotations in dcterms as well as dcterms in nested annotations cannot be saved in SBML." + "\n");
         }
     }
 
