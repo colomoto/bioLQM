@@ -355,7 +355,6 @@ public class PriorityClassPanel extends JPanel {
 						 ratesPanel.add(jtf, gbcR); 
 					 }
 					 
-					
 					//JPanel ratesPanel = ratesPanel(vars, rates, textfields, updaterName);
 					
                 	gbcG.gridx = 1;
@@ -515,50 +514,60 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	private void incPriorityOfSelVars() {
-		int[] pcGroup = getGroupIdx();
-		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
-		mpc.incPriorities(pcGroup[0], pcGroup[1], values);
-		fireActionEvent();
-		this.updatePriorityList();
-	}
-
-	private void decPriorityOfSelVars() {
-		
-		int[] pcGroup = getGroupIdx();
-		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
-		mpc.decPriorities(pcGroup[0], pcGroup[1], values);
-		fireActionEvent();
-		this.updatePriorityList();
-
-	}
-
-	private void incGroupOfSelVars() {
-		
-		int[] pcGroup = getGroupIdx();
-		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
-		mpc.incGroup(pcGroup[0], pcGroup[1], values);
-		fireActionEvent();
-		this.updatePriorityList();
-	}
-
-	private void decGroupOfSelVars() {
-		int[] pcGroup = getGroupIdx();
-		List<String> values = this.guiClasses.get(pcGroup[0]).get(pcGroup[1]).getSelectedValuesList();
-		mpc.decGroup(pcGroup[0], pcGroup[1], values);
-		fireActionEvent();
-		this.updatePriorityList();
-	}
-	
-	private int[] getGroupIdx() {
 		all: for (int i = 0; i < this.guiClasses.size(); i++) {
 			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
 				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
 				if (!values.isEmpty()) {
-					return new int[] {i, g};
+					mpc.incPriorities(i, g, values);
+					fireActionEvent();
+					break all;
 				}
 			}
 		}
-		return new int[] {0, 0};	}
+		this.updatePriorityList();
+	}
+
+	private void decPriorityOfSelVars() {
+		all: for (int i = 0; i < this.guiClasses.size(); i++) {
+			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+				if (!values.isEmpty()) {
+					mpc.decPriorities(i, g, values);
+					fireActionEvent();
+					break all;
+				}
+			}
+		}
+		this.updatePriorityList();
+	}
+
+	private void incGroupOfSelVars() {
+		all: for (int i = 0; i < this.guiClasses.size(); i++) {
+			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+				if (!values.isEmpty()) {
+					mpc.incGroup(i, g, values);
+					fireActionEvent();
+					break all;
+				}
+			}
+		}
+		this.updatePriorityList();
+	}
+
+	private void decGroupOfSelVars() {
+		all: for (int i = 0; i < this.guiClasses.size(); i++) {
+			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+				if (!values.isEmpty()) {
+					mpc.decGroup(i, g, values);
+					fireActionEvent();
+					break all;
+				}
+			}
+		}
+		this.updatePriorityList();
+	}
 	
 
 	private JPanel ratesPanel(List<String> vars,	Map<String, Double> rates, Map<JTextField, String> textfields, String updaterName) {

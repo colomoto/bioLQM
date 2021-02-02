@@ -870,9 +870,7 @@ public class ModelGrouping {
 			newVars[this.vars.length + 1] = splitFlag;
 			this.vars = newVars;
 			return true;
-		}
-		
-		
+		}		
 		
 		public void addUpdater(LogicalModelUpdater updater) {
 			this.updater = updater;
