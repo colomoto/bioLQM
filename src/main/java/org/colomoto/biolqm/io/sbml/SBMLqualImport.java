@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 /**
  * Crude SBML import using JSBML and the qual extension.
@@ -928,7 +929,7 @@ public class SBMLqualImport extends BaseLoader {
 	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
 		
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
-		if (qualifier.equals("unknownQualifier")) {
+		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
 			qualifier = cvterm.getUnknownQualifierName();
 		}
 		
@@ -947,7 +948,6 @@ public class SBMLqualImport extends BaseLoader {
 			
 			String collection = uri.substring(index2+1, index);
 			String identifier = uri.substring(index+1);
-			
 			metadata.addURI(qualifier, alternative, collection, identifier);
 		}
 		
@@ -986,6 +986,49 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 	
+	private void importElementTagsAndKeys(XMLNode xml, Metadata metadata) {
+	
+		for (XMLNode qualifier: xml.getChildElements("qualifier", "uri_colomoto")) {
+			String qualifierName = qualifier.getAttributes().getValue("name");
+
+			for (XMLNode alternative: qualifier.getChildElements("alternative", "uri_colomoto")) {
+				int alternativeNumber = Integer.parseInt(alternative.getAttributes().getValue("number"));
+				if (alternativeNumber < 0) {
+					alternativeNumber = metadata.createAlternative(qualifierName);
+				}
+				
+				XMLNode tags = alternative.getChildElement("tags", "uri_colomoto");
+				if (tags != null) {
+					for (XMLNode tagNode: tags.getChildElements("tag", "uri_colomoto")) {
+						
+						String tag = tagNode.getChild(0).getCharacters();
+						metadata.addTag(qualifierName, alternativeNumber, tag);
+					}
+				}
+				
+				XMLNode keys = alternative.getChildElement("keys", "uri_colomoto");
+				if (keys != null) {
+					for (XMLNode valuesNode: keys.getChildElements("values", "uri_colomoto")) {
+						String key = valuesNode.getAttributes().getValue("key");
+						String values = (String) valuesNode.getChild(0).getCharacters();
+						List<String> valuesList = Arrays.asList(values.split(";;;"));
+						
+						for (String val: valuesList) {
+							metadata.addKeyValue(qualifierName, alternativeNumber, key, val);
+						}
+					}
+				}
+				
+				XMLNode nested = alternative.getChildElement("nested", "uri_colomoto");
+				if (nested != null) {
+					Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternativeNumber);
+					
+					this.importElementTagsAndKeys(nested, metadataQualifier);
+				}
+			}
+		}
+	}
+	
 	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) throws XMLStreamException {
 		
 		SBase elementModel = (SBase) this.qualBundle.document.getModel();
@@ -1003,6 +1046,15 @@ public class SBMLqualImport extends BaseLoader {
 				
 				// to deal with terms of dcterms
 				this.importElementHistory(annotationModel, metadataModel);
+				
+				// to deal with tags and keys
+				if (annotationModel.isSetOtherAnnotationThanRDF()) {		
+					XMLNode nonRDFAnnotationModel = annotationModel.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
+					
+					if (nonRDFAnnotationModel != null) {
+						this.importElementTagsAndKeys(nonRDFAnnotationModel, metadataModel);
+					}
+				}
 			}
 			if (elementModel.isSetNotes()) {
 				XMLNode notesModel = elementModel.getNotes();
@@ -1028,6 +1080,15 @@ public class SBMLqualImport extends BaseLoader {
 					
 					// to deal with terms of dcterms
 					this.importElementHistory(annotationSpecies, metadataSpecies);
+						
+					// to deal with tags and keys
+					if (annotationSpecies.isSetOtherAnnotationThanRDF()) {		
+						XMLNode nonRDFAnnotationSpecies = annotationSpecies.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
+						
+						if (nonRDFAnnotationSpecies != null) {
+							this.importElementTagsAndKeys(nonRDFAnnotationSpecies, metadataSpecies);
+						}
+					}
 				}
 				if (elementSpecies.isSetNotes()) {
 					XMLNode notesSpecies = elementSpecies.getNotes();

@@ -140,12 +140,4 @@ class AuthorsAnnotation extends Annotation {
 		
 		return json;
 	}
-	
-	@Override
-	protected boolean isAnnotationNotEmpty() {
-		if (this.listOfAuthors.size()>0) {
-			return true;
-		}
-		return false;
-	}
 }

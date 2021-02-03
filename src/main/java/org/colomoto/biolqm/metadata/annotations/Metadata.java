@@ -696,26 +696,22 @@ public class Metadata {
 	public Metadata getMetadataOfQualifier(String termDesired, int alternative) {
 
 		if (!this.listOfAnnotations.containsKey(termDesired)) {
-			System.err.println("This qualifier doesn't exist, so there can be no metadata object attached to it." + "\n");
-			return null;
+			AnnotationFactory factory = new AnnotationFactory();
+			this.listOfAnnotations.put(termDesired, new ArrayList<Annotation>());
+			this.listOfAnnotations.get(termDesired).add(factory.getInstance("GenericAnnotation"));
 		}
-		else if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
-			if (this.listOfAnnotations.get(termDesired).get(alternative).isAnnotationNotEmpty()) {
-				Index indexParent = this.getLocalIndex();
-				
-				Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
-				
-				// if the index is null to that point, that means the annotation required doesn't exist and we return null
-				// else we return the metadata of this annotation
-				if (index != null) {
-					return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
-				}
-				return null;
+		
+		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
+			Index indexParent = this.getLocalIndex();
+			
+			Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
+			
+			// if the index is null to that point, that means the annotation required doesn't exist and we return null
+			// else we return the metadata of this annotation
+			if (index != null) {
+				return this.modelConstants.getInstanceOfListMetadata().getMetadata(index);
 			}
-			else {
-				System.err.println("This alternative is empty so you cannot add a metadata to it yet." + "\n");
-				return null;
-			}
+			return null;
 		}
 		else {
 			System.err.println("This alternative doesn't exist yet for this qualifier. You have to create it first with createAlternative(qualifier)." + "\n");
@@ -798,31 +794,28 @@ public class Metadata {
 			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
 				
 				JSONObject jsonAlternative = this.listOfAnnotations.get(qualifierName).get(alternative).getJSONOfAnnotation();
-				
-				if (!jsonAlternative.isEmpty()) {
+
+				// to check if the alternative contains a nested metadata
+				if (this.isSetMetadataOfQualifier(qualifierName, alternative)) {
+					Metadata metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
 					
-					// to check if the alternative contains a nested metadata
-					if (this.isSetMetadataOfQualifier(qualifierName, alternative)) {
-						Metadata metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
-						
-						JSONObject jsonNested = new JSONObject();
-						
-						// if there is some metadata we add the json representation in the json object
-						if (metadataNested.isMetadataNotEmpty()) {
-							jsonNested.put("annotation", metadataNested.getJSONOfMetadata());
-						}
-						// if there is some notes we add the json representation in the json object
-						if (metadataNested.getNotes() != "") {
-							jsonNested.put("notes", metadataNested.getNotes());
-						}
-						
-						if (!jsonNested.isEmpty()) {
-							jsonAlternative.put("nested", jsonNested);
-						}
+					JSONObject jsonNested = new JSONObject();
+					
+					// if there is some metadata we add the json representation in the json object
+					if (metadataNested.isMetadataNotEmpty()) {
+						jsonNested.put("annotation", metadataNested.getJSONOfMetadata());
+					}
+					// if there is some notes we add the json representation in the json object
+					if (metadataNested.getNotes() != "") {
+						jsonNested.put("notes", metadataNested.getNotes());
 					}
 					
-					arrayAlternatives.put(jsonAlternative);
+					if (!jsonNested.isEmpty()) {
+						jsonAlternative.put("nested", jsonNested);
+					}
 				}
+				
+				arrayAlternatives.put(jsonAlternative);
 			}
 			
 			if (!arrayAlternatives.isEmpty()) {
@@ -837,14 +830,14 @@ public class Metadata {
 	private XMLNode exportTagsAndKeys(int alternative, Set<String> listOfTags, Map<String, ArrayList<String>> listOfKeysValues, XMLNode xmlNested) {
 
 		XMLAttributes attributesAlternative = new XMLAttributes();
-		attributesAlternative.add("number", String.valueOf(alternative));
-		XMLNode xmlAlternative = new XMLNode(new XMLTriple("alternative"), attributesAlternative);
+		attributesAlternative.add("colomoto:number", String.valueOf(alternative));
+		XMLNode xmlAlternative = new XMLNode(new XMLTriple("colomoto:alternative"), attributesAlternative);
 		
 		if (listOfTags.size() > 0) {
-			XMLNode xmlTags = new XMLNode(new XMLTriple("tags"));
+			XMLNode xmlTags = new XMLNode(new XMLTriple("colomoto:tags"));
 			
 			for (String tag: listOfTags) {
-				XMLNode xmlTag = new XMLNode(new XMLTriple("tag"));
+				XMLNode xmlTag = new XMLNode(new XMLTriple("colomoto:tag"));
 				xmlTag.addChild(new XMLNode(tag));
 				xmlTags.addChild(xmlTag);
 			}
@@ -852,14 +845,14 @@ public class Metadata {
 			xmlAlternative.addChild(xmlTags);
 		}
 		if (listOfKeysValues.size() > 0) {
-			XMLNode xmlKeys = new XMLNode(new XMLTriple("keys"));
+			XMLNode xmlKeys = new XMLNode(new XMLTriple("colomoto:keys"));
 			
 			for (String key : listOfKeysValues.keySet()) {
 				XMLAttributes attributesKey = new XMLAttributes();
-				attributesKey.add("key", String.valueOf(key));
-				XMLNode xmlKey = new XMLNode(new XMLTriple("values"), attributesKey);
+				attributesKey.add("colomoto:key", String.valueOf(key));
+				XMLNode xmlKey = new XMLNode(new XMLTriple("colomoto:values"), attributesKey);
 				
-				String values = listOfKeysValues.get(key).stream().map(Object::toString).collect(Collectors.joining(", "));
+				String values = listOfKeysValues.get(key).stream().map(Object::toString).collect(Collectors.joining(";;;"));
 				xmlKey.addChild(new XMLNode(values));
 				
 				xmlKeys.addChild(xmlKey);
@@ -876,7 +869,7 @@ public class Metadata {
 	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> exportNestedMetadata(Metadata metadata) {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
-		XMLNode xml = new XMLNode(new XMLTriple("nested"));
+		XMLNode xml = new XMLNode(new XMLTriple("colomoto:nested"));
 		
 		for (String qualifierName: metadata.getListOfQualifiers()) {
 			
@@ -903,14 +896,14 @@ public class Metadata {
 		
 		// XMLNode for the tags and keys of the qualifier
 		XMLAttributes attributesQualifier = new XMLAttributes();
-		attributesQualifier.add("name", qualifierName);
-		attributesQualifier.add("type", qualifierClass);
-		XMLNode xmlQualifier = new XMLNode(new XMLTriple("qualifier"), attributesQualifier);
+		attributesQualifier.add("colomoto:name", qualifierName);
+		attributesQualifier.add("colomoto:type", qualifierClass);
+		XMLNode xmlQualifier = new XMLNode(new XMLTriple("colomoto:qualifier"), attributesQualifier);
 		
 		boolean tagsorkeys = false;
 		
+		int alternativeWithoutResources = 0;
 		for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
-			
 			CVTerm cvterm = new CVTerm();
 			
 			org.sbml.jsbml.CVTerm.Qualifier qualifier;
@@ -932,33 +925,37 @@ public class Metadata {
 				cvterm.addResource(resource.get(0)+":"+resource.get(1));
 			}
 			
+			// we save the nested parts
+			XMLNode xmlNested = new XMLNode();
+			if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
+				Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
+				
+				AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> nestedMetadata = metadata.exportNestedMetadata(metadataQualifier);
+				
+				ArrayList<CVTerm> nestedCVTerms = nestedMetadata.getKey();
+				for (CVTerm nestedCVTerm : nestedCVTerms) {
+					cvterm.addNestedCVTerm(nestedCVTerm);
+				}
+				xmlNested = nestedMetadata.getValue();
+			}
+			
+			int realAlternative;
+			if (cvterm.getResourceCount() > 0 || cvterm.getNestedCVTermCount() > 0) {
+				listOfCVTerms.add(cvterm);
+				realAlternative = alternative-alternativeWithoutResources;
+			}
+			else {
+				alternativeWithoutResources += 1;
+				realAlternative = -1;
+			}
+			
 			// we save the tags and keysvalues in an XMLNode aside
 			GenericAnnotation generic = (GenericAnnotation) metadata.listOfAnnotations.get(qualifierName).get(alternative);
 			Set<String> listOfTags = generic.getListOfTags();
 			Map<String, ArrayList<String>> listOfKeysValues = generic.getListOfKeysValues();
-			XMLNode xmlNested = new XMLNode();
-			
-			if (listOfResources.size() > 0 || listOfTags.size() > 0 || listOfKeysValues.size() > 0) {
-				if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
-					Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
-					
-					AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> nestedMetadata = metadata.exportNestedMetadata(metadataQualifier);
-					
-					ArrayList<CVTerm> nestedCVTerms = nestedMetadata.getKey();
-					for (CVTerm nestedCVTerm : nestedCVTerms) {
-						cvterm.addNestedCVTerm(nestedCVTerm);
-					}
-					xmlNested = nestedMetadata.getValue();
-				}
-			}
-			
 			if (listOfTags.size() > 0 || listOfKeysValues.size() > 0 || xmlNested.getChildCount() > 0) {
 				tagsorkeys = true;
-				xmlQualifier.addChild(metadata.exportTagsAndKeys(alternative, listOfTags, listOfKeysValues, xmlNested));
-			}
-			
-			if (cvterm.getResourceCount() > 0 || cvterm.getNestedCVTermCount() > 0) {
-				listOfCVTerms.add(cvterm);
+				xmlQualifier.addChild(metadata.exportTagsAndKeys(realAlternative, listOfTags, listOfKeysValues, xmlNested));
 			}
 		}
 		
@@ -979,7 +976,11 @@ public class Metadata {
 		org.sbml.jsbml.Annotation annotation = new org.sbml.jsbml.Annotation();
 		
 		History history = new History();
-		XMLNode xml = new XMLNode(new XMLTriple("nonRDFAnnotation"));
+		
+		XMLAttributes attributesXml = new XMLAttributes();
+		attributesXml.add("xmlns:colomoto", "uri_colomoto");
+		
+		XMLNode xml = new XMLNode(new XMLTriple("colomoto:nonRDFAnnotation"), attributesXml);
 		
 		for (String qualifierName: this.getListOfQualifiers()) {
 			

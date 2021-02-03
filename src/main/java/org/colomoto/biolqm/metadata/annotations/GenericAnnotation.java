@@ -291,12 +291,4 @@ class GenericAnnotation extends Annotation {
 		
 		return json;
 	}
-	
-	@Override
-	protected boolean isAnnotationNotEmpty() {
-		if (this.listOfURIs.size()>0 || this.listOfTags.size()>0 || this.listOfKeysValues.size()>0) {
-			return true;
-		}
-		return false;
-	}
 }

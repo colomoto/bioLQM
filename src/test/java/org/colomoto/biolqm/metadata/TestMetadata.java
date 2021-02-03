@@ -32,13 +32,13 @@ public class TestMetadata {
 		
 		LogicalModel model = format.load(new File(dir, "export_test_ginsim.sbml"));
 
-		// test modelMetadata
+/* 		// test modelMetadata
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
  		modelMetadata.addURI("lalaland", "uniprot", "P0DP23");
 		modelMetadata.addAuthor("creator", "Martin", "Boutroux", "mb@gm.com", "Inria", "1111-4444-6666-8888");
 		
-		System.out.println(modelMetadata.getDescriptionMetadata());
+		//System.out.println(modelMetadata.getDescriptionMetadata(true));
 		
 		// test componentMetadata
 		NodeInfo node = model.getComponents().get(0);
@@ -47,23 +47,24 @@ public class TestMetadata {
 		nodeMetadata.addURI("pussycat", "doi", "10.1093/ajae/aaq063");
 		
 		nodeMetadata.createAlternative("is");
-		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
+		nodeMetadata.createAlternative("is");
+		nodeMetadata.addURI("is", 2, "doi", "fantsaio");
 		
-		nodeMetadata.addKeyValue("is", 1, "coucou", "1");
-		nodeMetadata.addKeyValue("is", 1, "coucou", "2");
-		nodeMetadata.addKeyValue("is", 1, "hello", "2");
+		nodeMetadata.addKeyValue("is", 2, "coucou", "1");
+		nodeMetadata.addKeyValue("is", 2, "coucou", "2");
+		nodeMetadata.addKeyValue("is", 2, "hello", "2");
 		
-		Metadata nested5 = nodeMetadata.getMetadataOfQualifier("is", 1);
+		Metadata nested6 = nodeMetadata.getMetadataOfQualifier("is", 2);
 		
-		nested5.addKeyValue("is", 0, "coucou", "1");
-		nested5.addKeyValue("is", 0, "coucou", "2");
-		nested5.addTag("is", 0, "gutentag");
+		nested6.addKeyValue("is", 0, "coucou", "1");
+		nested6.addKeyValue("is", 0, "coucou", "2");
+		nested6.addTag("is", 0, "gutentag");
 		
-		Metadata nested6 = nested5.getMetadataOfQualifier("is");
+		nested6.createAlternative("is");
 		
-		nested6.addURI("lalaland", "uniprot", "P0DP23");
+		Metadata nested5 = nested6.getMetadataOfQualifier("is", 1);
 		
-		nested5.getDescriptionMetadata();
+		nested5.addURI("lalaland", "uniprot", "P0DP23"); */
 		
 /* 		modelMetadata.addAuthor("creator", "Martin", "", null, null, "1111-4444-6666-8888");
 		
@@ -137,11 +138,15 @@ public class TestMetadata {
 		
 		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
 		
+		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		
 		// model.exportMetadata(dir.getAbsolutePath()+"\\filename");
 		
 		// model.importMetadata(dir.getAbsolutePath()+"\\filename");
 		
 		// System.out.println(modelMetadata.getDescriptionMetadata());
+		
+		
 		
 		for (NodeInfo elementNode: model.getComponents()) {
 			System.out.println(elementNode.getNodeID());

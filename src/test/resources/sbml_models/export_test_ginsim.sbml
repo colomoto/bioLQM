@@ -29,7 +29,7 @@
 	  </body>
 	</notes>
     <annotation>
-	  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	  <rdf:Description rdf:about="#metaid0">
       <dc:creator>
         <rdf:Bag>
@@ -136,6 +136,16 @@
 	  </qual:qualitativeSpecies>
       <qual:qualitativeSpecies qual:maxLevel="2" qual:compartment="comp1" qual:constant="false" qual:id="Mdm2cyt">
 	    <annotation>
+<colomoto:nonRDFAnnotation xmlns:colomoto="uri_colomoto">
+            <colomoto:qualifier colomoto:name="is" colomoto:type="GenericAnnotation">
+              <colomoto:alternative colomoto:number="1">
+                <colomoto:keys>
+                  <colomoto:values colomoto:key="coucou">1;;;2</colomoto:values><colomoto:values colomoto:key="hello">2</colomoto:values></colomoto:keys><colomoto:nested>
+                  <colomoto:qualifier colomoto:name="is" colomoto:type="GenericAnnotation">
+                    <colomoto:alternative colomoto:number="-1">
+                      <colomoto:tags>
+                        <colomoto:tag>gutentag</colomoto:tag></colomoto:tags><colomoto:keys>
+                        <colomoto:values colomoto:key="coucou">1;;;2</colomoto:values></colomoto:keys></colomoto:alternative></colomoto:qualifier></colomoto:nested></colomoto:alternative></colomoto:qualifier></colomoto:nonRDFAnnotation>
 		  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/">
 			<rdf:Description rdf:about="#metaid2">
 			<bqbiol:occursIn>
@@ -153,6 +163,24 @@
 				</bqbiol:isDescribedBy>
 			  </rdf:Bag>
 			</bqbiol:occursIn>
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="CHEBI:145558"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	<bqbiol:is>
+	<rdf:Bag>
+	<bqbiol:is>
+	<rdf:Bag>
+	<bqbiol:lalaland>
+	<rdf:Bag>
+	<rdf:li rdf:resource="uniprot:P0DP23"/>
+	</rdf:Bag>
+	</bqbiol:lalaland>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Bag>
+	</bqbiol:is>
 			</rdf:Description>
 		  </rdf:RDF>
 		</annotation>
