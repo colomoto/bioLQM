@@ -136,22 +136,32 @@ public class TestMetadata {
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1093/ajae/aaq063"); */
 		
-		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
+		// LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
+		
+		Metadata modelMetadata = model.getMetadataOfModel();
+		
+		modelMetadata.createAlternative("isDescribedBy");
+		modelMetadata.addTag("isDescribedBy", 1, "doi");
+		
+		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("isDescribedBy");
+		
+		nestedMetadata.addDate("creator", "1996-05-28");
+		nestedMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		
 		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
 		
-		// model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		
-		// model.importMetadata(dir.getAbsolutePath()+"\\filename");
+		model.importMetadata(dir.getAbsolutePath()+"\\filename");
 		
-		// System.out.println(modelMetadata.getDescriptionMetadata());
+		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		
 		
 		
-		for (NodeInfo elementNode: model.getComponents()) {
+/* 		for (NodeInfo elementNode: model.getComponents()) {
 			System.out.println(elementNode.getNodeID());
 			Metadata elementNodeMetadata = model.getMetadataOfNode(elementNode);
 			System.out.println(elementNodeMetadata.getDescriptionMetadata(true));
-		}
+		} */
 	}
 }

@@ -148,21 +148,6 @@
                         <colomoto:values colomoto:key="coucou">1;;;2</colomoto:values></colomoto:keys></colomoto:alternative></colomoto:qualifier></colomoto:nested></colomoto:alternative></colomoto:qualifier></colomoto:nonRDFAnnotation>
 		  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/">
 			<rdf:Description rdf:about="#metaid2">
-			<bqbiol:occursIn>
-			  <rdf:Bag>
-				<rdf:li rdf:resource="https://identifiers.org/go/GO:0005764"/>
-				<bqbiol:isDescribedBy>
-				  <rdf:Bag>
-					<rdf:li rdf:resource="https://identifiers.org/pubmed/1111111"/>
-				  </rdf:Bag>
-				</bqbiol:isDescribedBy>
-				<bqbiol:isDescribedBy>
-				  <rdf:Bag>
-					<rdf:li rdf:resource="https://identifiers.org/eco/ECO:0000004"/>
-				  </rdf:Bag>
-				</bqbiol:isDescribedBy>
-			  </rdf:Bag>
-			</bqbiol:occursIn>
 	<bqbiol:is>
 	<rdf:Bag>
 	<rdf:li rdf:resource="CHEBI:145558"/>

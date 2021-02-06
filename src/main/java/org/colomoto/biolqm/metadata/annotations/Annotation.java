@@ -6,6 +6,7 @@ import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.Index;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 
@@ -25,4 +26,5 @@ abstract class Annotation {
 	protected abstract Index getIndex(ModelConstants modelConstants, Index indexParent);
 	protected abstract ArrayList<ArrayList<String>> getResources();
 	protected abstract JSONObject getJSONOfAnnotation();
+	protected abstract boolean doesAlternativeExist(JSONObject jsonAlternative);
 }

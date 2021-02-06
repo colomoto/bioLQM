@@ -291,4 +291,100 @@ class GenericAnnotation extends Annotation {
 		
 		return json;
 	}
+		
+	@Override
+	protected boolean doesAlternativeExist(JSONObject jsonAlternative) {
+		
+		int numUriAnnotation = this.listOfURIs.size();
+		if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
+			JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
+			
+			int numUriJson = arrayURIs.length();
+			if (numUriAnnotation == numUriJson) {
+				
+				for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
+				{
+					JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
+					URI uri = new URI(jsonURI.getString("collection"), jsonURI.getString("identifier"));
+					if (!this.listOfURIs.contains(uri)) {
+						return false;
+					}
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		else if (numUriAnnotation != 0) {
+			return false;
+		}
+		
+		int numTagAnnotation = this.listOfTags.size();
+		if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
+			JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
+			
+			int numTagJson = arrayTags.length();
+			if (numTagAnnotation == numTagJson) {
+				
+				for(int idTag = 0; idTag < arrayTags.length(); idTag++)
+				{
+					String tag = arrayTags.getString(idTag);
+					if (!this.listOfTags.contains(tag)) {
+						return false;
+					}
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		else if (numTagAnnotation != 0) {
+			return false;
+		}
+		
+		int numKeyAnnotation = this.listOfKeysValues.size();
+		if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
+			JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
+			
+			int numKeyJson = arrayKeys.length();
+			if (numKeyAnnotation == numKeyJson) {
+				
+				for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
+				{
+					JSONObject key = arrayKeys.getJSONObject(idKey);
+					JSONArray arrayValues = key.getJSONArray("values");
+					
+					String keyString = key.getString("key");
+					if (!this.listOfKeysValues.containsKey(keyString)) {
+						return false;
+					}
+					
+					ArrayList<String> valuesList = this.listOfKeysValues.get(keyString);
+					
+					int numValuesAnnotation = valuesList.size();
+					int numValuesJson = arrayValues.length();
+					if (numValuesAnnotation == numValuesJson) {
+						
+						for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
+							String valueString =  arrayValues.getString(idValue);
+							if (!valuesList.contains(valueString)) {
+								return false;
+							}
+						}
+					}
+					else {
+						return false;
+					}
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		else if (numKeyAnnotation != 0) {
+			return false;
+		}
+		
+		return true;
+	}
 }

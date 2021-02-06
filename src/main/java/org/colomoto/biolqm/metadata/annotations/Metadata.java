@@ -1034,4 +1034,97 @@ public class Metadata {
 		
 		return annotation;
 	}
+	
+	public int doesAlternativeExist(JSONObject jsonAlternative, String termDesired) {
+		
+		if (this.listOfAnnotations.containsKey(termDesired)) {
+			
+			for(int idAlt = 0; idAlt < this.getNumberOfAlternatives(termDesired); idAlt++) {
+				
+				boolean exist = this.listOfAnnotations.get(termDesired).get(idAlt).doesAlternativeExist(jsonAlternative);				
+				if (exist == true) {
+					return idAlt;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public boolean equalsMetadata(JSONObject json) {
+		
+		if (json.has("annotation") && !json.isNull("annotation")) {
+			
+			JSONArray arrayQualifiers = json.getJSONArray("annotation");
+			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++)
+			{
+				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
+				
+				String qualifierName = jsonQualifier.getString("qualifier");
+				String qualifierClass = jsonQualifier.getString("type");
+				
+				JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
+
+				if (qualifierClass.equals("GenericAnnotation")) {
+					
+					int numAltJson = arrayAlternatives.length();
+					for(int idAlternative = 0; idAlternative < numAltJson; idAlternative++)
+					{
+						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
+
+						int numSameAlt = this.doesAlternativeExist(jsonAlternative, qualifierName);
+						
+						if (numSameAlt != -1) {
+							
+							if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+								Metadata nestedMetadata = this.getMetadataOfQualifier(qualifierName, numSameAlt);
+								JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
+								
+								if (!nestedMetadata.equalsMetadata(nestedJson)) {
+									return false;
+								}
+							}
+							else if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) || this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+								return false;
+							}
+						}
+						else {
+							return false;
+						}
+					}
+				}
+				else {
+					JSONObject jsonAlternative = arrayAlternatives.getJSONObject(0);
+					
+					int numSameAlt = this.doesAlternativeExist(jsonAlternative, qualifierName);
+					
+					if (numSameAlt == -1) {
+						return false;
+					}
+					
+					if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && this.isSetMetadataOfQualifier(qualifierName)) {
+						
+						Metadata nestedMetadata = this.getMetadataOfQualifier(qualifierName);
+						JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
+						
+						if (!nestedMetadata.equalsMetadata(nestedJson)) {
+							return false;
+						}
+					}
+					else if (!(jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && !this.isSetMetadataOfQualifier(qualifierName)) {
+						
+					}
+					else {
+						return false;
+					}
+				}
+			}
+		}
+		
+		String existingNotes = this.getNotes();
+		if (json.has("notes") && !json.isNull("notes") && !existingNotes.equals(json.get("notes"))) {
+			return false;
+		}
+		
+		return true;
+	}
 }

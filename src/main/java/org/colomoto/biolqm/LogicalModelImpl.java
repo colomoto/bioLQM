@@ -395,51 +395,83 @@ public class LogicalModelImpl implements LogicalModel {
 
 				if (qualifierClass.equals("GenericAnnotation")) {
 					
-					int numberAlternative = metadata.getNumberOfAlternatives(qualifierName);
-					for(int idAlternative = 0; idAlternative < arrayAlternatives.length(); idAlternative++)
+					int numAltMetadata = metadata.getNumberOfAlternatives(qualifierName);
+					int numAltJson = arrayAlternatives.length();
+					boolean alternativesExist = false;
+					if (numAltMetadata > 1 || numAltJson > 1) {
+						alternativesExist = true;
+					}
+					
+					for(int idAlternative = 0; idAlternative < numAltJson; idAlternative++)
 					{
 						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
-						if (numberAlternative > 0) {
-							metadata.createAlternative(qualifierName);
-						}
 						
-						if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
-							JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
-							for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
-							{
-								JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
-								metadata.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
-							}
-						}
-						if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
-							JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
-							for(int idTag = 0; idTag < arrayTags.length(); idTag++)
-							{
-								String tag = arrayTags.getString(idTag);
-								metadata.addTag(qualifierName, numberAlternative, tag);
-							}
-						}
-						if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
-							JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
-							for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
-							{
-								JSONObject key = arrayKeys.getJSONObject(idKey);
-								JSONArray arrayValues = key.getJSONArray("values");
+						int numberAlternative = 0;
+						if (alternativesExist) {
+							
+							int numSameAlt = metadata.doesAlternativeExist(jsonAlternative, qualifierName);
+							if (numSameAlt != -1) {
 								
-								for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
-									metadata.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
+								if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && metadata.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+									Metadata nestedMetadata = metadata.getMetadataOfQualifier(qualifierName, numSameAlt);
+									JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
+									
+									if (nestedMetadata.equalsMetadata(nestedJson)) {
+										numberAlternative = -1;
+									}
+									else {
+										numberAlternative = metadata.createAlternative(qualifierName);
+									}
+								}
+								else if (!(jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && !metadata.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+									numberAlternative = -1;
+								}
+								else {
+									numberAlternative = metadata.createAlternative(qualifierName);
 								}
 							}
-						}
-							
-						if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
-							
-							Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, numberAlternative);
-							
-							this.importElementMetadata(metadataQualifier, jsonAlternative.getJSONObject("nested"));
+							else if (numAltMetadata != 0) {
+								numberAlternative = metadata.createAlternative(qualifierName);
+							}
 						}
 						
-						numberAlternative += 1;
+						if (numberAlternative != -1) {
+							if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
+								JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
+								for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
+								{
+									JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
+									metadata.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
+								}
+							}
+							if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
+								JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
+								for(int idTag = 0; idTag < arrayTags.length(); idTag++)
+								{
+									String tag = arrayTags.getString(idTag);
+									metadata.addTag(qualifierName, numberAlternative, tag);
+								}
+							}
+							if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
+								JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
+								for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
+								{
+									JSONObject key = arrayKeys.getJSONObject(idKey);
+									JSONArray arrayValues = key.getJSONArray("values");
+									
+									for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
+										metadata.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
+									}
+								}
+							}
+								
+							if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
+								
+								Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, numberAlternative);
+								
+								this.importElementMetadata(metadataQualifier, jsonAlternative.getJSONObject("nested"));
+							}
+						}
 					}
 				}
 				else {
@@ -454,6 +486,7 @@ public class LogicalModelImpl implements LogicalModel {
 							
 							String email = null;
 							if (author.has("email") && !author.isNull("email")) { email = author.getString("email"); }
+							
 							String organisation = null;
 							if (author.has("organisation") && !author.isNull("organisation")) { organisation = author.getString("organisation"); }
 							String orcid = null;

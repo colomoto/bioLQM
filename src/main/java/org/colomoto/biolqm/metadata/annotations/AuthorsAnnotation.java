@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Special class of annotations
@@ -22,19 +24,19 @@ import java.util.ArrayList;
 class AuthorsAnnotation extends Annotation {
 	
 	// variables
-	private ArrayList<Author> listOfAuthors;
+	private Set<Author> listOfAuthors;
 	
 	private Index indexOfAuthors;
 	
 	// constructors
 	protected AuthorsAnnotation() {
-		this.listOfAuthors = new ArrayList<Author>();
+		this.listOfAuthors = new HashSet<Author>();
 		
 		this.indexOfAuthors = null;
 	}
 		
 	// getters
-	protected ArrayList<Author> getListOfAuthors() {
+	protected Set<Author> getListOfAuthors() {
 		return this.listOfAuthors;
 	}
 	
@@ -128,7 +130,7 @@ class AuthorsAnnotation extends Annotation {
 				
 				jsonAuthor.put("name", author.getName());
 				jsonAuthor.put("surname", author.getSurname());
-				jsonAuthor.put("mail", author.getEmail());
+				jsonAuthor.put("email", author.getEmail());
 				jsonAuthor.put("organisation", author.getOrganisation());
 				jsonAuthor.put("orcid", author.getOrcid());
 				
@@ -139,5 +141,29 @@ class AuthorsAnnotation extends Annotation {
 		}
 		
 		return json;
+	}
+	
+	@Override
+	protected boolean doesAlternativeExist(JSONObject jsonAlternative) {
+		
+		JSONArray arrayAuthors = jsonAlternative.getJSONArray("authors");
+		for(int idAuthor = 0; idAuthor < arrayAuthors.length(); idAuthor++)
+		{
+			JSONObject author = arrayAuthors.getJSONObject(idAuthor);
+			
+			String email = null;
+			if (author.has("email") && !author.isNull("email")) { email = author.getString("email"); }
+			String organisation = null;
+			if (author.has("organisation") && !author.isNull("organisation")) { organisation = author.getString("organisation"); }
+			String orcid = null;
+			if (author.has("orcid") && !author.isNull("orcid")) { orcid = author.getString("orcid"); }
+			
+			Author authorObject = new Author(author.getString("name"), author.getString("surname"), email, organisation, orcid);
+			if (!this.listOfAuthors.contains(authorObject)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

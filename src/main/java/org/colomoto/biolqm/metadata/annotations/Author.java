@@ -40,22 +40,58 @@ class Author {
 		return this.orcid;
 	}
 	
-	// functions
+	// functions	
     @Override
 	public boolean equals(Object obj) {
-        boolean retVal = false;
 		
 		Author author = (Author) obj;
-        if (author.getName().equals(this.getName()) && author.getSurname().equals(this.getSurname()) && author.getEmail().equals(this.getEmail()) && author.getOrganisation().equals(this.getOrganisation()) && author.getOrcid().equals(this.getOrcid())){
-            retVal = true;
-        }
-
-		return retVal;
+		
+		if (!author.getName().equals(this.getName()) || !author.getSurname().equals(this.getSurname())) {
+			return false;
+		}
+		
+		// test of mail
+		if (!(this.getEmail() == null && author.getEmail() == null)) {
+			if (this.getEmail() == null || author.getEmail() == null) {
+				return false;
+			}
+			else if (!author.getEmail().equals(this.getEmail())) {
+				return false;
+			}
+		}
+		
+		// test of organisation
+		if (!(this.getOrganisation() == null && author.getOrganisation() == null)) {
+			if (this.getOrganisation() == null || author.getOrganisation() == null) {
+				return false;
+			}
+			else if (!author.getOrganisation().equals(this.getOrganisation())) {
+				return false;
+			}
+		}
+		
+		// test of orcid
+		if (!(this.getOrcid() == null && author.getOrcid() == null)) {
+			if (this.getOrcid() == null || author.getOrcid() == null) {
+				return false;
+			}
+			else if (!author.getOrcid().equals(this.getOrcid())) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
     @Override
 	public int hashCode() {
+		
+		int hash = this.getName().hashCode() + this.getSurname().hashCode();
+		
+		if (this.getEmail() != null) { hash += this.getEmail().hashCode(); }
+		if (this.getOrganisation() != null) { hash += this.getOrganisation().hashCode(); }
+		if (this.getOrcid() != null) { hash += this.getOrcid().hashCode(); }
 
-		return (int) this.getName().hashCode() + this.getSurname().hashCode() + this.getEmail().hashCode() + this.getOrganisation().hashCode() + this.getOrcid().hashCode();
+		return hash;
 	}
 }

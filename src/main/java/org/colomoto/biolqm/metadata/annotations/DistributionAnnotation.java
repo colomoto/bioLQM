@@ -54,7 +54,7 @@ class DistributionAnnotation extends Annotation {
 		
 		String chaine = ":\n";
 		
-		chaine += tab + "\t\t" + "Terms of distribution : " + this.distribution + "\n";
+		chaine += tab + "\t" + "Terms of distribution : " + this.distribution + "\n";
 		
 		return chaine;
 	}
@@ -102,5 +102,14 @@ class DistributionAnnotation extends Annotation {
 		json.put("distribution", this.distribution);
 		
 		return json;
+	}
+	
+	@Override
+	protected boolean doesAlternativeExist(JSONObject jsonAlternative) {
+		
+		if (this.distribution.equals(jsonAlternative.getString("distribution"))) {
+			return true;
+		}
+		return false;
 	}
 }

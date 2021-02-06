@@ -54,7 +54,7 @@ class DateAnnotation extends Annotation {
 		
 		String chaine = ":\n";
 		
-		chaine += tab + "\t\t" + "Date : " + this.date + "\n";
+		chaine += tab + "\t" + "Date : " + this.date + "\n";
 		
 		return chaine;
 	}
@@ -102,5 +102,14 @@ class DateAnnotation extends Annotation {
 		json.put("date", this.date);
 		
 		return json;
+	}
+	
+	@Override
+	protected boolean doesAlternativeExist(JSONObject jsonAlternative) {
+		
+		if (this.date.equals(jsonAlternative.getString("date"))) {
+			return true;
+		}
+		return false;
 	}
 }
