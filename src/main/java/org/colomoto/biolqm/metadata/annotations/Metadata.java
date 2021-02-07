@@ -3,6 +3,7 @@ package org.colomoto.biolqm.metadata.annotations;
 import org.colomoto.biolqm.metadata.annotations.Annotation;
 import org.colomoto.biolqm.metadata.annotations.AnnotationFactory;
 import org.colomoto.biolqm.metadata.annotations.JsonReader;
+import org.colomoto.biolqm.metadata.annotations.DateAnnotation;
 
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
@@ -154,7 +155,7 @@ public class Metadata {
 	
 	
 	// the functions to manage the alternatives
-	private void createQualifier(String termDesired, String javaClassDesired) {
+	private boolean createQualifier(String termDesired, String javaClassDesired) {
 
 		// we find the javaClass dedicated for this qualifier
 		String javaClass = this.suitedJavaClass(termDesired);
@@ -173,10 +174,14 @@ public class Metadata {
 			
 			this.listOfAnnotations.put(termDesired, new ArrayList<Annotation>());
 			this.listOfAnnotations.get(termDesired).add(newAnnotation);
+			
+			return true;
 		}
 		// else we print a warning
 		else {
 			System.err.println("You cannot create this type of annotation for this qualifier." + "\n");
+			
+			return false;
 		}
 	}
 	
@@ -210,15 +215,21 @@ public class Metadata {
 
 	// the functions to add an annotation
 	private void addAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) {
-			
+		
 		// if it's a new qualifier we create a first alternative
 		if (!this.listOfAnnotations.containsKey(termDesired) && alternative == 0) {
-			this.createQualifier(termDesired, javaClassDesired);
+			boolean creation = this.createQualifier(termDesired, javaClassDesired);
+			if (!creation) {
+				return;
+			}
 		}
 		// if the qualifier doesn't exist and the alternative is not 0 there is an issue
 		else if (!this.listOfAnnotations.containsKey(termDesired)) {
 			System.err.println("You have to create this qualifier with the alternative 0 (or with no alternative which is an implicit 0)." + "\n");
-			
+			return;
+		}
+		else if (!this.suitedJavaClass(termDesired).equals(javaClassDesired)) {
+			System.err.println("You cannot add this kind of information to this type of qualifier." + "\n");
 			return;
 		}
 		
@@ -340,7 +351,7 @@ public class Metadata {
 	 */	
 	public void addDate(String termDesired, String date) {
 		DateValidator validator = new DateValidator("yyyy-MM-dd");
-
+		
 		if (validator.isValid(date)) { 		
 			String javaClassDesired = "DateAnnotation";
 			this.addAnnotation(termDesired, 0, javaClassDesired, date);
@@ -696,9 +707,10 @@ public class Metadata {
 	public Metadata getMetadataOfQualifier(String termDesired, int alternative) {
 
 		if (!this.listOfAnnotations.containsKey(termDesired)) {
-			AnnotationFactory factory = new AnnotationFactory();
-			this.listOfAnnotations.put(termDesired, new ArrayList<Annotation>());
-			this.listOfAnnotations.get(termDesired).add(factory.getInstance("GenericAnnotation"));
+			boolean creation = this.createQualifier(termDesired, "GenericAnnotation");
+			if (!creation) {
+				return null;
+			}
 		}
 		
 		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
@@ -731,7 +743,7 @@ public class Metadata {
 	}
 	
 	
-	// the functions used to export the metadata towards the sbml format or the json format	
+	// the functions used to import/export the metadata towards the sbml format or the json format
 	private Set<String> getListOfQualifiers() {
 		return this.listOfAnnotations.keySet();
 	}
@@ -768,9 +780,11 @@ public class Metadata {
 		}
 		return this.listOfAnnotations.get(qualifierName).size();
 	}
-
+	
+	
+	// the functions to export the metadata towards the json format	
 	/**
-	 * Produces a json expression of the metadata object
+	 * Produces a json expression of the metadata object (internal use)
 	 *
 	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
 	 */
@@ -827,6 +841,8 @@ public class Metadata {
 		return arrayQualifiers;
 	}
 	
+	
+	// the functions to export the metadata towards the sbml format	
 	private XMLNode exportTagsAndKeys(int alternative, Set<String> listOfTags, Map<String, ArrayList<String>> listOfKeysValues, XMLNode xmlNested) {
 
 		XMLAttributes attributesAlternative = new XMLAttributes();
@@ -967,7 +983,7 @@ public class Metadata {
 	}
 	
 	/**
-	 * Produces a jSBML expression of the metadata object
+	 * Produces a jSBML expression of the metadata object (internal use)
 	 *
 	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
 	 */
@@ -1022,7 +1038,7 @@ public class Metadata {
 						history.setModifiedDate(simpleDateFormat);
 					}
 				} catch (ParseException e) {
-					System.err.println("Error parsing a date contained in an annotation of the model" + "\n");
+					System.err.println("Error parsing a date contained in an annotation of the model." + "\n");
 				}
 			}
 		}
@@ -1035,7 +1051,9 @@ public class Metadata {
 		return annotation;
 	}
 	
-	public int doesAlternativeExist(JSONObject jsonAlternative, String termDesired) {
+	
+	// the functions to import a json file of annotations as the annotations
+	private int doesAlternativeExist(JSONObject jsonAlternative, String termDesired) {
 		
 		if (this.listOfAnnotations.containsKey(termDesired)) {
 			
@@ -1050,7 +1068,7 @@ public class Metadata {
 		return -1;
 	}
 	
-	public boolean equalsMetadata(JSONObject json) {
+	private boolean equalsMetadata(JSONObject json) {
 		
 		if (json.has("annotation") && !json.isNull("annotation")) {
 			
@@ -1126,5 +1144,168 @@ public class Metadata {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Permits to import a json file to extend the existent annotations (internal use)
+	 *
+	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
+	 */
+	public void importElementMetadata(JSONObject json) {
+		
+		// if there is some metadata we add the json representation in the json object
+		if (json.has("annotation") && !json.isNull("annotation")) {
+			
+			JSONArray arrayQualifiers = json.getJSONArray("annotation");
+			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++)
+			{
+				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
+				
+				String qualifierName = jsonQualifier.getString("qualifier");
+				String qualifierClass = jsonQualifier.getString("type");
+				
+				JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
+
+				if (qualifierClass.equals("GenericAnnotation")) {
+					
+					int numAltMetadata = this.getNumberOfAlternatives(qualifierName);
+					int numAltJson = arrayAlternatives.length();
+					boolean alternativesExist = false;
+					if (numAltMetadata > 1 || numAltJson > 1) {
+						alternativesExist = true;
+					}
+					
+					for(int idAlternative = 0; idAlternative < numAltJson; idAlternative++)
+					{
+						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
+						
+						int numberAlternative = 0;
+						if (alternativesExist) {
+							
+							int numSameAlt = this.doesAlternativeExist(jsonAlternative, qualifierName);
+							if (numSameAlt != -1) {
+								
+								if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+									Metadata nestedMetadata = this.getMetadataOfQualifier(qualifierName, numSameAlt);
+									JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
+									
+									if (nestedMetadata.equalsMetadata(nestedJson)) {
+										numberAlternative = -1;
+									}
+									else {
+										numberAlternative = this.createAlternative(qualifierName);
+									}
+								}
+								else if (!(jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && !this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+									numberAlternative = -1;
+								}
+								else {
+									numberAlternative = this.createAlternative(qualifierName);
+								}
+							}
+							else if (numAltMetadata != 0) {
+								numberAlternative = this.createAlternative(qualifierName);
+							}
+						}
+						
+						if (numberAlternative != -1) {
+							if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
+								JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
+								for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
+								{
+									JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
+									this.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
+								}
+							}
+							if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
+								JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
+								for(int idTag = 0; idTag < arrayTags.length(); idTag++)
+								{
+									String tag = arrayTags.getString(idTag);
+									this.addTag(qualifierName, numberAlternative, tag);
+								}
+							}
+							if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
+								JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
+								for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
+								{
+									JSONObject key = arrayKeys.getJSONObject(idKey);
+									JSONArray arrayValues = key.getJSONArray("values");
+									
+									for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
+										this.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
+									}
+								}
+							}
+								
+							if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
+								
+								Metadata metadataQualifier = this.getMetadataOfQualifier(qualifierName, numberAlternative);
+								
+								metadataQualifier.importElementMetadata(jsonAlternative.getJSONObject("nested"));
+							}
+						}
+					}
+				}
+				else {
+					JSONObject jsonAlternative = arrayAlternatives.getJSONObject(0);
+					
+					if (qualifierClass.equals("AuthorsAnnotation")) {
+						
+						JSONArray arrayAuthors = jsonAlternative.getJSONArray("authors");
+						for(int idAuthor = 0; idAuthor < arrayAuthors.length(); idAuthor++)
+						{
+							JSONObject author = arrayAuthors.getJSONObject(idAuthor);
+							
+							String email = null;
+							if (author.has("email") && !author.isNull("email")) { email = author.getString("email"); }
+							
+							String organisation = null;
+							if (author.has("organisation") && !author.isNull("organisation")) { organisation = author.getString("organisation"); }
+							String orcid = null;
+							if (author.has("orcid") && !author.isNull("orcid")) { orcid = author.getString("orcid"); }
+							
+							this.addAuthor(qualifierName, author.getString("name"), author.getString("surname"), email, organisation, orcid);
+						}
+					}
+					else if (qualifierClass.equals("DateAnnotation")) {
+						
+						if (qualifierName.equals("created") && this.listOfAnnotations.containsKey(qualifierName)) {
+							DateAnnotation dateAnnotation = (DateAnnotation) this.listOfAnnotations.get(qualifierName).get(0);
+							
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+							try {
+								Date date = sdf.parse(dateAnnotation.getDate());
+								Date dateJSON = sdf.parse(jsonAlternative.getString("date"));
+								
+								if (dateJSON.before(date)) {
+									this.addDate(qualifierName, jsonAlternative.getString("date"));
+								}
+							} catch (ParseException e) {
+								System.err.println("Error parsing a date contained in an annotation of the model." + "\n");
+							}
+						}
+						this.addDate(qualifierName, jsonAlternative.getString("date"));
+					}
+					else if (qualifierClass.equals("DistributionAnnotation")) {
+
+						this.addDistribution(qualifierName, jsonAlternative.getString("distribution"));
+					}
+					
+					if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
+						
+						Metadata metadataQualifier = this.getMetadataOfQualifier(qualifierName);
+						
+						metadataQualifier.importElementMetadata(jsonAlternative.getJSONObject("nested"));
+					}
+				}
+			}
+		}
+		// if there is some notes we add the json representation in the json object
+		if (json.has("notes") && !json.isNull("notes")) {
+			
+			String existingNotes = this.getNotes();
+			this.setNotes(existingNotes + json.get("notes"));
+		}
 	}
 }

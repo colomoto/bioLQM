@@ -378,149 +378,6 @@ public class LogicalModelImpl implements LogicalModel {
         }
 	}
 	
-	private void importElementMetadata(Metadata metadata, JSONObject json) {
-		
-		// if there is some metadata we add the json representation in the json object
-		if (json.has("annotation") && !json.isNull("annotation")) {
-			
-			JSONArray arrayQualifiers = json.getJSONArray("annotation");
-			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++)
-			{
-				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
-				
-				String qualifierName = jsonQualifier.getString("qualifier");
-				String qualifierClass = jsonQualifier.getString("type");
-				
-				JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
-
-				if (qualifierClass.equals("GenericAnnotation")) {
-					
-					int numAltMetadata = metadata.getNumberOfAlternatives(qualifierName);
-					int numAltJson = arrayAlternatives.length();
-					boolean alternativesExist = false;
-					if (numAltMetadata > 1 || numAltJson > 1) {
-						alternativesExist = true;
-					}
-					
-					for(int idAlternative = 0; idAlternative < numAltJson; idAlternative++)
-					{
-						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
-						
-						int numberAlternative = 0;
-						if (alternativesExist) {
-							
-							int numSameAlt = metadata.doesAlternativeExist(jsonAlternative, qualifierName);
-							if (numSameAlt != -1) {
-								
-								if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && metadata.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
-									Metadata nestedMetadata = metadata.getMetadataOfQualifier(qualifierName, numSameAlt);
-									JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
-									
-									if (nestedMetadata.equalsMetadata(nestedJson)) {
-										numberAlternative = -1;
-									}
-									else {
-										numberAlternative = metadata.createAlternative(qualifierName);
-									}
-								}
-								else if (!(jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && !metadata.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
-									numberAlternative = -1;
-								}
-								else {
-									numberAlternative = metadata.createAlternative(qualifierName);
-								}
-							}
-							else if (numAltMetadata != 0) {
-								numberAlternative = metadata.createAlternative(qualifierName);
-							}
-						}
-						
-						if (numberAlternative != -1) {
-							if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
-								JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
-								for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
-								{
-									JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
-									metadata.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
-								}
-							}
-							if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
-								JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
-								for(int idTag = 0; idTag < arrayTags.length(); idTag++)
-								{
-									String tag = arrayTags.getString(idTag);
-									metadata.addTag(qualifierName, numberAlternative, tag);
-								}
-							}
-							if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
-								JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
-								for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
-								{
-									JSONObject key = arrayKeys.getJSONObject(idKey);
-									JSONArray arrayValues = key.getJSONArray("values");
-									
-									for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
-										metadata.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
-									}
-								}
-							}
-								
-							if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
-								
-								Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, numberAlternative);
-								
-								this.importElementMetadata(metadataQualifier, jsonAlternative.getJSONObject("nested"));
-							}
-						}
-					}
-				}
-				else {
-					JSONObject jsonAlternative = arrayAlternatives.getJSONObject(0);
-					
-					if (qualifierClass.equals("AuthorsAnnotation")) {
-						
-						JSONArray arrayAuthors = jsonAlternative.getJSONArray("authors");
-						for(int idAuthor = 0; idAuthor < arrayAuthors.length(); idAuthor++)
-						{
-							JSONObject author = arrayAuthors.getJSONObject(idAuthor);
-							
-							String email = null;
-							if (author.has("email") && !author.isNull("email")) { email = author.getString("email"); }
-							
-							String organisation = null;
-							if (author.has("organisation") && !author.isNull("organisation")) { organisation = author.getString("organisation"); }
-							String orcid = null;
-							if (author.has("orcid") && !author.isNull("orcid")) { orcid = author.getString("orcid"); }
-							
-							metadata.addAuthor(qualifierName, author.getString("name"), author.getString("surname"), email, organisation, orcid);
-						}
-					}
-					else if (qualifierClass.equals("DateAnnotation")) {
-						
-						metadata.addDate(qualifierName, jsonAlternative.getString("date"));
-					}
-					else if (qualifierClass.equals("DistributionAnnotation")) {
-
-						metadata.addDistribution(qualifierName, jsonAlternative.getString("distribution"));
-					}
-					
-					if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
-						
-						Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName);
-						
-						this.importElementMetadata(metadataQualifier, jsonAlternative.getJSONObject("nested"));
-					}
-				}
-			}
-		}
-		// if there is some notes we add the json representation in the json object
-		if (json.has("notes") && !json.isNull("notes")) {
-			
-			String existingNotes = metadata.getNotes();
-			metadata.setNotes(existingNotes + json.get("notes"));
-		}
-	}
-	
 	@Override
 	public void importMetadata(String filename) {
 		try {
@@ -534,7 +391,7 @@ public class LogicalModelImpl implements LogicalModel {
 			if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
 				Metadata metadataModel = this.getMetadataOfModel();
 				
-				this.importElementMetadata(metadataModel, json);
+				metadataModel.importElementMetadata(json);
 			}
 			
 			// we import the metadata concerning each node
@@ -547,7 +404,7 @@ public class LogicalModelImpl implements LogicalModel {
 				if (node != null) {
 					Metadata metadataNode = this.getMetadataOfNode(node);
 					
-					this.importElementMetadata(metadataNode, jsonNode);
+					metadataNode.importElementMetadata(jsonNode);
 				}
 			}
 			

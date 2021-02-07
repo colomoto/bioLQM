@@ -140,15 +140,15 @@ public class TestMetadata {
 		
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
-		modelMetadata.createAlternative("isDescribedBy");
-		modelMetadata.addTag("isDescribedBy", 1, "doi");
+		modelMetadata.addDate("created", "1996-05-29");
 		
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("isDescribedBy");
-		
-		nestedMetadata.addDate("creator", "1996-05-28");
-		nestedMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
+		nestedMetadata.addURI("toto", "doi", "10.1002/0470841559.ch1");
+		nestedMetadata.addDate("creator", "1998-05-29");
 		
 		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		
+		modelMetadata.addDate("created", "1996-05-29");
 		
 		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		

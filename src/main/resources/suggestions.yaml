@@ -176,6 +176,15 @@ dcterms:
     model: 
       probability: compulsory
       collections: [uniprot, chebi]
+    species: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    transition: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    nested: 
+      probability: possible
+      collections: [uniprot, chebi]
 
 - term: created
   description: date created
@@ -184,6 +193,15 @@ dcterms:
   appears: 
     model: 
       probability: compulsory
+      collections: [uniprot, chebi]
+    species: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    transition: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    nested: 
+      probability: possible
       collections: [uniprot, chebi]
 
 - term: modified
@@ -194,6 +212,15 @@ dcterms:
     model: 
       probability: compulsory
       collections: [uniprot, chebi]
+    species: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    transition: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    nested: 
+      probability: possible
+      collections: [uniprot, chebi]
   
 - term: license
   description: license
@@ -202,5 +229,14 @@ dcterms:
   appears: 
     model: 
       probability: compulsory
+      collections: [uniprot, chebi]
+    species: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    transition: 
+      probability: compulsory
+      collections: [uniprot, chebi]
+    nested: 
+      probability: possible
       collections: [uniprot, chebi]
   

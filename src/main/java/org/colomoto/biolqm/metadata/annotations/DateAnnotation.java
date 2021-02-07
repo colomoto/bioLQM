@@ -40,7 +40,7 @@ class DateAnnotation extends Annotation {
 	// functions	
 	@Override
 	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
-
+	
 		this.date = contentAnnotation[0];
 	}
 	
