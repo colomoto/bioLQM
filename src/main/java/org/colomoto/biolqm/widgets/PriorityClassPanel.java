@@ -322,7 +322,7 @@ public class PriorityClassPanel extends JPanel {
 					 
 					 // -- Order variables alphabetically 
 					 Collections.sort(vars,String.CASE_INSENSITIVE_ORDER);
-					 
+					
 					 for (int d = 0; d < rates.keySet().size(); d++) { 
 						 String node = vars.get(d);
 						 String nodeRate = Double.toString(rates.get(node));
@@ -371,6 +371,8 @@ public class PriorityClassPanel extends JPanel {
 				JList<String> jList = new JList<String>(lModel);
 				jList.setBorder(BorderFactory.createLoweredBevelBorder());
 				jList.setFixedCellWidth(this.GROUP_WIDTH);
+				jList.setFixedCellHeight(20);
+
 				jList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				jList.setBackground(Color.gray);
 				

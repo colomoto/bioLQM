@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 
 /**
  * Updater picking a random successor in the asynchronous scheme, with optional rates.
@@ -44,7 +45,6 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         } else {
         		this.rates = rates;
         	}
-
     }
 
 	@Override
@@ -57,12 +57,24 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
 		for (int idx=0 ; idx < size ; idx++) {
 			int change = nodeChange(state, idx);
+						            
+			
+			 if (this.filter != null && this.filter.length != 0) { 
+				 SplittingType splt = this.filter[idx]; 
+				 if (splt.equals(SplittingType.MERGED)) { 
+					 // check if "splited" in rates 
+					 // ??????????????????????????? 
+				 } 
+			 }
+			 
+			
 			if (change == 0) {
                 continue;
             }
 
-            // store the available change
             double r = this.rates[idx]; 
+
+            // store the available change
             totalrate += r;
             step_rates[nb_changes] = totalrate;
             step_changes[nb_changes][0] = idx;
@@ -98,7 +110,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         double s = 0;
         int idx = 0;
         double r = totalrate * random.nextDouble();
-        for (  ; idx<nb_changes ; idx++) {
+        for (  ; idx <= nb_changes ; idx++) {
             s = step_rates[idx];
             if (s >= r) {
                 break;
