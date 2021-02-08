@@ -19,10 +19,10 @@ import java.io.InputStream;
 public class QualifiersAvailable {
 	
 	// variables
-	public Map<String, Qualifier> model;
-	public Map<String, Qualifier> species;
-	public Map<String, Qualifier> transition;
-	public Map<String, Qualifier> nested;
+	private Map<String, Qualifier> model;
+	private Map<String, Qualifier> species;
+	private Map<String, Qualifier> transition;
+	private Map<String, Qualifier> nested;
 	
 	// constructors
 	public QualifiersAvailable() {

@@ -1,0 +1,149 @@
+-prefix: chebi
+ pattern: ChEBI
+
+-prefix: ensembl
+ pattern: Ensembl
+
+-prefix: ec-code
+ pattern: Enzyme Nomenclature
+
+-prefix: uniprot
+ pattern: UniProt Knowledgebase
+
+-prefix: taxonomy
+ pattern: Taxonomy
+
+-prefix: biomodels.db
+ pattern: BioModels Database
+
+-prefix: icd
+ pattern: ICD
+
+-prefix: intact
+ pattern: IntAct
+
+-prefix: interpro
+ pattern: InterPro
+
+-prefix: kegg.pathway
+ pattern: KEGG Pathway
+
+-prefix: kegg.compound
+ pattern: KEGG Compound
+
+-prefix: kegg.reaction
+ pattern: KEGG Reaction
+
+-prefix: pubmed
+ pattern: PubMed
+
+-prefix: mim
+ pattern: OMIM
+
+-prefix: pirsf
+ pattern: PIRSF
+
+-prefix: reactome
+ pattern: Reactome
+
+-prefix: doi
+ pattern: DOI
+
+-prefix: pdb
+ pattern: Protein Data Bank
+
+-prefix: go
+ pattern: Gene Ontology
+
+-prefix: sgd
+ pattern: SGD
+
+-prefix: sbo
+ pattern: Systems Biology Ontology
+
+-prefix: kegg.drug
+ pattern: KEGG Drug
+
+-prefix: kegg.glycan
+ pattern: KEGG Glycan
+
+-prefix: wb
+ pattern: WormBase
+
+-prefix: pfam
+ pattern: Pfam
+
+-prefix: insdc
+ pattern: Nucleotide Sequence Database
+
+-prefix: fb
+ pattern: FlyBase
+
+-prefix: wormpep
+ pattern: Wormpep
+
+-prefix: prosite
+ pattern: PROSITE
+
+-prefix: pubchem.substance
+ pattern: PubChem-substance
+
+-prefix: pubchem.compound
+ pattern: PubChem-compound
+
+-prefix: arxiv
+ pattern: arXiv
+
+-prefix: arrayexpress
+ pattern: ArrayExpress
+
+-prefix: mgi
+ pattern: Mouse Genome Database
+
+-prefix: sabiork.reaction
+ pattern: SABIO-RK Reaction
+
+-prefix: tcdb
+ pattern: Transport Classification Database
+
+-prefix: uniparc
+ pattern: UniParc
+
+-prefix: mint
+ pattern: MINT
+
+-prefix: dip
+ pattern: Database of Interacting Proteins
+
+-prefix: signaling-gateway
+ pattern: Signaling Gateway
+
+-prefix: resid
+ pattern: RESID
+
+-prefix: rgd
+ pattern: Rat Genome Database
+
+-prefix: tair.protein
+ pattern: TAIR Protein
+
+-prefix: tair.gene
+ pattern: TAIR Gene
+
+-prefix: tair.locus
+ pattern: TAIR Locus
+
+-prefix: hmdb
+ pattern: HMDB
+
+-prefix: lipidmaps
+ pattern: LIPID MAPS
+
+-prefix: peptideatlas
+ pattern: PeptideAtlas
+
+-prefix: geo
+ pattern: GEO
+
+-prefix: eco
+ pattern: Evidence Code Ontology

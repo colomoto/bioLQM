@@ -140,7 +140,9 @@ public class TestMetadata {
 		
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
-		modelMetadata.addDate("created", "1996-05-29");
+		modelMetadata.addURI("isDescribedBy", "doi", "maissicesttintinaupaysdelornoir");
+		
+/* 		modelMetadata.addDate("created", "1996-05-29");
 		
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("isDescribedBy");
 		nestedMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
@@ -169,7 +171,7 @@ public class TestMetadata {
 		nodenestedMetadata.addURI("isDescribedBy", "doi", "jesaispassicesttintinaupaysdelornoir");
 		
 		System.out.println(nodeMetadata.getDescriptionMetadata(true));
-		
+		 */
 /* 		for (NodeInfo elementNode: model.getComponents()) {
 			System.out.println(elementNode.getNodeID());
 			Metadata elementNodeMetadata = model.getMetadataOfNode(elementNode);

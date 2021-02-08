@@ -1,0 +1,1182 @@
+{
+  "_embedded" : {
+    "namespaces" : [ {
+      "prefix" : "chebi",
+      "mirId" : "MIR:00000002",
+      "name" : "ChEBI",
+      "pattern" : "^CHEBI:\\d+$",
+      "description" : "Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on 'small' chemical compounds.",
+      "created" : "2019-06-11T14:15:26.925+0000",
+      "modified" : "2019-06-11T14:15:26.925+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "36927",
+      "namespaceEmbeddedInLui" : true,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/1"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/1"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/1/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "ensembl",
+      "mirId" : "MIR:00000003",
+      "name" : "Ensembl",
+      "pattern" : "^((ENS[FPTG]\\\\d{11}(\\\\.\\\\d+)?)|(FB\\\\w{2}\\\\d{7})|(Y[A-Z]{2}\\\\d{3}[a-zA-Z](\\\\-[A-Z])?)|([A-Z_a-z0-9]+(\\\\.)?(t)?(\\\\d+)?([a-z])?))$",
+      "description" : "Ensembl is a joint project between EMBL - EBI and the Sanger Institute  to develop a software system which produces and maintains automatic annotation on selected eukaryotic genomes. This collections also references outgroup organisms.",
+      "created" : "2019-06-11T14:15:27.869+0000",
+      "modified" : "2019-06-11T14:15:27.869+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "ENSG00000139618",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/7"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/7"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/7/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "ec-code",
+      "mirId" : "MIR:00000004",
+      "name" : "Enzyme Nomenclature",
+      "pattern" : "^\\d+\\.-\\.-\\.-|\\d+\\.\\d+\\.-\\.-|\\d+\\.\\d+\\.\\d+\\.-|\\d+\\.\\d+\\.\\d+\\.(n)?\\d+$",
+      "description" : "The Enzyme Classification contains the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology on the nomenclature and classification of enzyme-catalysed reactions.",
+      "created" : "2019-06-11T14:15:28.483+0000",
+      "modified" : "2019-06-11T14:15:28.483+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "1.1.1.1",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/13"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/13"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/13/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "uniprot",
+      "mirId" : "MIR:00000005",
+      "name" : "UniProt Knowledgebase",
+      "pattern" : "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\\.\\d+)?$",
+      "description" : "The UniProt Knowledgebase (UniProtKB) is a comprehensive resource for protein sequence and functional information with extensive cross-references to more than 120 external databases. Besides amino acid sequence and a description, it also provides taxonomic data and citation information.",
+      "created" : "2019-06-11T14:15:29.457+0000",
+      "modified" : "2019-06-11T14:15:29.457+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "P0DP23",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/23"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/23"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/23/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "taxonomy",
+      "mirId" : "MIR:00000006",
+      "name" : "Taxonomy",
+      "pattern" : "^\\d+$",
+      "description" : "The taxonomy contains the relationships between all living forms for which nucleic acid or protein sequence have been determined.",
+      "created" : "2019-06-11T14:15:29.882+0000",
+      "modified" : "2019-06-11T14:15:29.882+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "9606",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/28"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/28"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/28/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "biomodels.db",
+      "mirId" : "MIR:00000007",
+      "name" : "BioModels Database",
+      "pattern" : "^((BIOMD|MODEL)\\d{10})|(BMID\\d{12})$",
+      "description" : "BioModels Database is a data resource that allows biologists to store, search and retrieve published mathematical models of biological interests.",
+      "created" : "2019-06-11T14:15:30.877+0000",
+      "modified" : "2019-06-11T14:15:30.877+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "BIOMD0000000048",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/36"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/36"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/36/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "icd",
+      "mirId" : "MIR:00000009",
+      "name" : "ICD",
+      "pattern" : "^[A-Z]\\d+(\\.[-\\d+])?$",
+      "description" : "The International Classification of Diseases is the international standard diagnostic classification for all general epidemiological and many health management purposes.",
+      "created" : "2019-06-11T14:15:31.658+0000",
+      "modified" : "2019-06-11T14:15:31.658+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "C34",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/43"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/43"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/43/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "intact",
+      "mirId" : "MIR:00000010",
+      "name" : "IntAct",
+      "pattern" : "^EBI\\-[0-9]+$",
+      "description" : "IntAct provides a freely available, open source database system and analysis tools for protein interaction data.",
+      "created" : "2019-06-11T14:15:31.920+0000",
+      "modified" : "2019-06-11T14:15:31.920+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "EBI-2307691",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/46"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/46"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/46/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "interpro",
+      "mirId" : "MIR:00000011",
+      "name" : "InterPro",
+      "pattern" : "^IPR\\d{6}$",
+      "description" : "InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.",
+      "created" : "2019-06-11T14:15:32.153+0000",
+      "modified" : "2019-06-11T14:15:32.153+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "IPR000100",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/48"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/48"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/48/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "kegg.pathway",
+      "mirId" : "MIR:00000012",
+      "name" : "KEGG Pathway",
+      "pattern" : "^\\w{2,4}\\d{5}$",
+      "description" : "KEGG PATHWAY is a collection of manually drawn pathway maps representing our knowledge on the molecular interaction and reaction networks.",
+      "created" : "2019-06-11T14:15:32.480+0000",
+      "modified" : "2019-06-11T14:15:32.480+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "hsa00620",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/51"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/51"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/51/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "kegg.compound",
+      "mirId" : "MIR:00000013",
+      "name" : "KEGG Compound",
+      "pattern" : "^C\\d+$",
+      "description" : "KEGG compound contains our knowledge on the universe of chemical substances that are relevant to life.",
+      "created" : "2019-06-11T14:15:32.730+0000",
+      "modified" : "2019-06-11T14:15:32.730+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "C12345",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/53"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/53"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/53/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "kegg.reaction",
+      "mirId" : "MIR:00000014",
+      "name" : "KEGG Reaction",
+      "pattern" : "^R\\d+$",
+      "description" : "KEGG reaction contains our knowledge on the universe of reactions that are relevant to life.",
+      "created" : "2019-06-11T14:15:32.930+0000",
+      "modified" : "2019-06-11T14:15:32.930+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "R00100",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/55"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/55"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/55/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "pubmed",
+      "mirId" : "MIR:00000015",
+      "name" : "PubMed",
+      "pattern" : "^\\d+$",
+      "description" : "PubMed is a service of the U.S. National Library of Medicine that includes citations from MEDLINE and other life science journals for biomedical articles back to the 1950s.",
+      "created" : "2019-06-11T14:15:33.142+0000",
+      "modified" : "2019-06-11T14:15:33.142+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "16333295",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/57"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/57"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/57/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "mim",
+      "mirId" : "MIR:00000016",
+      "name" : "OMIM",
+      "pattern" : "^[*#+%^]?\\d{6}$",
+      "description" : "Online Mendelian Inheritance in Man is a catalog of human genes and genetic disorders.",
+      "created" : "2019-06-11T14:15:33.878+0000",
+      "modified" : "2019-06-11T14:15:33.878+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "603903",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/65"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/65"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/65/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "pirsf",
+      "mirId" : "MIR:00000017",
+      "name" : "PIRSF",
+      "pattern" : "^PIRSF\\d{6}$",
+      "description" : "The PIR SuperFamily concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships.",
+      "created" : "2019-06-11T14:15:34.294+0000",
+      "modified" : "2019-06-11T14:15:34.294+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "PIRSF000100",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/69"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/69"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/69/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "reactome",
+      "mirId" : "MIR:00000018",
+      "name" : "Reactome",
+      "pattern" : "(^R-[A-Z]{3}-\\d+(-\\d+)?(\\.\\d+)?$)|(^REACT_\\d+(\\.\\d+)?$)",
+      "description" : "The Reactome project is a collaboration to develop a curated resource of core pathways and reactions in human biology.",
+      "created" : "2019-06-11T14:15:34.555+0000",
+      "modified" : "2019-06-11T14:15:34.555+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "R-HSA-201451",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/72"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/72"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/72/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "doi",
+      "mirId" : "MIR:00000019",
+      "name" : "DOI",
+      "pattern" : "^(doi\\:)?\\d{2}\\.\\d{4}.*$",
+      "description" : "The Digital Object Identifier System is for identifying content objects in the digital environment.",
+      "created" : "2019-06-11T14:15:34.841+0000",
+      "modified" : "2019-06-11T14:15:34.841+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "10.1038/nbt1156",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/75"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/75"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/75/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "pdb",
+      "mirId" : "MIR:00000020",
+      "name" : "Protein Data Bank",
+      "pattern" : "^[0-9][A-Za-z0-9]{3}$",
+      "description" : "The Protein Data Bank is the single worldwide archive of structural data of biological macromolecules.",
+      "created" : "2019-06-11T14:15:35.100+0000",
+      "modified" : "2019-06-11T14:15:35.100+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "2gc4",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/78"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/78"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/78/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "go",
+      "mirId" : "MIR:00000022",
+      "name" : "Gene Ontology",
+      "pattern" : "^GO:\\d{7}$",
+      "description" : "The Gene Ontology project provides a controlled vocabulary to describe gene and gene product attributes in any organism.",
+      "created" : "2019-06-11T14:15:35.970+0000",
+      "modified" : "2019-06-11T14:15:35.970+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "0006915",
+      "namespaceEmbeddedInLui" : true,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/87"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/87"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/87/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "sgd",
+      "mirId" : "MIR:00000023",
+      "name" : "SGD",
+      "pattern" : "^((S\\d+$)|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?))$",
+      "description" : "The Saccharomyces Genome Database (SGD) project collects information and maintains a database of the molecular biology of the yeast Saccharomyces cerevisiae.",
+      "created" : "2019-06-11T14:15:37.056+0000",
+      "modified" : "2019-06-11T14:15:37.056+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "S000003909",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/97"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/97"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/97/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "sbo",
+      "mirId" : "MIR:00000024",
+      "name" : "Systems Biology Ontology",
+      "pattern" : "^SBO:\\d{7}$",
+      "description" : "The goal of the Systems Biology Ontology is to develop controlled vocabularies and ontologies tailored specifically for the kinds of problems being faced in Systems Biology, especially in the context of computational modeling. SBO is a project of the BioModels.net effort.",
+      "created" : "2019-06-11T14:15:37.756+0000",
+      "modified" : "2019-06-11T14:15:37.756+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "0000262",
+      "namespaceEmbeddedInLui" : true,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/105"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/105"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/105/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "kegg.drug",
+      "mirId" : "MIR:00000025",
+      "name" : "KEGG Drug",
+      "pattern" : "^D\\d+$",
+      "description" : "KEGG DRUG contains chemical structures of drugs and additional information such as therapeutic categories and target molecules.",
+      "created" : "2019-06-11T14:15:38.268+0000",
+      "modified" : "2019-06-11T14:15:38.268+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "D00123",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/109"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/109"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/109/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "kegg.glycan",
+      "mirId" : "MIR:00000026",
+      "name" : "KEGG Glycan",
+      "pattern" : "^G\\d+$",
+      "description" : "KEGG GLYCAN, a part of the KEGG LIGAND database, is a collection of experimentally determined glycan structures. It contains all unique structures taken from CarbBank, structures entered from recent publications, and structures present in KEGG pathways.",
+      "created" : "2019-06-11T14:15:38.579+0000",
+      "modified" : "2019-06-11T14:15:38.579+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "G00123",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/111"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/111"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/111/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "wb",
+      "mirId" : "MIR:00000027",
+      "name" : "WormBase",
+      "pattern" : "^WB[A-Z][a-z]+\\d+$",
+      "description" : "WormBase is an online bioinformatics database of the biology and genome of the model organism Caenorhabditis elegans and other nematodes. It is used by the C. elegans research community both as an information resource and as a mode to publish and distribute their results. This collection references WormBase-accessioned entities.",
+      "created" : "2019-06-11T14:15:38.790+0000",
+      "modified" : "2019-06-11T14:15:38.790+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "WBGene00000001",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/113"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/113"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/113/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "pfam",
+      "mirId" : "MIR:00000028",
+      "name" : "Pfam",
+      "pattern" : "^PF\\d{5}$",
+      "description" : "The Pfam database contains information about protein domains and families. For each entry a protein sequence alignment and a Hidden Markov Model is stored.",
+      "created" : "2019-06-11T14:15:39.270+0000",
+      "modified" : "2019-06-11T14:15:39.270+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "PF01234",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/117"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/117"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/117/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "insdc",
+      "mirId" : "MIR:00000029",
+      "name" : "Nucleotide Sequence Database",
+      "pattern" : "^([A-Z]\\d{5}|[A-Z]{2}\\d{6}|[A-Z]{4}\\d{8}|[A-J][A-Z]{2}\\d{5})(\\.\\d+)?$",
+      "description" : "The International Nucleotide Sequence Database Collaboration (INSDC) consists of a joint effort to collect and disseminate databases containing DNA and RNA sequences.",
+      "created" : "2019-06-11T14:15:39.496+0000",
+      "modified" : "2019-06-11T14:15:39.496+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "X58356",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/119"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/119"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/119/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "fb",
+      "mirId" : "MIR:00000030",
+      "name" : "FlyBase",
+      "pattern" : "^FB\\w{2}\\d{7}$",
+      "description" : "FlyBase is the database of the Drosophila Genome Projects and of associated literature.",
+      "created" : "2019-06-11T14:15:40.188+0000",
+      "modified" : "2019-06-11T14:15:40.188+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "FBgn0011293",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/125"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/125"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/125/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "wormpep",
+      "mirId" : "MIR:00000031",
+      "name" : "Wormpep",
+      "pattern" : "^CE\\d{5}$",
+      "description" : "Wormpep contains the predicted proteins from the Caenorhabditis elegans genome sequencing project.",
+      "created" : "2019-06-11T14:15:40.709+0000",
+      "modified" : "2019-06-11T14:15:40.709+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "CE28239",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/130"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/130"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/130/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "prosite",
+      "mirId" : "MIR:00000032",
+      "name" : "PROSITE",
+      "pattern" : "^PS\\d{5}$",
+      "description" : "PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them.",
+      "created" : "2019-06-11T14:15:40.983+0000",
+      "modified" : "2019-06-11T14:15:40.983+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "PS00001",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/133"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/133"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/133/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "pubchem.substance",
+      "mirId" : "MIR:00000033",
+      "name" : "PubChem-substance",
+      "pattern" : "^\\d+$",
+      "description" : "PubChem provides information on the biological activities of small molecules. It is a component of NIH's Molecular Libraries Roadmap Initiative. PubChem Substance archives chemical substance records.",
+      "created" : "2019-06-11T14:15:41.269+0000",
+      "modified" : "2019-06-11T14:15:41.269+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "100101",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/136"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/136"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/136/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "pubchem.compound",
+      "mirId" : "MIR:00000034",
+      "name" : "PubChem-compound",
+      "pattern" : "^\\d+$",
+      "description" : "PubChem provides information on the biological activities of small molecules. It is a component of NIH's Molecular Libraries Roadmap Initiative. PubChem Compound archives chemical structures and records.",
+      "created" : "2019-06-11T14:15:41.493+0000",
+      "modified" : "2019-06-11T14:15:41.493+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "100101",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/138"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/138"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/138/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "arxiv",
+      "mirId" : "MIR:00000035",
+      "name" : "arXiv",
+      "pattern" : "^(\\w+(\\-\\w+)?(\\.\\w+)?)?\\d{4,7}(\\.\\d+(v\\d+)?)?$",
+      "description" : "arXiv is an e-print service in the fields of physics, mathematics, non-linear science, computer science, and quantitative biology.",
+      "created" : "2019-06-11T14:15:41.707+0000",
+      "modified" : "2019-06-11T14:15:41.707+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "0807.4956v1",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/140"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/140"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/140/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "arrayexpress",
+      "mirId" : "MIR:00000036",
+      "name" : "ArrayExpress",
+      "pattern" : "^[AEP]-\\w{4}-\\d+$",
+      "description" : "ArrayExpress is a public repository for microarray data, which is aimed at storing MIAME-compliant data in accordance with Microarray Gene Expression Data (MGED) recommendations.",
+      "created" : "2019-06-11T14:15:41.970+0000",
+      "modified" : "2019-06-11T14:15:41.970+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "E-MEXP-1712",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/143"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/143"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/143/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "mgi",
+      "mirId" : "MIR:00000037",
+      "name" : "Mouse Genome Database",
+      "pattern" : "^MGI:\\d+$",
+      "description" : "The Mouse Genome Database (MGD) project includes data on gene characterization, nomenclature, mapping, gene homologies among mammals, sequence links, phenotypes, allelic variants and mutants, and strain data.",
+      "created" : "2019-06-11T14:15:42.331+0000",
+      "modified" : "2019-06-11T14:15:42.331+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "2442292",
+      "namespaceEmbeddedInLui" : true,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/146"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/146"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/146/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "sabiork.reaction",
+      "mirId" : "MIR:00000038",
+      "name" : "SABIO-RK Reaction",
+      "pattern" : "^\\d+$",
+      "description" : "SABIO-RK is a relational database system that contains information about biochemical reactions, their kinetic equations with their parameters, and the experimental conditions under which these parameters were measured. The reaction data set provides information regarding the organism in which a reaction is observed, pathways in which it participates, and links to further information.",
+      "created" : "2019-06-11T14:15:42.838+0000",
+      "modified" : "2019-06-11T14:15:42.838+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "75",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/150"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/150"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/150/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "tcdb",
+      "mirId" : "MIR:00000040",
+      "name" : "Transport Classification Database",
+      "pattern" : "^\\d+(\\.[A-Z])?(\\.\\d+)?(\\.\\d+)?(\\.\\d+)?$",
+      "description" : "The database details a comprehensive  IUBMB approved classification system for membrane transport proteins known as the Transporter Classification (TC) system. The TC system is analogous to the Enzyme Commission (EC) system for classification of enzymes, but incorporates phylogenetic information additionally.",
+      "created" : "2019-06-11T14:15:43.342+0000",
+      "modified" : "2019-06-11T14:15:43.342+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "5.A.1.1.1",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/156"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/156"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/156/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "uniparc",
+      "mirId" : "MIR:00000041",
+      "name" : "UniParc",
+      "pattern" : "^UPI[A-F0-9]{10}$",
+      "description" : "The UniProt Archive (UniParc) is a  database containing non-redundant protein sequence information from many sources. Each unique sequence is given a stable and unique identifier (UPI) making it possible to identify the same protein from different source databases.",
+      "created" : "2019-06-11T14:15:43.590+0000",
+      "modified" : "2019-06-11T14:15:43.590+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "UPI000000000A",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/159"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/159"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/159/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "mint",
+      "mirId" : "MIR:00000042",
+      "name" : "MINT",
+      "pattern" : "^MINT\\-\\d{1,7}$",
+      "description" : "The Molecular INTeraction database (MINT) stores, in a structured format, information about molecular interactions by extracting experimental details from work published in peer-reviewed journals.",
+      "created" : "2019-06-11T14:15:43.925+0000",
+      "modified" : "2019-06-11T14:15:43.925+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "MINT-10000",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/162"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/162"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/162/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "dip",
+      "mirId" : "MIR:00000044",
+      "name" : "Database of Interacting Proteins",
+      "pattern" : "^DIP(\\:)?\\-\\d{1,}[ENXS]$",
+      "description" : "The database of interacting protein (DIP) database stores experimentally determined interactions between proteins. It combines information from a variety of sources to create a single, consistent set of protein-protein interactions",
+      "created" : "2019-06-11T14:15:44.329+0000",
+      "modified" : "2019-06-11T14:15:44.329+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "DIP-743N",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/166"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/166"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/166/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "signaling-gateway",
+      "mirId" : "MIR:00000045",
+      "name" : "Signaling Gateway",
+      "pattern" : "A\\d{6}$",
+      "description" : "The Signaling Gateway provides  information on  mammalian proteins involved in cellular signaling.",
+      "created" : "2019-06-11T14:15:44.579+0000",
+      "modified" : "2019-06-11T14:15:44.579+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "A001094",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/169"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/169"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/169/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "resid",
+      "mirId" : "MIR:00000046",
+      "name" : "RESID",
+      "pattern" : "^AA\\d{4}$",
+      "description" : "The RESID Database of Protein Modifications is a comprehensive collection of annotations and structures for protein modifications including amino-terminal, carboxyl-terminal and peptide chain cross-link post-translational modifications.",
+      "created" : "2019-06-11T14:15:44.821+0000",
+      "modified" : "2019-06-11T14:15:44.821+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "AA0001",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/172"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/172"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/172/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "rgd",
+      "mirId" : "MIR:00000047",
+      "name" : "Rat Genome Database",
+      "pattern" : "^\\d{4,}$",
+      "description" : "Rat Genome Database seeks to collect, consolidate, and integrate rat genomic and genetic data with curated functional and physiological data and make these data widely available to the scientific community. This collection references genes.",
+      "created" : "2019-06-11T14:15:45.062+0000",
+      "modified" : "2019-06-11T14:15:45.062+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "2018",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/175"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/175"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/175/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "tair.protein",
+      "mirId" : "MIR:00000048",
+      "name" : "TAIR Protein",
+      "pattern" : "^AASequence:\\d{10}$",
+      "description" : "The Arabidopsis Information Resource (TAIR) maintains a database of genetic and molecular biology data for the model higher plant Arabidopsis thaliana. This provides protein information for a given gene model and provides links to other sources such as UniProtKB and GenPept",
+      "created" : "2019-06-11T14:15:45.813+0000",
+      "modified" : "2019-06-11T14:15:45.813+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "AASequence:1009107926",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/179"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/179"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/179/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "tair.gene",
+      "mirId" : "MIR:00000049",
+      "name" : "TAIR Gene",
+      "pattern" : "^Gene:\\d{7}$",
+      "description" : "The Arabidopsis Information Resource (TAIR) maintains a database of genetic and molecular biology data for the model higher plant Arabidopsis thaliana. This is the reference gene model for a given locus.",
+      "created" : "2019-06-11T14:15:46.061+0000",
+      "modified" : "2019-06-11T14:15:46.061+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "Gene:2200934",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/182"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/182"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/182/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "tair.locus",
+      "mirId" : "MIR:00000050",
+      "name" : "TAIR Locus",
+      "pattern" : "^\\d{7}$",
+      "description" : "The Arabidopsis Information Resource (TAIR) maintains a database of genetic and molecular biology data for the model higher plant Arabidopsis thaliana. The name of a Locus is unique and used by TAIR, TIGR, and MIPS.",
+      "created" : "2019-06-11T14:15:46.274+0000",
+      "modified" : "2019-06-11T14:15:46.274+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "2200950",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/184"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/184"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/184/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "hmdb",
+      "mirId" : "MIR:00000051",
+      "name" : "HMDB",
+      "pattern" : "^HMDB\\d+$",
+      "description" : "The Human Metabolome Database (HMDB) is a database containing detailed information about small molecule metabolites found in the human body.It contains or links 1) chemical 2) clinical and 3) molecular biology/biochemistry data.",
+      "created" : "2019-06-11T14:15:46.469+0000",
+      "modified" : "2019-06-11T14:15:46.469+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "HMDB00001",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/186"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/186"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/186/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "lipidmaps",
+      "mirId" : "MIR:00000052",
+      "name" : "LIPID MAPS",
+      "pattern" : "^LM(FA|GL|GP|SP|ST|PR|SL|PK)[0-9]{4}([0-9a-zA-Z]{4,6})?$",
+      "description" : "The LIPID MAPS Lipid Classification System is comprised of eight lipid categories, each with its own subclassification hierarchy. All lipids in the LIPID MAPS Structure Database (LMSD) have been classified using this system and have been assigned LIPID MAPS ID's which reflects their position in the classification hierarchy.",
+      "created" : "2019-06-11T14:15:46.708+0000",
+      "modified" : "2019-06-11T14:15:46.708+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "LMPR0102010012",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/189"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/189"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/189/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "peptideatlas",
+      "mirId" : "MIR:00000053",
+      "name" : "PeptideAtlas",
+      "pattern" : "^PAp[0-9]{8}$",
+      "description" : "The PeptideAtlas Project provides a publicly accessible database of peptides identified in tandem mass spectrometry proteomics studies and software tools.",
+      "created" : "2019-06-11T14:15:46.969+0000",
+      "modified" : "2019-06-11T14:15:46.969+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "PAp00000009",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/192"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/192"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/192/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "geo",
+      "mirId" : "MIR:00000054",
+      "name" : "GEO",
+      "pattern" : "^G(PL|SM|SE|DS)\\d+$",
+      "description" : "The Gene Expression Omnibus (GEO) is a gene expression repository providing a curated, online resource for gene expression data browsing, query and retrieval.",
+      "created" : "2019-06-11T14:15:47.245+0000",
+      "modified" : "2019-06-11T14:15:47.245+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "GDS1234",
+      "namespaceEmbeddedInLui" : false,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/195"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/195"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/195/contactPerson"
+        }
+      }
+    }, {
+      "prefix" : "eco",
+      "mirId" : "MIR:00000055",
+      "name" : "Evidence Code Ontology",
+      "pattern" : "ECO:\\d{7}$",
+      "description" : "Evidence codes can be used to specify the type of supporting evidence for a piece of knowledge. This allows inference of a 'level of support' between an entity and an annotation made to an entity.",
+      "created" : "2019-06-11T14:15:47.447+0000",
+      "modified" : "2019-06-11T14:15:47.447+0000",
+      "deprecated" : false,
+      "deprecationDate" : null,
+      "sampleId" : "0000006",
+      "namespaceEmbeddedInLui" : true,
+      "_links" : {
+        "self" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/197"
+        },
+        "namespace" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/197"
+        },
+        "contactPerson" : {
+          "href" : "https://registry.api.identifiers.org/restApi/namespaces/197/contactPerson"
+        }
+      }
+    } ]
+  },
+  "_links" : {
+    "first" : {
+      "href" : "https://registry.api.identifiers.org/restApi/namespaces?page=0&size=50"
+    },
+    "self" : {
+      "href" : "https://registry.api.identifiers.org/restApi/namespaces{&sort}",
+      "templated" : true
+    },
+    "next" : {
+      "href" : "https://registry.api.identifiers.org/restApi/namespaces?page=1&size=50"
+    },
+    "last" : {
+      "href" : "https://registry.api.identifiers.org/restApi/namespaces?page=14&size=50"
+    },
+    "profile" : {
+      "href" : "https://registry.api.identifiers.org/restApi/profile/namespaces"
+    },
+    "search" : {
+      "href" : "https://registry.api.identifiers.org/restApi/namespaces/search"
+    }
+  },
+  "page" : {
+    "size" : 50,
+    "totalElements" : 714,
+    "totalPages" : 15,
+    "number" : 0
+  }
+}

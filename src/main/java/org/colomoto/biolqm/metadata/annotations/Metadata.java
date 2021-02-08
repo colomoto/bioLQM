@@ -138,33 +138,51 @@ public class Metadata {
 	
 	private boolean isValidURI(String collection, String identifier) {
 		
-		// check the internet connection
+		// first we look into the patterns saved because they are saved by default or because they were used already in the model
+		Map<String, String> collections = this.modelConstants.getCollectionsAvailable();
+		if (collections.containsKey(collection)) {
+			if (identifier.matches(collections.get(collection))) {
+				System.out.println(collection+identifier);
+				return true;
+			}
+			else {
+				System.err.println("Error checking the uri: the identifier is not valid according to identifiers.org." + "\n");
+				return false;
+			}
+		}
+		
+		// and if it doesn't work we check the internet connection
 	    try {
 			URL url = new URL("http://www.google.com");
 			URLConnection connection = url.openConnection();
 			connection.connect();
 		} catch (MalformedURLException e) {
-			System.out.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
+			System.err.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
 			return true;
 		} catch (IOException e) {
-			System.out.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
+			System.err.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
 			return true;
 		}
 		
-		String compactId = collection+":"+identifier;
-		String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
+		// to go check the uri with the api of identifiers.org
+		String stringURL = "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix="+collection;
 		
+		System.out.println(collection+identifier);
 		try {
-			JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
-			
-			if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
+			JSONObject jsonCollection = JsonReader.readJsonFromUrl(stringURL);
+			System.out.println(jsonCollection.getString("pattern"));
+			if (jsonCollection.has("pattern") && !jsonCollection.isNull("pattern") && identifier.matches(jsonCollection.getString("pattern"))) {
+				System.out.println(true);
+				// we add the pattern of the collection to our internal list for further uses without the internet
+				this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(collection, jsonCollection.getString("pattern"));
+				
 				return true;
 			}
 			else {
-				System.err.println("The URI is not valid: it should be a valid entry for identifiers.org." + "\n");
+				System.err.println("Error checking the uri: the identifier is not valid according to identifiers.org." + "\n");
 			}
 		} catch (IOException e) {
-			System.err.println("Error checking the uri: it should be a valid entry for identifiers.org.." + "\n");
+			System.err.println("Error checking the uri: the collection is not valid according to identifiers.org." + "\n");
 		}
 		return false;
 	}
@@ -268,6 +286,7 @@ public class Metadata {
 	 * @param identifier the entry one wants to point at in the collection
 	 */	
 	public void addURI(String termDesired, int alternative, String collection, String identifier) {
+
 		if (!this.isValidURI(collection, identifier)) {
 			return;
 		}

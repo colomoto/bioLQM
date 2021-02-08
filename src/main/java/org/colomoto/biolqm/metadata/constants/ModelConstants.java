@@ -10,6 +10,7 @@ import org.colomoto.biolqm.metadata.constants.TagsKeysAvailable;
 import org.colomoto.biolqm.metadata.constants.Index;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.colomoto.biolqm.metadata.constants.Reference;
+import org.colomoto.biolqm.metadata.constants.CollectionsAvailable;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class ModelConstants {
 	public ListMetadata instanceOfListMetadata;
 	public QualifiersAvailable instanceOfQualifiersAvailable;
 	public TagsKeysAvailable instanceOfTagsKeysAvailable;
+	public CollectionsAvailable instanceOfCollectionsAvailable;
 	
 	public int increment = 0;
 	
@@ -37,6 +39,7 @@ public class ModelConstants {
 		this.instanceOfListMetadata = new ListMetadata();
 		this.instanceOfQualifiersAvailable = new QualifiersAvailable();
 		this.instanceOfTagsKeysAvailable = new TagsKeysAvailable();
+		this.instanceOfCollectionsAvailable = new CollectionsAvailable();
 	}
 
 	// getters
@@ -51,6 +54,9 @@ public class ModelConstants {
 	}
 	public TagsKeysAvailable getInstanceOfTagsKeysAvailable() {
 		return this.instanceOfTagsKeysAvailable;
+	}
+	public CollectionsAvailable getInstanceOfCollectionsAvailable() {
+		return this.instanceOfCollectionsAvailable;
 	}
 	public int getIncrement() {
 		increment += 1;
@@ -72,5 +78,8 @@ public class ModelConstants {
 	}
 	public Map<String, ArrayList<String>> getKeysValuesAvailable() {
 		return this.instanceOfTagsKeysAvailable.keysValues;
+	}
+	public Map<String, String> getCollectionsAvailable() {
+		return this.instanceOfCollectionsAvailable.getCollections();
 	}
 }

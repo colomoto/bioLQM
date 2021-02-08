@@ -1,0 +1,149 @@
+- prefix: chebi
+  pattern: ^CHEBI:\d+$
+
+- prefix: ensembl
+  pattern: ^((ENS[FPTG]\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$
+
+- prefix: ec-code
+  pattern: ^\d+\.-\.-\.-|\d+\.\d+\.-\.-|\d+\.\d+\.\d+\.-|\d+\.\d+\.\d+\.(n)?\d+$
+
+- prefix: uniprot
+  pattern: ^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$
+
+- prefix: taxonomy
+  pattern: ^\d+$
+
+- prefix: biomodels.db
+  pattern: ^((BIOMD|MODEL)\d{10})|(BMID\d{12})$
+
+- prefix: icd
+  pattern: ^[A-Z]\d+(\.[-\d+])?$
+
+- prefix: intact
+  pattern: ^EBI\-[0-9]+$
+
+- prefix: interpro
+  pattern: ^IPR\d{6}$
+
+- prefix: kegg.pathway
+  pattern: ^\w{2,4}\d{5}$
+
+- prefix: kegg.compound
+  pattern: ^C\d+$
+
+- prefix: kegg.reaction
+  pattern: ^R\d+$
+
+- prefix: pubmed
+  pattern: ^\d+$
+
+- prefix: mim
+  pattern: ^[*#+%^]?\d{6}$
+
+- prefix: pirsf
+  pattern: ^PIRSF\d{6}$
+
+- prefix: reactome
+  pattern: (^R-[A-Z]{3}-\d+(-\d+)?(\.\d+)?$)|(^REACT_\d+(\.\d+)?$)
+
+- prefix: doi
+  pattern: ^(doi\:)?\d{2}\.\d{4}.*$
+
+- prefix: pdb
+  pattern: ^[0-9][A-Za-z0-9]{3}$
+
+- prefix: go
+  pattern: ^GO:\d{7}$
+
+- prefix: sgd
+  pattern: ^((S\d+$)|(Y[A-Z]{2}\d{3}[a-zA-Z](\-[A-Z])?))$
+
+- prefix: sbo
+  pattern: ^SBO:\d{7}$
+
+- prefix: kegg.drug
+  pattern: ^D\d+$
+
+- prefix: kegg.glycan
+  pattern: ^G\d+$
+
+- prefix: wb
+  pattern: ^WB[A-Z][a-z]+\d+$
+
+- prefix: pfam
+  pattern: ^PF\d{5}$
+
+- prefix: insdc
+  pattern: ^([A-Z]\d{5}|[A-Z]{2}\d{6}|[A-Z]{4}\d{8}|[A-J][A-Z]{2}\d{5})(\.\d+)?$
+
+- prefix: fb
+  pattern: ^FB\w{2}\d{7}$
+
+- prefix: wormpep
+  pattern: ^CE\d{5}$
+
+- prefix: prosite
+  pattern: ^PS\d{5}$
+
+- prefix: pubchem.substance
+  pattern: ^\d+$
+
+- prefix: pubchem.compound
+  pattern: ^\d+$
+
+- prefix: arxiv
+  pattern: ^(\w+(\-\w+)?(\.\w+)?)?\d{4,7}(\.\d+(v\d+)?)?$
+
+- prefix: arrayexpress
+  pattern: ^[AEP]-\w{4}-\d+$
+
+- prefix: mgi
+  pattern: ^MGI:\d+$
+
+- prefix: sabiork.reaction
+  pattern: ^\d+$
+
+- prefix: tcdb
+  pattern: ^\d+(\.[A-Z])?(\.\d+)?(\.\d+)?(\.\d+)?$
+
+- prefix: uniparc
+  pattern: ^UPI[A-F0-9]{10}$
+
+- prefix: mint
+  pattern: ^MINT\-\d{1,7}$
+
+- prefix: dip
+  pattern: ^DIP(\:)?\-\d{1,}[ENXS]$
+
+- prefix: signaling-gateway
+  pattern: A\d{6}$
+
+- prefix: resid
+  pattern: ^AA\d{4}$
+
+- prefix: rgd
+  pattern: ^\d{4,}$
+
+- prefix: tair.protein
+  pattern: ^AASequence:\d{10}$
+
+- prefix: tair.gene
+  pattern: ^Gene:\d{7}$
+
+- prefix: tair.locus
+  pattern: ^\d{7}$
+
+- prefix: hmdb
+  pattern: ^HMDB\d+$
+
+- prefix: lipidmaps
+  pattern: ^LM(FA|GL|GP|SP|ST|PR|SL|PK)[0-9]{4}([0-9a-zA-Z]{4,6})?$
+
+- prefix: peptideatlas
+  pattern: ^PAp[0-9]{8}$
+
+- prefix: geo
+  pattern: ^G(PL|SM|SE|DS)\d+$
+
+- prefix: eco
+  pattern: ECO:\d{7}$
