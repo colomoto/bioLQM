@@ -143,7 +143,7 @@ public class TestMetadata {
 		modelMetadata.addDate("created", "1996-05-29");
 		
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("isDescribedBy");
-		nestedMetadata.addURI("toto", "doi", "10.1002/0470841559.ch1");
+		nestedMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		nestedMetadata.addDate("creator", "1998-05-29");
 		
 		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
@@ -156,7 +156,19 @@ public class TestMetadata {
 		
 		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		
+		NodeInfo node = model.getComponents().get(0);
+		Metadata nodeMetadata = model.getMetadataOfNode(node);
+
+		nodeMetadata.createAlternative("is");
+		nodeMetadata.addURI("is", 1, "doi", "fantsaio");
 		
+		Metadata nodenestedMetadata = nodeMetadata.getMetadataOfQualifier("is", 1);
+		
+		nodenestedMetadata.addURI("isDescribedBy", "doi", "maissicesttintinaupaysdelornoir");
+		
+		nodenestedMetadata.addURI("isDescribedBy", "doi", "jesaispassicesttintinaupaysdelornoir");
+		
+		System.out.println(nodeMetadata.getDescriptionMetadata(true));
 		
 /* 		for (NodeInfo elementNode: model.getComponents()) {
 			System.out.println(elementNode.getNodeID());

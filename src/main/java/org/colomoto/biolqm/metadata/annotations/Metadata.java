@@ -37,6 +37,9 @@ import java.util.Date;
 import java.text.ParseException;
 import java.util.stream.Collectors;
 import java.util.AbstractMap;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * One instance per component (model, node, transition...)
@@ -135,6 +138,19 @@ public class Metadata {
 	
 	private boolean isValidURI(String collection, String identifier) {
 		
+		// check the internet connection
+	    try {
+			URL url = new URL("http://www.google.com");
+			URLConnection connection = url.openConnection();
+			connection.connect();
+		} catch (MalformedURLException e) {
+			System.out.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
+			return true;
+		} catch (IOException e) {
+			System.out.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
+			return true;
+		}
+		
 		String compactId = collection+":"+identifier;
 		String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
 		
@@ -145,13 +161,13 @@ public class Metadata {
 				return true;
 			}
 			else {
-				System.err.println("The URI is not valid." + "\n");
+				System.err.println("The URI is not valid: it should be a valid entry for identifiers.org." + "\n");
 			}
 		} catch (IOException e) {
-			System.err.println("Error checking the uri." + "\n");
+			System.err.println("Error checking the uri: it should be a valid entry for identifiers.org.." + "\n");
 		}
 		return false;
-	}	
+	}
 	
 	
 	// the functions to manage the alternatives
@@ -253,7 +269,6 @@ public class Metadata {
 	 */	
 	public void addURI(String termDesired, int alternative, String collection, String identifier) {
 		if (!this.isValidURI(collection, identifier)) {
-			System.err.println("The uri is not valid: it should be a valid entry for identifiers.org." + "\n");
 			return;
 		}
 		
