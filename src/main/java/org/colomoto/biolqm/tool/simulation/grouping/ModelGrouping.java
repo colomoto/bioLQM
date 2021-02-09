@@ -405,6 +405,12 @@ public class ModelGrouping {
 		}
 	}
 	
+	public void accept() {
+		for (int i = 0; i < this.size(); i++) {
+			this.pcList.get(i).accept();
+		}
+	}
+	
 	@Override
 	public boolean equals(Object a) {
 		ModelGrouping outMPC = (ModelGrouping) a;
@@ -443,6 +449,8 @@ public class ModelGrouping {
 			this.groups = new ArrayList<>();
 			this.groups.add(pcg);
 		}
+
+
 
 		public RankedClass(LogicalModel m, String textFormat) {
 			this.groups = new ArrayList<>();
@@ -590,6 +598,13 @@ public class ModelGrouping {
 		public boolean add(int idxGrp, int idxVar, int splitFlag) {
 			return this.groups.get(idxGrp).add(idxVar, splitFlag);
 		}
+		
+		public void accept() {
+			for (int g = 0; g < this.groups.size(); g++) {
+				this.groups.get(g).updateVarsAndFilter();
+			}
+			
+		}
 
 		public RankedClass clone() {
 			RankedClass pc = new RankedClass(this.groups.get(0).clone());
@@ -692,15 +707,14 @@ public class ModelGrouping {
 							newVar[1] = split;
 							lVars.add(newVar);
 
-							SplittingType splt = null;
-							if (split == 1 ) {
-								splt = SplittingType.POSITIVE;
-							} else if (split == -1) {
-								splt = SplittingType.NEGATIVE;
-							} else {
-								splt = SplittingType.MERGED;
-							}
-							this.filter.put(node, splt);
+							
+							/*
+							 * SplittingType splt = null;
+							 */							 /*   if (split == 1 ) { splt = SplittingType.POSITIVE;
+							 * } else if (split == -1) { splt = SplittingType.NEGATIVE; } else { splt =
+							 * SplittingType.MERGED; } this.filter.put(node, splt);
+							 */
+							
 							break;
 						}
 					}
@@ -844,9 +858,11 @@ public class ModelGrouping {
 			for (int i = 0; i < this.vars.length; i += 2) {
 				if (this.vars[i] == idx && this.vars[i + 1] == splitFlag) {
 					this.vars[i + 1] = 0;
-					// filter...
-					NodeInfo node = model.getComponents().get(idx);
-					this.filter.put(node, SplittingType.MERGED);
+					
+					/*
+					 * // filter... NodeInfo node = model.getComponents().get(idx);
+					 * this.filter.put(node, SplittingType.MERGED);
+					 */
 					break;
 				}
 			}
@@ -876,25 +892,17 @@ public class ModelGrouping {
 			}
 			this.vars = newVars;
 			
-			
-			// get the nodeInfo from the node to be changed
-			NodeInfo node = model.getComponents().get(idx);
-			SplittingType splt = this.filter.get(node);
-			
-			// if both +/- are to be removed, do it.
-			if (splitFlag == 0) {
-				this.filter.remove(node);
-			} else {
-				// if only + or - is to be removed, check if both exist in the group,
-				// if so, remove the complementing splitflag from this.filter
-				if (splt.equals(SplittingType.MERGED)) {
-						SplittingType newSplt = (splitFlag == 1) ? SplittingType.NEGATIVE : SplittingType.POSITIVE;
-						this.filter.put(node, newSplt);
-					} else {
-						this.filter.remove(node);
-					}
-			}
-			
+			/*
+			 * // get the nodeInfo from the node to be changed NodeInfo node =
+			 * model.getComponents().get(idx); SplittingType splt = this.filter.get(node);
+			 * 
+			 * // if both +/- are to be removed, do it. if (splitFlag == 0) {
+			 * this.filter.remove(node); } else { // if only + or - is to be removed, check
+			 * if both exist in the group, // if so, remove the complementing splitflag from
+			 * this.filter if (splt.equals(SplittingType.MERGED)) { SplittingType newSplt =
+			 * (splitFlag == 1) ? SplittingType.NEGATIVE : SplittingType.POSITIVE;
+			 * this.filter.put(node, newSplt); } else { this.filter.remove(node); } }
+			 */
 			return true;
 		}
 
@@ -909,25 +917,19 @@ public class ModelGrouping {
 			this.vars = newVars;
 				
 			// get the nodeInfo from the node to be changed
-			NodeInfo node = model.getComponents().get(idx);
-			SplittingType splt = this.filter.get(node);
-			
-			// if both +/- are to be added, do it.
-			if (splitFlag == 0) {
-				this.filter.put(node, SplittingType.MERGED);
-			} else {
-				// if only + or - is to be added, check if the complementing exists in the group
-				// if so, put as MERGED
-				SplittingType compSplt = (splitFlag == 1) ? SplittingType.NEGATIVE : SplittingType.POSITIVE;
-				if (compSplt.equals(splt)) {
-						this.filter.put(node, SplittingType.MERGED);
-					// neither exists
-					} else {
-						SplittingType newSplt = (splitFlag == 1) ? SplittingType.POSITIVE : SplittingType.NEGATIVE;
-						this.filter.put(node, newSplt);
-					}
-			}
-			
+			/*
+			 * NodeInfo node = model.getComponents().get(idx); SplittingType splt =
+			 * this.filter.get(node);
+			 * 
+			 * // if both +/- are to be added, do it. if (splitFlag == 0) {
+			 * this.filter.put(node, SplittingType.MERGED); } else { // if only + or - is to
+			 * be added, check if the complementing exists in the group // if so, put as
+			 * MERGED SplittingType compSplt = (splitFlag == 1) ? SplittingType.NEGATIVE :
+			 * SplittingType.POSITIVE; if (compSplt.equals(splt)) { this.filter.put(node,
+			 * SplittingType.MERGED); // neither exists } else { SplittingType newSplt =
+			 * (splitFlag == 1) ? SplittingType.POSITIVE : SplittingType.NEGATIVE;
+			 * this.filter.put(node, newSplt); } }
+			 */
 			return true;
 		}
 
@@ -969,6 +971,35 @@ public class ModelGrouping {
 				this.updaterString += Arrays.toString(idxs);
 		    }
 		}
+		
+		public void updateVarsAndFilter() {
+			
+			Map<NodeInfo, SplittingType> newFilter = new HashMap<NodeInfo, SplittingType>();
+			
+			for (int idx = 0; idx < this.vars.length - 2; idx+=2) {
+				NodeInfo node = model.getComponents().get(this.vars[idx]);
+				// find Node with var nodeID
+				
+				if (this.vars[idx+1] == 0) {
+					newFilter.put(node, SplittingType.MERGED);
+				} else if (this.vars[idx] != this.vars[idx+2]) {
+					if (this.vars[idx+1] == 1) {
+						newFilter.put(node, SplittingType.POSITIVE);
+					} else {
+						newFilter.put(node, SplittingType.NEGATIVE);
+					}
+				} else {
+					// we want to merge this.vars
+					// except if random rate ?
+					System.out.print(node.toString());
+					this.add(this.vars[idx], 0);
+					this.remove(this.vars[idx], 1);
+					this.remove(this.vars[idx], -1);
+
+					newFilter.put(node, SplittingType.MERGED);
+				}
+			}
+		}
 
 
 		public RankedClassGroup clone() {
@@ -982,5 +1013,6 @@ public class ModelGrouping {
 			return false;
 		}
 	}
+
  
 }

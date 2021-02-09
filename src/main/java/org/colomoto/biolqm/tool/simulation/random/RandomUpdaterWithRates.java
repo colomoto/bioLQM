@@ -1,6 +1,11 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 
 /**
@@ -20,27 +25,53 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 	 * @param model the model for which the random is constructed
 	 */
     public RandomUpdaterWithRates(LogicalModel model) {
-        this(model, null);
+        this(model, null, null);
     }
+    
+    public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
+        this(model, rates, null);
+    }
+    
+    public RandomUpdaterWithRates(LogicalModel model,  Map<NodeInfo, SplittingType> filter) {
+        this(model, null, filter);
+    }
+
 
     /**
      * 
 	 * @param model the model for which the random is constructed
      * @param rates the rates associated to each component
      */
-    public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
+    public RandomUpdaterWithRates(LogicalModel model, double[] rates, Map<NodeInfo, SplittingType> filter) {
         super(model);
+        this.setFilter(filter);
+        
+        // if no rates passed
         if (rates == null) {
-        	if(this.filter == null || this.filter.length == 0) {
+        	if(this.filter == null) {
         		this.rates = new double[this.size];
         		for (int i=0 ; i<this.rates.length ; i++) {
         			this.rates[i] = 1.0;
         		}
         	} else {
-        		this.rates = new double[this.filter.length];
-        		for (int i=0 ; i<this.filter.length ; i++) {
-        			this.rates[i] = 1.0;
+        		// if only some vars are to be considered...
+        		List<Double> filterRates = new ArrayList<Double>();
+        		for (int i = 0; i < this.filter.length; i++) {
+        			if (this.filter[i] != null) {
+        				// if the variable is MERGED, then add two rates,
+        				// for negative and positive 
+        				if (this.filter[i] == SplittingType.MERGED) {
+            				filterRates.add(1.0);
+            				filterRates.add(1.0);
+        				} else {
+        				filterRates.add(1.0);
+        				}
+        			}
         		}
+        		// cast from ArrayList to array
+        		this.rates = new double[filterRates.size()];
+        		for (int i = 0; i < this.rates.length; i++)
+        			this.rates[i] = filterRates.get(i);
         	}
         } else {
         		this.rates = rates;
@@ -55,24 +86,42 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         double[] step_rates = new double[size];
         int[][] step_changes = new int[this.size][2];
 
+        int merged = 0;
 		for (int idx=0 ; idx < size ; idx++) {
 			int change = nodeChange(state, idx);
-						            
-			
-			 if (this.filter != null && this.filter.length != 0) { 
-				 SplittingType splt = this.filter[idx]; 
-				 if (splt.equals(SplittingType.MERGED)) { 
-					 // check if "splited" in rates 
-					 // ??????????????????????????? 
-				 } 
-			 }
-			 
-			
+						            			
 			if (change == 0) {
+				merged ++;
                 continue;
             }
-
-            double r = this.rates[idx]; 
+			
+			
+			double r = (Double) null;
+			
+			// this assumes that this.rates has two rates in the array for
+			// each MERGED variable in this.filter
+			
+			// if this.filter equals [NEGATIVE, POSITIVE, MERGED, POSITIVE] then..
+			// this.rates is something like [0.2,0.5,0.3,0.5,0.1], 
+			// where third and fourth positions are NEGATIVE and POSITIVE for the MERGED idx in this.filter
+			
+			if (this.filter != null && this.filter.length != 0) {
+				SplittingType splt = this.filter[idx]; 
+				if (splt.equals(SplittingType.MERGED)) { 
+				
+					if (change == -1 ) {
+						r = this.rates[merged];
+					} else {
+						r = this.rates[merged+1];
+					}
+					merged += 2;
+				} else {
+					r = this.rates[merged]; 
+					merged++;
+				}
+			} else {
+				r = this.rates[idx];
+			}
 
             // store the available change
             totalrate += r;
@@ -85,7 +134,6 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         if (nb_changes == 0) {
             return null;
         }
-
         byte[] nextstate = state.clone();
         int selected = select(step_rates, nb_changes, totalrate);
         int idx = step_changes[selected][0];

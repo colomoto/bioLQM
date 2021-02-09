@@ -35,6 +35,7 @@ abstract public class BaseUpdater implements LogicalModelUpdater {
         SplittingType st = SplittingType.MERGED;
         if (this.filter != null) {
             st = this.filter[index];
+            // null if var not used
             if (st == null) {
                 return 0;
             }

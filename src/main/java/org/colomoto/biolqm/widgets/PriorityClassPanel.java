@@ -292,9 +292,7 @@ public class PriorityClassPanel extends JPanel {
 				
 				System.out.println(updaterName);
 				
-				Boolean isRandom = false;
 				if (updaterName.equals("Random uniform") || updaterName.equals("Random non uniform")) {
-					isRandom = true;
 					
 					// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 					Map<String, Double> rates = new HashMap<String, Double>();
