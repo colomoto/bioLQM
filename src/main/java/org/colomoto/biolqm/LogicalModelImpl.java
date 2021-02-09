@@ -327,6 +327,8 @@ public class LogicalModelImpl implements LogicalModel {
 		
 		Metadata metadataModel = this.getMetadataOfModel();
 		
+		metadataModel.exportCollectionsMetadata(json);
+		
 		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
 			this.exportElementMetadata(metadataModel, json);
 		}
@@ -387,9 +389,15 @@ public class LogicalModelImpl implements LogicalModel {
 			JSONTokener tokener = new JSONTokener(is);
 			JSONObject json = new JSONObject(tokener);
 			
+			Metadata metadataModel = this.getMetadataOfModel();
+			
+			if (json.has("collections") && !json.isNull("collections")) {	 
+				
+				metadataModel.importCollectionsMetadata(json.getJSONArray("collections"));
+			}
+			
 			// we import the metadata concerning the model
 			if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
-				Metadata metadataModel = this.getMetadataOfModel();
 				
 				metadataModel.importElementMetadata(json);
 			}

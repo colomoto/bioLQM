@@ -177,8 +177,6 @@ public class Metadata {
 		String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
 		
 		try {
-			System.out.println("hi");
-			
 			JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
 			
 			if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
@@ -1201,7 +1199,6 @@ public class Metadata {
 	/**
 	 * Permits to import a json file to extend the existent annotations (internal use)
 	 *
-	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
 	 */
 	public void importElementMetadata(JSONObject json) {
 		
@@ -1358,6 +1355,47 @@ public class Metadata {
 			
 			String existingNotes = this.getNotes();
 			this.setNotes(existingNotes + json.get("notes"));
+		}
+	}
+	
+	/**
+	 * Permits to export the patterns of the collections used in the json file
+	 *
+	 */
+	public void exportCollectionsMetadata(JSONObject json) {
+		
+		JSONArray jsonArray = new JSONArray();
+		
+		for (Entry<String, Collection> entry : this.modelConstants.getCollectionsAvailable().entrySet()) {
+			
+			JSONObject contentCollection = new JSONObject();
+			
+			Collection coll = entry.getValue();
+			contentCollection.put("prefix", entry.getKey());
+			contentCollection.put("pattern", coll.getPattern());
+			contentCollection.put("namespaceEmbedded", Boolean.toString(coll.getNamespaceEmbedded()));
+			
+			jsonArray.put(contentCollection);
+		}
+		
+		json.put("collections", jsonArray);
+	}
+	
+	/**
+	 * Permits to import the patterns of the collections used in the json file
+	 *
+	 */
+	public void importCollectionsMetadata(JSONArray json) {
+		
+		for(int idCollection = 0; idCollection < json.length(); idCollection++)
+		{
+			JSONObject jsonCollection = json.getJSONObject(idCollection);
+
+			String prefix = jsonCollection.getString("prefix");
+			String pattern = jsonCollection.getString("pattern");
+			String namespaceEmbedded = jsonCollection.getString("namespaceEmbedded");
+			
+			this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(prefix, pattern, Boolean.valueOf(namespaceEmbedded));
 		}
 	}
 }

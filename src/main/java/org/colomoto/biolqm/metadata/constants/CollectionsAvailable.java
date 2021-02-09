@@ -46,7 +46,9 @@ public class CollectionsAvailable {
 	}	
 	
 	public void updateCollections(String prefix, String pattern, boolean namespaceEmbedded) {
-		this.collections.put(prefix, new Collection(pattern, namespaceEmbedded));
+		if (!this.collections.containsKey(prefix)) {
+			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded));
+		}
 	}
 }
 	

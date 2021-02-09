@@ -173,6 +173,10 @@ public class TestMetadata {
 		System.out.println(nodeMetadata.getDescriptionMetadata(true));
 		 */
 		 
+		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		
+		model.importMetadata(dir.getAbsolutePath()+"\\filename");
+		
 		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		 
 		for (NodeInfo elementNode: model.getComponents()) {
