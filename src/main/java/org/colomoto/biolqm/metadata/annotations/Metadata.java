@@ -216,7 +216,6 @@ public class Metadata {
 			
 			javaClass = javaClassDesired;
 		}
-		
 		// if the javaClass for this qualifier match the javaClass asked by the user we create the annotation
 		if (javaClass.equals(javaClassDesired)) {
 			AnnotationFactory factory = new AnnotationFactory();
@@ -790,6 +789,29 @@ public class Metadata {
 	public Metadata getMetadataOfQualifier(String termDesired) {
 
 		return this.getMetadataOfQualifier(termDesired, 0);
+	}
+	
+	
+	// the function to retrieve the dois associated to some metadata
+	/**
+	 * Get a list of references used in the model and written in the given year
+	 *
+	 * @param year a String of the year you're interested in
+	 * @return ArrayList<String> a list of String with the dois
+	 */
+	public ArrayList<String> getReferencesWithYear(String year) {
+		
+		return this.modelConstants.getInstanceOfExternalMetadata().getReferencesWithYear(year);
+	}
+	/**
+	 * Get a list of references used in the model and containing a given expression in their titles
+	 *
+	 * @param word a String of the expression you're interested in
+	 * @return ArrayList<String> a list of String with the dois
+	 */
+	public ArrayList<String> getReferencesWithKeyword(String word) {
+		
+		return this.modelConstants.getInstanceOfExternalMetadata().getReferencesWithKeyword(word);
 	}
 	
 	

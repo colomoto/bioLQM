@@ -6,6 +6,7 @@ import org.colomoto.biolqm.metadata.constants.Reference;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.ArrayList;
 
 /**
  * One instance per model opened to keep a trace of the external metadata involved
@@ -40,10 +41,44 @@ public class ExternalMetadata {
 	public String getDescription() {
 		String help = "";
 		
-		for (Map.Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
+		for (Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
 			help += "\t" + entry.getKey().getIdentifier() + ": " + entry.getValue().getTitle() + ", " + entry.getValue().getYear() + "\n"; 
 		}
 		
 		return help;
+	}
+	
+	public ArrayList<String> getReferencesWithYear(String year) {
+		
+		ArrayList<String> refs = new ArrayList<String>();
+		
+		for (Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
+			Reference ref = entry.getValue();
+			
+			if (ref.getYear().equals(year)) {
+				URI uri = entry.getKey();
+				String doi = uri.getCollection()+":"+uri.getIdentifier();
+				
+				refs.add(doi);
+			}
+		}
+		return refs;
+	}
+	
+	public ArrayList<String> getReferencesWithKeyword(String word) {
+		
+		ArrayList<String> refs = new ArrayList<String>();
+		
+		for (Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
+			Reference ref = entry.getValue();
+			
+			if (ref.getTitle().contains(word)) {
+				URI uri = entry.getKey();
+				String doi = uri.getCollection()+":"+uri.getIdentifier();
+				
+				refs.add(doi);
+			}
+		}
+		return refs;
 	}
 }

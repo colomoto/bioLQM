@@ -73,6 +73,8 @@ class GenericAnnotation extends Annotation {
 				if (termDesired == "isDescribedBy") {										
 					if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
 						String url = "https://api.crossref.org/works/"+contentAnnotation[2];
+						
+						System.out.println("dessous");
 
 						try {
 							JSONObject json = JsonReader.readJsonFromUrl(url);
@@ -96,6 +98,8 @@ class GenericAnnotation extends Annotation {
 						} catch (IOException e) {
 							System.err.println("Error retrieving the metadata of the doi." + "\n");
 						}
+						
+						System.out.println("dessus");
 					}
 				}
 				break;

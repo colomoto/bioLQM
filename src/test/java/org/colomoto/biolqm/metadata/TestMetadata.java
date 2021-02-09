@@ -142,10 +142,16 @@ public class TestMetadata {
 		
 		modelMetadata.addURI("isDescribedBy", "doi", "maissicesttintinaupaysdelornoir");
 		
-/* 		modelMetadata.addDate("created", "1996-05-29");
+		modelMetadata.addDate("created", "1996-05-29");
 		
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("isDescribedBy");
+		
+		System.out.println("le problème est au dessous");
+		
 		nestedMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
+		
+		System.out.println("le problème est au dessus");
+		
 		nestedMetadata.addDate("creator", "1998-05-29");
 		
 		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
@@ -171,7 +177,7 @@ public class TestMetadata {
 		nodenestedMetadata.addURI("isDescribedBy", "doi", "jesaispassicesttintinaupaysdelornoir");
 		
 		System.out.println(nodeMetadata.getDescriptionMetadata(true));
-		 */
+		
 		 
 		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
 		
@@ -184,5 +190,13 @@ public class TestMetadata {
 			Metadata elementNodeMetadata = model.getMetadataOfNode(elementNode);
 			System.out.println(elementNodeMetadata.getDescriptionMetadata(true));
 		}
+		
+		System.out.println(modelMetadata.getHelpAnnotation("isDescribedBy"));
+		
+		System.out.println(modelMetadata.getReferencesWithKeyword("Net").toString());
+		
+		System.out.println("modelMetadata.getReferencesOfYear(2003)");
+		
+		System.out.println(modelMetadata.getReferencesWithKeyword(" gsfgsgs").toString());
 	}
 }
