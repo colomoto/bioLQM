@@ -172,10 +172,13 @@ public class TestMetadata {
 		
 		System.out.println(nodeMetadata.getDescriptionMetadata(true));
 		 */
-/* 		for (NodeInfo elementNode: model.getComponents()) {
+		 
+		System.out.println(modelMetadata.getDescriptionMetadata(true));
+		 
+		for (NodeInfo elementNode: model.getComponents()) {
 			System.out.println(elementNode.getNodeID());
 			Metadata elementNodeMetadata = model.getMetadataOfNode(elementNode);
 			System.out.println(elementNodeMetadata.getDescriptionMetadata(true));
-		} */
+		}
 	}
 }

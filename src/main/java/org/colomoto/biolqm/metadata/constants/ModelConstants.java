@@ -11,6 +11,7 @@ import org.colomoto.biolqm.metadata.constants.Index;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.colomoto.biolqm.metadata.constants.Reference;
 import org.colomoto.biolqm.metadata.constants.CollectionsAvailable;
+import org.colomoto.biolqm.metadata.constants.Collection;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class ModelConstants {
 	public Map<String, ArrayList<String>> getKeysValuesAvailable() {
 		return this.instanceOfTagsKeysAvailable.keysValues;
 	}
-	public Map<String, String> getCollectionsAvailable() {
+	public Map<String, Collection> getCollectionsAvailable() {
 		return this.instanceOfCollectionsAvailable.getCollections();
 	}
 }

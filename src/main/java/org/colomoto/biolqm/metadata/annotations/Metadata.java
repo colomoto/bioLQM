@@ -11,6 +11,8 @@ import org.colomoto.biolqm.metadata.constants.QualifiersAvailable;
 import org.colomoto.biolqm.metadata.constants.TagsKeysAvailable;
 import org.colomoto.biolqm.metadata.constants.Index;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
+import org.colomoto.biolqm.metadata.constants.CollectionsAvailable;
+import org.colomoto.biolqm.metadata.constants.Collection;
 
 import org.colomoto.biolqm.metadata.validations.DateValidator;
 
@@ -139,10 +141,16 @@ public class Metadata {
 	private boolean isValidURI(String collection, String identifier) {
 		
 		// first we look into the patterns saved because they are saved by default or because they were used already in the model
-		Map<String, String> collections = this.modelConstants.getCollectionsAvailable();
-		if (collections.containsKey(collection)) {
-			if (identifier.matches(collections.get(collection))) {
-				System.out.println(collection+identifier);
+		Map<String, Collection> collections = this.modelConstants.getCollectionsAvailable();
+		String lowerCollection = collection.toLowerCase();
+		if (collections.containsKey(lowerCollection)) {
+			Collection collectionChecked = collections.get(lowerCollection);
+			
+			String idTest = identifier;
+			if (collectionChecked.getNamespaceEmbedded()) {
+				idTest = collection+":"+identifier;
+			}
+			if (idTest.matches(collectionChecked.getPattern())) {
 				return true;
 			}
 			else {
@@ -165,24 +173,34 @@ public class Metadata {
 		}
 		
 		// to go check the uri with the api of identifiers.org
-		String stringURL = "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix="+collection;
+		String compactId = collection+":"+identifier;
+		String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
 		
-		System.out.println(collection+identifier);
 		try {
-			JSONObject jsonCollection = JsonReader.readJsonFromUrl(stringURL);
-			System.out.println(jsonCollection.getString("pattern"));
-			if (jsonCollection.has("pattern") && !jsonCollection.isNull("pattern") && identifier.matches(jsonCollection.getString("pattern"))) {
-				System.out.println(true);
-				// we add the pattern of the collection to our internal list for further uses without the internet
-				this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(collection, jsonCollection.getString("pattern"));
+			System.out.println("hi");
+			
+			JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
+			
+			if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
+				
+				try {
+					String stringURL = "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix="+lowerCollection;
+					JSONObject jsonCollection = JsonReader.readJsonFromUrl(stringURL);
+					
+					// we add the pattern of the collection to our internal list for further uses without the internet
+					this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(lowerCollection, jsonCollection.getString("pattern"), jsonCollection.getBoolean("namespaceEmbeddedInLui"));
+					
+				} catch (IOException e) {
+					System.err.println("Error checking the uri: it should be a valid entry for identifiers.org.." + "\n");
+				}
 				
 				return true;
 			}
 			else {
-				System.err.println("Error checking the uri: the identifier is not valid according to identifiers.org." + "\n");
+				System.err.println("The URI is not valid: it should be a valid entry for identifiers.org." + "\n");
 			}
 		} catch (IOException e) {
-			System.err.println("Error checking the uri: the collection is not valid according to identifiers.org." + "\n");
+			System.err.println("Error checking the uri: it should be a valid entry for identifiers.org.." + "\n");
 		}
 		return false;
 	}

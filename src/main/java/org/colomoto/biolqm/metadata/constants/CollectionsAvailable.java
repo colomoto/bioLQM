@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.metadata.constants;
 
+import org.colomoto.biolqm.metadata.constants.Collection;
+
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
@@ -16,11 +18,11 @@ import java.io.InputStream;
 public class CollectionsAvailable {
 	
 	// variables
-	private Map<String, String> collections;
+	public Map<String, Collection> collections;
 	
 	// constructors
 	public CollectionsAvailable() {
-		this.collections = new HashMap<String, String>();
+		this.collections = new HashMap<String, Collection>();
 		
 		Yaml yaml = new Yaml();
 		InputStream inputStream = QualifiersAvailable.class
@@ -32,18 +34,19 @@ public class CollectionsAvailable {
 		for (Map<String, String> collection : listOfCollections) {
 			String prefix = (String) collection.get("prefix");
 			String pattern = (String) collection.get("pattern");
+			Boolean namespaceEmbedded = Boolean.valueOf(collection.get("namespaceEmbedded"));
 			
-			this.collections.put(prefix, pattern);
+			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded));
 		}
 	}
 	
 	// getters
-	public Map<String, String> getCollections() {		
+	public Map<String, Collection> getCollections() {		
 		return this.collections;
 	}	
 	
-	public void updateCollections(String prefix, String pattern) {
-		this.collections.put(prefix, pattern);
+	public void updateCollections(String prefix, String pattern, boolean namespaceEmbedded) {
+		this.collections.put(prefix, new Collection(pattern, namespaceEmbedded));
 	}
 }
 	
