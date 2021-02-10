@@ -8,6 +8,7 @@ import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
@@ -23,8 +24,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -265,11 +270,9 @@ public class TestUpdaters {
 	
 	@Test
 	public void testRandomUpdaterWithRates() throws IOException {
-		
-				
 		LogicalModel model = getModel();
-		
-		RandomUpdater updater = new RandomUpdaterWithRates(model, new double[] {0.5,0.3,0.2});
+		double[] rates =  new double[] {0.5,0.3,0.2};
+		RandomUpdater updater = new RandomUpdaterWithRates(model,rates);
 		byte[] state = {0,0,0};
 		// two updatable states A and B
 		// 0.5/0.8 = 0.625
@@ -283,6 +286,7 @@ public class TestUpdaters {
 		
 		int size = model.getComponents().size();
 
+		Set<Integer> updatables = new HashSet<Integer>();		
 		int[] simUpdates = new int[size];
 		int simRuns = 10000;
 		
@@ -294,19 +298,136 @@ public class TestUpdaters {
 				break;
 			}
 			
-			int idx = getIdxChange(state, successor, size);
+			int idx = getIdxChange(state, successor);
+			updatables.add(idx);
 			simUpdates[idx] += 1;
 				
 		}
 		
-		// state 1
-		 //assertTrue(simUpdates[0] > 6250-50 & simUpdates[0] < 6250+50);
-		 //assertTrue(simUpdates[1] > 3750-50 & simUpdates[1] < 3750+50);
+		double[] newRates = new double[size];
+		double sum = 0.0;
+		// sum of rates of updatable components 
+		for (int id : updatables) {
+			sum += rates[id];
+			}
 		
-		// state 2
-		assertTrue(simUpdates[2] == 10000);
+		// calculate new rates
+		for (int id : updatables) {
+			newRates[id] = rates[id]/sum;
+		}
+		for (int compIdx = 0; compIdx < size; compIdx++) {
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
+		}
 		
 	}
+	
+
+	
+
+	@Test
+	public void testRandomUpWithRatesFilter() throws IOException {
+		LogicalModel model = getModel();
+		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
+		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.NEGATIVE, SplittingType.POSITIVE};
+		
+		int ratesCount = 0;
+
+        Random random = new Random();
+		for (NodeInfo nodes : model.getComponents()) {
+			SplittingType splt = test[random.nextInt(test.length)];
+			filter.put(nodes, splt);	
+			ratesCount ++;
+			if (splt == SplittingType.MERGED)
+				ratesCount ++;
+		}
+	
+		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
+
+		assert(updater.getRates().length == ratesCount);
+	}
+	
+	
+	@Test
+	public void testRandomUpdaterWithRatesAndFilter() throws IOException {
+				
+		LogicalModel model = getOtherModel();
+		
+		// C has different rates or [-] 0.7 and [+] 0.2
+		double[] rates =  new double[] {0.5,0.5, 0.3,0.3, 0.7,0.2, 0.1,0.1, 0.4,0.4};
+		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
+		
+		
+		// split transitions 
+		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.MERGED,
+				SplittingType.MERGED, SplittingType.POSITIVE, SplittingType.POSITIVE};
+		
+		int i = 0;
+		for (NodeInfo node : model.getComponents()) {
+			SplittingType splt = test[i];
+			filter.put(node, splt);
+			i++;
+		}
+		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, rates, filter);
+	
+		// updatables = C[+], D[-] and E[+].
+		byte[] state = {1,0,0,1,0};
+		// 0.2, 0.1, 0.4
+		// 0.28, 0.14, 0.57
+		// with split transitions : 0.2, 0.4 > 0.3, 0.6
+
+		// updatables = C[-], and E[+].
+		byte[] state2 = {1,1,1,0,0};
+		// 0.7, 0.4
+		// 0.63, 0.36
+		// with split transitions : ... same 
+		state = state2.clone();
+		
+		int size = model.getComponents().size();
+
+		Set<Integer> updatables = new HashSet<Integer>();	
+		// for both [-] and [+]
+		int[] simUpdates = new int[size * 2];
+		int simRuns = 1000;
+		
+		for (int run = 0; run < simRuns ; run++) {
+			byte[] successor = updater.pickSuccessor(state);
+			if (successor == null) {
+				break;
+			}
+			
+			int idx = getIdxChange(state, successor);
+			int change = getChange(state, successor);
+			
+			if (change == 1) {
+				simUpdates[idx * 2 + 1] += 1;
+				updatables.add(idx * 2 + 1);
+
+			} else {
+				simUpdates[idx * 2] += 1;
+				updatables.add(idx * 2);
+			}	
+		}
+				
+		double[] newRates = new double[size * 2];
+		double sum = 0.0;
+		// sum of rates of updatable components 
+		for (int id : updatables) {
+			sum += rates[id];
+			}
+		
+		// calculate new rates
+		for (int id : updatables) {
+			newRates[id] = rates[id]/sum;
+		}
+
+		for (int compIdx = 0; compIdx < size * 2; compIdx++) {
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
+		}
+		
+	}
+	
 	
 	@Test
 	public void testRandomUpdaterWithRatesOther() throws IOException {
@@ -336,7 +457,7 @@ public class TestUpdaters {
 			if (successor == null) {
 				break;
 			}
-			int idx = getIdxChange(state, successor, size);
+			int idx = getIdxChange(state, successor);
 			simUpdates[idx] += 1;
 			// save idx of component updated 
 			updatables.add(idx);
@@ -382,7 +503,7 @@ public class TestUpdaters {
 			if (successor == null) {
 				break;
 			}
-			int idx = getIdxChange(state, successor, size);
+			int idx = getIdxChange(state, successor);
 			simUpdates[idx] += 1;
 		}
 		assertTrue(simUpdates[2] > 5000-50 & simUpdates[2] < 5000+50);
@@ -391,10 +512,10 @@ public class TestUpdaters {
 	}
 	
 	
-	private int getIdxChange(byte[] state1, byte[] state2, int size) {
+	private int getIdxChange(byte[] state1, byte[] state2) {
 		int idx = 0;
 		boolean foundchange = false;
-		while (!foundchange && idx < size) {
+		while (!foundchange && idx < state1.length) {
 			if (state2[idx] != state1[idx]) {
 				foundchange = true;
 			}
@@ -404,6 +525,20 @@ public class TestUpdaters {
 		}
 		return idx;
 	}	
+	
+	private int getChange(byte[] state1, byte[] state2) {
+		int idx = 0;
+		boolean foundchange = false;
+		while (!foundchange && idx < state1.length) {
+			if (state2[idx] != state1[idx]) {
+				return state2[idx] - state1[idx];
+			}
+			else {
+				idx += 1; 
+			}			
+		}
+		return 0;
+	}
 }
 
 

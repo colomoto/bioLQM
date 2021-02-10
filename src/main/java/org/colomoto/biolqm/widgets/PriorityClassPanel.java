@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -235,7 +236,6 @@ public class PriorityClassPanel extends JPanel {
 			// g += 2
 			// When g is pair it adds a ComboBox, when g is impair it adds the groups
 			// so the group index is g/2 
-			System.out.println("");
 
 			for (int g = 0 ; g < lGrpVars.size()*2; g += 2) {
 				int idxGroup = g/2;
@@ -258,7 +258,6 @@ public class PriorityClassPanel extends JPanel {
 
 	                	// get the PC index and Group index
 	                	int[] idx = pcIdxGroup.get(e.getSource());
-	                	System.out.println("PC " + idx[0] + " GR " + idx[1]);
 	                	Map<JTextField, String> textfields = null;
 
 		                switch (up) {
@@ -289,9 +288,7 @@ public class PriorityClassPanel extends JPanel {
 		
 				// get the group variables
 				List<String> vars = lGrpVars.get(idxGroup);
-				
-				System.out.println(updaterName);
-				
+								
 				if (updaterName.equals("Random uniform") || updaterName.equals("Random non uniform")) {
 					
 					// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
@@ -570,33 +567,29 @@ public class PriorityClassPanel extends JPanel {
 	}
 	
 
-	private JPanel ratesPanel(List<String> vars,	Map<String, Double> rates, Map<JTextField, String> textfields, String updaterName) {
-		JPanel ratesPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints gbcR = new GridBagConstraints();
-		gbcR.gridx = 0;
-
-		// -- Order variables alphabetically
-		Collections.sort(vars, String.CASE_INSENSITIVE_ORDER);
-		
-		for (int d = 0; d < rates.keySet().size(); d++) {
-			String node = vars.get(d);
-			String nodeRate = Double.toString(rates.get(node));
-			
-			JTextField jtf = new JTextField(nodeRate);
-			jtf.setToolTipText(node);
-			
-			// put(textfield, node string)
-			textfields.put(jtf, node);
-			
-			jtf.setColumns(3);
-        	if (updaterName.equals("Random uniform"))
-        		jtf.disable();
-        	ratesPanel.add(jtf, gbcR);
-        	}
-		
-    	return ratesPanel;
-	
-	}
+	/*
+	 * private JPanel ratesPanel(List<String> vars, Map<String, Double> rates,
+	 * Map<JTextField, String> textfields, String updaterName) { JPanel ratesPanel =
+	 * new JPanel(new GridBagLayout()); GridBagConstraints gbcR = new
+	 * GridBagConstraints(); gbcR.gridx = 0;
+	 * 
+	 * // -- Order variables alphabetically Collections.sort(vars,
+	 * String.CASE_INSENSITIVE_ORDER);
+	 * 
+	 * for (int d = 0; d < rates.keySet().size(); d++) { String node = vars.get(d);
+	 * String nodeRate = Double.toString(rates.get(node));
+	 * 
+	 * JTextField jtf = new JTextField(nodeRate); jtf.setToolTipText(node);
+	 * 
+	 * // put(textfield, node string) textfields.put(jtf, node);
+	 * 
+	 * jtf.setColumns(3); if (updaterName.equals("Random uniform")) jtf.disable();
+	 * ratesPanel.add(jtf, gbcR); }
+	 * 
+	 * return ratesPanel;
+	 * 
+	 * }
+	 */
 	
 	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
 		
@@ -604,7 +597,7 @@ public class PriorityClassPanel extends JPanel {
 			LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel());
      		mpc.addUpdater(idxPC, idxGrp, updater);
 		} else {
-			double[] rates = new double[textfields.size()];
+			List<Double> rates = new ArrayList<Double>();
 			int i = 0;
 			Boolean valid = true;
 			for (JTextField jtf : textfields.keySet()) {
@@ -613,7 +606,7 @@ public class PriorityClassPanel extends JPanel {
 				try {
 					Double rate = Double.parseDouble(text);
 					jtf.setBackground(Color.white);
-					rates[i] = rate;
+					rates.add(rate);
 				}
 				catch(NumberFormatException er) {
 					jtf.setBackground(LIGHT_RED);
@@ -622,19 +615,15 @@ public class PriorityClassPanel extends JPanel {
 				}
 				i++;
 			}
+			double[] arrayRates = new double[rates.size()];
+			for (int j = 0; j < arrayRates.length; j++) 
+				arrayRates[j] = rates.get(j);
 		
-			if (valid) {
-				
-				// rates, falta dos componentes não incluidos no grupo
-				LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel(), rates);
-				mpc.addUpdater(idxPC, idxGrp, updater);
-			} else {
-				LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel());
-				mpc.addUpdater(idxPC, idxGrp, updater);
-			}
+			// rates, falta dos componentes não incluidos no grupo
+			LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel(), arrayRates);
+			mpc.addUpdater(idxPC, idxGrp, updater);
+			} 
 		}
-		
-	}
 	
 
 	private void collapseAll() {

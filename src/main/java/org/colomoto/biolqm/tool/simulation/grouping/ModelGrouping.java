@@ -18,6 +18,7 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsU
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
+import org.hamcrest.core.IsInstanceOf;
 /**
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
@@ -706,14 +707,6 @@ public class ModelGrouping {
 							newVar[0] = idx;
 							newVar[1] = split;
 							lVars.add(newVar);
-
-							
-							/*
-							 * SplittingType splt = null;
-							 */							 /*   if (split == 1 ) { splt = SplittingType.POSITIVE;
-							 * } else if (split == -1) { splt = SplittingType.NEGATIVE; } else { splt =
-							 * SplittingType.MERGED; } this.filter.put(node, splt);
-							 */
 							
 							break;
 						}
@@ -727,6 +720,9 @@ public class ModelGrouping {
 				this.vars[i * 2] = lVars.get(i)[0];
 				this.vars[i * 2 + 1] = lVars.get(i)[1];
 			}
+			
+			// get the filter
+			this.updateVarsAndFilter();
 			
 			// get updater
 			if (up.length == 1) {
@@ -759,20 +755,14 @@ public class ModelGrouping {
 					String[] rates = up[1].substring(3, up[1].length() - 1).split(",");
 					double[] doubleRates = new double[rates.length];
 		
-					// !!!!! rates only for an entire model ?? 
 					for (int e = 0; e < doubleRates.length; e++) {
 						doubleRates[e] = Double.parseDouble(rates[e]);
 					}
 					
-					this.updater = new RandomUpdaterWithRates(model, doubleRates);
+					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.filter);
 					
 					double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
-					double[] idxs = new double[this.vars.length/2];
-					for (int i = 0, e = 0; i < idxs.length; e++, i+= 2) {
-						idxs[e] = ratesIdx[this.vars[i]];
-					}
-		
-					this.updaterString += Arrays.toString(idxs);
+					this.updaterString += Arrays.toString(ratesIdx);
 
 				}						
 			}				
@@ -934,7 +924,12 @@ public class ModelGrouping {
 		}
 
 		public void addUpdater(LogicalModelUpdater updater) {
-			this.updater = updater;
+		    if (updater instanceof RandomUpdaterWithRates) {
+				this.updater = new RandomUpdaterWithRates(model, ((RandomUpdaterWithRates) updater).getRates(), this.filter);
+		    } else {
+		    	this.updater = updater;
+		    	this.updater.setFilter(this.filter);
+		    }
 			changeUpdaterString();
 		}
 		
@@ -960,15 +955,9 @@ public class ModelGrouping {
 				this.updaterString =  SEPUPDATER + "RN";
 				
 				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
-				System.out.println(Arrays.toString(ratesIdx));
-				System.out.println(Arrays.toString(this.vars));
+				this.updaterString += Arrays.toString(ratesIdx);
+				System.out.println(this.updaterString);
 
-				double[] idxs = new double[this.vars.length/2];
-				for (int i = 0, e = 0; i < idxs.length; e++, i+= 2) {
-					idxs[e] = ratesIdx[this.vars[i]];
-				}
-	
-				this.updaterString += Arrays.toString(idxs);
 		    }
 		}
 		
@@ -991,12 +980,14 @@ public class ModelGrouping {
 				} else {
 					// we want to merge this.vars
 					// except if random rate ?
-					System.out.print(node.toString());
-					this.add(this.vars[idx], 0);
-					this.remove(this.vars[idx], 1);
-					this.remove(this.vars[idx], -1);
-
-					newFilter.put(node, SplittingType.MERGED);
+					if (this.updater instanceof RandomUpdaterWithRates) {
+						newFilter.put(node, SplittingType.MERGED);
+					} else {
+						this.add(this.vars[idx], 0);
+						this.remove(this.vars[idx], 1);
+						this.remove(this.vars[idx], -1);
+						newFilter.put(node, SplittingType.MERGED);
+					}
 				}
 			}
 		}

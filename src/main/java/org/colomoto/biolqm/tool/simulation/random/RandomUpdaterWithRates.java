@@ -44,19 +44,21 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
      */
     public RandomUpdaterWithRates(LogicalModel model, double[] rates, Map<NodeInfo, SplittingType> filter) {
         super(model);
-        this.setFilter(filter);
         
         // if no rates passed
         if (rates == null) {
-        	if(this.filter == null) {
+        	if(filter == null) {
         		this.rates = new double[this.size];
         		for (int i=0 ; i<this.rates.length ; i++) {
         			this.rates[i] = 1.0;
         		}
         	} else {
+                this.setFilter(filter);
+
         		// if only some vars are to be considered...
         		List<Double> filterRates = new ArrayList<Double>();
         		for (int i = 0; i < this.filter.length; i++) {
+        			
         			if (this.filter[i] != null) {
         				// if the variable is MERGED, then add two rates,
         				// for negative and positive 
@@ -64,7 +66,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
             				filterRates.add(1.0);
             				filterRates.add(1.0);
         				} else {
-        				filterRates.add(1.0);
+        					filterRates.add(1.0);
         				}
         			}
         		}
@@ -75,6 +77,8 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         	}
         } else {
         		this.rates = rates;
+        		if (filter != null ) 
+        			this.setFilter(filter);
         	}
     }
 
@@ -91,12 +95,11 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 			int change = nodeChange(state, idx);
 						            			
 			if (change == 0) {
-				merged ++;
+				merged += 2;
                 continue;
             }
 			
-			
-			double r = (Double) null;
+			double r = 0.0;
 			
 			// this assumes that this.rates has two rates in the array for
 			// each MERGED variable in this.filter
@@ -114,11 +117,10 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 					} else {
 						r = this.rates[merged+1];
 					}
-					merged += 2;
 				} else {
 					r = this.rates[merged]; 
-					merged++;
 				}
+				merged += 2;
 			} else {
 				r = this.rates[idx];
 			}

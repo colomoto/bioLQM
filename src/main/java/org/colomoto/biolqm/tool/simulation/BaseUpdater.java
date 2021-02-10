@@ -94,6 +94,7 @@ abstract public class BaseUpdater implements LogicalModelUpdater {
         this.filter = new SplittingType[components.size()];
         int idx = 0;
         for (NodeInfo ni: components) {
+
             this.filter[idx++] = filter.get(ni);
         }
     }
