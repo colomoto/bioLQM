@@ -9,6 +9,7 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 
+
 import java.io.File;
 
 import org.junit.jupiter.api.Test;
