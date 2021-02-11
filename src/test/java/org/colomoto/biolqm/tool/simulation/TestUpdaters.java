@@ -428,6 +428,34 @@ public class TestUpdaters {
 		
 	}
 	
+	@Test
+	public void testRandomUpdaterRateFilter() throws IOException {
+		
+	LogicalModel model = getOtherModel();
+		
+		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
+		
+		// split transitions 
+		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.MERGED,
+				SplittingType.MERGED, SplittingType.POSITIVE, SplittingType.POSITIVE};
+		
+		Random random = new Random();
+		int rateCount = 0;
+		int i = 0;
+		for (NodeInfo node : model.getComponents()) {
+			SplittingType splt = test[random.nextInt(test.length)];
+			if (splt == SplittingType.MERGED)
+				rateCount ++;
+			filter.put(node, splt);
+			i++;
+			rateCount ++;
+		}
+		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
+		assert(updater.getRates().length == rateCount);
+	}
+	
+	
+	
 	
 	@Test
 	public void testRandomUpdaterWithRatesOther() throws IOException {

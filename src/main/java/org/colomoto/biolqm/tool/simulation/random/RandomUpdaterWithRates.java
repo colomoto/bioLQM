@@ -77,7 +77,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         			this.rates[i] = filterRates.get(i);
         	}
         } else {
-        		System.out.println(Arrays.toString(rates));
+        		//System.out.println(Arrays.toString(rates));
         		this.rates = rates;
         		if (filter != null ) 
         			this.setFilter(filter);

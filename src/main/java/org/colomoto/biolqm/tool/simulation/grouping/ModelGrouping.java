@@ -952,33 +952,42 @@ public class ModelGrouping {
 		
 		public void addUpdater(double[] rates) {
 		    updateVarsAndFilter();
-		    List<Double> tempRates = new ArrayList<Double>();
-		    int e = 0;
-		    for (int i = 0; i < this.vars.length - 2; i += 2) {
-		   		if (this.vars[i + 1] == 0 ) {
-		   			tempRates.add(rates[e]);
-		   			tempRates.add(rates[e]);
-		   		} else {
-	    			tempRates.add(rates[e]);
-	    		}
-		   		e ++;
-	    	}
-	    	double[] newRates = new double[tempRates.size()];
-	    	for (int j = 0; j < newRates.length; j++)
-	    		newRates[j] = tempRates.get(j);
+		    if (rates.length == 0) {
+		    	this.updater = new RandomUpdaterWithRates(model,this.filter); 
+		    } else {
+		    
+		    	List<Double> tempRates = new ArrayList<Double>();
+		    	int e = 0;
+		    	for (int i = 0; i < this.vars.length - 1; i += 2) {
+		    		if (this.vars[i + 1] == 0 ) {
+		    			tempRates.add(rates[e]);
+		   				tempRates.add(rates[e]);
+		    		} else {
+		    			tempRates.add(rates[e]);
+		    		}
+		    		e ++;
+		    	}
+		    	double[] newRates = new double[tempRates.size()];
+		    	for (int j = 0; j < newRates.length; j++)
+		    		newRates[j] = tempRates.get(j);
 			
-	    	this.updater = new RandomUpdaterWithRates(model, newRates, this.filter); 
-			changeUpdaterString();
+		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.filter); 
+		    }
+	    	changeUpdaterString();
 		}
 		
 		public double[] getRates() {
 			
 			double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
-			// aqui ... para a interface 
+			// get Rates to GUI
+			//System.out.println(Arrays.toString(this.vars));
+			//System.out.println(Arrays.toString(upRates));
+
 			List<Double> tempRates = new ArrayList<Double>();
-			for (int i=0; i < this.vars.length - 2; i += 2) {
+			for (int i=0; i < this.vars.length - 1; i += 2) {
 				// if no split or only [+] or [-] exists
-				if (this.vars[i + 1] == 0 && this.vars[i] != this.vars[i+2]) {
+				if (i + 2 < this.vars.length && this.vars[i + 1] == 0
+						&& this.vars[i] != this.vars[i+2]) {
 					tempRates.add(upRates[i]);
 				// if both exist:
 				} else {
@@ -992,7 +1001,6 @@ public class ModelGrouping {
 			for (int j = 0; j < rates.length; j++) 
 				rates[j] = tempRates.get(j);
 				
-			System.out.println(this.updaterString + "  " + Arrays.toString(rates));
 		
 			return rates;
 		}
@@ -1021,7 +1029,6 @@ public class ModelGrouping {
 				
 				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
 				this.updaterString += Arrays.toString(ratesIdx).replaceAll("\\s+","");
-				System.out.println(this.updaterString);
 		    }
 		}
 		
@@ -1030,14 +1037,14 @@ public class ModelGrouping {
 			
 			Map<NodeInfo, SplittingType> newFilter = new HashMap<NodeInfo, SplittingType>();
 			
-			for (int idx = 0; idx < this.vars.length - 2; idx+=2) {
+			for (int idx = 0; idx < this.vars.length - 1; idx+=2) {
 				NodeInfo node = model.getComponents().get(this.vars[idx]);
 				// find Node with var nodeID
 			//
 		//		System.out.println(node + " " + this.vars[idx] + " " + this.vars[idx + 1 ]);
 				if (this.vars[idx+1] == 0) {
 					newFilter.put(node, SplittingType.MERGED);
-				} else if (this.vars[idx] != this.vars[idx+2]) {
+				} else if (idx + 2 < this.vars.length && this.vars[idx] != this.vars[idx+2]) {
 					if (this.vars[idx+1] == 1) {
 						newFilter.put(node, SplittingType.POSITIVE);
 					} else {

@@ -304,12 +304,12 @@ public class PriorityClassPanel extends JPanel {
 					} else {
 
 						double[] upRates = mpc.getRates(idxPC, idxGroup);
-						System.out.println(Arrays.toString(upRates));
+						System.out.println("upRates: " + Arrays.toString(upRates));
 
 						// put (node string, rate)
 						for (int e = 0; e < vars.size(); e++) {
-							 rates.put(vars.get(e), upRates[e]); 
-							 }
+							rates.put(vars.get(e), upRates[e]); 
+						}
 					}
 						
 					 JPanel ratesPanel = new JPanel(new GridBagLayout()); 
@@ -594,8 +594,7 @@ public class PriorityClassPanel extends JPanel {
 	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
 		
 		if (textfields == null) {
-			LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel());
-     		mpc.addUpdater(idxPC, idxGrp, updater);
+     		mpc.addUpdater(idxPC, idxGrp, new double[0]);
 		} else {
 			List<Double> rates = new ArrayList<Double>();
 			int i = 0;
