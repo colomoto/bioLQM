@@ -8,6 +8,7 @@ import org.colomoto.biolqm.io.BaseLoader;
 import org.colomoto.mddlib.*;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
+import org.colomoto.biolqm.metadata.constants.XSLTransform;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
@@ -1059,8 +1060,14 @@ public class SBMLqualImport extends BaseLoader {
 			if (elementModel.isSetNotes()) {
 				XMLNode notesModel = elementModel.getNotes();
 				
-				// to deal with the notes incorporated
-				metadataModel.setNotes(notesModel.toXMLString());
+				// to suppress the xmlns of the html language
+				for (XMLNode content: notesModel.getChildElements("", "")) {
+					content.clearNamespaces();
+				}
+				
+				String htmlModel = notesModel.toXMLString();
+				String markdownModel = XSLTransform.simpleTransform(htmlModel);
+				metadataModel.setNotes(markdownModel);
 			}
 		}
 		
@@ -1092,9 +1099,16 @@ public class SBMLqualImport extends BaseLoader {
 				}
 				if (elementSpecies.isSetNotes()) {
 					XMLNode notesSpecies = elementSpecies.getNotes();
-					
-					// to deal with the notes incorporated
-					metadataSpecies.setNotes(notesSpecies.toXMLString());
+					notesSpecies.clearNamespaces();
+				
+					// to suppress the xmlns of the html language
+					for (XMLNode content: notesSpecies.getChildElements("", "")) {
+						content.clearNamespaces();
+					}
+				
+					String htmlSpecies = notesSpecies.toXMLString();
+					String markdownSpecies = XSLTransform.simpleTransform(htmlSpecies);
+					metadataSpecies.setNotes(markdownSpecies);
 				}
 			}
 		}

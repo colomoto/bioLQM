@@ -1,4 +1,4 @@
-package org.colomoto.biolqm.metadata.annotations;
+package org.colomoto.biolqm.metadata.constants;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -9,25 +9,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 public class XSLTransform {
-
-    /**
-     * Simple transformation method.
-     * @param sourcePath - Absolute path to source xml file.
-     * @param xsltPath - Absolute path to xslt file.
-     * @param resultDir - Directory where you want to put resulting files.
-     */
-/*     public static void simpleTransform(String sourcePath, String resultDir) {
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        try {
-            Transformer transformer =
-                tFactory.newTransformer(new StreamSource(new File("src/main/resources/html2markdown.xsl")));
-
-            transformer.transform(new StreamSource(new File(sourcePath)),
-                                  new StreamResult(new File(resultDir)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    } */
 	
 	public static String simpleTransform(String source) {
         try {
@@ -48,8 +29,8 @@ public class XSLTransform {
 		return null;
     }
 
-    public static void setPropertiesXSLTransform() {
+/*     public static void setPropertiesXSLTransform() {
         //Set saxon as transformer.
         System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
-    }
+    } */
 }

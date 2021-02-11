@@ -137,11 +137,13 @@ public class TestMetadata {
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1093/ajae/aaq063"); */
 		
-		// LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
+		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
 		
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
-		modelMetadata.addURI("isDescribedBy", "doi", "maissicesttintinaupaysdelornoir");
+		//System.out.println(modelMetadata.getNotes());
+		
+/* 		modelMetadata.addURI("isDescribedBy", "doi", "maissicesttintinaupaysdelornoir");
 		
 		modelMetadata.addDate("created", "1996-05-29");
 		
@@ -198,6 +200,6 @@ public class TestMetadata {
 		
 		System.out.println("modelMetadata.getReferencesOfYear(2003)");
 		
-		System.out.println(modelMetadata.getReferencesWithKeyword(" gsfgsgs").toString());
+		System.out.println(modelMetadata.getReferencesWithKeyword(" gsfgsgs").toString()); */
 	}
 }

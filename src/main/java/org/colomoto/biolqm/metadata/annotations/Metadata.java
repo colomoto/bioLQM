@@ -1236,7 +1236,7 @@ public class Metadata {
 				String qualifierClass = jsonQualifier.getString("type");
 				
 				JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
-
+				
 				if (qualifierClass.equals("GenericAnnotation")) {
 					
 					int numAltMetadata = this.getNumberOfAlternatives(qualifierName);

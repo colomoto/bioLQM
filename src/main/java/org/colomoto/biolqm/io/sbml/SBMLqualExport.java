@@ -9,6 +9,7 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
+import com.github.rjeschke.txtmark.Processor;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
@@ -20,6 +21,8 @@ import org.sbml.jsbml.ext.qual.*;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.jsbml.xml.XMLTriple;
+import org.sbml.jsbml.xml.XMLAttributes;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -381,8 +384,11 @@ public class SBMLqualExport extends BaseExporter {
 		}
 		if (metadata.getNotes() != "") {
 			try {
-				XMLNode xmlnode = XMLNode.convertStringToXMLNode(metadata.getNotes());
-				element.setNotes(xmlnode);
+				String result = Processor.process(metadata.getNotes());
+				String resultWithBody = "<notes><body xmlns=\"http://www.w3.org/1999/xhtml\">" + result + "</body></notes>";
+				
+				XMLNode xmlNode = XMLNode.convertStringToXMLNode(resultWithBody);			
+				element.setNotes(xmlNode);
 			} catch (XMLStreamException e) {
 				System.err.println("Error exporting one of the notes in sbml." + "\n");
 			}

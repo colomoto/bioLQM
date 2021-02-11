@@ -3,30 +3,43 @@
   <model id="model_id">
 	<notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <p>This is the  model described in the article:      <br/>
-			<strong>Towards a genome-scale kinetic model of cellular metabolism</strong>
-			<br/>
-			  Smallbone K, Simeonidis E, Swainston N, Mendes P.      <em>BMC Syst Biol.</em>
-			  2010 Jan 28;4(1):6. PMID:      <a href="http://www.ncbi.nlm.nih.gov/pubmed/20109182">20109182</a>
-			  , doi:      <a href="http: //dx.doi.org/10.1186/1752-0509-4-6">10.1186/1752-0509-4-6</a>
-			<br/>
-			<strong>Abstract:</strong>
-			  CKGROUND: Advances in bioinformatic techniques and analyses have led to the availability of genome-scale metabolic reconstructions. The size and complexity of such networks often means that their potential behaviour can only be analysed with constraint-based methods. Whilst requiring minimal experimental data, such methods are unable to give insight into cellular substrate concentrations. Instead, the long-term goal of systems biology is to use kinetic modelling to characterize fully the mechanics of each enzymatic reaction, and to combine such knowledge to predict system behaviour.      <br/>
-			  RESULTS: We describe a method for building a parameterized genome-scale kinetic model of a metabolic network. Simplified linlog kinetics are used and the parameters are extracted from a kinetic model repository. We demonstrate our methodology by applying it to yeast metabolism. The resultant model has 956 metabolic reactions involving 820 metabolites, and, whilst approximative, has considerably broader remit than any existing models of its type. Control analysis is used to identify key steps within the system.      <br/>
-			  CONCLUSIONS: Our modelling framework may be considered a stepping-stone toward the long-term goal of a fully-parameterized model of yeast metabolism. The model (see additional file 1) is available in SBML format from the BioModels database (BioModels ID: MODEL1001200000) and at      <a href="http://www.mcisb.org/resources/genomescale/">http://www.mcisb.org/resources/genomescale/</a>
-        </p>
-		<p>This SBML representation of the yeast metabolic network is made available under the Creative Commons Attribution-Share Alike 3.0 Unported Licence (see www.creativecommons.org).
-		</p>
-		<p>This model originates from BioModels Database: A Database of Annotated Published Models (http://www.ebi.ac.uk/biomodels/). It is copyright (c) 2005-2011 The BioModels.net Team.      <br/>
-          To the extent possible under law, all copyright and related or neighbouring rights to this encoded model have been dedicated to the public domain worldwide. Please refer to      <a href="http://creativecommons.org/publicdomain/zero/1.0/" title="Creative Commons CC0">CC0 Public Domain Dedication</a>
-          for more information.      
-		</p>
-		<p>In summary, you are entitled to use this encoded model in absolutely any manner you deem suitable, verbatim, or with modification, alone or embedded it in a larger context, redistribute it, commercially or not, in a restricted way or not.
-          .      <br/>
-		<br/>
-          To cite BioModels Database, please use:      <a href="http://www.ncbi.nlm.nih.gov/pubmed/20587024" target="_blank">Li C, Donizelli M, Rodriguez N, Dharuri H, Endler L, Chelliah V, Li L, He E, Henry A, Stefan MI, Snoep JL, Hucka M, Le Novère N, Laibe C (2010) BioModels Database: An enhanced, curated and annotated resource for published quantitative kinetic models. BMC Syst Biol., 4:92.</a>
-		</p>
-	  </body>
+        <div class="dc:title">Jiang2007 - GSIS system, Pancreatic Beta Cells</div>
+        <div class="dc:description">Description of a core kinetic model of the glucose-stimulated insulin secretion system (GSIS) in pancreatic beta cells.</div>
+        <div class="dc:bibliographicCitation">
+          <p>This model is described in the article:</p>
+          <div class="bibo:title">
+            <a href="http://identifiers.org/pubmed/17514510" title="Access to this publication">A kinetic core model of the glucose-stimulated insulin secretion network of pancreatic beta cells.</a>
+          </div>
+          <div class="bibo:authorList">Jiang N, Cox RD, Hancock JM.</div>
+          <div class="bibo:Journal">Mamm Genome 2007 Jul; 18(6-7):508-20.</div>
+          <p>Abstract:</p>
+          <div class="bibo:abstract">
+            <p>The construction and characterization of a core kinetic model of the glucose-stimulated insulin secretion system (GSIS) in pancreatic beta cells is described. The model consists of 44 enzymatic reactions, 59 metabolic state variables, and 272 parameters. It integrates five subsystems: glycolysis, the TCA cycle, the respiratory chain, NADH shuttles, and the pyruvate cycle. It also takes into account compartmentalization of the reactions in the cytoplasm and mitochondrial matrix. The model shows expected behavior in its outputs, including the response of ATP production to starting glucose concentration and the induction of oscillations of metabolite concentrations in the glycolytic pathway and in ATP and ADP concentrations. Identification of choke points and parameter sensitivity analysis indicate that the glycolytic pathway, and to a lesser extent the TCA cycle, are critical to the proper behavior of the system, while parameters in other components such as the respiratory chain are less critical. Notably, however, sensitivity analysis identifies the first reactions of nonglycolytic pathways as being important for the behavior of the system. The model is robust to deletion of malic enzyme activity, which is absent in mouse pancreatic beta cells. The model represents a step toward the construction of a model with species-specific parameters that can be used to understand mouse models of diabetes and the relationship of these mouse models to the human disease state.</p>
+          </div>
+        </div>
+        <div class="bm:curation">
+          <p>The model reproduces Figure 2 of the paper, and is built using files 'ModelNNT11.xml' and 'changed.m' available from        <a href="http://www.har.mrc.ac.uk/research/bioinformatics/research_areas/systems_biology.html">http://www.har.mrc.ac.uk/research/bioinformatics/research_areas/systems_biology.html</a>
+            .        </p>
+      </div>
+      <div class="bm:modification">
+        <p>A couple of small errors in the model (in the original SBML file 'ModelNNT11.xml') have been corrected. The errors are:</p>
+        <ul>
+          <li>v44 now produces Pyr rather than PYR</li>
+          <li>the kinetic law of v27 is now dependent on cytoplasmic (rather than mitochondrial) acetyl CoA and OXA</li>
+        </ul>
+      </div>
+      <div class="dc:publisher">
+        <p>This model is hosted on        <a href="http://www.ebi.ac.uk/biomodels/">BioModels Database</a>
+            and identified by:        <a href="http://www.ebi.ac.uk/biomodels/BIOMD0000000239">BIOMD0000000239</a>
+            .        </p>
+      <p>To cite BioModels Database, please use:        <a href="http://identifiers.org/pubmed/20587024" title="Latest BioModels Database publication">BioModels Database: An enhanced, curated and annotated resource for published quantitative kinetic models</a>
+            .        </p>
+  </div>
+  <div class="dc:license">
+    <p>To the extent possible under law, all copyright and related or neighbouring rights to this encoded model have been dedicated to the public domain worldwide. Please refer to        <a href="http://creativecommons.org/publicdomain/zero/1.0/" title="Access to: CC0 1.0 Universal (CC0 1.0), Public Domain Dedication">CC0 Public Domain Dedication</a>
+            for more information.        </p>
+</div>
+</body>
 	</notes>
     <annotation>
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/">
