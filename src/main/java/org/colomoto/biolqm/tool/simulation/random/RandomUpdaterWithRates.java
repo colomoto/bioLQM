@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.tool.simulation.random;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +77,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         			this.rates[i] = filterRates.get(i);
         	}
         } else {
+        		System.out.println(Arrays.toString(rates));
         		this.rates = rates;
         		if (filter != null ) 
         			this.setFilter(filter);

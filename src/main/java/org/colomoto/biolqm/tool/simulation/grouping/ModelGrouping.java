@@ -330,7 +330,6 @@ public class ModelGrouping {
 		return this.pcList.get(idxPC).getGroupUpdaterName(idxGrp);
 	}
 	
-	
 	public LogicalModelUpdater getUpdater(int idxPC, int idxGrp) {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
 			return null;
@@ -340,6 +339,17 @@ public class ModelGrouping {
 	public void addUpdater(int idxPC, int idxGrp, LogicalModelUpdater updater) {
 		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
 			this.pcList.get(idxPC).addUpdater(idxGrp, updater);
+	}
+	
+	public void addUpdater(int idxPC, int idxGrp, double[] rates) {
+		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
+			this.pcList.get(idxPC).addUpdater(idxGrp, rates);
+	}
+	
+	public double[] getRates(int idxPC, int idxGrp) {
+		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
+			return this.pcList.get(idxPC).getRates(idxGrp);
+		return new double[0];
 	}
 
 	public void collapseAll() {
@@ -515,6 +525,18 @@ public class ModelGrouping {
 				this.groups.get(idxGrp).addUpdater(updater);
 			}
 		}
+		
+		public void addUpdater(int idxGrp, double[] rates) {
+			if (idxGrp >= 0 && idxGrp < this.size()) {
+				this.groups.get(idxGrp).addUpdater(rates);
+			}
+		}
+		
+		public double[] getRates(int idxGrp) {
+			if (idxGrp >= 0 && idxGrp < this.size()) 
+				return this.groups.get(idxGrp).getRates();
+			return new double[0];
+		}
 			
 				
 		public List<List<String>> getVars(LogicalModel m) {
@@ -670,17 +692,18 @@ public class ModelGrouping {
 			this.vars = vars;
 			this.updater = new SynchronousUpdater(model);
 			this.updaterString = "";
+			updateVarsAndFilter();
 		}
 		
 		public RankedClassGroup(int[] vars, LogicalModelUpdater updater) {
 			this.vars = vars;
-			addUpdater(updater);	
+			addUpdater(updater);
+			updateVarsAndFilter();
 		}
 		
 
 		public RankedClassGroup(LogicalModel m, String textFormat) {
-			
-			String[] up = textFormat.split(SEPUPDATER);
+			String[] up = textFormat.split("\\" + SEPUPDATER);
 			String[] saVars = up[0].split(SEPVAR);
 			List<int[]> lVars = new ArrayList<int[]>();
 
@@ -695,7 +718,6 @@ public class ModelGrouping {
 					var = saVars[i].substring(0, var.length() - SplittingType.POSITIVE.toString().length());
 				}
 				// last variable, should be followed by $RU, $RN, $S or "".
-				
 				for (int idx = 0; idx < m.getComponents().size(); idx++) {
 					NodeInfo node = m.getComponents().get(idx);
 					// find Node with var nodeID
@@ -707,7 +729,6 @@ public class ModelGrouping {
 							newVar[0] = idx;
 							newVar[1] = split;
 							lVars.add(newVar);
-							
 							break;
 						}
 					}
@@ -723,7 +744,7 @@ public class ModelGrouping {
 			
 			// get the filter
 			this.updateVarsAndFilter();
-			
+						
 			// get updater
 			if (up.length == 1) {
 				// default, Synchronous
@@ -762,8 +783,7 @@ public class ModelGrouping {
 					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.filter);
 					
 					double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
-					this.updaterString += Arrays.toString(ratesIdx);
-
+					this.updaterString += Arrays.toString(ratesIdx).replaceAll("\\s+","");
 				}						
 			}				
 		}
@@ -924,13 +944,57 @@ public class ModelGrouping {
 		}
 
 		public void addUpdater(LogicalModelUpdater updater) {
-		    if (updater instanceof RandomUpdaterWithRates) {
-				this.updater = new RandomUpdaterWithRates(model, ((RandomUpdaterWithRates) updater).getRates(), this.filter);
-		    } else {
-		    	this.updater = updater;
-		    	this.updater.setFilter(this.filter);
-		    }
+		    updateVarsAndFilter();
+		    this.updater = updater;
+		    this.updater.setFilter(this.filter);
 			changeUpdaterString();
+		}
+		
+		public void addUpdater(double[] rates) {
+		    updateVarsAndFilter();
+		    List<Double> tempRates = new ArrayList<Double>();
+		    int e = 0;
+		    for (int i = 0; i < this.vars.length - 2; i += 2) {
+		   		if (this.vars[i + 1] == 0 ) {
+		   			tempRates.add(rates[e]);
+		   			tempRates.add(rates[e]);
+		   		} else {
+	    			tempRates.add(rates[e]);
+	    		}
+		   		e ++;
+	    	}
+	    	double[] newRates = new double[tempRates.size()];
+	    	for (int j = 0; j < newRates.length; j++)
+	    		newRates[j] = tempRates.get(j);
+			
+	    	this.updater = new RandomUpdaterWithRates(model, newRates, this.filter); 
+			changeUpdaterString();
+		}
+		
+		public double[] getRates() {
+			
+			double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
+			// aqui ... para a interface 
+			List<Double> tempRates = new ArrayList<Double>();
+			for (int i=0; i < this.vars.length - 2; i += 2) {
+				// if no split or only [+] or [-] exists
+				if (this.vars[i + 1] == 0 && this.vars[i] != this.vars[i+2]) {
+					tempRates.add(upRates[i]);
+				// if both exist:
+				} else {
+					if (this.vars[i + 1] == -1) 
+					tempRates.add(upRates[i]);
+					tempRates.add(upRates[i + 1]);
+
+				}
+			}
+			double[] rates = new double[tempRates.size()];
+			for (int j = 0; j < rates.length; j++) 
+				rates[j] = tempRates.get(j);
+				
+			System.out.println(this.updaterString + "  " + Arrays.toString(rates));
+		
+			return rates;
 		}
 		
 		public LogicalModelUpdater getUpdater() {
@@ -945,6 +1009,7 @@ public class ModelGrouping {
 			return this.updater.getUpdaterName();
 		}
 		
+		
 		private void changeUpdaterString() {
 			
 		    if (this.updater instanceof RandomUpdaterWrapper){
@@ -955,11 +1020,11 @@ public class ModelGrouping {
 				this.updaterString =  SEPUPDATER + "RN";
 				
 				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
-				this.updaterString += Arrays.toString(ratesIdx);
+				this.updaterString += Arrays.toString(ratesIdx).replaceAll("\\s+","");
 				System.out.println(this.updaterString);
-
 		    }
 		}
+		
 		
 		public void updateVarsAndFilter() {
 			
@@ -968,7 +1033,8 @@ public class ModelGrouping {
 			for (int idx = 0; idx < this.vars.length - 2; idx+=2) {
 				NodeInfo node = model.getComponents().get(this.vars[idx]);
 				// find Node with var nodeID
-				
+			//
+		//		System.out.println(node + " " + this.vars[idx] + " " + this.vars[idx + 1 ]);
 				if (this.vars[idx+1] == 0) {
 					newFilter.put(node, SplittingType.MERGED);
 				} else if (this.vars[idx] != this.vars[idx+2]) {
@@ -990,6 +1056,7 @@ public class ModelGrouping {
 					}
 				}
 			}
+			this.filter = newFilter;
 		}
 
 

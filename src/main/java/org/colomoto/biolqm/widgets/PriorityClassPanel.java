@@ -269,7 +269,7 @@ public class PriorityClassPanel extends JPanel {
 		                    case "Random uniform":
 		                    	MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(mpc.getModel());
 		                    	updater = new RandomUpdaterWrapper(MultiUpdater);
-		                		System.out.println(((RandomUpdaterWrapper) updater).getUpdaterName());
+		                		//System.out.println(((RandomUpdaterWrapper) updater).getUpdaterName());
 
 		                		mpc.addUpdater(idx[0], idx[1], updater);
 		                        break;
@@ -282,7 +282,7 @@ public class PriorityClassPanel extends JPanel {
 		                }
 						fireActionEvent();
 						updatePriorityList();	
-						System.out.println(mpc.toString());
+						//System.out.println(mpc.toString());
 		            }
 		        });
 		
@@ -303,8 +303,8 @@ public class PriorityClassPanel extends JPanel {
 							 }
 					} else {
 
-						RandomUpdaterWithRates upWithRates = (RandomUpdaterWithRates) mpc.getUpdater(idxPC, idxGroup);
-						double[] upRates = upWithRates.getRates();
+						double[] upRates = mpc.getRates(idxPC, idxGroup);
+						System.out.println(Arrays.toString(upRates));
 
 						// put (node string, rate)
 						for (int e = 0; e < vars.size(); e++) {
@@ -620,8 +620,7 @@ public class PriorityClassPanel extends JPanel {
 				arrayRates[j] = rates.get(j);
 		
 			// rates, falta dos componentes não incluidos no grupo
-			LogicalModelUpdater updater =  new RandomUpdaterWithRates(mpc.getModel(), arrayRates);
-			mpc.addUpdater(idxPC, idxGrp, updater);
+			mpc.addUpdater(idxPC, idxGrp, arrayRates);
 			} 
 		}
 	
