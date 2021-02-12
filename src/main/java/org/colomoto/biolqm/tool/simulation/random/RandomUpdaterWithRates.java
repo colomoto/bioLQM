@@ -37,7 +37,6 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         this(model, null, filter);
     }
 
-
     /**
      * 
 	 * @param model the model for which the random is constructed

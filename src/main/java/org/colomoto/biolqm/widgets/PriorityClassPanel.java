@@ -37,6 +37,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
@@ -269,7 +270,6 @@ public class PriorityClassPanel extends JPanel {
 		                    case "Random uniform":
 		                    	MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(mpc.getModel());
 		                    	updater = new RandomUpdaterWrapper(MultiUpdater);
-		                		//System.out.println(((RandomUpdaterWrapper) updater).getUpdaterName());
 
 		                		mpc.addUpdater(idx[0], idx[1], updater);
 		                        break;
@@ -282,7 +282,6 @@ public class PriorityClassPanel extends JPanel {
 		                }
 						fireActionEvent();
 						updatePriorityList();	
-						//System.out.println(mpc.toString());
 		            }
 		        });
 		
@@ -593,19 +592,20 @@ public class PriorityClassPanel extends JPanel {
 	
 	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
 		
+		Map<String, Double> nodeRates = new HashMap<String, Double>();
 		if (textfields == null) {
-     		mpc.addUpdater(idxPC, idxGrp, new double[0]);
+     		mpc.addUpdater(idxPC, idxGrp, nodeRates);
 		} else {
-			List<Double> rates = new ArrayList<Double>();
 			int i = 0;
 			Boolean valid = true;
 			for (JTextField jtf : textfields.keySet()) {
 			
 				String text = jtf.getText();
+				String node = jtf.getToolTipText();
 				try {
 					Double rate = Double.parseDouble(text);
 					jtf.setBackground(Color.white);
-					rates.add(rate);
+					nodeRates.put(node, rate);
 				}
 				catch(NumberFormatException er) {
 					jtf.setBackground(LIGHT_RED);
@@ -614,12 +614,8 @@ public class PriorityClassPanel extends JPanel {
 				}
 				i++;
 			}
-			double[] arrayRates = new double[rates.size()];
-			for (int j = 0; j < arrayRates.length; j++) 
-				arrayRates[j] = rates.get(j);
-		
 			// rates, falta dos componentes não incluidos no grupo
-			mpc.addUpdater(idxPC, idxGrp, arrayRates);
+			mpc.addUpdater(idxPC, idxGrp, nodeRates);
 			} 
 		}
 	

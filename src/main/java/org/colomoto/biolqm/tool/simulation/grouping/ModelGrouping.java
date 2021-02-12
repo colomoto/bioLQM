@@ -341,7 +341,7 @@ public class ModelGrouping {
 			this.pcList.get(idxPC).addUpdater(idxGrp, updater);
 	}
 	
-	public void addUpdater(int idxPC, int idxGrp, double[] rates) {
+	public void addUpdater(int idxPC, int idxGrp, Map<String, Double> rates) {
 		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
 			this.pcList.get(idxPC).addUpdater(idxGrp, rates);
 	}
@@ -526,7 +526,7 @@ public class ModelGrouping {
 			}
 		}
 		
-		public void addUpdater(int idxGrp, double[] rates) {
+		public void addUpdater(int idxGrp, Map<String, Double> rates ) {
 			if (idxGrp >= 0 && idxGrp < this.size()) {
 				this.groups.get(idxGrp).addUpdater(rates);
 			}
@@ -698,10 +698,8 @@ public class ModelGrouping {
 		public RankedClassGroup(int[] vars, LogicalModelUpdater updater) {
 			this.vars = vars;
 			addUpdater(updater);
-			updateVarsAndFilter();
 		}
 		
-
 		public RankedClassGroup(LogicalModel m, String textFormat) {
 			String[] up = textFormat.split("\\" + SEPUPDATER);
 			String[] saVars = up[0].split(SEPVAR);
@@ -947,26 +945,33 @@ public class ModelGrouping {
 		    updateVarsAndFilter();
 		    this.updater = updater;
 		    this.updater.setFilter(this.filter);
-			changeUpdaterString();
+		    changeUpdaterString();
 		}
 		
-		public void addUpdater(double[] rates) {
+		public void addUpdater(Map<String, Double> rates) {
 		    updateVarsAndFilter();
-		    if (rates.length == 0) {
+		    if (rates.size() == 0) {
 		    	this.updater = new RandomUpdaterWithRates(model,this.filter); 
 		    } else {
 		    
+		    	//  ...      ORDENAÇÃO 
 		    	List<Double> tempRates = new ArrayList<Double>();
-		    	int e = 0;
-		    	for (int i = 0; i < this.vars.length - 1; i += 2) {
-		    		if (this.vars[i + 1] == 0 ) {
-		    			tempRates.add(rates[e]);
-		   				tempRates.add(rates[e]);
+		    	List<tupleNodeRate> tpNodeRate = new ArrayList<tupleNodeRate>();
+		    	for(int i = 0; i < this.vars.length - 1; i+= 2) 
+		    		tpNodeRate.add(new tupleNodeRate(this.vars[i], this.vars[i+1]));
+		    	
+		    	java.util.Collections.sort(tpNodeRate);
+		    	for(tupleNodeRate nodeRate : tpNodeRate) {
+		    		String var = model.getComponents().get(nodeRate.idx).getNodeID();
+		    		if (nodeRate.flag == 0) {
+		    			tempRates.add(rates.get(var));
+		   				tempRates.add(rates.get(var));
 		    		} else {
-		    			tempRates.add(rates[e]);
+		    			tempRates.add(rates.get(var));
 		    		}
-		    		e ++;
 		    	}
+		    		
+
 		    	double[] newRates = new double[tempRates.size()];
 		    	for (int j = 0; j < newRates.length; j++)
 		    		newRates[j] = tempRates.get(j);
@@ -980,28 +985,35 @@ public class ModelGrouping {
 			
 			double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
 			// get Rates to GUI
-			//System.out.println(Arrays.toString(this.vars));
-			//System.out.println(Arrays.toString(upRates));
-
+			System.out.println("this.vars: " + Arrays.toString(this.vars));
+			System.out.println("updaterRates: " + Arrays.toString(upRates));
+			
 			List<Double> tempRates = new ArrayList<Double>();
-			for (int i=0; i < this.vars.length - 1; i += 2) {
-				// if no split or only [+] or [-] exists
-				if (i + 2 < this.vars.length && this.vars[i + 1] == 0
-						&& this.vars[i] != this.vars[i+2]) {
-					tempRates.add(upRates[i]);
-				// if both exist:
-				} else {
-					if (this.vars[i + 1] == -1) 
-					tempRates.add(upRates[i]);
-					tempRates.add(upRates[i + 1]);
 
+			
+			if (upRates.length*2 == this.vars.length) {
+				for (int i=0; i < this.vars.length - 1; i += 2) {
+					// if no split or only [+] or [-] exists
+					if (i + 2 < this.vars.length && this.vars[i + 1] == 0
+							&& this.vars[i] != this.vars[i+2]) {
+						tempRates.add(upRates[i]);
+						// if both exist:
+					} else {
+						if (this.vars[i + 1] == -1) {
+							tempRates.add(upRates[i]);
+							tempRates.add(upRates[i + 1]);
+						}
+					}
 				}
+			} else {
+				// vars have been changed... 
 			}
+			
 			double[] rates = new double[tempRates.size()];
 			for (int j = 0; j < rates.length; j++) 
 				rates[j] = tempRates.get(j);
 				
-		
+			
 			return rates;
 		}
 		
@@ -1044,7 +1056,11 @@ public class ModelGrouping {
 		//		System.out.println(node + " " + this.vars[idx] + " " + this.vars[idx + 1 ]);
 				if (this.vars[idx+1] == 0) {
 					newFilter.put(node, SplittingType.MERGED);
-				} else if (idx + 2 < this.vars.length && this.vars[idx] != this.vars[idx+2]) {
+					
+				// if only [+] or [-] is present
+				} else if ((idx + 2 < this.vars.length 
+						&& this.vars[idx] != this.vars[idx+2]) 
+						|| idx + 2 == this.vars.length) {
 					if (this.vars[idx+1] == 1) {
 						newFilter.put(node, SplittingType.POSITIVE);
 					} else {
@@ -1066,7 +1082,6 @@ public class ModelGrouping {
 			this.filter = newFilter;
 		}
 
-
 		public RankedClassGroup clone() {
 			return new RankedClassGroup(this.vars.clone(), this.updater);
 		}
@@ -1078,6 +1093,24 @@ public class ModelGrouping {
 			return false;
 		}
 	}
+	
+	public class tupleNodeRate implements Comparable<tupleNodeRate> {
+		
+		public final int idx;
+		public final int flag;
+		
+		tupleNodeRate(int idx, int flag) {
+			this.idx = idx;
+			this.flag = flag;
+		}
+		
+	
+		public int compareTo(tupleNodeRate other) {
+			   return new Integer(this.idx).compareTo(new Integer(other.idx));
+		 }
+		   
+	}
+	
 
  
 }
