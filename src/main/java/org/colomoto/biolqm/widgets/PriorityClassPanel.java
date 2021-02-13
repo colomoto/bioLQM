@@ -335,6 +335,7 @@ public class PriorityClassPanel extends JPanel {
 							 @Override
 							 public void keyTyped(KeyEvent e) {
 							 }
+							 
 							 @Override
 							 public void keyReleased(KeyEvent e) {
 								 int[] idx = idxJtf.get(e.getSource());

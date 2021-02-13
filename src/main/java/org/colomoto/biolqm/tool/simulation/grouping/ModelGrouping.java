@@ -959,26 +959,45 @@ public class ModelGrouping {
 		    		tpNodeRate.add(new VarInfo(this.vars[i], this.vars[i+1]));
 	
 		    	java.util.Collections.sort(tpNodeRate);
-		    	for(VarInfo nodeRate : tpNodeRate) {
+		    	for(int e = 0; e < tpNodeRate.size(); e++) {
 		    		
-		    		String var = model.getComponents().get(nodeRate.idx).getNodeID();
-		    		if (nodeRate.flag == 1) {
-						var = var + SplittingType.POSITIVE.toString();
-		    		} else if (nodeRate.flag == -1){
-		    			var = var + SplittingType.NEGATIVE.toString();
-		    		}
-		    	
-		    		tempRates.add(rates.get(var));
-		   			tempRates.add(rates.get(var));
+		    		VarInfo nodeRate = tpNodeRate.get(e);
+		    		String var = model.getComponents().get(nodeRate.idx).getNodeID();   		
+		    			
+			    		// if split and both [+], [-] are present 
+		    			if (e + 1 < tpNodeRate.size() 
+		    					&& tpNodeRate.get(e+1).idx == nodeRate.idx) {
+		    				String deepVar = var;
+		    				
+							var = deepVar + SplittingType.POSITIVE.toString();
+				   			tempRates.add(rates.get(var));
+			  
+			    			var = deepVar + SplittingType.NEGATIVE.toString();
+				   			tempRates.add(rates.get(var));
+				   			e ++; 				
+		    			} else {
+		    				// verificar se 
+		    				if (nodeRate.flag == 1) {
+		    					var = var + SplittingType.POSITIVE.toString();
+
+		    				} else if (nodeRate.flag == -1){
+		    					var = var + SplittingType.NEGATIVE.toString();
+		    	 
+		    				}
+		    				
+		    				tempRates.add(rates.get(var));
+		    				tempRates.add(rates.get(var));
+		    			}
+		    		
 		    	}
 		    	double[] newRates = new double[tempRates.size()];
 		    	for (int j = 0; j < newRates.length; j++)
 		    		newRates[j] = tempRates.get(j);
 			
 		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
-		    	
 		    }
 		}
+		  
 		
 		
 		public Map<String, Double> getRates() {
@@ -989,7 +1008,8 @@ public class ModelGrouping {
 			Map<String, Double> nodeRates = new HashMap<String, Double>();
 			
 			
-	    	for(int idx = 0, rate = 0; (idx < splt.length && rate < upRates.length - 2); idx ++, rate += 2) {
+	    	for(int idx = 0, rate = 0; (idx < splt.length 
+	    			&& rate < upRates.length - 1); idx ++, rate += 2) {
 	    		String var = model.getComponents().get(idx).getNodeID();
 
 	    		if (splt[idx] == SplittingType.MERGED) {
