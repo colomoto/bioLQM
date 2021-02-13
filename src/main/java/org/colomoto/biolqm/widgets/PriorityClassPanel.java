@@ -288,7 +288,8 @@ public class PriorityClassPanel extends JPanel {
 				// get the group variables
 				List<String> vars = lGrpVars.get(idxGroup);
 								
-				if (updaterName.equals("Random uniform") || updaterName.equals("Random non uniform")) {
+				if (updaterName.equals("Random uniform") ||
+						updaterName.equals("Random non uniform")) {
 					
 					// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 					Map<String, Double> rates = new HashMap<String, Double>();
@@ -302,12 +303,12 @@ public class PriorityClassPanel extends JPanel {
 							 }
 					} else {
 
-						double[] upRates = mpc.getRates(idxPC, idxGroup);
-						System.out.println("upRates: " + Arrays.toString(upRates));
+						Map<String, Double> upRates = mpc.getRates(idxPC, idxGroup);
 
 						// put (node string, rate)
 						for (int e = 0; e < vars.size(); e++) {
-							rates.put(vars.get(e), upRates[e]); 
+							String var = vars.get(e);
+							rates.put(var, upRates.get(var)); 
 						}
 					}
 						
@@ -319,7 +320,13 @@ public class PriorityClassPanel extends JPanel {
 					
 					 for (int d = 0; d < rates.keySet().size(); d++) { 
 						 String node = vars.get(d);
-						 String nodeRate = Double.toString(rates.get(node));
+						 
+						 Double rate = rates.get(node);
+						 if (rate == null)
+							 rate = 1.0;
+						 
+						 String nodeRate = Double.toString(rate);
+						 
 					 
 						 JTextField jtf = new JTextField(nodeRate); 
 						 idxJtf.put(jtf, new int[] {idxPC, idxGroup});
@@ -614,7 +621,6 @@ public class PriorityClassPanel extends JPanel {
 				}
 				i++;
 			}
-			// rates, falta dos componentes não incluidos no grupo
 			mpc.addUpdater(idxPC, idxGrp, nodeRates);
 			} 
 		}

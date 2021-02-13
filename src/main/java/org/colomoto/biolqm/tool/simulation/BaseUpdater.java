@@ -98,6 +98,11 @@ abstract public class BaseUpdater implements LogicalModelUpdater {
         }
     }
     
+    public SplittingType[] getFilter() {
+    	return this.filter;
+    }
+    
+    
     public abstract String getUpdaterName();
     
 

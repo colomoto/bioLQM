@@ -346,10 +346,10 @@ public class ModelGrouping {
 			this.pcList.get(idxPC).addUpdater(idxGrp, rates);
 	}
 	
-	public double[] getRates(int idxPC, int idxGrp) {
+	public Map<String, Double> getRates(int idxPC, int idxGrp) {
 		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
 			return this.pcList.get(idxPC).getRates(idxGrp);
-		return new double[0];
+		return new HashMap<String, Double>();
 	}
 
 	public void collapseAll() {
@@ -532,10 +532,10 @@ public class ModelGrouping {
 			}
 		}
 		
-		public double[] getRates(int idxGrp) {
+		public Map<String, Double> getRates(int idxGrp) {
 			if (idxGrp >= 0 && idxGrp < this.size()) 
 				return this.groups.get(idxGrp).getRates();
-			return new double[0];
+			return new HashMap<String, Double>();
 		}
 			
 				
@@ -767,17 +767,7 @@ public class ModelGrouping {
 		
 					for (int e = 0; e < doubleRates.length; e++) 
 						doubleRates[e] = Double.parseDouble(rates[e]);
-					
-			    	java.util.Collections.sort(varsInfo);
-			    	for (int e = 0, j = 0; e < varsInfo.size(); j ++, e += 2) {
-			    		VarInfo var = varsInfo.get(j);
-			    		if (var.flag == 0 || var.flag == -1) {
-			    			var.addRate(doubleRates[e]);
-			    		} else {
-			    			var.addRate(doubleRates[e + 1]);
-			    		}
-			    		
-			    	}
+			
 					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.getFilter());
 				}						
 			}
@@ -798,7 +788,6 @@ public class ModelGrouping {
 		private boolean contains(int idx, int splitFlag) {
 			for (int i = 0; i < this.vars.length; i += 2) {
 				
-				// splitFlag is either +1 or -1
 				if (this.vars[i] == idx && this.vars[i + 1] == splitFlag) {
 					return true;
 				}
@@ -930,8 +919,8 @@ public class ModelGrouping {
 				
 			// get the nodeInfo from the node to be changed
 			
-			 NodeInfo node = model.getComponents().get(idx); 
-			 SplittingType splt = this.getFilter().get(node);
+//			 NodeInfo node = model.getComponents().get(idx); 
+//			 SplittingType splt = this.getFilter().get(node);
 			 
 			 // if both +/- are to be added, do it. 
 //			 if (splitFlag == 0) {
@@ -978,68 +967,46 @@ public class ModelGrouping {
 		    		} else if (nodeRate.flag == -1){
 		    			var = var + SplittingType.NEGATIVE.toString();
 		    		}
+		    	
 		    		tempRates.add(rates.get(var));
 		   			tempRates.add(rates.get(var));
-
+		    	}
 		    	double[] newRates = new double[tempRates.size()];
 		    	for (int j = 0; j < newRates.length; j++)
 		    		newRates[j] = tempRates.get(j);
 			
 		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
-		    }
+		    	
 		    }
 		}
 		
-		public double[] getRates() {
+		
+		public Map<String, Double> getRates() {
 			
+			// old Rates and oldFilter (might have changed)
 			double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
-			// get Rates to GUI
-			System.out.println("this.vars: " + Arrays.toString(this.vars));
-			System.out.println("updaterRates: " + Arrays.toString(upRates));
+			SplittingType[] splt = ((RandomUpdaterWithRates) this.updater).getFilter();
+			Map<String, Double> nodeRates = new HashMap<String, Double>();
 			
-			List<Double> tempRates = new ArrayList<Double>();
 			
-			if (upRates.length == this.vars.length) {
-				for (int i=0; i < this.vars.length - 1; i += 2) {
-					// if no split or only [+] or [-] exists
-					if (this.vars[i + 1] == 0 || (i + 2 < this.vars.length 
-							&& this.vars[i] != this.vars[i+2]) || i + 2 == this.vars.length) {
-						tempRates.add(upRates[i]);
-						// if both exist:
-					} else {
-						tempRates.add(upRates[i]);
-						tempRates.add(upRates[i + 1]);
-						}
-					}
-			// a var has been removed or added by the GUI
-			} else {
-				List<VarInfo> tpNodeRate = new ArrayList<VarInfo>();
-		    	for(int i = 0; i < this.vars.length - 1; i+= 2) 
-		    		tpNodeRate.add(new VarInfo(this.vars[i], this.vars[i+1]));
-		    	java.util.Collections.sort(tpNodeRate);
-		    	
-				// a var has been removed
-				if (upRates.length > this.vars.length) {
-					
-					// get relative position
-			    	for(VarInfo nodeRate : tpNodeRate) {
-			    	}					
-				
-				// a var has been added
-				} else {
-					int varIdx = this.vars[this.vars.length - 2];
-					int varFlag = this.vars[this.vars.length - 1];
-				
-				}
-			}
-			
-			double[] rates = new double[tempRates.size()];
-			for (int j = 0; j < rates.length; j++) 
-				rates[j] = tempRates.get(j);
-				
-			
-			return rates;
-		}
+	    	for(int idx = 0, rate = 0; (idx < splt.length && rate < upRates.length - 2); idx ++, rate += 2) {
+	    		String var = model.getComponents().get(idx).getNodeID();
+
+	    		if (splt[idx] == SplittingType.MERGED) {
+		    		// not split, rate[-] == rate[+]
+		    		nodeRates.put(var, upRates[rate]);
+		    		// split, rate[-] != rate[+]
+		    	 	nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
+		    		nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);	
+	    		} else if (splt[idx] == SplittingType.POSITIVE) {
+	    			nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);
+	    		} else if (splt[idx] == SplittingType.NEGATIVE) {
+	    			nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
+	    		}
+	    	}
+	    	return nodeRates;
+
+		}			
 		
 		public LogicalModelUpdater getUpdater() {
 			return this.updater;
@@ -1143,10 +1110,7 @@ public class ModelGrouping {
 		VarInfo(int idx, int flag) {
 			this(idx, flag, null);
 		}
-		
-		public void addRate(double rate) {
-			this.rate = rate;
-		}
+
 		
 		public int compareTo(VarInfo other) {
 			   return ((Integer) (this.idx)).compareTo((Integer) other.idx);
