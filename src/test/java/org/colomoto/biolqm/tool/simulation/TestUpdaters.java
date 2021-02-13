@@ -334,16 +334,14 @@ public class TestUpdaters {
 		int ratesCount = 0;
 
         Random random = new Random();
-		for (NodeInfo nodes : model.getComponents()) {
+		for (NodeInfo node : model.getComponents()) {
 			SplittingType splt = test[random.nextInt(test.length)];
-			filter.put(nodes, splt);	
-			ratesCount ++;
-			if (splt == SplittingType.MERGED)
-				ratesCount ++;
+			if (splt != null)
+				ratesCount +=2;
+			filter.put(node, splt);
 		}
 	
 		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
-
 		assert(updater.getRates().length == ratesCount);
 	}
 	
@@ -436,25 +434,20 @@ public class TestUpdaters {
 		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
 		
 		// split transitions 
-		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.MERGED,
-				SplittingType.MERGED, SplittingType.POSITIVE, SplittingType.POSITIVE};
+		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.NEGATIVE,
+				SplittingType.POSITIVE};
 		
 		Random random = new Random();
 		int rateCount = 0;
-		int i = 0;
-		for (NodeInfo node : model.getComponents()) {
+		for (int j = 0; j <  random.nextInt(model.getComponents().size()); j++) {
 			SplittingType splt = test[random.nextInt(test.length)];
-			if (splt == SplittingType.MERGED)
-				rateCount ++;
-			filter.put(node, splt);
-			i++;
-			rateCount ++;
+			rateCount +=2;
+			filter.put(model.getComponents().get(j), splt);
 		}
 		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
+		System.out.println(Arrays.toString(updater.getRates()) + " " + rateCount);
 		assert(updater.getRates().length == rateCount);
 	}
-	
-	
 	
 	
 	@Test

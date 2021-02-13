@@ -23,7 +23,7 @@ import org.hamcrest.core.IsInstanceOf;
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
  */
-public class ModelGrouping {
+public class ModelGrouping2 {
 
 	public static final String SEPVAR = ",";
 	public static final String SEPGROUP = "/";
@@ -37,7 +37,7 @@ public class ModelGrouping {
 	private List<RankedClass> pcList;
 
 
-	public ModelGrouping(LogicalModel m) { 
+	public ModelGrouping2(LogicalModel m) { 
 		this.model = m;
 		this.pcList = new ArrayList<>();
 
@@ -60,7 +60,7 @@ public class ModelGrouping {
 		this.pcList.add(new RankedClass(new RankedClassGroup(vars)));
 	}
 
-	public ModelGrouping(LogicalModel m, String textFormat) {
+	public ModelGrouping2(LogicalModel m, String textFormat) {
 		this.model = m;
 		this.pcList = new ArrayList<>();
 		String[] saPCs = textFormat.split(SEPCLASS);
@@ -69,7 +69,7 @@ public class ModelGrouping {
 		}
 	}
 
-	private ModelGrouping(LogicalModel m, List<RankedClass> pcList) {
+	private ModelGrouping2(LogicalModel m, List<RankedClass> pcList) {
 		this.model = m;
 		this.pcList = pcList;
 	}
@@ -101,21 +101,21 @@ public class ModelGrouping {
 	}
 
 	@Override
-	public ModelGrouping clone() {
+	public ModelGrouping2 clone() {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		}
-		return new ModelGrouping(this.model, pcNew);
+		return new ModelGrouping2(this.model, pcNew);
 	}
 	
 	// FIXME: hack for EpiLog to pass modified/perturbed models to the PriorityUpdater
-	public ModelGrouping cloneWithModel(LogicalModel modifiedModel) {
+	public ModelGrouping2 cloneWithModel(LogicalModel modifiedModel) {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		} 
-		return new ModelGrouping(modifiedModel, pcNew);
+		return new ModelGrouping2(modifiedModel, pcNew);
 	}
 
 	public void switchClasses(int i, int j) {
@@ -146,7 +146,7 @@ public class ModelGrouping {
 	}
 	
 	public static String[] getUpdatersAvailable() {
-		return ModelGrouping.updatersList;
+		return ModelGrouping2.updatersList;
 	}
 
 	public void decPriorities(int idxPC, int idxGrp, List<String> vars) {
@@ -424,7 +424,7 @@ public class ModelGrouping {
 	
 	@Override
 	public boolean equals(Object a) {
-		ModelGrouping outMPC = (ModelGrouping) a;
+		ModelGrouping2 outMPC = (ModelGrouping2) a;
 		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()) {
 			return false;
 		}
@@ -624,7 +624,7 @@ public class ModelGrouping {
 		
 		public void accept() {
 			for (int g = 0; g < this.groups.size(); g++) {
-				this.groups.get(g).acceptVars();
+				this.groups.get(g).updateVarsAndFilter();
 			}
 			
 		}
@@ -683,18 +683,21 @@ public class ModelGrouping {
 	public class RankedClassGroup {
 		// 2*n positions for n variables
 		private int[] vars;
+		private Map<NodeInfo, SplittingType> filter;
 		private LogicalModelUpdater updater;
-		private List<VarInfo> varInfoList = null;
+		private String updaterString;
 		
 		
 		public RankedClassGroup(int[] vars) {
 			this.vars = vars;
-			this.addUpdater(new SynchronousUpdater(model));
+			this.updater = new SynchronousUpdater(model);
+			this.updaterString = "";
+			updateVarsAndFilter();
 		}
 		
 		public RankedClassGroup(int[] vars, LogicalModelUpdater updater) {
 			this.vars = vars;
-			this.addUpdater(updater);
+			addUpdater(updater);
 		}
 		
 		public RankedClassGroup(LogicalModel m, String textFormat) {
@@ -712,6 +715,7 @@ public class ModelGrouping {
 					split = 1;
 					var = saVars[i].substring(0, var.length() - SplittingType.POSITIVE.toString().length());
 				}
+				// last variable, should be followed by $RU, $RN, $S or "".
 				for (int idx = 0; idx < m.getComponents().size(); idx++) {
 					NodeInfo node = m.getComponents().get(idx);
 					// find Node with var nodeID
@@ -728,59 +732,58 @@ public class ModelGrouping {
 					}
 				}
 			}
-			List<VarInfo> varsInfo = new ArrayList<VarInfo>();
 			this.vars = new int[lVars.size() * 2];
 			for (int i = 0; i < lVars.size(); i++) {
-				varsInfo.add(new VarInfo(lVars.get(i)[0], lVars.get(i)[1]));
+				
 				// idx, split, idx, split ...
 				this.vars[i * 2] = lVars.get(i)[0];
 				this.vars[i * 2 + 1] = lVars.get(i)[1];
 			}
 			
 			// get the filter
-			Map<NodeInfo, SplittingType> filter = this.getFilter();
+			this.updateVarsAndFilter();
 						
 			// get updater
 			if (up.length == 1) {
 				// default, Synchronous
-				
+				this.updaterString = "";
 				this.updater = new SynchronousUpdater(model);
 			} else if (up.length == 2) {
 				// either $S, $RN or $RU
 				if (up[1].equals("S")) {
-					this.addUpdater(new SynchronousUpdater(model));
+					this.updaterString = SEPUPDATER + "S";
+					this.updater = new SynchronousUpdater(model);
+					
 				} else if (up[1].equals("RU")) {
+					this.updaterString = SEPUPDATER + "RU";
 					MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
-					this.addUpdater(new RandomUpdaterWrapper(MultiUpdater));
-
+					this.updater = new RandomUpdaterWrapper(MultiUpdater);
 					
 				} else if (up[1].equals("C")) {
+					this.updaterString = SEPUPDATER + "C";
 					// ?? 
 				} else if (up[1].equals("BS")) {
+					this.updaterString = SEPUPDATER + "BS";
 					// ?? 
 				} else if (up[1].equals("A")) {
+					this.updaterString = SEPUPDATER + "A";
 					// ?? 
 				} else {
+					this.updaterString =  SEPUPDATER + "RN";
 					// $RN[0.3,0.5,...], get rates
 					String[] rates = up[1].substring(3, up[1].length() - 1).split(",");
 					double[] doubleRates = new double[rates.length];
 		
-					for (int e = 0; e < doubleRates.length; e++) 
+					for (int e = 0; e < doubleRates.length; e++) {
 						doubleRates[e] = Double.parseDouble(rates[e]);
+					}
 					
-			    	java.util.Collections.sort(varsInfo);
-			    	for (int e = 0, j = 0; e < varsInfo.size(); j ++, e += 2) {
-			    		VarInfo var = varsInfo.get(j);
-			    		if (var.flag == 0 || var.flag == -1) {
-			    			var.addRate(doubleRates[e]);
-			    		} else {
-			    			var.addRate(doubleRates[e + 1]);
-			    		}
-			    		
-			    	}
-					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.getFilter());
+					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.filter);
+					
+					double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
+					this.updaterString += Arrays.toString(ratesIdx).replaceAll("\\s+","");
 				}						
-			}
+			}				
 		}
 
 		public int[] array() {
@@ -931,7 +934,7 @@ public class ModelGrouping {
 			// get the nodeInfo from the node to be changed
 			
 			 NodeInfo node = model.getComponents().get(idx); 
-			 SplittingType splt = this.getFilter().get(node);
+			 SplittingType splt = this.filter.get(node);
 			 
 			 // if both +/- are to be added, do it. 
 //			 if (splitFlag == 0) {
@@ -955,22 +958,25 @@ public class ModelGrouping {
 		}
 
 		public void addUpdater(LogicalModelUpdater updater) {
+		    updateVarsAndFilter();
 		    this.updater = updater;
-		    this.updater.setFilter(this.getFilter());
+		    this.updater.setFilter(this.filter);
+		    changeUpdaterString();
 		}
 		
 		public void addUpdater(Map<String, Double> rates) {
+		    updateVarsAndFilter();
 		    if (rates.size() == 0) {
-		    	this.updater = new RandomUpdaterWithRates(model, this.getFilter()); 
+		    	this.updater = new RandomUpdaterWithRates(model,this.filter); 
 		    } else {
 		    	//  ...      ORDENAÇÃO 
 		    	List<Double> tempRates = new ArrayList<Double>();
-		    	List<VarInfo> tpNodeRate = new ArrayList<VarInfo>();
+		    	List<tupleNodeRate> tpNodeRate = new ArrayList<tupleNodeRate>();
 		    	for(int i = 0; i < this.vars.length - 1; i+= 2) 
-		    		tpNodeRate.add(new VarInfo(this.vars[i], this.vars[i+1]));
+		    		tpNodeRate.add(new tupleNodeRate(this.vars[i], this.vars[i+1]));
 	
 		    	java.util.Collections.sort(tpNodeRate);
-		    	for(VarInfo nodeRate : tpNodeRate) {
+		    	for(tupleNodeRate nodeRate : tpNodeRate) {
 		    		
 		    		String var = model.getComponents().get(nodeRate.idx).getNodeID();
 		    		if (nodeRate.flag == 1) {
@@ -985,8 +991,9 @@ public class ModelGrouping {
 		    	for (int j = 0; j < newRates.length; j++)
 		    		newRates[j] = tempRates.get(j);
 			
-		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
+		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.filter); 
 		    }
+	    	changeUpdaterString();
 		    }
 		}
 		
@@ -1013,16 +1020,16 @@ public class ModelGrouping {
 					}
 			// a var has been removed or added by the GUI
 			} else {
-				List<VarInfo> tpNodeRate = new ArrayList<VarInfo>();
+				List<tupleNodeRate> tpNodeRate = new ArrayList<tupleNodeRate>();
 		    	for(int i = 0; i < this.vars.length - 1; i+= 2) 
-		    		tpNodeRate.add(new VarInfo(this.vars[i], this.vars[i+1]));
+		    		tpNodeRate.add(new tupleNodeRate(this.vars[i], this.vars[i+1]));
 		    	java.util.Collections.sort(tpNodeRate);
 		    	
 				// a var has been removed
 				if (upRates.length > this.vars.length) {
 					
 					// get relative position
-			    	for(VarInfo nodeRate : tpNodeRate) {
+			    	for(tupleNodeRate nodeRate : tpNodeRate) {
 			    	}					
 				
 				// a var has been added
@@ -1046,74 +1053,64 @@ public class ModelGrouping {
 		}
 		
 		public String getUdaterString() {
-			if (this.updater instanceof RandomUpdaterWrapper){
-				return SEPUPDATER + "RU";
-			} else if (this.updater instanceof SynchronousUpdater) {
-				return SEPUPDATER + "S";
-			} else if (this.updater instanceof RandomUpdaterWithRates) {
-				String updater = SEPUPDATER + "RN";
-				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
-				return updater += Arrays.toString(ratesIdx).replaceAll("\\s+","");
-			}
-			return "";
+			return this.updaterString;
 		}
 		
 		public String getUpdaterName() {
 			return this.updater.getUpdaterName();
 		}
 		
-		private Map<NodeInfo, SplittingType> getFilter() {
-			Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
-			for (int idx = 0; idx < this.vars.length - 1; idx+=2) {
-				NodeInfo node = model.getComponents().get(this.vars[idx]);
+		
+		private void changeUpdaterString() {
+			
+		    if (this.updater instanceof RandomUpdaterWrapper){
+				this.updaterString = SEPUPDATER + "RU";
+		    } else if (this.updater instanceof SynchronousUpdater) {
+				this.updaterString = SEPUPDATER + "S";
+		    } else if (this.updater instanceof RandomUpdaterWithRates) {
+				this.updaterString =  SEPUPDATER + "RN";
 				
-				// find Node with var nodeID
-				if (this.vars[idx+1] == 0) {
-					filter.put(node, SplittingType.MERGED);
-					
-				// if only [+] or [-] is present
-				} else if ((idx + 2 < this.vars.length 
-						&& this.vars[idx] != this.vars[idx+2]) 
-						|| idx + 2 == this.vars.length) {
-					if (this.vars[idx+1] == 1) {
-						filter.put(node, SplittingType.POSITIVE);
-					} else {
-						filter.put(node, SplittingType.NEGATIVE);
-					}
-				} else {
-					filter.put(node, SplittingType.MERGED);
-				}
-			}
-			return filter;
+				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
+				this.updaterString += Arrays.toString(ratesIdx).replaceAll("\\s+","");
+		    }
 		}
 		
-				
-		public void acceptVars() {
-						
+		
+		public void updateVarsAndFilter() {
+			
+			Map<NodeInfo, SplittingType> newFilter = new HashMap<NodeInfo, SplittingType>();
+			
 			for (int idx = 0; idx < this.vars.length - 1; idx+=2) {
 				NodeInfo node = model.getComponents().get(this.vars[idx]);
 				// find Node with var nodeID
-			
+			//
+		//		System.out.println(node + " " + this.vars[idx] + " " + this.vars[idx + 1 ]);
 				if (this.vars[idx+1] == 0) {
+					newFilter.put(node, SplittingType.MERGED);
 					
 				// if only [+] or [-] is present
 				} else if ((idx + 2 < this.vars.length 
 						&& this.vars[idx] != this.vars[idx+2]) 
 						|| idx + 2 == this.vars.length) {
 					if (this.vars[idx+1] == 1) {
+						newFilter.put(node, SplittingType.POSITIVE);
 					} else {
+						newFilter.put(node, SplittingType.NEGATIVE);
 					}
 				} else {
 					// we want to merge this.vars
 					// except if random rate ?
 					if (this.updater instanceof RandomUpdaterWithRates) {
+						newFilter.put(node, SplittingType.MERGED);
 					} else {
 						this.add(this.vars[idx], 0);
 						this.remove(this.vars[idx], 1);
 						this.remove(this.vars[idx], -1);
+						newFilter.put(node, SplittingType.MERGED);
 					}
 				}
 			}
+			this.filter = newFilter;
 		}
 
 		public RankedClassGroup clone() {
@@ -1128,30 +1125,23 @@ public class ModelGrouping {
 		}
 	}
 	
-	public class VarInfo implements Comparable<VarInfo> {
+	public class tupleNodeRate implements Comparable<tupleNodeRate> {
 		
 		public final int idx;
 		public final int flag;
-		public Double rate;
 		
-		VarInfo(int idx, int flag, Double rate) {
+		tupleNodeRate(int idx, int flag) {
 			this.idx = idx;
 			this.flag = flag;
-			this.rate = rate;
-		}
-
-		VarInfo(int idx, int flag) {
-			this(idx, flag, null);
 		}
 		
-		public void addRate(double rate) {
-			this.rate = rate;
-		}
-		
-		public int compareTo(VarInfo other) {
-			   return ((Integer) (this.idx)).compareTo((Integer) other.idx);
+	
+		public int compareTo(tupleNodeRate other) {
+			   return new Integer(this.idx).compareTo(new Integer(other.idx));
 		 }
-   
+		   
 	}
 	
+
+ 
 }

@@ -49,34 +49,17 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         if (rates == null) {
         	if(filter == null) {
         		this.rates = new double[this.size];
-        		for (int i=0 ; i<this.rates.length ; i++) {
+        		for (int i=0 ; i< this.rates.length ; i++) {
         			this.rates[i] = 1.0;
         		}
         	} else {
                 this.setFilter(filter);
-
-        		// if only some vars are to be considered...
-        		List<Double> filterRates = new ArrayList<Double>();
-        		for (int i = 0; i < this.filter.length; i++) {
-        			
-        			if (this.filter[i] != null) {
-        				// if the variable is MERGED, then add two rates,
-        				// for negative and positive 
-        				if (this.filter[i] == SplittingType.MERGED) {
-            				filterRates.add(1.0);
-            				filterRates.add(1.0);
-        				} else {
-        					filterRates.add(1.0);
-        				}
-        			}
-        		}
         		// cast from ArrayList to array
-        		this.rates = new double[filterRates.size()];
-        		for (int i = 0; i < this.rates.length; i++)
-        			this.rates[i] = filterRates.get(i);
+        		this.rates = new double[filter.size()*2];
+        		Arrays.fill(this.rates, 1.0);
+  
         	}
         } else {
-        		//System.out.println(Arrays.toString(rates));
         		this.rates = rates;
         		if (filter != null ) 
         			this.setFilter(filter);
@@ -101,27 +84,17 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
             }
 			
 			double r = 0.0;
-			
-			// this assumes that this.rates has two rates in the array for
-			// each MERGED variable in this.filter
-			
-			// if this.filter equals [NEGATIVE, POSITIVE, MERGED, POSITIVE] then..
-			// this.rates is something like [0.2,0.5,0.3,0.5,0.1], 
-			// where third and fourth positions are NEGATIVE and POSITIVE for the MERGED idx in this.filter
-			
+	
 			if (this.filter != null && this.filter.length != 0) {
 				SplittingType splt = this.filter[idx]; 
 				if (splt.equals(SplittingType.MERGED)) { 
 				
-					if (change == -1 ) {
+					if (change == -1) {
 						r = this.rates[merged];
 					} else {
 						r = this.rates[merged+1];
 					}
-				} else {
-					r = this.rates[merged]; 
-				}
-				merged += 2;
+				} merged += 2;
 			} else {
 				r = this.rates[idx];
 			}
