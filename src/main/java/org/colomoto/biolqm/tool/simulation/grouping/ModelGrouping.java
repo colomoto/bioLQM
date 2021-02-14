@@ -1009,7 +1009,7 @@ public class ModelGrouping {
 			
 			
 	    	for(int idx = 0, rate = 0; (idx < splt.length 
-	    			&& rate < upRates.length - 1); idx ++, rate += 2) {
+	    			&& rate < upRates.length ); idx ++, rate += 2) {
 	    		String var = model.getComponents().get(idx).getNodeID();
 
 	    		if (splt[idx] == SplittingType.MERGED) {
@@ -1025,7 +1025,6 @@ public class ModelGrouping {
 	    		}
 	    	}
 	    	return nodeRates;
-
 		}			
 		
 		public LogicalModelUpdater getUpdater() {
@@ -1081,20 +1080,11 @@ public class ModelGrouping {
 				NodeInfo node = model.getComponents().get(this.vars[idx]);
 				// find Node with var nodeID
 			
-				if (this.vars[idx+1] == 0) {
-					
-				// if only [+] or [-] is present
-				} else if ((idx + 2 < this.vars.length 
-						&& this.vars[idx] != this.vars[idx+2]) 
-						|| idx + 2 == this.vars.length) {
-					if (this.vars[idx+1] == 1) {
-					} else {
-					}
-				} else {
+				if (idx < this.vars.length - 2 && !(this.vars[idx+1] == 0) 
+						&& this.vars[idx] == this.vars[idx+2]) {
 					// we want to merge this.vars
 					// except if random rate ?
-					if (this.updater instanceof RandomUpdaterWithRates) {
-					} else {
+					if (!(this.updater instanceof RandomUpdaterWithRates)) {
 						this.add(this.vars[idx], 0);
 						this.remove(this.vars[idx], 1);
 						this.remove(this.vars[idx], -1);

@@ -622,6 +622,7 @@ public class PriorityClassPanel extends JPanel {
 				}
 				i++;
 			}
+			fireActionEvent();
 			mpc.addUpdater(idxPC, idxGrp, nodeRates);
 			} 
 		}
