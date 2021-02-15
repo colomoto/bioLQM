@@ -32,17 +32,28 @@ public class TestMetadata {
 		}
 		
 		LogicalModel model = format.load(new File(dir, "export_test_ginsim.sbml"));
-
-/* 		// test modelMetadata
+		
 		Metadata modelMetadata = model.getMetadataOfModel();
+		
+		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("isDescribedBy");
+		
+		nestedMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
+		
+		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
+		
+		modelMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
+		
+		Thread.sleep(10000);
+
+		// test modelMetadata
 		
  		modelMetadata.addURI("lalaland", "uniprot", "P0DP23");
 		modelMetadata.addAuthor("creator", "Martin", "Boutroux", "mb@gm.com", "Inria", "1111-4444-6666-8888");
 		
-		//System.out.println(modelMetadata.getDescriptionMetadata(true));
+		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		
 		// test componentMetadata
-		NodeInfo node = model.getComponents().get(0);
+/* 		NodeInfo node = model.getComponents().get(0);
 		
 		Metadata nodeMetadata = model.getMetadataOfNode(node);
 		nodeMetadata.addURI("pussycat", "doi", "10.1093/ajae/aaq063");
@@ -136,10 +147,6 @@ public class TestMetadata {
 		
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		elementMetadata.addURI("isDescribedBy", "doi", "10.1093/ajae/aaq063"); */
-		
-		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\export_test_ginsim_output.sbml", "sbml");
-		
-		Metadata modelMetadata = model.getMetadataOfModel();
 		
 		//System.out.println(modelMetadata.getNotes());
 		

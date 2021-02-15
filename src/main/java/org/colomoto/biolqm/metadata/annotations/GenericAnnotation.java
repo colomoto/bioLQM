@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.io.IOException;
 
 /**
  * Generic class for the annotations
@@ -69,38 +68,12 @@ class GenericAnnotation extends Annotation {
 				this.listOfURIs.add(uri);
 				
 				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
-				
-				if (termDesired == "isDescribedBy") {										
-					if (contentAnnotation[1] == "doi" && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
-						String url = "https://api.crossref.org/works/"+contentAnnotation[2];
-						
-						System.out.println("dessous");
-
-						try {
-							JSONObject json = JsonReader.readJsonFromUrl(url);
-							JSONObject jsonMessage = json.getJSONObject("message");
-							
-							String title = null;
-							Integer year = null;
-							if (jsonMessage.has("title") && !jsonMessage.isNull("title")) {
-								title = jsonMessage.getJSONArray("title").getString(0).toString();
-							}
-							if (jsonMessage.has("created") && !jsonMessage.isNull("created")) {
-								year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
-							}
-							
-							if (title != null && year != null) {
-								modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
-							}
-							else {
-								System.err.println("Error retrieving the metadata of the doi: at least one of the characteristics couldn't be fetched." + "\n");
-							}	
-						} catch (IOException e) {
-							System.err.println("Error retrieving the metadata of the doi." + "\n");
-						}
-						
-						System.out.println("dessus");
-					}
+								
+				if (contentAnnotation[1].equals("doi") && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
+					modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, "", "");
+					
+					GetExternalMetadata gem = new GetExternalMetadata(modelConstants, contentAnnotation[1], contentAnnotation[2]);
+					gem.start();
 				}
 				break;
 			case "tag":

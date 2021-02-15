@@ -32,8 +32,11 @@ public class ExternalMetadata {
 		return false;
 	}
 	
-	public void updateExternalMetadata(URI uri, String title, String year) {
-		if (!this.externalMetadata.containsKey(uri)) {
+	public synchronized void updateExternalMetadata(URI uri, String title, String year) {
+		if (title.equals("") && year.equals("")) {
+			this.externalMetadata.put(uri, null);
+		}
+		else {
 			this.externalMetadata.put(uri, new Reference(title, year));
 		}
 	}

@@ -940,15 +940,22 @@ public class SBMLqualImport extends BaseLoader {
 		}
 		
 		// we add all the uris for this qualifier
-		for (String uri: cvterm.getResources()) {
-			int colon = uri.lastIndexOf(':');
-			int slash = uri.lastIndexOf('/');
-			int index = Math.max(colon, slash);
+		for (String uri: cvterm.getResources()) {			
+			if (uri.indexOf("identifiers.org/") != -1) {
+				uri = uri.split("identifiers.org/")[1];
+			}
 			
-			int index2 = uri.lastIndexOf('/', index-1);
+			int colon = uri.indexOf(':');
+			int slash = uri.indexOf('/');
 			
-			String collection = uri.substring(index2+1, index);
+			int index = colon;
+			if (colon == -1 || (slash != -1 && slash < colon)) {
+				index = slash;
+			}
+			
+			String collection = uri.substring(0, index);
 			String identifier = uri.substring(index+1);
+			
 			metadata.addURI(qualifier, alternative, collection, identifier);
 		}
 		

@@ -71,7 +71,12 @@
       </bqmodel:is>
       <bqmodel:isDescribedBy>
         <rdf:Bag>
-          <rdf:li rdf:resource="http://identifiers.org/pubmed/20109182"/>
+          <rdf:li rdf:resource="http://identifiers.org/doi/10.1093/ajae/aaq063"/>
+        </rdf:Bag>
+      </bqmodel:isDescribedBy>
+      <bqmodel:isDescribedBy>
+        <rdf:Bag>
+          <rdf:li rdf:resource="http://identifiers.org/doi/10.1371/journal.pgen.1001111"/>
         </rdf:Bag>
       </bqmodel:isDescribedBy>
 	  <bqmodel:lililand>

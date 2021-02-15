@@ -138,25 +138,54 @@ public class Metadata {
 		return true;
 	}
 	
-	private boolean isValidURI(String collection, String identifier) {
+	private boolean checkWithCollectionsAvailable(String termDesired, int alternative, String collection, String identifier, String pattern, boolean namespaceEmbedded) {
+		String javaClassDesired = "GenericAnnotation";
+	
+		if (!namespaceEmbedded && identifier.matches(pattern)) {
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			return true;
+		}
+		else if (namespaceEmbedded && (collection+":"+identifier).matches(pattern)) {
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			return true;
+		}
+		else if (namespaceEmbedded && identifier.matches(pattern)) {
+			int colon = identifier.indexOf(':');
+			int slash = identifier.indexOf('/');
+			
+			int index = colon;
+			if (colon == -1 || (slash != -1 && slash < colon)) {
+				index = slash;
+			}
+			
+			collection = identifier.substring(0, index);
+			identifier = identifier.substring(index+1);
+			
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			return true;
+		}
+		else {
+			System.err.println("Error checking the uri: the identifier is not valid according to identifiers.org." + "\n");
+			return false;
+		}
+	}
+	
+	private void isValidURI(String termDesired, int alternative, String collection, String identifier) {
+		
+ 		String javaClassDesired = "GenericAnnotation";
 		
 		// first we look into the patterns saved because they are saved by default or because they were used already in the model
 		Map<String, Collection> collections = this.modelConstants.getCollectionsAvailable();
 		String lowerCollection = collection.toLowerCase();
+		
 		if (collections.containsKey(lowerCollection)) {
 			Collection collectionChecked = collections.get(lowerCollection);
 			
-			String idTest = identifier;
-			if (collectionChecked.getNamespaceEmbedded()) {
-				idTest = collection+":"+identifier;
-			}
-			if (idTest.matches(collectionChecked.getPattern())) {
-				return true;
-			}
-			else {
-				System.err.println("Error checking the uri: the identifier is not valid according to identifiers.org." + "\n");
-				return false;
-			}
+			String pattern = collectionChecked.getPattern();
+			boolean namespaceEmbedded = collectionChecked.getNamespaceEmbedded();
+			
+			this.checkWithCollectionsAvailable(termDesired, alternative, collection, identifier, pattern, namespaceEmbedded);
+			return;
 		}
 		
 		// and if it doesn't work we check the internet connection
@@ -166,41 +195,38 @@ public class Metadata {
 			connection.connect();
 		} catch (MalformedURLException e) {
 			System.err.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
-			return true;
+			
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			return;
 		} catch (IOException e) {
 			System.err.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
-			return true;
-		}
-		
-		// to go check the uri with the api of identifiers.org
-		String compactId = collection+":"+identifier;
-		String fullCompactId = "https://resolver.api.identifiers.org/"+compactId;
-		
-		try {
-			JSONObject jsonURI = JsonReader.readJsonFromUrl(fullCompactId);
 			
-			if (jsonURI.has("errorMessage") && jsonURI.isNull("errorMessage")) {
-				
-				try {
-					String stringURL = "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix="+lowerCollection;
-					JSONObject jsonCollection = JsonReader.readJsonFromUrl(stringURL);
-					
-					// we add the pattern of the collection to our internal list for further uses without the internet
-					this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(lowerCollection, jsonCollection.getString("pattern"), jsonCollection.getBoolean("namespaceEmbeddedInLui"));
-					
-				} catch (IOException e) {
-					System.err.println("Error checking the uri: it should be a valid entry for identifiers.org.." + "\n");
-				}
-				
-				return true;
-			}
-			else {
-				System.err.println("The URI is not valid: it should be a valid entry for identifiers.org." + "\n");
-			}
-		} catch (IOException e) {
-			System.err.println("Error checking the uri: it should be a valid entry for identifiers.org.." + "\n");
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			return;
 		}
-		return false;
+		
+		// get the collection and check with the pattern
+		try {
+			String stringURL = "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix="+lowerCollection;
+			JSONObject jsonCollection = JsonReader.readJsonFromUrl(stringURL);
+			
+			String pattern = jsonCollection.getString("pattern");
+			boolean namespaceEmbedded = jsonCollection.getBoolean("namespaceEmbeddedInLui");
+			
+			if (this.checkWithCollectionsAvailable(termDesired, alternative, collection, identifier, pattern, namespaceEmbedded)) {
+
+				// we add the pattern of the collection to our internal list for further uses without the internet
+				this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(lowerCollection, pattern, namespaceEmbedded);
+				return;
+			}
+			
+		} catch (IOException e) {
+			System.err.println("Error adding the collection to the list of collections available." + "\n");
+			return;
+		}
+		
+		System.err.println("Error checking the URI (shouldn't happen)." + "\n");
+		return;
 	}
 	
 	
@@ -302,12 +328,7 @@ public class Metadata {
 	 */	
 	public void addURI(String termDesired, int alternative, String collection, String identifier) {
 
-		if (!this.isValidURI(collection, identifier)) {
-			return;
-		}
-		
-		String javaClassDesired = "GenericAnnotation";
-		this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+		this.isValidURI(termDesired, alternative, collection, identifier);
 	}
 	/**
 	 * Add a new URI to the component
