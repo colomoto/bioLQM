@@ -238,8 +238,10 @@ public class TestSimulations {
 		}
 	}
 
-	assertTrue(count[0] > 5000-50 & count[0] < 5000+50);
-	assertTrue(count[1] > 5000-50 & count[1] < 5000+50);
+		for (int compIdx = 0; compIdx < count.length; compIdx++) {
+			assertTrue(count[compIdx] >= simRuns * 0.5 * 0.9 
+					&& count[compIdx] <= simRuns * 0.5 * 1.1);
+		}
 		
 	}
 	

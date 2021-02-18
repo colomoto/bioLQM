@@ -416,7 +416,7 @@ public class ModelGrouping {
 		}
 	}
 	
-	public void accept() {
+	public void acceptGUI() {
 		for (int i = 0; i < this.size(); i++) {
 			this.pcList.get(i).accept();
 		}
@@ -743,8 +743,7 @@ public class ModelGrouping {
 			// get updater
 			if (up.length == 1) {
 				// default, Synchronous
-				
-				this.updater = new SynchronousUpdater(model);
+				this.addUpdater(new SynchronousUpdater(model));
 			} else if (up.length == 2) {
 				// either $S, $RN or $RU
 				if (up[1].equals("S")) {
@@ -752,8 +751,7 @@ public class ModelGrouping {
 				} else if (up[1].equals("RU")) {
 					MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
 					this.addUpdater(new RandomUpdaterWrapper(MultiUpdater));
-
-					
+		
 				} else if (up[1].equals("C")) {
 					// ?? 
 				} else if (up[1].equals("BS")) {
@@ -968,12 +966,13 @@ public class ModelGrouping {
 		    			if (e + 1 < tpNodeRate.size() 
 		    					&& tpNodeRate.get(e+1).idx == nodeRate.idx) {
 		    				String deepVar = var;
-		    				
-							var = deepVar + SplittingType.POSITIVE.toString();
-				   			tempRates.add(rates.get(var));
-			  
+ 
 			    			var = deepVar + SplittingType.NEGATIVE.toString();
 				   			tempRates.add(rates.get(var));
+				   			
+							var = deepVar + SplittingType.POSITIVE.toString();
+				   			tempRates.add(rates.get(var));
+				   			
 				   			e ++; 				
 		    			} else {
 		    				// verificar se 
@@ -993,7 +992,7 @@ public class ModelGrouping {
 		    	double[] newRates = new double[tempRates.size()];
 		    	for (int j = 0; j < newRates.length; j++)
 		    		newRates[j] = tempRates.get(j);
-			
+		    	Map<NodeInfo, SplittingType> tst = this.getFilter();
 		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
 		    }
 		}
@@ -1008,20 +1007,23 @@ public class ModelGrouping {
 			Map<String, Double> nodeRates = new HashMap<String, Double>();
 			
 			
-	    	for(int idx = 0, rate = 0; (idx < splt.length 
-	    			&& rate < upRates.length ); idx ++, rate += 2) {
+	    	for(int idx = 0, rate = 0; idx < splt.length
+	    			&& rate < upRates.length - 1; idx ++) {
 	    		String var = model.getComponents().get(idx).getNodeID();
 
-	    		if (splt[idx] == SplittingType.MERGED) {
-		    		// not split, rate[-] == rate[+]
-		    		nodeRates.put(var, upRates[rate]);
-		    		// split, rate[-] != rate[+]
-		    	 	nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
-		    		nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);	
-	    		} else if (splt[idx] == SplittingType.POSITIVE) {
-	    			nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);
-	    		} else if (splt[idx] == SplittingType.NEGATIVE) {
-	    			nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
+	    		if (splt[idx] != null) {
+	    			if (splt[idx] == SplittingType.MERGED) {
+	    				// not split, rate[-] == rate[+]
+	    				nodeRates.put(var, upRates[rate]);
+		    			// split, rate[-] != rate[+]
+		    	 		nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
+		    	 		nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);	
+	    			} else if (splt[idx] == SplittingType.POSITIVE) {
+	    				nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);
+	    			} else if (splt[idx] == SplittingType.NEGATIVE) {
+	    				nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
+	    			}
+	    			rate += 2;
 	    		}
 	    	}
 	    	return nodeRates;
@@ -1035,7 +1037,7 @@ public class ModelGrouping {
 			if (this.updater instanceof RandomUpdaterWrapper){
 				return SEPUPDATER + "RU";
 			} else if (this.updater instanceof SynchronousUpdater) {
-				return SEPUPDATER + "S";
+				return "";
 			} else if (this.updater instanceof RandomUpdaterWithRates) {
 				String updater = SEPUPDATER + "RN";
 				double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
@@ -1050,24 +1052,31 @@ public class ModelGrouping {
 		
 		private Map<NodeInfo, SplittingType> getFilter() {
 			Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
-			for (int idx = 0; idx < this.vars.length - 1; idx+=2) {
-				NodeInfo node = model.getComponents().get(this.vars[idx]);
+			
+	    	List<VarInfo> tpNode = new ArrayList<VarInfo>();
+	    	for(int i = 0; i < this.vars.length - 1; i+= 2) 
+	    		tpNode.add(new VarInfo(this.vars[i], this.vars[i+1]));
+
+	    	java.util.Collections.sort(tpNode);
+	    	for(int e = 0; e < tpNode.size(); e++) {
+	    		VarInfo var = tpNode.get(e);
+	    		NodeInfo node = model.getComponents().get(var.idx);
 				
 				// find Node with var nodeID
-				if (this.vars[idx+1] == 0) {
+				if (var.flag == 0) {
 					filter.put(node, SplittingType.MERGED);
 					
 				// if only [+] or [-] is present
-				} else if ((idx + 2 < this.vars.length 
-						&& this.vars[idx] != this.vars[idx+2]) 
-						|| idx + 2 == this.vars.length) {
-					if (this.vars[idx+1] == 1) {
+				} else if (e == tpNode.size() - 1 ||
+						(e < tpNode.size() - 1 && var.idx != tpNode.get(e+1).idx)) {
+					if (var.flag == 1) {
 						filter.put(node, SplittingType.POSITIVE);
 					} else {
 						filter.put(node, SplittingType.NEGATIVE);
 					}
 				} else {
 					filter.put(node, SplittingType.MERGED);
+					e ++;
 				}
 			}
 			return filter;
@@ -1123,7 +1132,11 @@ public class ModelGrouping {
 
 		
 		public int compareTo(VarInfo other) {
+			if (this.idx != other.idx) {
 			   return ((Integer) (this.idx)).compareTo((Integer) other.idx);
+			} else {
+				return ((Integer) (this.flag)).compareTo((Integer) other.flag);
+			}
 		 }
    
 	}

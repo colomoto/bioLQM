@@ -44,4 +44,10 @@ public class DeterministicPriorityUpdater extends BaseUpdater implements Determi
 
         return nextstate;
     }
+
+	@Override
+	public String getUpdaterName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

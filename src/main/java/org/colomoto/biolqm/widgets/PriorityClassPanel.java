@@ -318,6 +318,7 @@ public class PriorityClassPanel extends JPanel {
 					 // -- Order variables alphabetically 
 					 Collections.sort(vars,String.CASE_INSENSITIVE_ORDER);
 					
+					 Map<String, Double> nodes = new HashMap<String, Double>();
 					 for (int d = 0; d < rates.keySet().size(); d++) { 
 						 String node = vars.get(d);
 						 
@@ -326,6 +327,7 @@ public class PriorityClassPanel extends JPanel {
 							 rate = 1.0;
 						 
 						 String nodeRate = Double.toString(rate);
+						 nodes.put(node, rate);
 						 
 					 
 						 JTextField jtf = new JTextField(nodeRate); 
@@ -356,6 +358,7 @@ public class PriorityClassPanel extends JPanel {
 						 
 						 ratesPanel.add(jtf, gbcR); 
 					 }
+					 mpc.addUpdater(idxPC, idxGroup, nodes);
 					 
 					//JPanel ratesPanel = ratesPanel(vars, rates, textfields, updaterName);
 					

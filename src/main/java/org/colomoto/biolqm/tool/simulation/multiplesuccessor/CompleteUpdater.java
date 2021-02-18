@@ -82,5 +82,11 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
         }
     }
 
+	@Override
+	public String getUpdaterName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 

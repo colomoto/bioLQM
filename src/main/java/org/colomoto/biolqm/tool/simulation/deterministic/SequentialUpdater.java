@@ -92,4 +92,10 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
         return nextstate;
 	}
 
+	@Override
+	public String getUpdaterName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

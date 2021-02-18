@@ -62,11 +62,13 @@ public class TestPriorityClasses {
 				"C" + ModelGrouping.SEPGROUP +
 				"D" + ModelGrouping.SEPGROUP +
 				"E");
+		System.out.println(mpc.toString());
 		assertEquals("A" + ModelGrouping.SEPGROUP +
 				"B" + ModelGrouping.SEPGROUP +
 				"C" + ModelGrouping.SEPGROUP +
 				"D" + ModelGrouping.SEPGROUP +
 				"E", mpc.toString());
+		
 
 		List<String> lTmp = new ArrayList<String>();
 		lTmp.add("A");

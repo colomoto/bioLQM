@@ -83,4 +83,10 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 		
 	}
 
+	@Override
+	public String getUpdaterName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
