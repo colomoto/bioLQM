@@ -5,6 +5,8 @@ import org.colomoto.biolqm.metadata.annotations.URI;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.metadata.annotations.JsonReader;
 
+import org.colomoto.biolqm.metadata.constants.GetExternalMetadata;
+
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.ListMetadata;
 import org.colomoto.biolqm.metadata.constants.ExternalMetadata;

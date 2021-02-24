@@ -1,6 +1,7 @@
-package org.colomoto.biolqm.metadata.annotations;
+package org.colomoto.biolqm.metadata.constants;
 
 import org.colomoto.biolqm.metadata.annotations.URI;
+import org.colomoto.biolqm.metadata.annotations.JsonReader;
 
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 
@@ -15,7 +16,7 @@ import java.io.IOException;
  *
  * @author Martin Boutroux
  */
-class GetExternalMetadata extends Thread {
+public class GetExternalMetadata extends Thread {
 	
 	// variables
 	private ModelConstants modelConstants;
@@ -23,7 +24,7 @@ class GetExternalMetadata extends Thread {
 	private String identifier;
 	
 	// constructors
-	protected GetExternalMetadata(ModelConstants newModelConstants, String newCollection, String newIdentifier) {
+	public GetExternalMetadata(ModelConstants newModelConstants, String newCollection, String newIdentifier) {
 		this.modelConstants = newModelConstants;
 		this.collection = newCollection;
 		this.identifier = newIdentifier;
