@@ -9,7 +9,6 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 
-
 import java.io.File;
 
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ public class TestMetadata {
 		
 		modelMetadata.addURI("isDescribedBy", "doi", "10.1002/0470841559.ch1");
 		
-		Thread.sleep(10000);
+		// Thread.sleep(10000);
 
 		// test modelMetadata
 		

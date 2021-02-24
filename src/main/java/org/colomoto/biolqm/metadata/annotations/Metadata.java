@@ -818,7 +818,7 @@ public class Metadata {
 	 * Get a list of references used in the model and written in the given year
 	 *
 	 * @param year a String of the year you're interested in
-	 * @return ArrayList<String> a list of String with the dois
+	 * @return a list of String with the dois
 	 */
 	public ArrayList<String> getReferencesWithYear(String year) {
 		
@@ -828,7 +828,7 @@ public class Metadata {
 	 * Get a list of references used in the model and containing a given expression in their titles
 	 *
 	 * @param word a String of the expression you're interested in
-	 * @return ArrayList<String> a list of String with the dois
+	 * @return a list of String with the dois
 	 */
 	public ArrayList<String> getReferencesWithKeyword(String word) {
 		
@@ -879,9 +879,10 @@ public class Metadata {
 	/**
 	 * Produces a json expression of the metadata object (internal use)
 	 *
+	 * @param nested a boolean to precise if the json will contain the nested parts 
 	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
 	 */
-	public JSONArray getJSONOfMetadata() {
+	public JSONArray getJSONOfMetadata(boolean nested) {
 		
 		JSONArray arrayQualifiers = new JSONArray();
 		
@@ -903,7 +904,7 @@ public class Metadata {
 				JSONObject jsonAlternative = this.listOfAnnotations.get(qualifierName).get(alternative).getJSONOfAnnotation();
 
 				// to check if the alternative contains a nested metadata
-				if (this.isSetMetadataOfQualifier(qualifierName, alternative)) {
+				if (nested && this.isSetMetadataOfQualifier(qualifierName, alternative)) {
 					Metadata metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
 					
 					JSONObject jsonNested = new JSONObject();
@@ -934,6 +935,14 @@ public class Metadata {
 		return arrayQualifiers;
 	}
 	
+	/**
+	 * Produces a json expression of the metadata object with the nested parts (internal use)
+	 *
+	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
+	 */
+	public JSONArray getJSONOfMetadata() {
+		return this.getJSONOfMetadata(true);
+	}
 	
 	// the functions to export the metadata towards the sbml format	
 	private XMLNode exportTagsAndKeys(int alternative, Set<String> listOfTags, Map<String, ArrayList<String>> listOfKeysValues, XMLNode xmlNested) {

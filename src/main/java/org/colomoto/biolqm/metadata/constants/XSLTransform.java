@@ -7,6 +7,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import java.io.InputStream;
 
 public class XSLTransform {
 	
@@ -15,8 +16,12 @@ public class XSLTransform {
 			StringReader reader = new StringReader(source);
 			StringWriter writer = new StringWriter();
 			TransformerFactory tFactory = TransformerFactory.newInstance();
+			
+			InputStream is = XSLTransform.class
+			  .getClassLoader()
+			  .getResourceAsStream("html2markdown.xsl");
             Transformer transformer =
-                tFactory.newTransformer(new StreamSource(new File("src/main/resources/html2markdown.xsl")));
+                tFactory.newTransformer(new StreamSource(is));
 
             transformer.transform(new StreamSource(reader),
                                   new StreamResult(writer));
