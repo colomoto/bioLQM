@@ -88,7 +88,6 @@ public class PriorityClassPanel extends JPanel {
 		// CENTER PANEL
 		this.jpCenter = new JPanel(new GridBagLayout());
 		jpTopCenter.add(this.jpCenter, BorderLayout.CENTER);
-		this.jpCenter.setBackground(Color.red);
 		this.add(jpTopCenter, BorderLayout.CENTER);
 
 		// SOUTH PANEL
@@ -101,7 +100,6 @@ public class PriorityClassPanel extends JPanel {
 				updateGUI();
 			}
 		});
-		jpSouthCenter.setBackground(Color.DARK_GRAY);
 		jpSouthCenter.add(jbSplit);
 		JButton jbUnsplit = this.getNoMargins("Unsplit");
 		jbUnsplit.addActionListener(new ActionListener() {
@@ -182,7 +180,6 @@ public class PriorityClassPanel extends JPanel {
 			jpPClass.setAlignmentY(TOP_ALIGNMENT);
 			JPanel jpPClassHeader = new JPanel(new BorderLayout());
 			jpPClass.add(jpPClassHeader, BorderLayout.NORTH);
-			jpPClass.setBackground(Color.blue);
 
 			JLabel jlTmp = new JLabel("   Rank " + (idxPC + 1) + "   ", SwingConstants.CENTER);
 			jlTmp.setToolTipText(idxPC == 0 ? "Fastest class" : (idxPC == (mpc.size() - 1) ? "Slowest class" : ""));
@@ -303,7 +300,7 @@ public class PriorityClassPanel extends JPanel {
 							 }
 					} else {
 
-						Map<String, Double> upRates = mpc.getRates(idxPC, idxGroup);
+						Map<String, Double> upRates = mpc.getRates(idxPC, idxGroup, vars);
 
 						// put (node string, rate)
 						for (int e = 0; e < vars.size(); e++) {
@@ -358,7 +355,6 @@ public class PriorityClassPanel extends JPanel {
 						 
 						 ratesPanel.add(jtf, gbcR); 
 					 }
-					 mpc.addUpdater(idxPC, idxGroup, nodes);
 					 
 					//JPanel ratesPanel = ratesPanel(vars, rates, textfields, updaterName);
 					
@@ -378,9 +374,7 @@ public class PriorityClassPanel extends JPanel {
 				jList.setFixedCellWidth(this.GROUP_WIDTH);
 				jList.setFixedCellHeight(20);
 
-				jList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				jList.setBackground(Color.gray);
-				
+				jList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);				
 					
 				jList.addMouseListener(new MouseListener() {
 					@Override

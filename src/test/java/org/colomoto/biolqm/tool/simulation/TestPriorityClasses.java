@@ -9,7 +9,9 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -62,7 +64,6 @@ public class TestPriorityClasses {
 				"C" + ModelGrouping.SEPGROUP +
 				"D" + ModelGrouping.SEPGROUP +
 				"E");
-		System.out.println(mpc.toString());
 		assertEquals("A" + ModelGrouping.SEPGROUP +
 				"B" + ModelGrouping.SEPGROUP +
 				"C" + ModelGrouping.SEPGROUP +
@@ -125,4 +126,47 @@ public class TestPriorityClasses {
 				"D" + ModelGrouping.SEPGROUP +
 				"E", mpc.toString());
 	}
+	
+	
+	@Test
+	public void testPriorityClassesInit2() throws IOException {
+		LogicalModel model = getOtherModel();
+		model.getComponents().get(0).setInput(true);
+		// One class Async
+		ModelGrouping mpc = new ModelGrouping(model,
+				"A" + ModelGrouping.SEPGROUP +
+				"B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
+				"E");
+		
+		mpc.addUpdater(0, 0, new SynchronousUpdater(model));		
+		assertEquals("B" + ModelGrouping.SEPGROUP +
+				"C" + ModelGrouping.SEPGROUP +
+				"D" + ModelGrouping.SEPGROUP +
+				"E", mpc.toString());
+		
+		
+		ModelGrouping mpc2 = new ModelGrouping(model,
+				"A" + ModelGrouping.SEPVAR +
+				"B" + ModelGrouping.SEPVAR +
+				"C" + ModelGrouping.SEPVAR +
+				"D" + ModelGrouping.SEPVAR +
+				"E");
+		
+		
+		mpc2.addUpdater(0, 0, new RandomUpdaterWithRates(model));
+		String aa = mpc2.toString();
+		assertEquals(
+				"B" + ModelGrouping.SEPVAR +
+				"C" + ModelGrouping.SEPVAR +
+				"D" + ModelGrouping.SEPVAR +
+				"E" + ModelGrouping.SEPUPDATER +
+				"RN[1.0,1.0,1.0,1.0]", mpc2.toString());
+		
+	}
+	
+	
+	
+	
 }

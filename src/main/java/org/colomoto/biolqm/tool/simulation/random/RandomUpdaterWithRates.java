@@ -48,10 +48,18 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         // if no rates passed
         if (rates == null) {
         	if(filter == null) {
-        		this.rates = new double[this.size];
-        		for (int i=0 ; i< this.rates.length ; i++) {
-        			this.rates[i] = 1.0;
+        		List<Double> nodeRates = new ArrayList<Double>();
+        		List<NodeInfo> nodes = model.getComponents();
+        		
+        		for (NodeInfo node : nodes) {
+        			if (!node.isInput())
+        				nodeRates.add(1.0);
         		}
+        		this.rates = new double[nodeRates.size()];
+        		for (int i=0; i < nodeRates.size(); i++)
+        			this.rates[i] = 1.0;
+        		
+        		
         	} else {
                 this.setFilter(filter);
         		// cast from ArrayList to array
@@ -79,7 +87,10 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 			int change = nodeChange(state, idx);
 						            			
 			if (change == 0) {
-				merged += 2;
+				if (this.filter != null 
+						&& this.filter.length != 0 && this.filter[idx] != null) {
+					merged += 2;
+				}
                 continue;
             }
 			
@@ -88,7 +99,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 			if (this.filter != null && this.filter.length != 0) {
 				SplittingType splt = this.filter[idx]; 
 				if (splt.equals(SplittingType.MERGED)) { 
-				
+					
 					if (change == -1) {
 						r = this.rates[merged];
 					} else {

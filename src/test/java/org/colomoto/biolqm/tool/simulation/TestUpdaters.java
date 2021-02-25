@@ -22,6 +22,8 @@ import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.junit.jupiter.api.Test;
 
+import junit.framework.Assert;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,6 +90,38 @@ public class TestUpdaters {
 		
 		return new LogicalModelImpl(vars, manager, functions);
 	}
+	private LogicalModel getThirdModel() {
+		// build a list of variables and functions for a model
+		List<NodeInfo> vars = new ArrayList<NodeInfo>();
+		vars.add(new NodeInfo("A"));
+		vars.add(new NodeInfo("B"));
+		vars.add(new NodeInfo("C"));
+		vars.add(new NodeInfo("D"));
+		vars.add(new NodeInfo("E"));
+		
+		MDDManager manager = new MDDStoreImpl(vars, 2);
+		int[] functions = new int[vars.size()];
+		MDDVariable va = manager.getVariableForKey(vars.get(0));
+		MDDVariable vb = manager.getVariableForKey(vars.get(1));
+		MDDVariable vc = manager.getVariableForKey(vars.get(2));
+		MDDVariable vd = manager.getVariableForKey(vars.get(3));
+		MDDVariable ve = manager.getVariableForKey(vars.get(4));
+		int fa = va.getNode(0, 1);
+		int fna = va.getNode(1, 0);
+		int fb = vb.getNode(0, 1);
+		int fnb = vb.getNode(1,0);
+		int fc = vc.getNode(0, 1);
+		int fd = vd.getNode(0, 1);
+
+		functions[0] = 1;
+		functions[1] = 1;
+		functions[2] = 1;
+		functions[3] = 1;
+		functions[4] = 1;
+		
+		return new LogicalModelImpl(vars, manager, functions);
+	}
+	
 	
 	//private int findChange(byte[] state1, byte[] state2) {
 	//}
@@ -194,6 +228,7 @@ public class TestUpdaters {
 	@Test
 	public void testSequentialUpdater() throws IOException {
 		LogicalModel model = getModel();
+		model.getComponents().get(1).setInput(true);
         DeterministicUpdater updater = new SequentialUpdater(model);
 		byte[] state = {0,0,0};
         byte[] next = updater.getSuccessor(state);
@@ -445,7 +480,6 @@ public class TestUpdaters {
 			filter.put(model.getComponents().get(j), splt);
 		}
 		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
-		System.out.println(Arrays.toString(updater.getRates()) + " " + rateCount);
 		assert(updater.getRates().length == rateCount);
 	}
 	
@@ -503,6 +537,61 @@ public class TestUpdaters {
 		
 	}
 	
+	@Test
+	public void testRandomUpdaterWithRatesOtherInput() throws IOException {
+		
+		LogicalModel model = getOtherModel();
+		model.getComponents().get(1).setInput(true);
+		double[] rates = {0.4,0.1,0.1,0.2,0.2};
+		
+		RandomUpdater updater = new RandomUpdaterWithRates(model, rates);
+		byte[] state = {0,0,0,0,0};
+		// two updatable states C and D
+		// [0, 0, 0.33, 0.66, 0]
+	
+		
+		byte[] state2 = {0,1,0,0,0};
+		// three updatable states, B, D and E
+		// [0, 0.2, 0, 0.4, 0.4]
+		
+		state = state2.clone();
+		
+		int size = model.getComponents().size();
+		int[] simUpdates = new int[size];
+		Set<Integer> updatables = new HashSet<Integer>();
+		int simRuns = 10000;
+		
+		for (int run = 0; run < simRuns ; run++) {
+			byte[] successor = updater.pickSuccessor(state);
+			if (successor == null) {
+				break;
+			}
+			int idx = getIdxChange(state, successor);
+			simUpdates[idx] += 1;
+			// save idx of component updated 
+			updatables.add(idx);
+		}
+		
+		double[] newRates = new double[size];
+		double sum = 0.0;
+		// sum of rates of updatable components 
+		for (int id : updatables) {
+			sum += rates[id];
+			}
+		
+		// calculate new rates
+		for (int id : updatables) {
+			newRates[id] = rates[id]/sum;
+		}
+
+		for (int compIdx = 0; compIdx < size; compIdx++) {
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
+		}
+		
+	}
+	
+	
 	
 	//@Test
 	public void testRandomUpdaterWraper() throws IOException {
@@ -512,8 +601,9 @@ public class TestUpdaters {
 
 		RandomUpdater updater = new RandomUpdaterWrapper(MultiUpdater);
 		byte[] state = {0,0,0,0,0};
-		// two updatable states C and D
 		
+		// two updatable states C and D
+	    Set<Integer> updatables = new HashSet<Integer>();
 		int size = model.getComponents().size();
 		int[] simUpdates = new int[size];
 		int simRuns = 10000;
@@ -525,12 +615,104 @@ public class TestUpdaters {
 				break;
 			}
 			int idx = getIdxChange(state, successor);
+	        updatables.add(idx);
 			simUpdates[idx] += 1;
 		}
-		assertTrue(simUpdates[2] > 5000-50 & simUpdates[2] < 5000+50);
-		assertTrue(simUpdates[3] > 5000-50 & simUpdates[3] < 5000+50);
+		
+		double prob = 1.0/updatables.size();
+        double[] probs = new double[simUpdates.length];
+        for (int i = 0; i < probs.length; i++)
+               probs[i] = (simUpdates[i] == 0) ? 0 : prob;
+                          
+        for (int compIdx = 0; compIdx < size; compIdx++) {
+               assertTrue(simUpdates[compIdx] >= simRuns * probs[compIdx] * 0.9
+                             && simUpdates[compIdx] <= simRuns * probs[compIdx] * 1.1);
+        }
 		
 	}
+	
+		@Test
+		public void testPriorityClassesModelGrouping() throws IOException {
+			LogicalModel model = getThirdModel();
+			List<NodeInfo> nodes = model.getComponents();
+			model.getComponents().get(0).setInput(true);
+			int nodeCount = 0;
+			String modelGroup = "";
+			for (NodeInfo node : nodes) {
+				if (!node.isInput()) {
+					modelGroup += node.toString() + ModelGrouping.SEPGROUP;
+					nodeCount ++;
+				}
+			}
+			modelGroup = modelGroup.substring(0, modelGroup.length() - 
+					ModelGrouping.SEPGROUP.length());
+			
+			ModelGrouping mpc = new ModelGrouping(model, modelGroup);
+			
+			PriorityUpdater pc = new PriorityUpdater(mpc);
+			byte[] state = {0,0,0,0,0};
+
+			List<byte[]> lNext = pc.getSuccessors(state);
+			assertEquals(nodeCount, lNext.size());
+
+		}
+		
+		@Test
+		public void testPriorityClassesModelGroupingStateChange() throws IOException {
+			LogicalModel model = getThirdModel();
+			List<NodeInfo> nodes = model.getComponents();
+			int nodeCount = 0;
+			String modelGroup = "";
+			for (NodeInfo node : nodes) {
+				if (!node.isInput()) {
+					modelGroup += node.toString() + ModelGrouping.SEPGROUP;
+					nodeCount ++;
+				}
+			}
+			modelGroup = modelGroup.substring(0, modelGroup.length() - 
+					ModelGrouping.SEPGROUP.length());
+			
+			ModelGrouping mpc = new ModelGrouping(model, modelGroup);
+			
+			PriorityUpdater pc = new PriorityUpdater(mpc);
+			byte[] state = {0,0,0,0,0};
+
+			List<byte[]> lNext = pc.getSuccessors(state);
+			assertEquals(nodeCount, lNext.size());
+			
+			int i = 0;
+			for (byte[] currState : lNext) {
+				assertEquals(1, getNumChanges(state, currState));
+				assertEquals(i, getIdxChange(state, currState));
+				i++;
+			}
+
+		}
+		
+		@Test
+		public void testPriorityClassesRates() throws IOException {
+			LogicalModel model = getThirdModel();
+			ModelGrouping mpc = new ModelGrouping(model, "A" + ModelGrouping.SEPVAR +
+														 "B" + ModelGrouping.SEPVAR +
+														 "C" + ModelGrouping.SEPUPDATER +
+														 "RN[2.0,2.0,2.0,0.0,6.0,1.0]" + ModelGrouping.SEPGROUP +
+														 "D" + ModelGrouping.SEPVAR +
+														 "E");
+						
+			PriorityUpdater pc = new PriorityUpdater(mpc);
+			byte[] state = {0,0,0,0,0};
+			// A,B,C w/ prob 2.0, 0 and 1.0 respc.
+			// D,E are synchronous
+			byte[] firstCG = new byte[] {0,0,1,0,0};
+			byte[] firstAG = new byte[] {1,0,0,0,0};
+			
+			byte[] secondG =  new byte[] {0,0,0,1,1};
+			List<byte[]> lNext = pc.getSuccessors(state);
+			Assert.assertTrue((Arrays.equals(lNext.get(0),firstAG)) ||
+					Arrays.equals(lNext.get(0),firstCG));
+			Assert.assertTrue(Arrays.equals(lNext.get(1), secondG));
+			
+		}
 	
 	
 	private int getIdxChange(byte[] state1, byte[] state2) {
@@ -560,6 +742,19 @@ public class TestUpdaters {
 		}
 		return 0;
 	}
+	
+	private int getNumChanges(byte[] state1, byte[] state2) {
+		int idx = 0;
+		int change = 0;
+		while (idx < state1.length) {
+			if (state2[idx] != state1[idx]) {
+				change ++;
+			}
+			idx += 1; 
+		}
+		return change;
+	}
+	
 }
 
 

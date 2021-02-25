@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -220,69 +221,109 @@ public class TestSimulations {
 	RandomUpdaterWrapper updater = new RandomUpdaterWrapper(new AsynchronousUpdater(model));
 		
 	RandomWalkSimulation simulation = new RandomWalkSimulation(updater, state, 100);
+	
+    int size = model.getComponents().size();
+    int[] simUpdates = new int[size];
+    Set<Integer> updatables = new HashSet<Integer>();
 	Iterator<byte[]> it = simulation.iterator();
-	
-	
-	int simRuns = 10000;	
-	for (int run = 0; run < simRuns ; run++) {
-		it = simulation.iterator();
-		it.next();
-		byte[] successor = it.next();
-		if (successor == null) {
-			break;
-		}
-		for (int route = 0; route < 2 ;route++) {
-			if (Arrays.equals(states[route], successor)) {
-			count[route] += 1;
-			}
-		}
-	}
 
-		for (int compIdx = 0; compIdx < count.length; compIdx++) {
-			assertTrue(count[compIdx] >= simRuns * 0.5 * 0.9 
-					&& count[compIdx] <= simRuns * 0.5 * 1.1);
-		}
-		
-	}
-	
-	@Test
-	public void testRandomRatesSimulation() throws IOException {
-	LogicalModel model = getComponents();
-	
-	byte[] state = {0, 0, 0, 0, 0};
-	// C and D
-	byte[][] states = {{0, 0, 1, 0, 0}, {0, 0, 0, 1, 0}};
-	int[] count = new int[2];
-	
-	RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model,new double[] {0.4,0.1,0.1,0.2,0.2});
-		
-	RandomWalkSimulation simulation = new RandomWalkSimulation(updater, state, 100);
-	Iterator<byte[]> it = simulation.iterator();
-	
-	
-	int simRuns = 10000;	
-	for (int run = 0; run < simRuns ; run++) {
-		it = simulation.iterator();
-		it.next();
-		byte[] successor = it.next();
-		if (successor == null) {
-			break;
-		}
-		for (int route = 0; route < 2 ;route++) {
-			if (Arrays.equals(states[route], successor)) {
-			count[route] += 1;
-			}
-		}
-	}
+    int simRuns = 10000;  
 
-	assertTrue(count[0] > 3333-50 & count[0] < 3333+50);
-	assertTrue(count[1] > 6666-50 & count[1] < 6666+50);
-		
-	}
+    for (int run = 0; run < simRuns ; run++) {
+           it = simulation.iterator();
+           it.next();
+           byte[] successor = it.next();
+           if (successor == null) {
+                  break;
+           }
+
+           int idx = getIdxChange(state, successor);
+           updatables.add(idx);
+           simUpdates[idx] += 1;
+
+    }
+           double prob = 1.0/updatables.size();
+           double[] probs = new double[simUpdates.length];
+           for (int i = 0; i < probs.length; i++)
+                  probs[i] = (simUpdates[i] == 0) ? 0 : prob;
+                             
+           for (int compIdx = 0; compIdx < size; compIdx++) {
+                  assertTrue(simUpdates[compIdx] >= simRuns * probs[compIdx] * 0.9
+                                && simUpdates[compIdx] <= simRuns * probs[compIdx] * 1.1);
+           }
+
+    }
 	
-	
-	
-	
+	  @Test
+
+      public void testRandomRatesSimulation() throws IOException {
+		  
+      LogicalModel model = getComponents();
+      byte[] state = {0, 0, 0, 0, 0};
+      // C and D
+      int[] count = new int[2];
+      double[] rates = new double[] {0.4,0.1,0.1,0.2,0.2};
+
+
+      RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model,rates);
+      RandomWalkSimulation simulation = new RandomWalkSimulation(updater, state, 100);
+
+      Iterator<byte[]> it = simulation.iterator();
+
+      int size = model.getComponents().size();
+      int[] simUpdates = new int[size];
+      Set<Integer> updatables = new HashSet<Integer>();
+
+      int simRuns = 10000;  
+
+      for (int run = 0; run < simRuns ; run++) {
+
+             it = simulation.iterator();
+             it.next();
+             byte[] successor = it.next();
+             if (successor == null) {
+                    break;
+             }
+
+             int idx = getIdxChange(state, successor);
+             updatables.add(idx);
+             simUpdates[idx] += 1;
+      }
+
+             double[] newRates = new double[size];
+             double sum = 0.0;
+             // sum of rates of updatable components
+             for (int id : updatables) {
+                    sum += rates[id];
+             }
+
+             // calculate new rates
+             for (int id : updatables) {
+                    newRates[id] = rates[id]/sum;
+             }
+
+             for (int compIdx = 0; compIdx < size; compIdx++) {
+                    assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9
+                                  && simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);		
+             }
+      }
+     
+
+      private int getIdxChange(byte[] state1, byte[] state2) {
+
+             int idx = 0;
+             boolean foundchange = false;
+             while (!foundchange && idx < state1.length) {
+                    if (state2[idx] != state1[idx]) {
+                           foundchange = true;
+                    }
+                    else {
+                           idx += 1;
+                    }                   
+             }
+             return idx;
+      }
+
 	
 	
 }

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
@@ -346,9 +348,9 @@ public class ModelGrouping {
 			this.pcList.get(idxPC).addUpdater(idxGrp, rates);
 	}
 	
-	public Map<String, Double> getRates(int idxPC, int idxGrp) {
+	public Map<String, Double> getRates(int idxPC, int idxGrp, List<String> vars) {
 		if (this.isValid(idxPC) && this.pcList.get(idxPC).isValid(idxGrp))
-			return this.pcList.get(idxPC).getRates(idxGrp);
+			return this.pcList.get(idxPC).getRates(idxGrp, vars);
 		return new HashMap<String, Double>();
 	}
 
@@ -532,9 +534,9 @@ public class ModelGrouping {
 			}
 		}
 		
-		public Map<String, Double> getRates(int idxGrp) {
+		public Map<String, Double> getRates(int idxGrp, List<String> vars) {
 			if (idxGrp >= 0 && idxGrp < this.size()) 
-				return this.groups.get(idxGrp).getRates();
+				return this.groups.get(idxGrp).getRates(vars);
 			return new HashMap<String, Double>();
 		}
 			
@@ -684,7 +686,6 @@ public class ModelGrouping {
 		// 2*n positions for n variables
 		private int[] vars;
 		private LogicalModelUpdater updater;
-		private List<VarInfo> varInfoList = null;
 		
 		
 		public RankedClassGroup(int[] vars) {
@@ -762,9 +763,9 @@ public class ModelGrouping {
 					// $RN[0.3,0.5,...], get rates
 					String[] rates = up[1].substring(3, up[1].length() - 1).split(",");
 					double[] doubleRates = new double[rates.length];
-		
-					for (int e = 0; e < doubleRates.length; e++) 
+					for (int e = 0; e < doubleRates.length; e++) {
 						doubleRates[e] = Double.parseDouble(rates[e]);
+					}
 			
 					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.getFilter());
 				}						
@@ -996,7 +997,21 @@ public class ModelGrouping {
 		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
 		    }
 		}
-		  
+		
+		public Map<String, Double> getRates(List<String> vars) {
+			Map<String, Double> rates = this.getRates();
+			
+			Set<String> toRemove = new HashSet<String>();
+			for (String node: rates.keySet()) {
+				if (!vars.contains(node)) 
+					toRemove.add(node);
+			}
+			for (String node : toRemove)
+				rates.remove(node);
+			
+			return rates;
+			
+		}
 		
 		
 		public Map<String, Double> getRates() {
@@ -1118,19 +1133,13 @@ public class ModelGrouping {
 		
 		public final int idx;
 		public final int flag;
-		public Double rate;
 		
-		VarInfo(int idx, int flag, Double rate) {
+		VarInfo(int idx, int flag) {
 			this.idx = idx;
 			this.flag = flag;
-			this.rate = rate;
 		}
 
-		VarInfo(int idx, int flag) {
-			this(idx, flag, null);
-		}
 
-		
 		public int compareTo(VarInfo other) {
 			if (this.idx != other.idx) {
 			   return ((Integer) (this.idx)).compareTo((Integer) other.idx);

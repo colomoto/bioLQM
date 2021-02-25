@@ -1,11 +1,17 @@
 package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
 /**
  * Draft for a priority updater: components are grouped in groups, which can be
@@ -48,13 +54,15 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			for (int g = 0; g < pc.size(); g++) {
 				
 				// pcVars
-				// the individual groups are the classes 
-				int[] pcVars = pc.getGroupValues(g);
-
+//				 the individual groups are the classes 
+				
+				
+				LogicalModelUpdater groupUpdater = this.pclist.getUpdater(p, g);
+				
 				if (this.isComplete) {
-					lTmpSucc.addAll(this.computeSuccStates(pcVars, lTmpSucc));
+					lTmpSucc.addAll(this.computeSuccStates(groupUpdater, lTmpSucc));
 				}
-				lTmpSucc.addAll(this.computeSuccStates(pcVars, currStates));
+				lTmpSucc.addAll(this.computeSuccStates(groupUpdater, currStates));
 			}
 
 			// stop if previous block already generated successors
@@ -66,20 +74,22 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 		return currStates;
 	}
 
-	private List<byte[]> computeSuccStates(int[] pcVars, List<byte[]> currStates) {
+	private List<byte[]> computeSuccStates(LogicalModelUpdater groupUpdater, List<byte[]> currStates) {
 		List<byte[]> lTmp = new ArrayList<>();
 		for (byte[] currState : currStates) {
 			byte[] succState = null;
 
-			// Update the nodes in the current priority class
-			for (int i = 0; i < pcVars.length; i += 2) {
-				int idx = pcVars[i];
-				int change = nodeChange(currState, idx);
-				if (change != 0 && (change == pcVars[i + 1] || pcVars[i + 1] == 0)) {
-					succState = update(currState, idx, change, succState);
-				}
+			if (groupUpdater instanceof RandomUpdaterWithRates) {
+				succState = ((RandomUpdaterWithRates) groupUpdater).pickSuccessor(currState);
+				
+			} else if (groupUpdater instanceof SynchronousUpdater){
+				succState = ((SynchronousUpdater) groupUpdater).getSuccessor(currState);
+
+			} else if (groupUpdater instanceof RandomUpdaterWrapper) {
+				succState = ((RandomUpdaterWrapper) groupUpdater).pickSuccessor(currState);
 			}
-			lTmp = addSuccessor(lTmp, succState);
+			
+			lTmp = this.addSuccessor(lTmp, succState);
 		}
 		return lTmp;
 	}
