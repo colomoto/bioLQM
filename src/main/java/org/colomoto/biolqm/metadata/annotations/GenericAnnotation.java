@@ -189,7 +189,7 @@ class GenericAnnotation extends Annotation {
 	}
 	
 	@Override
-	protected Index getIndex(ModelConstants modelConstants, Index indexParent) {
+	protected Index getIndex(ModelConstants modelConstants, Index indexParent) throws Exception {
 
 		Index existingIndex;
 		

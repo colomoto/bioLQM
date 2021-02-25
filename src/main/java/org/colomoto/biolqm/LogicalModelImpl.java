@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONTokener;
 
 import org.colomoto.mddlib.MDDManager;
@@ -59,7 +60,12 @@ public class LogicalModelImpl implements LogicalModel {
 			this.ddmanager.use(f);
 		}
 		
-		this.annotationModule = new AnnotationModule();
+		try {
+			this.annotationModule = new AnnotationModule();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public LogicalModelImpl(List<NodeInfo> nodeOrder, MDDManager ddmanager, int[] functions) {
@@ -296,17 +302,22 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 	
 	@Override
-	public Metadata getMetadataOfNode(NodeInfo node) {
+	public Metadata getMetadataOfNode(NodeInfo node) throws Exception {
 		
-		if (this.annotationModule.nodesIndex.containsKey(node)) {
-			return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.nodesIndex.get(node));
-		}
-		else {
-			return this.annotationModule.createMetadataOfNode(node);
+		try {
+			if (this.annotationModule.nodesIndex.containsKey(node)) {
+				return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.nodesIndex.get(node));
+			}
+			else {
+				return this.annotationModule.createMetadataOfNode(node);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	private void exportElementMetadata(Metadata metadata, JSONObject json) {
+	private void exportElementMetadata(Metadata metadata, JSONObject json) throws JSONException, Exception {
 		
 		// if there is some metadata we add the json representation in the json object
 		if (metadata.isMetadataNotEmpty()) {
@@ -321,7 +332,7 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 	
 	@Override
-	public void exportMetadata(String filename) {
+	public void exportMetadata(String filename) throws JSONException, Exception {
 		
 		JSONObject json = new JSONObject();
 		
@@ -381,7 +392,7 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 	
 	@Override
-	public void importMetadata(String filename) {
+	public void importMetadata(String filename) throws Exception {
 		try {
 			// we load the json file
 			File initialFile = new File(filename+".json");
@@ -397,9 +408,14 @@ public class LogicalModelImpl implements LogicalModel {
 			}
 			
 			// we import the metadata concerning the model
-			if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
-				
-				metadataModel.importElementMetadata(json);
+			try {
+				if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
+					
+					metadataModel.importElementMetadata(json);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 			// we import the metadata concerning each node
@@ -409,11 +425,17 @@ public class LogicalModelImpl implements LogicalModel {
 				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
 				NodeInfo node = this.getComponent(jsonNode.getString("id"));
 				
-				if (node != null) {
-					Metadata metadataNode = this.getMetadataOfNode(node);
-					
-					metadataNode.importElementMetadata(jsonNode);
-				}
+				if (node != null)
+					try {
+						{
+							Metadata metadataNode = this.getMetadataOfNode(node);
+							
+							metadataNode.importElementMetadata(jsonNode);
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 			
 		} catch (FileNotFoundException e) {

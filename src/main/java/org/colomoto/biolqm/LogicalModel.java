@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
-
+import org.json.JSONException;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
@@ -178,20 +178,24 @@ public interface LogicalModel {
 	 * 
 	 * @param node the node you want to annotate
 	 * @return the existing Metadata of the node. Create it if it does not exist.
+	 * @throws Exception 
 	 */
-	Metadata getMetadataOfNode(NodeInfo node);
+	Metadata getMetadataOfNode(NodeInfo node) throws Exception;
 	
 	/**
 	 * Export all the metadata of the model in a structured json file
 	 * 
 	 * @param filename the name of the json file
+	 * @throws Exception 
+	 * @throws JSONException 
 	 */
-	void exportMetadata(String filename);
+	void exportMetadata(String filename) throws JSONException, Exception;
 	
 	/**
 	 * Import a structured json file to populate the metadata of the model
 	 * 
 	 * @param filename the name of the json file
+	 * @throws Exception 
 	 */
-	void importMetadata(String filename);
+	void importMetadata(String filename) throws Exception;
 }

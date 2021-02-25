@@ -1,36 +1,50 @@
 package org.colomoto.biolqm.io.sbml;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
+
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.mddlib.*;
-import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.metadata.constants.XSLTransform;
-
+import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDManagerFactory;
+import org.colomoto.mddlib.MDDOperator;
+import org.colomoto.mddlib.MDDVariable;
+import org.colomoto.mddlib.MDDVariableFactory;
+import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
-import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.ext.layout.*;
-import org.sbml.jsbml.ext.qual.*;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.CVTerm;
-import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.History;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.ext.layout.BoundingBox;
+import org.sbml.jsbml.ext.layout.Dimensions;
+import org.sbml.jsbml.ext.layout.GeneralGlyph;
+import org.sbml.jsbml.ext.layout.GraphicalObject;
+import org.sbml.jsbml.ext.layout.Layout;
+import org.sbml.jsbml.ext.layout.Point;
+import org.sbml.jsbml.ext.qual.FunctionTerm;
+import org.sbml.jsbml.ext.qual.Input;
+import org.sbml.jsbml.ext.qual.Output;
+import org.sbml.jsbml.ext.qual.OutputTransitionEffect;
+import org.sbml.jsbml.ext.qual.QualitativeSpecies;
+import org.sbml.jsbml.ext.qual.Transition;
 import org.sbml.jsbml.xml.XMLNode;
-
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Arrays;
 
 /**
  * Crude SBML import using JSBML and the qual extension.
@@ -51,7 +65,7 @@ public class SBMLqualImport extends BaseLoader {
         return qualBundle;
     }
 
-    public LogicalModel performTask() throws IOException {
+    public LogicalModel performTask() throws Exception {
 
         try {
             this.qualBundle = SBMLqualHelper.parseInputStream(streams.input());
@@ -927,7 +941,7 @@ public class SBMLqualImport extends BaseLoader {
         throw new RuntimeException("Multi-valued is not handled here!");
     }
 	
-	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
+	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) throws Exception {
 		
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
 		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
@@ -969,7 +983,7 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 		
-    private void importElementHistory(Annotation annotation, Metadata metadata) {
+    private void importElementHistory(Annotation annotation, Metadata metadata) throws Exception {
 		
 		if (annotation.isSetHistory()) {		
 			History history = annotation.getHistory();
@@ -994,7 +1008,7 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 	
-	private void importElementTagsAndKeys(XMLNode xml, Metadata metadata) {
+	private void importElementTagsAndKeys(XMLNode xml, Metadata metadata) throws Exception {
 	
 		for (XMLNode qualifier: xml.getChildElements("qualifier", "uri_colomoto")) {
 			String qualifierName = qualifier.getAttributes().getValue("name");
@@ -1037,7 +1051,7 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 	
-	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) throws XMLStreamException {
+	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) throws Exception {
 		
 		SBase elementModel = (SBase) this.qualBundle.document.getModel();
 		

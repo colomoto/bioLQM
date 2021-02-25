@@ -23,7 +23,7 @@ abstract class Annotation {
 	protected abstract void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation);
 	protected abstract String getValue(String tab);
 	protected abstract boolean isSetIndex(ModelConstants modelConstants, Index indexParent);
-	protected abstract Index getIndex(ModelConstants modelConstants, Index indexParent);
+	protected abstract Index getIndex(ModelConstants modelConstants, Index indexParent) throws Exception;
 	protected abstract ArrayList<ArrayList<String>> getResources();
 	protected abstract JSONObject getJSONOfAnnotation();
 	protected abstract boolean doesAlternativeExist(JSONObject jsonAlternative);

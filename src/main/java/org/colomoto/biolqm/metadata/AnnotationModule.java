@@ -24,7 +24,7 @@ public class AnnotationModule {
 	public Map<NodeInfo, Index> nodesIndex;
 	
 	// constructors
-	public AnnotationModule() {
+	public AnnotationModule() throws Exception {
 		this.modelConstants = new ModelConstants();
 		
 		Metadata modelMetadata = new Metadata(this.modelConstants, "model");
@@ -40,8 +40,9 @@ public class AnnotationModule {
 	 *
 	 * @param node the node you want to annotate
 	 * @return the Metadata object you created for the node
+	 * @throws Exception 
 	 */
-	public Metadata createMetadataOfNode(NodeInfo node) {
+	public Metadata createMetadataOfNode(NodeInfo node) throws Exception {
 		
 		Metadata nodeMetadata = new Metadata(this.modelConstants, "species");
 		Index nodeIndex = new Index(this.modelConstants.getIncrement());

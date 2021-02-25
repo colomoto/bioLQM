@@ -18,7 +18,7 @@ import org.colomoto.biolqm.metadata.validations.DateValidator;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-
+import org.json.JSONException;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
@@ -60,7 +60,7 @@ public class Metadata {
 	
 	
 	// constructors
-	public Metadata(ModelConstants newModelConstants, String newType)
+	public Metadata(ModelConstants newModelConstants, String newType) throws Exception
 	{
 		this.type = newType;
 		this.notes = "";
@@ -98,7 +98,7 @@ public class Metadata {
 	
 	
 	// functions
-	private String suitedJavaClass(String termDesired) {
+	public String suitedJavaClass(String termDesired) {
 		Map<String, Qualifier> listQualifiersComponent = this.modelConstants.getQualifiersAvailable(this.type);
 		
 		if (listQualifiersComponent.containsKey(termDesired)) {
@@ -138,16 +138,16 @@ public class Metadata {
 		return true;
 	}
 	
-	private boolean checkWithCollectionsAvailable(String termDesired, int alternative, String collection, String identifier, String pattern, boolean namespaceEmbedded) {
+	private void checkWithCollectionsAvailable(String termDesired, int alternative, String collection, String identifier, String pattern, boolean namespaceEmbedded) throws Exception {
 		String javaClassDesired = "GenericAnnotation";
 	
 		if (!namespaceEmbedded && identifier.matches(pattern)) {
 			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
-			return true;
+			return;
 		}
 		else if (namespaceEmbedded && (collection+":"+identifier).matches(pattern)) {
 			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
-			return true;
+			return;
 		}
 		else if (namespaceEmbedded && identifier.matches(pattern)) {
 			int colon = identifier.indexOf(':');
@@ -162,15 +162,14 @@ public class Metadata {
 			identifier = identifier.substring(index+1);
 			
 			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
-			return true;
+			return;
 		}
 		else {
-			System.err.println("Error checking the uri: the identifier is not valid according to identifiers.org." + "\n");
-			return false;
+			throw new Exception("Error checking the uri: the identifier is not valid according to identifiers.org.");
 		}
 	}
 	
-	private void isValidURI(String termDesired, int alternative, String collection, String identifier) {
+	private void isValidURI(String termDesired, int alternative, String collection, String identifier) throws Exception {
 		
  		String javaClassDesired = "GenericAnnotation";
 		
@@ -185,6 +184,7 @@ public class Metadata {
 			boolean namespaceEmbedded = collectionChecked.getNamespaceEmbedded();
 			
 			this.checkWithCollectionsAvailable(termDesired, alternative, collection, identifier, pattern, namespaceEmbedded);
+
 			return;
 		}
 		
@@ -194,15 +194,13 @@ public class Metadata {
 			URLConnection connection = url.openConnection();
 			connection.connect();
 		} catch (MalformedURLException e) {
-			System.err.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
-			
 			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
-			return;
+			
+			throw new Exception("Internet is not connected: the uri will be added without validation against the entries of identifiers.org.");
 		} catch (IOException e) {
-			System.err.println("Internet is not connected: the uri will be added without validation against the entries of identifiers.org." + "\n");
-			
 			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
-			return;
+
+			throw new Exception("Internet is not connected: the uri will be added without validation against the entries of identifiers.org.");
 		}
 		
 		// get the collection and check with the pattern
@@ -213,25 +211,19 @@ public class Metadata {
 			String pattern = jsonCollection.getString("pattern");
 			boolean namespaceEmbedded = jsonCollection.getBoolean("namespaceEmbeddedInLui");
 			
-			if (this.checkWithCollectionsAvailable(termDesired, alternative, collection, identifier, pattern, namespaceEmbedded)) {
+			this.checkWithCollectionsAvailable(termDesired, alternative, collection, identifier, pattern, namespaceEmbedded);
+			this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(lowerCollection, pattern, namespaceEmbedded);
 
-				// we add the pattern of the collection to our internal list for further uses without the internet
-				this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(lowerCollection, pattern, namespaceEmbedded);
-				return;
-			}
+			return;
 			
 		} catch (IOException e) {
-			System.err.println("Error adding the collection to the list of collections available." + "\n");
-			return;
+			throw new Exception("Error adding the collection to the list of collections available.");
 		}
-		
-		System.err.println("Error checking the URI (shouldn't happen)." + "\n");
-		return;
 	}
 	
 	
 	// the functions to manage the alternatives
-	private boolean createQualifier(String termDesired, String javaClassDesired) {
+	private void createQualifier(String termDesired, String javaClassDesired) throws Exception {
 
 		// we find the javaClass dedicated for this qualifier
 		String javaClass = this.suitedJavaClass(termDesired);
@@ -250,13 +242,11 @@ public class Metadata {
 			this.listOfAnnotations.put(termDesired, new ArrayList<Annotation>());
 			this.listOfAnnotations.get(termDesired).add(newAnnotation);
 			
-			return true;
+			return;
 		}
 		// else we print a warning
 		else {
-			System.err.println("You cannot create this type of annotation for this qualifier." + "\n");
-			
-			return false;
+			throw new Exception("You cannot create this type of annotation for this qualifier.");
 		}
 	}
 	
@@ -286,17 +276,33 @@ public class Metadata {
 			return -1;
 		}
 	}
+	
+	public boolean removeAlternative(String termDesired, int alternative) {
+		
+		if (this.listOfAnnotations.containsKey(termDesired) && alternative < this.getNumberOfAlternatives(termDesired)) {
+			this.listOfAnnotations.get(termDesired).remove(alternative);
+			
+			int number = this.getNumberOfAlternatives(termDesired);
+			if (number == 0) {
+				this.listOfAnnotations.remove(termDesired);
+			} else if (alternative == number) {
+				return false;
+			}
+		}
+		else {
+			System.err.println("This alternative doesn't exist for this qualifier." + "\n");
+		}
+		
+		return true;
+	}
 
 
 	// the functions to add an annotation
-	private void addAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) {
+	private void addAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) throws Exception {
 		
 		// if it's a new qualifier we create a first alternative
 		if (!this.listOfAnnotations.containsKey(termDesired) && alternative == 0) {
-			boolean creation = this.createQualifier(termDesired, javaClassDesired);
-			if (!creation) {
-				return;
-			}
+			this.createQualifier(termDesired, javaClassDesired);
 		}
 		// if the qualifier doesn't exist and the alternative is not 0 there is an issue
 		else if (!this.listOfAnnotations.containsKey(termDesired)) {
@@ -325,9 +331,9 @@ public class Metadata {
 	 * @param alternative the number of the alternative one wants to modify
 	 * @param collection the collection of the uri one wants to create (uniprot, chebi...)
 	 * @param identifier the entry one wants to point at in the collection
+	 * @throws Exception 
 	 */	
-	public void addURI(String termDesired, int alternative, String collection, String identifier) {
-
+	public void addURI(String termDesired, int alternative, String collection, String identifier) throws Exception {
 		this.isValidURI(termDesired, alternative, collection, identifier);
 	}
 	/**
@@ -336,8 +342,9 @@ public class Metadata {
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param collection the collection of the uri one wants to create (uniprot, chebi...)
 	 * @param identifier the entry one wants to point at in the collection
+	 * @throws Exception 
 	 */	
-	public void addURI(String termDesired, String collection, String identifier) {
+	public void addURI(String termDesired, String collection, String identifier) throws Exception {
 		this.addURI(termDesired, 0, collection, identifier);
 	}
 
@@ -347,8 +354,9 @@ public class Metadata {
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param alternative the number of the alternative one wants to modify
 	 * @param tag the tag one wants to add
+	 * @throws Exception 
 	 */	
-	public void addTag(String termDesired, int alternative, String tag) {
+	public void addTag(String termDesired, int alternative, String tag) throws Exception {
 		String javaClassDesired = "GenericAnnotation";
 		this.addAnnotation(termDesired, alternative, javaClassDesired, "tag", tag);
 	}	
@@ -357,8 +365,9 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param tag the tag one wants to add
+	 * @throws Exception 
 	 */	
-	public void addTag(String termDesired, String tag) {
+	public void addTag(String termDesired, String tag) throws Exception {
 		this.addTag(termDesired, 0, tag);
 	}
 	
@@ -369,8 +378,9 @@ public class Metadata {
 	 * @param alternative the number of the alternative one wants to modify
 	 * @param key the place where one wants to store the value
 	 * @param value the value one wants to store
+	 * @throws Exception 
 	 */	
-	public void addKeyValue(String termDesired, int alternative, String key, String value) {
+	public void addKeyValue(String termDesired, int alternative, String key, String value) throws Exception {
 		String javaClassDesired = "GenericAnnotation";
 		this.addAnnotation(termDesired, alternative, javaClassDesired, "keyvalue", key, value);
 	}
@@ -380,8 +390,9 @@ public class Metadata {
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param key the place where one wants to store the value
 	 * @param value the value one wants to store
+	 * @throws Exception 
 	 */	
-	public void addKeyValue(String termDesired, String key, String value) {
+	public void addKeyValue(String termDesired, String key, String value) throws Exception {
 		this.addKeyValue(termDesired, 0, key, value);
 	}
 	
@@ -394,19 +405,17 @@ public class Metadata {
 	 * @param email the email of the author (optional: put null if you don't want to define it)
 	 * @param organisation the organisation of the author (optional: put null if you don't want to define it)
 	 * @param orcid the orcid of the author (optional: put null if you don't want to define it)
+	 * @throws Exception 
 	 */	
-	public void addAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
+	public void addAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) throws Exception {
 		if (name == null || surname == null) {
-			System.err.println("The name and the surname of the author are compulsory." + "\n");
-			return;
+			throw new Exception("The name and the surname of the author are compulsory.");
 		}
 		if (!this.isValidEmail(email)) {
-			System.err.println("The email is not valid. It should contain an @ (at the very least)." + "\n");
-			return;
+			throw new Exception("The email is not valid. It should contain an @ (at the very least).");
 		}
 		if (!this.isValidOrcid(orcid)) {
-			System.err.println("The orcid is not valid. It should follow the format ****-****-****-**** with * a number." + "\n");
-			return;
+			throw new Exception("The orcid is not valid. It should follow the format ****-****-****-**** with * a number.");
 		}
 		
 		String javaClassDesired = "AuthorsAnnotation";
@@ -418,8 +427,9 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param date the date one wants to add
+	 * @throws Exception 
 	 */	
-	public void addDate(String termDesired, String date) {
+	public void addDate(String termDesired, String date) throws Exception {
 		DateValidator validator = new DateValidator("yyyy-MM-dd");
 		
 		if (validator.isValid(date)) { 		
@@ -427,7 +437,7 @@ public class Metadata {
 			this.addAnnotation(termDesired, 0, javaClassDesired, date);
 		}
 		else {
-			System.err.println("The date is not valid. It should follow the format YYYY-MM-DD." + "\n");
+			throw new Exception("The date is not valid. It should follow the format YYYY-MM-DD.");
 		}
 	}
 	
@@ -436,8 +446,9 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param distribution the terms of distribution one wants to add
+	 * @throws Exception 
 	 */	
-	public void addDistribution(String termDesired, String distribution) {
+	public void addDistribution(String termDesired, String distribution) throws Exception {
 		String javaClassDesired = "DistributionAnnotation";
 		this.addAnnotation(termDesired, 0, javaClassDesired, distribution);
 	}
@@ -572,7 +583,7 @@ public class Metadata {
 	
 	
 	// the functions to get a description of the components' annotations
-	protected String getDescriptionNestedMetadata(String tab) {
+	protected String getDescriptionNestedMetadata(String tab) throws Exception {
 		String description = "";
 		
 		Set keys = this.listOfAnnotations.keySet();
@@ -585,7 +596,7 @@ public class Metadata {
 		return description;
 	}
 	
-	private String commonDescriptionAnnotation(String termDesired, boolean nested, String tab) {
+	private String commonDescriptionAnnotation(String termDesired, boolean nested, String tab) throws Exception {
 		String description = "";
 		
 		for (int alternative = 0; alternative < this.listOfAnnotations.get(termDesired).size(); alternative++) {
@@ -619,8 +630,9 @@ public class Metadata {
 	 * 
 	 * @param termDesired the qualifier one wants to get the description of
 	 * @param nested a boolean to precise if you want to describe the nested annotations (true for yes, false for no)
+	 * @throws Exception 
 	 */	
-	public String getDescriptionAnnotation(String termDesired, boolean nested) {
+	public String getDescriptionAnnotation(String termDesired, boolean nested) throws Exception {
 		String description = "";
 		
 		if (this.listOfAnnotations.containsKey(termDesired)) {
@@ -631,9 +643,10 @@ public class Metadata {
 	}
 	/**
 	 * Retrieve a String containing the description of an annotation (without the nested parts)
+	 * @throws Exception 
 	 * 
 	 */	
-	public String getDescriptionAnnotation(String termDesired) {
+	public String getDescriptionAnnotation(String termDesired) throws Exception {
 		return this.getDescriptionAnnotation(termDesired, false);
 	}
 
@@ -641,8 +654,9 @@ public class Metadata {
 	 * Retrieve a String containing the description of all the component's annotations
 	 * 
 	 * @param nested a boolean to precise if you want to describe the nested annotations (true for yes, false for no)
+	 * @throws Exception 
 	 */	
-	public String getDescriptionMetadata(boolean nested) {
+	public String getDescriptionMetadata(boolean nested) throws Exception {
 		String description = "";
 		
 		Set keys = this.listOfAnnotations.keySet();
@@ -656,9 +670,10 @@ public class Metadata {
 	}
 	/**
 	 * Retrieve a String containing the description of all the component's annotations (without the nested parts)
+	 * @throws Exception 
 	 * 
 	 */	
-	public String getDescriptionMetadata() {
+	public String getDescriptionMetadata() throws Exception {
 		return this.getDescriptionMetadata(false);
 	}
 	
@@ -773,14 +788,12 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to retrieve
 	 * @param alternative the number of the alternative you want to check
+	 * @throws Exception 
 	 */	
-	public Metadata getMetadataOfQualifier(String termDesired, int alternative) {
+	public Metadata getMetadataOfQualifier(String termDesired, int alternative) throws Exception {
 
 		if (!this.listOfAnnotations.containsKey(termDesired)) {
-			boolean creation = this.createQualifier(termDesired, "GenericAnnotation");
-			if (!creation) {
-				return null;
-			}
+			this.createQualifier(termDesired, "GenericAnnotation");
 		}
 		
 		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
@@ -806,8 +819,9 @@ public class Metadata {
 	 * It can be modified exactly as the parent Metadata
 	 *
 	 * @param termDesired the qualifier one wants to retrieve
+	 * @throws Exception 
 	 */	
-	public Metadata getMetadataOfQualifier(String termDesired) {
+	public Metadata getMetadataOfQualifier(String termDesired) throws Exception {
 
 		return this.getMetadataOfQualifier(termDesired, 0);
 	}
@@ -881,8 +895,9 @@ public class Metadata {
 	 *
 	 * @param nested a boolean to precise if the json will contain the nested parts 
 	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
+	 * @throws Exception 
 	 */
-	public JSONArray getJSONOfMetadata(boolean nested) {
+	public JSONArray getJSONOfMetadata(boolean nested) throws Exception {
 		
 		JSONArray arrayQualifiers = new JSONArray();
 		
@@ -905,7 +920,8 @@ public class Metadata {
 
 				// to check if the alternative contains a nested metadata
 				if (nested && this.isSetMetadataOfQualifier(qualifierName, alternative)) {
-					Metadata metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
+					Metadata metadataNested;
+					metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
 					
 					JSONObject jsonNested = new JSONObject();
 					
@@ -939,8 +955,9 @@ public class Metadata {
 	 * Produces a json expression of the metadata object with the nested parts (internal use)
 	 *
 	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
+	 * @throws Exception 
 	 */
-	public JSONArray getJSONOfMetadata() {
+	public JSONArray getJSONOfMetadata() throws Exception {
 		return this.getJSONOfMetadata(true);
 	}
 	
@@ -984,7 +1001,7 @@ public class Metadata {
 		return xmlAlternative;
 	}
 	
-	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> exportNestedMetadata(Metadata metadata) {
+	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> exportNestedMetadata(Metadata metadata) throws Exception {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
 		XMLNode xml = new XMLNode(new XMLTriple("colomoto:nested"));
@@ -1008,7 +1025,7 @@ public class Metadata {
 		return new AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode>(listOfCVTerms, xml);
 	}
 	
-	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata(Metadata metadata, XMLNode xml, String qualifierName, String qualifierClass) {
+	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata(Metadata metadata, XMLNode xml, String qualifierName, String qualifierClass) throws Exception {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
 		
@@ -1088,8 +1105,9 @@ public class Metadata {
 	 * Produces a jSBML expression of the metadata object (internal use)
 	 *
 	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
+	 * @throws Exception 
 	 */
-	public org.sbml.jsbml.Annotation getSBMLOfMetadata() {
+	public org.sbml.jsbml.Annotation getSBMLOfMetadata() throws Exception {
 		
 		org.sbml.jsbml.Annotation annotation = new org.sbml.jsbml.Annotation();
 		
@@ -1170,7 +1188,7 @@ public class Metadata {
 		return -1;
 	}
 	
-	private boolean equalsMetadata(JSONObject json) {
+	private boolean equalsMetadata(JSONObject json) throws Exception {
 		
 		if (json.has("annotation") && !json.isNull("annotation")) {
 			
@@ -1250,9 +1268,10 @@ public class Metadata {
 	
 	/**
 	 * Permits to import a json file to extend the existent annotations (internal use)
+	 * @throws Exception 
 	 *
 	 */
-	public void importElementMetadata(JSONObject json) {
+	public void importElementMetadata(JSONObject json) throws Exception {
 		
 		// if there is some metadata we add the json representation in the json object
 		if (json.has("annotation") && !json.isNull("annotation")) {

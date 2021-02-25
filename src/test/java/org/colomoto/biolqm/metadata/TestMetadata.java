@@ -51,6 +51,17 @@ public class TestMetadata {
 		
 		System.out.println(modelMetadata.getDescriptionMetadata(true));
 		
+		NodeInfo node = model.getComponents().get(0);
+		Metadata nodeMetadata = model.getMetadataOfNode(node);
+		
+		nodeMetadata.addKeyValue("is", 0, "coucou", "1");
+		nodeMetadata.addKeyValue("is", 0, "coucou", "2");
+		nodeMetadata.addKeyValue("is", 0, "hello", "2");
+		
+		System.out.println(nodeMetadata);
+		
+		System.out.println(nodeMetadata.getJSONOfMetadata());
+		
 		// test componentMetadata
 /* 		NodeInfo node = model.getComponents().get(0);
 		
