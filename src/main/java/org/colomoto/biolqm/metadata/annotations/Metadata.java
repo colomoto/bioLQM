@@ -586,8 +586,8 @@ public class Metadata {
 	protected String getDescriptionNestedMetadata(String tab) throws Exception {
 		String description = "";
 		
-		Set keys = this.listOfAnnotations.keySet();
-		Iterator it = keys.iterator();
+		Set<String> keys = this.listOfAnnotations.keySet();
+		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
 			String termDesired = (String) it.next();
 			description += commonDescriptionAnnotation(termDesired, true, tab);
@@ -659,8 +659,8 @@ public class Metadata {
 	public String getDescriptionMetadata(boolean nested) throws Exception {
 		String description = "";
 		
-		Set keys = this.listOfAnnotations.keySet();
-		Iterator it = keys.iterator();
+		Set<String> keys = this.listOfAnnotations.keySet();
+		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
 			String termDesired = (String) it.next();
 			description += commonDescriptionAnnotation(termDesired, nested, "");
@@ -701,8 +701,8 @@ public class Metadata {
 			help += "Tags available:\n" + "\t" + this.modelConstants.getTagsAvailable().toString() + "\n";
 			
 			help += "Keys-Values available:\n";
-			Set keys2 = this.modelConstants.getKeysValuesAvailable().keySet();
-			Iterator it2 = keys2.iterator();
+			Set<String> keys2 = this.modelConstants.getKeysValuesAvailable().keySet();
+			Iterator<String> it2 = keys2.iterator();
 			while (it2.hasNext()) {
 				String customKey = (String) it2.next();
 				
@@ -725,8 +725,8 @@ public class Metadata {
 		
 		Map<String, Qualifier> listQualifiersComponent = this.modelConstants.getQualifiersAvailable(this.type);
 		
-		Set keys = listQualifiersComponent.keySet();
-		Iterator it = keys.iterator();
+		Set<String> keys = listQualifiersComponent.keySet();
+		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
 			String term = (String) it.next();
 			Qualifier qual = listQualifiersComponent.get(term);
@@ -741,8 +741,8 @@ public class Metadata {
 		help += "Tags available:\n" + "\t" + this.modelConstants.getTagsAvailable().toString() + "\n";
 		
 		help += "Keys-Values available:\n";
-		Set keys2 = this.modelConstants.getKeysValuesAvailable().keySet();
-		Iterator it2 = keys2.iterator();
+		Set<String> keys2 = this.modelConstants.getKeysValuesAvailable().keySet();
+		Iterator<String> it2 = keys2.iterator();
 		while (it2.hasNext()) {
 			String customKey = (String) it2.next();
 			
