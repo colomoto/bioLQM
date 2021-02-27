@@ -1,12 +1,9 @@
 package org.colomoto.biolqm.metadata.annotations;
 
-import org.colomoto.biolqm.metadata.annotations.Metadata;
-
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.metadata.constants.Index;
 
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 

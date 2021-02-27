@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.metadata.constants;
 
-import org.colomoto.biolqm.metadata.constants.Collection;
-
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;

@@ -1,24 +1,14 @@
 package org.colomoto.biolqm.metadata.annotations;
 
-import org.colomoto.biolqm.metadata.annotations.Annotation;
-import org.colomoto.biolqm.metadata.annotations.AnnotationFactory;
-import org.colomoto.biolqm.metadata.annotations.JsonReader;
-import org.colomoto.biolqm.metadata.annotations.DateAnnotation;
-
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
-import org.colomoto.biolqm.metadata.constants.ListMetadata;
-import org.colomoto.biolqm.metadata.constants.QualifiersAvailable;
-import org.colomoto.biolqm.metadata.constants.TagsKeysAvailable;
 import org.colomoto.biolqm.metadata.constants.Index;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
-import org.colomoto.biolqm.metadata.constants.CollectionsAvailable;
 import org.colomoto.biolqm.metadata.constants.Collection;
 
 import org.colomoto.biolqm.metadata.validations.DateValidator;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
@@ -729,7 +719,7 @@ public class Metadata {
 		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
 			String term = (String) it.next();
-			Qualifier qual = listQualifiersComponent.get(term);
+			//Qualifier qual = listQualifiersComponent.get(term);
 			
 			help += "-" + term + ":\n" + this.modelConstants.getInstanceOfQualifiersAvailable().getHelpQualifier(this.type, term);
 			

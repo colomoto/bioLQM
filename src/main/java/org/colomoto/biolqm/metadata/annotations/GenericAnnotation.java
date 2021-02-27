@@ -1,17 +1,8 @@
 package org.colomoto.biolqm.metadata.annotations;
 
-import org.colomoto.biolqm.metadata.annotations.Annotation;
-import org.colomoto.biolqm.metadata.annotations.URI;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
-import org.colomoto.biolqm.metadata.annotations.JsonReader;
-
 import org.colomoto.biolqm.metadata.constants.GetExternalMetadata;
 
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
-import org.colomoto.biolqm.metadata.constants.ListMetadata;
-import org.colomoto.biolqm.metadata.constants.ExternalMetadata;
-import org.colomoto.biolqm.metadata.constants.QualifiersAvailable;
-import org.colomoto.biolqm.metadata.constants.TagsKeysAvailable;
 import org.colomoto.biolqm.metadata.constants.Index;
 
 import org.json.JSONObject;

@@ -2,8 +2,6 @@ package org.colomoto.biolqm.metadata.constants;
 
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 
-import org.colomoto.biolqm.metadata.constants.Index;
-
 import java.util.Map;
 import java.util.HashMap;
 

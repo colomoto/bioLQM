@@ -1,7 +1,6 @@
 package org.colomoto.biolqm.metadata.constants;
 
 import org.colomoto.biolqm.metadata.annotations.URI;
-import org.colomoto.biolqm.metadata.constants.Reference;
 
 import java.util.Map;
 import java.util.HashMap;

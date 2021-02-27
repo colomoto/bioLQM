@@ -2,7 +2,6 @@ package org.colomoto.biolqm.metadata.constants;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.File;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;

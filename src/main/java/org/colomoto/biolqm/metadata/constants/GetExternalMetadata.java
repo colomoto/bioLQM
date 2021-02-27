@@ -3,10 +3,7 @@ package org.colomoto.biolqm.metadata.constants;
 import org.colomoto.biolqm.metadata.annotations.URI;
 import org.colomoto.biolqm.metadata.annotations.JsonReader;
 
-import org.colomoto.biolqm.metadata.constants.ModelConstants;
-
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 import java.io.IOException;
 

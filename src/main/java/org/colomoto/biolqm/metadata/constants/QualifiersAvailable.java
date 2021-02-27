@@ -1,13 +1,10 @@
 package org.colomoto.biolqm.metadata.constants;
 
-import org.colomoto.biolqm.metadata.constants.Qualifier;
-
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
 import java.io.InputStream;
 
 /**
