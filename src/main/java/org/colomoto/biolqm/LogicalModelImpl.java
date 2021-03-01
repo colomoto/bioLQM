@@ -395,7 +395,7 @@ public class LogicalModelImpl implements LogicalModel {
 	public void importMetadata(String filename) throws Exception {
 		try {
 			// we load the json file
-			File initialFile = new File(filename+".json");
+			File initialFile = new File(filename);
 			InputStream is = new FileInputStream(initialFile);
 			JSONTokener tokener = new JSONTokener(is);
 			JSONObject json = new JSONObject(tokener);

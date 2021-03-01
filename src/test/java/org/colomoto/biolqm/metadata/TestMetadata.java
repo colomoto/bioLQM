@@ -62,6 +62,8 @@ public class TestMetadata {
 		
 		System.out.println(nodeMetadata.getJSONOfMetadata());
 		
+		model.exportMetadata(dir.getAbsolutePath()+"\\filename");
+		
 		// test componentMetadata
 /* 		NodeInfo node = model.getComponents().get(0);
 		
