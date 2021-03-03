@@ -1016,7 +1016,12 @@ public class SBMLqualImport extends BaseLoader {
 			for (XMLNode alternative: qualifier.getChildElements("alternative", "uri_colomoto")) {
 				int alternativeNumber = Integer.parseInt(alternative.getAttributes().getValue("number"));
 				if (alternativeNumber < 0) {
-					alternativeNumber = metadata.createAlternative(qualifierName);
+					if (metadata.getNumberOfAlternatives(qualifierName) == 0) {
+						alternativeNumber = 0;
+					}
+					else {
+						alternativeNumber = metadata.createAlternative(qualifierName);
+					}
 				}
 				
 				XMLNode tags = alternative.getChildElement("tags", "uri_colomoto");
@@ -1070,7 +1075,7 @@ public class SBMLqualImport extends BaseLoader {
 				this.importElementHistory(annotationModel, metadataModel);
 				
 				// to deal with tags and keys
-				if (annotationModel.isSetOtherAnnotationThanRDF()) {		
+				if (annotationModel.isSetNonRDFannotation()) {		
 					XMLNode nonRDFAnnotationModel = annotationModel.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
 					
 					if (nonRDFAnnotationModel != null) {
@@ -1110,7 +1115,7 @@ public class SBMLqualImport extends BaseLoader {
 					this.importElementHistory(annotationSpecies, metadataSpecies);
 						
 					// to deal with tags and keys
-					if (annotationSpecies.isSetOtherAnnotationThanRDF()) {		
+					if (annotationSpecies.isSetNonRDFannotation()) {		
 						XMLNode nonRDFAnnotationSpecies = annotationSpecies.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
 						
 						if (nonRDFAnnotationSpecies != null) {

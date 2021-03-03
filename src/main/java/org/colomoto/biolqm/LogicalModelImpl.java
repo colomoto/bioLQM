@@ -440,8 +440,6 @@ public class LogicalModelImpl implements LogicalModel {
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-            e.printStackTrace();
-        }
+		}
 	}
 }

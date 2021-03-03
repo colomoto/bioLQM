@@ -50,7 +50,7 @@ class AuthorsAnnotation extends Annotation {
 		if (!this.listOfAuthors.contains(author)) {
 			System.err.println("This value has not been defined yet for this qualifier." + "\n");
 		}
-		else {		
+		else {
 			this.listOfAuthors.remove(author);
 		}
 	}
