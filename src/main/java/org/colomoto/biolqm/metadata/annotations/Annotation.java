@@ -24,4 +24,5 @@ abstract class Annotation {
 	protected abstract ArrayList<ArrayList<String>> getResources();
 	protected abstract JSONObject getJSONOfAnnotation();
 	protected abstract boolean doesAlternativeExist(JSONObject jsonAlternative);
+	protected abstract String getShortDescription();
 }

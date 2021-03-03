@@ -207,7 +207,7 @@ public class Metadata {
 			return;
 			
 		} catch (IOException e) {
-			throw new Exception("Error adding the collection to the list of collections available.");
+			throw new Exception("The collection is not valid according to identifiers.org. You can use a key-value pair instead.");
 		}
 	}
 	
@@ -665,6 +665,17 @@ public class Metadata {
 	 */	
 	public String getDescriptionMetadata() throws Exception {
 		return this.getDescriptionMetadata(false);
+	}
+	/**
+	 * Retrieve a String containing the numbers of elements for each type of element this sort of qualifier may contain
+	 * 
+	 */	
+	public String getShortDescriptionAlternative(String qualifier, int alternative) {
+		if (this.listOfAnnotations.containsKey(qualifier) && alternative >= 0 && alternative < this.listOfAnnotations.get(qualifier).size()) {
+			return this.listOfAnnotations.get(qualifier).get(alternative).getShortDescription();
+		}
+		
+		return "not defined yet";
 	}
 	
 	

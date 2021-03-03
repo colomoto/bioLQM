@@ -425,7 +425,7 @@ public class LogicalModelImpl implements LogicalModel {
 				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
 				NodeInfo node = this.getComponent(jsonNode.getString("id"));
 				
-				if (node != null)
+				if (node != null) {
 					try {
 						{
 							Metadata metadataNode = this.getMetadataOfNode(node);
@@ -436,6 +436,9 @@ public class LogicalModelImpl implements LogicalModel {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+				} else {
+					System.err.println("The node "+jsonNode.getString("id")+" has no equivalent in the model so its annotations couldn't be imported.");
+				}
 			}
 			
 		} catch (FileNotFoundException e) {

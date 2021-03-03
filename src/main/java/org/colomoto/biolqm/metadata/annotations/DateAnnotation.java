@@ -108,4 +108,9 @@ class DateAnnotation extends Annotation {
 		}
 		return false;
 	}
+	
+	@Override
+	protected String getShortDescription() {
+		return "1 date";
+	}
 }

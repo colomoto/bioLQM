@@ -161,4 +161,12 @@ class AuthorsAnnotation extends Annotation {
 		
 		return true;
 	}
+	
+	@Override
+	protected String getShortDescription() {
+		if (this.listOfAuthors.size() == 1) {
+			return this.listOfAuthors.size()+" author";
+		}
+		return this.listOfAuthors.size()+" authors";
+	}
 }

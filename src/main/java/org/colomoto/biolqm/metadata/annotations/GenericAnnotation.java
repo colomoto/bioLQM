@@ -357,4 +357,25 @@ class GenericAnnotation extends Annotation {
 		
 		return true;
 	}
+	
+	@Override
+	protected String getShortDescription() {
+		String description = "";
+		if (this.listOfURIs.size() == 1) {
+			description += this.listOfURIs.size()+" uri, ";
+		} else {
+			description += this.listOfURIs.size()+" uris, ";
+		}
+		if (this.listOfTags.size() == 1) {
+			description += this.listOfTags.size()+" tag, ";
+		} else {
+			description += this.listOfTags.size()+" tags, ";
+		}
+		if (this.listOfKeysValues.size() == 1) {
+			description += this.listOfKeysValues.size()+" key";
+		} else {
+			description += this.listOfKeysValues.size()+" keys";
+		}
+		return description;
+	}
 }
