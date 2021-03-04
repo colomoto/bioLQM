@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -149,11 +151,12 @@ public class PriorityClassPanel extends JPanel {
 		});
 		jpSouthCenter.add(this.jbDecClass);
  
-		JButton jbSingle = this.getNoMargins("Collapse All");
+		JButton jbSingle = this.getNoMargins("Collapse Ranks");
 		jbSingle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				collapseAll();
+				//collapseAll();
+				collapseRanks();
 				updateGUI();
 			}
 		});
@@ -244,7 +247,7 @@ public class PriorityClassPanel extends JPanel {
 				String updaterName = mpc.getGroupUpdaterName(idxPC, idxGroup);
 				jcbUpdaters.setSelectedItem(updaterName);
 				
-				// save updater with idxPC and idxGroup !!!!!!!!!!!!!!!!
+				// save updater with idxPC and idxGroup !
 				pcIdxGroup.put(jcbUpdaters, new int[] {idxPC, idxGroup});
 				
 				
@@ -285,29 +288,21 @@ public class PriorityClassPanel extends JPanel {
 				// get the group variables
 				List<String> vars = lGrpVars.get(idxGroup);
 								
-				if (updaterName.equals("Random uniform") ||
-						updaterName.equals("Random non uniform")) {
+				if (updaterName.equals("Random non uniform")) {
 					
 					// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 					Map<String, Double> rates = new HashMap<String, Double>();
 					Map<JTextField, String> textfields = new HashMap<JTextField, String>();
 					textfields.clear();
 
-					//updaterName = "Random non uniform";
-					if (updaterName.equals("Random uniform")) {
-						for (int e = 0; e < vars.size(); e++) {
-							 rates.put(vars.get(e), 1.0); 
-							 }
-					} else {
+					Map<String, Double> upRates = mpc.getRates(idxPC, idxGroup, vars);
 
-						Map<String, Double> upRates = mpc.getRates(idxPC, idxGroup, vars);
-
-						// put (node string, rate)
-						for (int e = 0; e < vars.size(); e++) {
-							String var = vars.get(e);
-							rates.put(var, upRates.get(var)); 
-						}
+					// put (node string, rate)
+					for (int e = 0; e < vars.size(); e++) {
+						String var = vars.get(e);
+						rates.put(var, upRates.get(var)); 
 					}
+					
 						
 					 JPanel ratesPanel = new JPanel(new GridBagLayout()); 
 					 GridBagConstraints gbcR = new GridBagConstraints(); gbcR.gridx = 0;
@@ -380,13 +375,13 @@ public class PriorityClassPanel extends JPanel {
 					@Override
 					public void mouseReleased(MouseEvent e) {
 						@SuppressWarnings("unchecked")
+	
 						JList<String> selJList = (JList<String>) e.getSource();
-						for (List<JList<String>> lClass : guiClasses) {
-							for (JList<String> lGroup : lClass) {
-								if (!lGroup.equals(selJList)) {
+						for (int pc = 0; pc < guiClasses.size(); pc ++) {
+							if(guiClasses.get(pc).indexOf(selJList) == -1) {
+								for (JList<String> lGroup : guiClasses.get(pc)) 
 									lGroup.clearSelection();
 								}
-							}
 						}
 					}
 
@@ -421,8 +416,7 @@ public class PriorityClassPanel extends JPanel {
 					public void mouseDragged(MouseEvent e) {
 					}
 				});
-				
-							    
+										
 				gbcG.gridx = 0;
 				this.guiClasses.get(idxPC).add(jList);
 				// add first comboBox
@@ -440,7 +434,31 @@ public class PriorityClassPanel extends JPanel {
 
 			if (this.guiMultipSuc) {
 				JPanel jpTmp = new JPanel(new BorderLayout());
-				jpTmp.add(new JLabel("Groups", SwingConstants.CENTER), BorderLayout.CENTER);
+				
+				JButton jbAllGrp = this.getNoMargins("Groups");
+				jbAllGrp.setToolTipText("Select all vars");
+				jbAllGrp.setActionCommand("" + idxPC);
+				jbAllGrp.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JButton jb = (JButton) e.getSource();
+						int pos = Integer.parseInt(jb.getActionCommand());
+						
+						for (int pc = 0; pc < guiClasses.size(); pc ++) {
+							if(pc != pos) {
+								for (JList<String> lGroup : guiClasses.get(pc)) 
+									lGroup.clearSelection();
+								}
+						}
+						List<JList<String>> rankGroups = guiClasses.get(pos);
+						for (int g = 0; g < rankGroups.size(); g++) {
+							JList<String> group = rankGroups.get(g);
+							group.setSelectionInterval(0, group.getModel().getSize() - 1);
+						}
+					}
+				});
+
+				jpTmp.add(jbAllGrp, BorderLayout.CENTER);
 				// Expand groups -- Async class
 				JButton jbExpand = this.getNoMargins("E");
 				jbExpand.setToolTipText("Expand - one component per group (Asynchronous)");
@@ -448,30 +466,42 @@ public class PriorityClassPanel extends JPanel {
 				jbExpand.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						JButton jb = (JButton) e.getSource();
-						int pos = Integer.parseInt(jb.getActionCommand());
-						mpc.groupExpand(pos);
-						fireActionEvent();
-						updatePriorityList();
+						expandRankVars();
 					}
 				});
 				jpTmp.add(jbExpand, BorderLayout.LINE_START);
 				// Collapse groups -- Sync class
 				JButton jbCollapse = this.getNoMargins("C");
 				jbCollapse.setToolTipText("Collapse - All components in single group (Synchronous)");
-				jbCollapse.setActionCommand("" + idxPC);
 				jbCollapse.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						JButton jb = (JButton) e.getSource();
-						int pos = Integer.parseInt(jb.getActionCommand());
-						mpc.groupCollapse(pos);
-						fireActionEvent();
-						updatePriorityList();
+						collapseRankVars();
 					}
 				});
+				
+//				List<JList<String>> rankGroups = guiClasses.get(idxPC);
+//				Map<Integer, List<String>> vars = new HashMap<Integer, List<String>>();
+//				for (int g = 0; g < rankGroups.size(); g++) {
+//					JList<String> group = rankGroups.get(g);
+//					List<String> varsSel = group.getSelectedValuesList();
+//					if (varsSel.size() != 0 ) 
+//						vars.put(g, varsSel);
+//				}
+//				if (vars.size() == 0) {
+//					jbCollapse.setEnabled(false);
+//					jbExpand.setEnabled(false);
+//					jbCollapse.setForeground(Color.DARK_GRAY);
+//					jbCollapse.setForeground(Color.DARK_GRAY);
+//				} else if (vars.size() == 1) {
+//					jbCollapse.setEnabled(false);
+//					jbExpand.setEnabled(true);
+//					jbCollapse.setForeground(Color.DARK_GRAY);
+//				} else {
+//					jbCollapse.setEnabled(true);
+//					jbExpand.setEnabled(true);
+//				}
 				jpTmp.add(jbCollapse, BorderLayout.LINE_END);
-
 				jpPClass.add(jpTmp, BorderLayout.SOUTH);
 			}
 
@@ -515,31 +545,50 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	private void incPriorityOfSelVars() {
+		
+		// groups, strings
+		Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
+		int idxPC = -1;
+		 
 		all: for (int i = 0; i < this.guiClasses.size(); i++) {
 			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
 				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
 				if (!values.isEmpty()) {
-					mpc.incPriorities(i, g, values);
-					fireActionEvent();
-					break all;
+					List<String> vars = new ArrayList<String>();
+					vars.addAll(values);
+					groupsSel.put(g, vars);
 				}
+			} if (!groupsSel.isEmpty()) { 
+				idxPC = i;
+				break all;
 			}
 		}
+		mpc.incPriorities(idxPC, groupsSel);
+		fireActionEvent();
 		this.updatePriorityList();
 	}
 
 	private void decPriorityOfSelVars() {
-		all: for (int i = 0; i < this.guiClasses.size(); i++) {
-			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
-				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
-				if (!values.isEmpty()) {
-					mpc.decPriorities(i, g, values);
-					fireActionEvent();
-					break all;
+		// groups, strings
+				Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
+				int idxPC = -1;
+				 
+				all: for (int i = 0; i < this.guiClasses.size(); i++) {
+					for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+						List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+						if (!values.isEmpty()) {
+							List<String> vars = new ArrayList<String>();
+							vars.addAll(values);
+							groupsSel.put(g, vars);
+						}
+					} if (!groupsSel.isEmpty()) { 
+						idxPC = i;
+						break all;
+					}
 				}
-			}
-		}
-		this.updatePriorityList();
+				mpc.decPriorities(idxPC, groupsSel);
+				fireActionEvent();
+				this.updatePriorityList();
 	}
 
 	private void incGroupOfSelVars() {
@@ -623,12 +672,67 @@ public class PriorityClassPanel extends JPanel {
 			mpc.addUpdater(idxPC, idxGrp, nodeRates);
 			} 
 		}
-	
 
-	private void collapseAll() {
-		this.mpc.collapseAll();
+//	private void collapseAll() {
+//		this.mpc.collapseAll();
+//		fireActionEvent();
+//		this.updatePriorityList();
+//	}
+	
+	private void collapseRanks() {
+		this.mpc.collapseRanks();
 		fireActionEvent();
 		this.updatePriorityList();
+	}
+	
+	private void collapseRankVars(){
+		// groups, strings
+			Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
+			int idxPC = -1;
+			 
+			all: for (int i = 0; i < this.guiClasses.size(); i++) {
+				for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+					List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+					if (!values.isEmpty()) {
+						List<String> vars = new ArrayList<String>();
+						vars.addAll(values);
+						groupsSel.put(g, vars);
+					}
+				} if (!groupsSel.isEmpty()) { 
+					idxPC = i;
+					break all;
+				}
+			}
+			
+			mpc.groupCollapse(idxPC, groupsSel);
+			
+			fireActionEvent();
+			this.updatePriorityList();
+	}
+	
+	private void expandRankVars(){
+		// groups, strings
+			Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
+			int idxPC = -1;
+			 
+			all: for (int i = 0; i < this.guiClasses.size(); i++) {
+				for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+					List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+					if (!values.isEmpty()) {
+						List<String> vars = new ArrayList<String>();
+						vars.addAll(values);
+						groupsSel.put(g, vars);
+					}
+				} if (!groupsSel.isEmpty()) { 
+					idxPC = i;
+					break all;
+				}
+			}
+			
+			mpc.groupExpand(idxPC, groupsSel);
+			
+			fireActionEvent();
+			this.updatePriorityList();
 	}
 
 	private void updateGUI() {

@@ -1,3 +1,4 @@
+
 package org.colomoto.biolqm.tool.simulation.grouping;
 
 import java.util.ArrayList;
@@ -139,7 +140,7 @@ public class ModelGrouping {
 	public List<List<String>> getClassVars(int idxPC) {
 		List<List<String>> tmp;
 		if (this.isValid(idxPC)) {
-			tmp = this.pcList.get(idxPC).getVars(this.model);
+			tmp = this.pcList.get(idxPC).getVars();
 		} else { 
 			tmp = new ArrayList<>();
 			tmp.add(new ArrayList<>());
@@ -151,10 +152,25 @@ public class ModelGrouping {
 		return ModelGrouping.updatersList;
 	}
 
-	public void decPriorities(int idxPC, int idxGrp, List<String> vars) {
-		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
+	public void decPriorities(int idxPC, Map<Integer, List<String>> groupsSel) {
+		if (!this.isValid(idxPC))
 			return;
-		for (String varMm : vars) {
+		
+		int i = 0;
+		for (int group : groupsSel.keySet()) {
+			this.decPriorities(idxPC, group - i, groupsSel.get(group));
+			i ++;
+		}
+	}
+	
+	public void decPriorities(int idxPC, int idxGrp, List<String> vars) {
+		if (!this.pcList.get(idxPC).isValid(idxGrp))
+			return;
+		
+		RankedClassGroup tempGroup = this.pcList.get(idxPC).groups.get(idxGrp).clone();
+		RankedClassGroup newGroup = this.pcList.get(idxPC).groups.get(idxGrp).clone();
+		
+		for (String varMm : tempGroup.getVars()) {
 			int splitFlag = 0;
 			String var = varMm;
 			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
@@ -164,34 +180,44 @@ public class ModelGrouping {
 				splitFlag = -1;
 				var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
 			}
+			
 			for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 				// If var is valid
 				if (this.model.getComponents().get(idx).getNodeID().equals(var)) {
 					// If group contains var
 					if (this.pcList.get(idxPC).contains(idxGrp, idx, splitFlag)) {
-						this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
-				}
-					// If a new class is needed
-					if ((idxPC + 1) == this.pcList.size()) {
-						int[] newvars = new int[2];
-						newvars[0] = idx;
-						newvars[1] = splitFlag;
-						this.pcList.add(new RankedClass(new RankedClassGroup(newvars)));
-					} else {
-						this.pcList.get(idxPC + 1).add(0, idx, splitFlag);
+						if (vars.contains(varMm)) {
+							this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
+						} else {
+							newGroup.remove(idx, splitFlag);	
+						}
 					}
 				}
 			}
-			// If the old class is empty
-			if (this.pcList.get(idxPC).isEmpty()) {
-				this.pcList.remove(idxPC);
-			}
+		}
+			
+		if (idxPC == this.pcList.size() - 1) {
+			this.pcList.add(this.pcList.size(), new RankedClass(newGroup));
+		} else {
+			this.pcList.get(idxPC + 1).addGrp(this.pcList.get(idxPC + 1).size(),newGroup);
+		}
+			
+		// If the old group is empty
+		if (this.pcList.get(idxPC).groups.get(idxGrp).isEmpty()) {
+			this.pcList.get(idxPC).groups.remove(idxGrp);
+		}
+		// If the old class is empty
+		if (this.pcList.get(idxPC).isEmpty()) {
+			this.pcList.remove(idxPC);
 		}
 	}
+		
+
 
 	public void decGroup(int idxPC, int idxGrp, List<String> vars) {
 		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
 			return;
+
 		for (String varMm : vars) {
 
 			int splitFlag = 0;
@@ -267,12 +293,24 @@ public class ModelGrouping {
 			this.pcList.get(idxPC).groups.remove(idxGrp);
 		}
 	}
-
-	public void incPriorities(int idxPC, int idxGrp, List<String> vars) {
-		if (!this.isValid(idxPC) || !this.pcList.get(idxPC).isValid(idxGrp))
+	public void incPriorities(int idxPC, Map<Integer, List<String>> groupsSel) {
+		if (!this.isValid(idxPC))
 			return;
-		List<int[]> lVars = new ArrayList<int[]>();
-		for (String varMm : vars) {
+		int i = 0;
+		for (int group : groupsSel.keySet()) {
+			this.incPriorities(idxPC, group - i, groupsSel.get(group));
+			i ++;
+		}
+	}
+		
+	public void incPriorities(int idxPC, int idxGrp, List<String> vars) {
+		if (!this.pcList.get(idxPC).isValid(idxGrp))
+			return;
+		
+		RankedClassGroup tempGroup = this.pcList.get(idxPC).groups.get(idxGrp).clone();
+		RankedClassGroup newGroup = this.pcList.get(idxPC).groups.get(idxGrp).clone();
+		
+		for (String varMm : tempGroup.getVars()) {
 			int splitFlag = 0;
 			String var = varMm;
 			if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
@@ -282,32 +320,29 @@ public class ModelGrouping {
 				splitFlag = -1;
 				var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
 			}
+			
 			for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
 				// If var is valid
 				if (this.model.getComponents().get(idx).getNodeID().equals(var)) {
 					// If group contains var
 					if (this.pcList.get(idxPC).contains(idxGrp, idx, splitFlag)) {
-						int[] newvars = new int[2];
-						newvars[0] = idx;
-						newvars[1] = splitFlag;
-						lVars.add(newvars);
+						if (vars.contains(varMm)) {
+							this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
+						} else {
+							newGroup.remove(idx, splitFlag);	
+						}
 					}
 				}
 			}
 		}
-		if (lVars.isEmpty())
-			return;
-		// For all existing in the group
-		for (int[] newvars : lVars) {
-			this.pcList.get(idxPC).remove(idxGrp, newvars[0], newvars[1]);
-			// If a new class is needed
-			if (idxPC == 0) {
-				this.pcList.add(0, new RankedClass(new RankedClassGroup(newvars)));
-				idxPC++;
-			} else {
-				this.pcList.get(idxPC - 1).add(0, newvars[0], newvars[1]);
-			}
+			
+		if (idxPC == 0) {
+			this.pcList.add(0, new RankedClass(newGroup));
+			idxPC++;
+		} else {
+			this.pcList.get(idxPC - 1).addGrp(this.pcList.get(idxPC - 1).size(),newGroup);
 		}
+		
 		// If the old group is empty
 		if (this.pcList.get(idxPC).groups.get(idxGrp).isEmpty()) {
 			this.pcList.get(idxPC).groups.remove(idxGrp);
@@ -321,9 +356,118 @@ public class ModelGrouping {
 	public void groupExpand(int idxPC) {
 		this.pcList.get(idxPC).expand();
 	}
+	
+	public void groupExpand(int idxPC, Map<Integer, List<String>> vars) {
+		boolean all = true;
+		if (this.pcList.get(idxPC).size() != vars.size()) 
+			all = false;
+			
+		for (int g : vars.keySet()) {
+			if (this.pcList.get(idxPC).groups.get(g).size() != vars.get(g).size()) {
+				all = false;
+				break;
+			}	
+		}
+		if (all) {
+			this.groupExpand(idxPC);
+		} else {
+			// for each group
+			for (int idxGrp : vars.keySet()) {
+				if (this.pcList.get(idxPC).groups.get(idxGrp).size() != 1) {
+					for (String varMm : vars.get(idxGrp)) {
+						int splitFlag = 0;
+						String var = varMm;	
+						if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
+							splitFlag = 1;
+							var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+						} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
+							splitFlag = -1;
+							var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
+						}
+						for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
+							// If var is valid
+							if (this.model.getComponents().get(idx).getNodeID().equals(var)) {
+								if (this.pcList.get(idxPC).contains(idxGrp, idx, splitFlag)) {
+									// remove var from its group	
+									this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
+									// creates new group with var
+									RankedClassGroup newGroup = new RankedClassGroup(new int[] {idx, splitFlag});
+									int rankSize = this.pcList.get(idxPC).size();
+									// add new group at the end
+									this.pcList.get(idxPC).addGrp(rankSize,newGroup);
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+		int i = 0;
+		for (int idxGrp : vars.keySet()) {
+			// If the old group is empty
+			if (this.pcList.get(idxPC).groups.get(idxGrp - i).isEmpty()) {
+				this.pcList.get(idxPC).groups.remove(idxGrp - i);
+				i++;
+			}
+		}
+	}
 
 	public void groupCollapse(int idxPC) {
 		this.pcList.get(idxPC).collapse();
+	}
+
+	public void groupCollapse(int idxPC, Map<Integer, List<String>> vars) {
+		boolean all = true;
+		if (this.pcList.get(idxPC).size() != vars.size()) 
+			all = false;
+			
+		for (int g : vars.keySet()) {
+			if (this.pcList.get(idxPC).groups.get(g).size() != vars.get(g).size()) {
+				all = false;
+				break;
+			}	
+		}
+		if (all) {
+			this.groupCollapse(idxPC);
+		} else {
+			RankedClassGroup newGrp = new RankedClassGroup(new int[] {});
+			this.pcList.get(idxPC).addGrp(this.pcList.get(idxPC).size(), newGrp);
+			
+			// for each group
+			for (int idxGrp : vars.keySet()) {
+				for (String varMm : vars.get(idxGrp)) {
+					int splitFlag = 0;
+					String var = varMm;	
+					if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
+						splitFlag = 1;
+						var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+					} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
+						splitFlag = -1;
+						var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
+					}
+					for (int idx = 0; idx < this.model.getComponents().size(); idx++) {
+						// If var is valid
+						if (this.model.getComponents().get(idx).getNodeID().equals(var)) {
+							if (this.pcList.get(idxPC).contains(idxGrp, idx, splitFlag)) {
+								// remove var from its group	
+								this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
+								// add to new group
+								this.pcList.get(idxPC).add(this.pcList.get(idxPC).size() - 1, 
+										idx, splitFlag);							
+							}
+						}
+					}
+				}
+			}	
+			int i = 0;
+			for (int idxGrp : vars.keySet()) {
+				// If the old group is empty
+				if (this.pcList.get(idxPC).groups.get(idxGrp - i).isEmpty()) {
+					this.pcList.get(idxPC).groups.remove(idxGrp - i);
+					i++;
+				}
+			}
+		}
 	}
 	
 	public String getGroupUpdaterName(int idxPC, int idxGrp) {
@@ -369,6 +513,19 @@ public class ModelGrouping {
 			pc0.unsplit(0, idxVar, 1);
 			this.remove(idxVar, -1);
 		}
+	}
+	
+	public void collapseRanks() {
+		
+		for(int i = 1; i < this.pcList.size(); i++) {
+			for(int g = 0; g < this.pcList.get(i).size(); g++) {
+				this.pcList.get(0).addGrp(this.pcList.get(0).size(), 
+						pcList.get(i).groups.get(g));
+
+			}
+		}
+		for(int size = pcList.size(); size > 1; size --)
+			this.pcList.remove(1);
 	}
 
 	/**
@@ -463,8 +620,6 @@ public class ModelGrouping {
 			this.groups.add(pcg);
 		}
 
-
-
 		public RankedClass(LogicalModel m, String textFormat) {
 			this.groups = new ArrayList<>();
 			String[] saPCGs = textFormat.split(SEPGROUP);
@@ -482,7 +637,8 @@ public class ModelGrouping {
 		}
 
 		public boolean isEmpty() {
-			return this.size() == 0 || (this.size() == 1 && this.groups.get(0).isEmpty());
+			return this.size() == 0 || (this.size() == 1 && 
+					this.groups.get(0).isEmpty());
 		}
 
 		private boolean contains(int idxGrp, int idxVar, int splitFlag) {
@@ -541,13 +697,15 @@ public class ModelGrouping {
 		}
 			
 				
-		public List<List<String>> getVars(LogicalModel m) {
+		public List<List<String>> getVars() {
 			List<List<String>> lVars = new ArrayList<List<String>>();
 			for (RankedClassGroup pcg : this.groups) {
-				lVars.add(pcg.getVars(m));
+				lVars.add(pcg.getVars());
 			}
 			return lVars;
 		}
+		
+		
 
 		public void collapse() {
 			for (int g = this.size() - 1; g > 0; g--) {
@@ -558,6 +716,30 @@ public class ModelGrouping {
 				this.groups.remove(g);
 			}
 		}
+		public void collapse(Map<Integer, List<String>> groupsVars) {
+			
+//			RankedClassGroup newGroup = new RankedClassGroup();			
+			for (int g = this.size() - 1; g > 0; g--) {
+				List<String> vars = groupsVars.get(g);
+				if (!vars.isEmpty()) {
+					for (String varMm : vars) {
+						int splitFlag = 0;
+						String var = varMm;
+						if (varMm.endsWith(SplittingType.POSITIVE.toString())) {
+							splitFlag = 1;
+							var = varMm.substring(0, varMm.length() - SplittingType.POSITIVE.toString().length());
+						} else if (varMm.endsWith(SplittingType.NEGATIVE.toString())) {
+							splitFlag = -1;
+							var = varMm.substring(0, varMm.length() - SplittingType.NEGATIVE.toString().length());
+						}
+						for (int idx = 0; idx < model.getComponents().size(); idx++) {
+						
+								}
+							}
+						}
+			}
+		}
+		
 
 		public void expand() {
 			List<RankedClassGroup> lPCGs = new ArrayList<RankedClassGroup>();
@@ -794,11 +976,11 @@ public class ModelGrouping {
 			return false;
 		}
 
-		public List<String> getVars(LogicalModel m) {
+		public List<String> getVars() {
 			List<String> lVars = new ArrayList<String>();
 			// i += 2 in order to look for only Node idx, skip splitFlag
 			for (int i = 0; i < this.vars.length; i += 2) {
-				String var = m.getComponents().get(this.vars[i]).getNodeID();
+				String var = model.getComponents().get(this.vars[i]).getNodeID();
 				if (this.vars[i + 1] == 1) {
 					var += SplittingType.POSITIVE.toString();
 				} else if (this.vars[i + 1] == -1) {
@@ -1149,5 +1331,6 @@ public class ModelGrouping {
 		 }
    
 	}
-	
+
+
 }
