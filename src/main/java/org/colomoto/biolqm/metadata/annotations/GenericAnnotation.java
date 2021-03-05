@@ -378,4 +378,18 @@ class GenericAnnotation extends Annotation {
 		}
 		return description;
 	}
+	
+	@Override
+	public boolean isNotEmpty() {
+		if (this.listOfURIs.size()>0) {
+			return true;
+		}
+		if (this.listOfTags.size()>0) {
+			return true;
+		}
+		if (this.listOfKeysValues.size()>0) {
+			return true;
+		}
+		return false;
+	}
 }

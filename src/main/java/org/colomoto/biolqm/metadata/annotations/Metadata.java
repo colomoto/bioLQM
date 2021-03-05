@@ -864,6 +864,44 @@ public class Metadata {
 		return this.listOfAnnotations.get(qualifierName).get(alternative).getResources();
 	}
 
+	private boolean isMetadataPartiallyNotEmpty() {
+		if (!this.getNotes().equals("")) {
+			return true;
+		}
+		for (String qualifierName: this.getListOfQualifiers()) {
+			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
+				if (this.isAnnotationNotEmpty(qualifierName, alternative)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if a qualifier for a given alternative contains annotations or is empty
+	 *
+	 * @return false if the alternative is empty, true otherwise
+	 */	
+	public boolean isAnnotationNotEmpty(String qualifier, int alternative) {
+		// we check that the annotation is empty
+		if (this.listOfAnnotations.get(qualifier).get(alternative).isNotEmpty()) {
+			return true;
+		}
+		// we check if there is a nested block and if yes we check that he is empty too recursively
+		if (this.isSetMetadataOfQualifier(qualifier, alternative)) {
+			try {
+				if (this.getMetadataOfQualifier(qualifier, alternative).isMetadataPartiallyNotEmpty()) {
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Check if the metadata object is empty or contains annotation
 	 *

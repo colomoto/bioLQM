@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.metadata;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.metadata.annotations.Metadata;

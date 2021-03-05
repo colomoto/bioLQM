@@ -113,4 +113,9 @@ class DistributionAnnotation extends Annotation {
 	protected String getShortDescription() {
 		return "1 distribution";
 	}
+	
+	@Override
+	public boolean isNotEmpty() {
+		return false;
+	}
 }

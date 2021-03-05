@@ -113,4 +113,9 @@ class DateAnnotation extends Annotation {
 	protected String getShortDescription() {
 		return "1 date";
 	}
+	
+	@Override
+	public boolean isNotEmpty() {
+		return false;
+	}
 }

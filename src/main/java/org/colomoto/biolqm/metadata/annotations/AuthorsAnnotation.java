@@ -169,4 +169,12 @@ class AuthorsAnnotation extends Annotation {
 		}
 		return this.listOfAuthors.size()+" authors";
 	}
+	
+	@Override
+	public boolean isNotEmpty() {
+		if (this.listOfAuthors.size()>0) {
+			return true;
+		}
+		return false;
+	}
 }
