@@ -865,9 +865,9 @@ public class Metadata {
 	}
 
 	private boolean isMetadataPartiallyNotEmpty() {
-		if (!this.getNotes().equals("")) {
-			return true;
-		}
+		//if (!this.getNotes().equals("")) {
+		//	return true;
+		//}
 		for (String qualifierName: this.getListOfQualifiers()) {
 			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
 				if (this.isAnnotationNotEmpty(qualifierName, alternative)) {
@@ -885,20 +885,22 @@ public class Metadata {
 	 */	
 	public boolean isAnnotationNotEmpty(String qualifier, int alternative) {
 		// we check that the annotation is empty
-		if (this.listOfAnnotations.get(qualifier).get(alternative).isNotEmpty()) {
-			return true;
-		}
-		// we check if there is a nested block and if yes we check that he is empty too recursively
-		if (this.isSetMetadataOfQualifier(qualifier, alternative)) {
-			try {
-				if (this.getMetadataOfQualifier(qualifier, alternative).isMetadataPartiallyNotEmpty()) {
-					return true;
+		if (this.listOfAnnotations.containsKey(qualifier)) {
+			if (this.listOfAnnotations.get(qualifier).get(alternative).isNotEmpty()) {
+				return true;
+			}
+			// we check if there is a nested block and if yes we check that he is empty too recursively
+			if (this.isSetMetadataOfQualifier(qualifier, alternative)) {
+				try {
+					if (this.getMetadataOfQualifier(qualifier, alternative).isMetadataPartiallyNotEmpty()) {
+						return true;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
-		
+
 		return false;
 	}
 	
