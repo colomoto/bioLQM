@@ -398,6 +398,7 @@ public class Metadata {
 	 * @throws Exception 
 	 */	
 	public void addAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) throws Exception {
+
 		if (name == null || surname == null) {
 			throw new Exception("The name and the surname of the author are compulsory.");
 		}
@@ -799,7 +800,6 @@ public class Metadata {
 		
 		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
 			Index indexParent = this.getLocalIndex();
-			
 			Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
 			
 			// if the index is null to that point, that means the annotation required doesn't exist and we return null
@@ -1078,15 +1078,28 @@ public class Metadata {
 		
 		boolean tagsorkeys = false;
 		
+		// if the metadata is nested we need to find the type of the original parent (model or node)
+		String type = metadata.getType();
+		
+		if (type.equals("nested")) {
+			Index indexMetadata = metadata.getLocalIndex();
+			
+			while (type.equals("nested")) {
+				indexMetadata = indexMetadata.getIndexOfParent();
+				type = modelConstants.getListMetadata().get(indexMetadata).getType();
+			}
+		}
+		
 		int alternativeWithoutResources = 0;
 		for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
 			CVTerm cvterm = new CVTerm();
 			
 			org.sbml.jsbml.CVTerm.Qualifier qualifier;
-			if (metadata.getType().equals("model")) {
+			
+			if (type.equals("model")) {
 				qualifier = CVTerm.Qualifier.getModelQualifierFor(qualifierName);
-			}
-			else {
+				
+			} else {
 				qualifier = CVTerm.Qualifier.getBiologicalQualifierFor(qualifierName);
 			}
 			cvterm.setQualifier(qualifier);
@@ -1220,12 +1233,13 @@ public class Metadata {
 			
 			for(int idAlt = 0; idAlt < this.getNumberOfAlternatives(termDesired); idAlt++) {
 				
-				boolean exist = this.listOfAnnotations.get(termDesired).get(idAlt).doesAlternativeExist(jsonAlternative);				
-				if (exist == true) {
+				if (this.listOfAnnotations.get(termDesired).get(idAlt).doesAlternativeExist(jsonAlternative)) {
+					// if the same alternative already exists we return its number
 					return idAlt;
 				}
 			}
 		}
+		// we return -1 if the alternative does not already exist
 		return -1;
 	}
 	
@@ -1338,12 +1352,18 @@ public class Metadata {
 					
 					for(int idAlternative = 0; idAlternative < numAltJson; idAlternative++)
 					{
+						int numAltMetadataUpdated = this.getNumberOfAlternatives(qualifierName);
+						
 						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
 						
 						int numberAlternative = 0;
+						
 						if (alternativesExist) {
 							
+							// we test if the alternative already exist
 							int numSameAlt = this.doesAlternativeExist(jsonAlternative, qualifierName);
+							
+							// if it does exist we check if the nested parts are also the same
 							if (numSameAlt != -1) {
 								
 								if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
@@ -1363,12 +1383,13 @@ public class Metadata {
 								else {
 									numberAlternative = this.createAlternative(qualifierName);
 								}
-							}
-							else if (numAltMetadata != 0) {
+							} else if (numAltMetadataUpdated != 0) {
 								numberAlternative = this.createAlternative(qualifierName);
 							}
 						}
 						
+						// if numberAlternative = -1 at this point it means the alternative already existed so we don't add it
+						// otherwise we add it
 						if (numberAlternative != -1) {
 							if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
 								JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
@@ -1509,5 +1530,62 @@ public class Metadata {
 			
 			this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(prefix, pattern, Boolean.valueOf(namespaceEmbedded));
 		}
+	}
+	
+	public boolean sameMetadata(Object obj) {
+		
+		Metadata meta = (Metadata) obj;
+		Set<String> listQualifiersMeta = meta.getListOfQualifiers();
+		
+		for (String qualifier: this.getListOfQualifiers()) {
+			
+			if (!listQualifiersMeta.contains(qualifier)) {
+				System.err.println("The list of qualifiers is not the same.");
+				return false;
+			} 
+			int numberAlternatives = this.getNumberOfAlternatives(qualifier);
+			if (meta.getNumberOfAlternatives(qualifier) != numberAlternatives) {
+				System.err.println("The number of alternatives for the qualifier "+qualifier+" is not the same.");
+				return false;
+			}
+			String typeAnnoThis = this.listOfAnnotations.get(qualifier).get(0).getClass().getName();
+			String typeAnnoMeta = meta.listOfAnnotations.get(qualifier).get(0).getClass().getName();
+			if (!typeAnnoThis.equals(typeAnnoMeta)) {
+				System.err.println("The type of annotation for the qualifier "+qualifier+" is not the same.");
+				return false;
+			}
+			
+			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifier); alternative++) {
+				
+				Annotation annoThis = (Annotation) this.listOfAnnotations.get(qualifier).get(alternative);
+				Annotation annoMeta = (Annotation) meta.listOfAnnotations.get(qualifier).get(alternative);
+				
+				if (!annoThis.sameAnnotation(annoMeta)) {
+					System.err.println("The content of the qualifier "+qualifier+" for the alternative "+alternative+" is not the same.");
+					return false;
+				}
+				
+				if (this.isSetMetadataOfQualifier(qualifier, alternative)) {
+					if (!meta.isSetMetadataOfQualifier(qualifier, alternative)) {
+						System.err.println("The qualifier "+qualifier+" for the alternative "+alternative+" does contain a nested metadata in one case but not in the other.");
+						return false;
+					}
+					
+					try {
+						Metadata nestedThis = this.getMetadataOfQualifier(qualifier, alternative);
+						Metadata nestedMeta = meta.getMetadataOfQualifier(qualifier, alternative);
+						
+						if (!nestedThis.sameMetadata(nestedMeta)) {
+							System.err.println("This problem occured in a nested metadata.");
+							return false;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 }

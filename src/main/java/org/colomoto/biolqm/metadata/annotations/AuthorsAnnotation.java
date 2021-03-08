@@ -177,4 +177,24 @@ class AuthorsAnnotation extends Annotation {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean sameAnnotation(Object obj) {
+		
+		AuthorsAnnotation auth = (AuthorsAnnotation) obj;
+		
+		if (this.listOfAuthors.size() != auth.listOfAuthors.size()) {
+			System.err.println("The two annotations does not contain the same number of authors.");
+			return false;
+		}
+		
+		for (Author author: this.listOfAuthors) {
+			if (!auth.getListOfAuthors().contains(author)) {
+				System.err.println("An author does not match.");
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

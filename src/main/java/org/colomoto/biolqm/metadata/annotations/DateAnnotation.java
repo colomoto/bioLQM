@@ -118,4 +118,13 @@ class DateAnnotation extends Annotation {
 	public boolean isNotEmpty() {
 		return false;
 	}
+	
+	@Override
+	public boolean sameAnnotation(Object obj) {
+		DateAnnotation date = (DateAnnotation) obj;
+		if (!date.getDate().equals(this.getDate())) {
+			return false;
+		}
+		return true;
+	}
 }

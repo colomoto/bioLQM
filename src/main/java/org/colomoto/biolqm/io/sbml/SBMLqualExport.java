@@ -21,18 +21,12 @@ import org.sbml.jsbml.ext.qual.*;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.XMLTriple;
-import org.sbml.jsbml.xml.XMLAttributes;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.ArrayList;
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * SBML export using JSBML and the "qual" extension.

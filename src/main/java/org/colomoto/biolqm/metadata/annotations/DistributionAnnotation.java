@@ -118,4 +118,13 @@ class DistributionAnnotation extends Annotation {
 	public boolean isNotEmpty() {
 		return false;
 	}
+	
+	@Override
+	public boolean sameAnnotation(Object obj) {
+		DistributionAnnotation dist = (DistributionAnnotation) obj;
+		if (!dist.getDistribution().equals(this.getDistribution())) {
+			return false;
+		}
+		return true;
+	}
 }

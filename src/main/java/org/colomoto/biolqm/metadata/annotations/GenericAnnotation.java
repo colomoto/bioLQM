@@ -392,4 +392,56 @@ class GenericAnnotation extends Annotation {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean sameAnnotation(Object obj) {
+		
+		GenericAnnotation gene = (GenericAnnotation) obj;
+		
+		if (this.listOfURIs.size() != gene.listOfURIs.size()) {
+			System.err.println("The two annotations does not contain the same number of uris.");
+			return false;
+		}
+		if (this.listOfTags.size() != gene.listOfTags.size()) {
+			System.err.println("The two annotations does not contain the same number of tags.");
+			return false;
+		}
+		if (this.listOfKeysValues.size() != gene.listOfKeysValues.size()) {
+			System.err.println("The two annotations does not contain the same number of keysValues.");
+			return false;
+		}
+		
+		for (URI uri: this.listOfURIs) {
+			if (!gene.getListOfURIs().contains(uri)) {
+				System.err.println("A URI does not match.");
+				return false;
+			}
+		}
+		
+		for (String tag: this.listOfTags) {
+			if (!gene.getListOfTags().contains(tag)) {
+				System.err.println("A tag does not match.");
+				return false;
+			}
+		}
+		
+		for (String key: this.listOfKeysValues.keySet()) {
+			
+			if (!gene.getListOfKeysValues().containsKey(key)) {
+				System.err.println("A key does not match.");
+				return false;
+			}
+			
+			ArrayList<String> geneKey = gene.getListOfKeysValues().get(key);
+			for (String value: this.listOfKeysValues.get(key)) {
+				
+				if (!geneKey.contains(value)) {
+					System.err.println("A value does not match for the key "+key+".");
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 }

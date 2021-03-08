@@ -942,8 +942,8 @@ public class SBMLqualImport extends BaseLoader {
     }
 	
 	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) throws Exception {
-		
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+		
 		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
 			qualifier = cvterm.getUnknownQualifierName();
 		}
@@ -985,7 +985,7 @@ public class SBMLqualImport extends BaseLoader {
 		
     private void importElementHistory(Annotation annotation, Metadata metadata) throws Exception {
 		
-		if (annotation.isSetHistory()) {		
+		if (annotation.isSetHistory()) {
 			History history = annotation.getHistory();
 			
 			String pattern = "yyyy-MM-dd";
@@ -1115,7 +1115,7 @@ public class SBMLqualImport extends BaseLoader {
 					this.importElementHistory(annotationSpecies, metadataSpecies);
 						
 					// to deal with tags and keys
-					if (annotationSpecies.isSetNonRDFannotation()) {		
+					if (annotationSpecies.isSetNonRDFannotation()) {
 						XMLNode nonRDFAnnotationSpecies = annotationSpecies.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
 						
 						if (nonRDFAnnotationSpecies != null) {

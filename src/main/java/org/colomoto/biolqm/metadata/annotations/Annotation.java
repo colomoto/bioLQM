@@ -26,4 +26,5 @@ abstract class Annotation {
 	protected abstract boolean doesAlternativeExist(JSONObject jsonAlternative);
 	protected abstract String getShortDescription();
 	protected abstract boolean isNotEmpty();
+	protected abstract boolean sameAnnotation(Object obj);
 }
