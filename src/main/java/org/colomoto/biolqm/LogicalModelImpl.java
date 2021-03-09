@@ -6,10 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -19,6 +25,7 @@ import org.json.JSONTokener;
 import org.colomoto.mddlib.MDDManager;
 
 import org.colomoto.biolqm.metadata.AnnotationModule;
+import org.colomoto.biolqm.metadata.annotations.JsonReader;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
@@ -381,8 +388,8 @@ public class LogicalModelImpl implements LogicalModel {
 		json.put("nodes", jsonArray);
 		
         // Write JSON file
-        try (FileWriter file = new FileWriter(filename+".json")) {
- 
+        try (Writer file = new OutputStreamWriter(new FileOutputStream(filename+".json"), StandardCharsets.UTF_8)) {
+        	
             file.write(json.toString());
             file.flush();
  
@@ -395,10 +402,7 @@ public class LogicalModelImpl implements LogicalModel {
 	public void importMetadata(String filename) throws Exception {
 		try {
 			// we load the json file
-			File initialFile = new File(filename);
-			InputStream is = new FileInputStream(initialFile);
-			JSONTokener tokener = new JSONTokener(is);
-			JSONObject json = new JSONObject(tokener);
+			JSONObject json = JsonReader.readJsonFromFile(filename);
 			
 			Metadata metadataModel = this.getMetadataOfModel();
 			

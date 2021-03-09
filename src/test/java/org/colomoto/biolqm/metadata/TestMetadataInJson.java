@@ -64,7 +64,7 @@ public class TestMetadataInJson {
 				Metadata nodeMetadata = model.getMetadataOfNode(elementNode);
 				
 				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);
-				nodeMetadata.addAuthor("creator", "Dupont", "Dupont", "moulinsart@tintin.org", "Herge", "0000-1111-2222-3333");
+				nodeMetadata.addAuthor("creator", "Dupond", "Dupont", "moulinsart@tintin.org", "Hergé", "0000-1111-2222-3333");
 			}
 		}
 		
@@ -84,6 +84,13 @@ public class TestMetadataInJson {
 		Metadata model2Metadata = model2.getMetadataOfModel();
 		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
+		
+		if (!result) {
+			System.out.println(modelMetadata.getDescriptionMetadata());
+			System.out.println("aie");
+			System.out.println(model2Metadata.getDescriptionMetadata());
+		}
+		
 		assertEquals(result, true);
 		
 		for (NodeInfo node: model.getComponents()) {
@@ -101,6 +108,12 @@ public class TestMetadataInJson {
 				Metadata node2Meta = model2.getMetadataOfNode(node2);
 				
 				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
+				
+				if (!resultNode) {
+					System.out.println(nodeMeta.getDescriptionMetadata());
+					System.out.println(node2Meta.getDescriptionMetadata());
+				}
+				
 				assertEquals(resultNode, true);
 			} else {
 				fail("The two models does not contain the same nodes.");

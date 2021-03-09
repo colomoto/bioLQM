@@ -1539,48 +1539,50 @@ public class Metadata {
 		
 		for (String qualifier: this.getListOfQualifiers()) {
 			
-			if (!listQualifiersMeta.contains(qualifier)) {
-				System.err.println("The list of qualifiers is not the same.");
-				return false;
-			} 
-			int numberAlternatives = this.getNumberOfAlternatives(qualifier);
-			if (meta.getNumberOfAlternatives(qualifier) != numberAlternatives) {
-				System.err.println("The number of alternatives for the qualifier "+qualifier+" is not the same.");
-				return false;
-			}
-			String typeAnnoThis = this.listOfAnnotations.get(qualifier).get(0).getClass().getName();
-			String typeAnnoMeta = meta.listOfAnnotations.get(qualifier).get(0).getClass().getName();
-			if (!typeAnnoThis.equals(typeAnnoMeta)) {
-				System.err.println("The type of annotation for the qualifier "+qualifier+" is not the same.");
-				return false;
-			}
-			
-			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifier); alternative++) {
-				
-				Annotation annoThis = (Annotation) this.listOfAnnotations.get(qualifier).get(alternative);
-				Annotation annoMeta = (Annotation) meta.listOfAnnotations.get(qualifier).get(alternative);
-				
-				if (!annoThis.sameAnnotation(annoMeta)) {
-					System.err.println("The content of the qualifier "+qualifier+" for the alternative "+alternative+" is not the same.");
+			if (!(this.getType().equals("model") && qualifier.equals("modified"))) {
+				if (!listQualifiersMeta.contains(qualifier)) {
+					System.err.println("The list of qualifiers is not the same.");
+					return false;
+				} 
+				int numberAlternatives = this.getNumberOfAlternatives(qualifier);
+				if (meta.getNumberOfAlternatives(qualifier) != numberAlternatives) {
+					System.err.println("The number of alternatives for the qualifier "+qualifier+" is not the same.");
+					return false;
+				}
+				String typeAnnoThis = this.listOfAnnotations.get(qualifier).get(0).getClass().getName();
+				String typeAnnoMeta = meta.listOfAnnotations.get(qualifier).get(0).getClass().getName();
+				if (!typeAnnoThis.equals(typeAnnoMeta)) {
+					System.err.println("The type of annotation for the qualifier "+qualifier+" is not the same.");
 					return false;
 				}
 				
-				if (this.isSetMetadataOfQualifier(qualifier, alternative)) {
-					if (!meta.isSetMetadataOfQualifier(qualifier, alternative)) {
-						System.err.println("The qualifier "+qualifier+" for the alternative "+alternative+" does contain a nested metadata in one case but not in the other.");
+				for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifier); alternative++) {
+					
+					Annotation annoThis = (Annotation) this.listOfAnnotations.get(qualifier).get(alternative);
+					Annotation annoMeta = (Annotation) meta.listOfAnnotations.get(qualifier).get(alternative);
+					
+					if (!annoThis.sameAnnotation(annoMeta)) {
+						System.err.println("The content of the qualifier "+qualifier+" for the alternative "+alternative+" is not the same.");
 						return false;
 					}
 					
-					try {
-						Metadata nestedThis = this.getMetadataOfQualifier(qualifier, alternative);
-						Metadata nestedMeta = meta.getMetadataOfQualifier(qualifier, alternative);
-						
-						if (!nestedThis.sameMetadata(nestedMeta)) {
-							System.err.println("This problem occured in a nested metadata.");
+					if (this.isSetMetadataOfQualifier(qualifier, alternative)) {
+						if (!meta.isSetMetadataOfQualifier(qualifier, alternative)) {
+							System.err.println("The qualifier "+qualifier+" for the alternative "+alternative+" does contain a nested metadata in one case but not in the other.");
 							return false;
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
+						
+						try {
+							Metadata nestedThis = this.getMetadataOfQualifier(qualifier, alternative);
+							Metadata nestedMeta = meta.getMetadataOfQualifier(qualifier, alternative);
+							
+							if (!nestedThis.sameMetadata(nestedMeta)) {
+								System.err.println("This problem occured in a nested metadata.");
+								return false;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

@@ -215,7 +215,13 @@ public class SBMLqualExport extends BaseExporter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("Beware: only the official instances of dcterms will be saved (the qualifiers 'creator', 'created' and 'modified'). Moreover, nested annotations in dcterms as well as dcterms in nested annotations cannot be saved in SBML." + "\n");
+			System.out.println("Beware, the following elements of annotations cannot be saved in SBML:\r\n"
+					+ "-	The authors qualifiers other than « creator »\r\n"
+					+ "-	The date qualifiers other than « created » and modified\r\n"
+					+ "-	The distribution qualifiers\r\n"
+					+ "-	The nested parts of « creator », « created » and « modified » qualifiers\r\n"
+					+ "-	The orcid identifier of authors\r\n"
+					+ "\n");
         }
     }
 
