@@ -17,12 +17,14 @@ public class Qualifier {
 	private String javaClass;
 	private String probability;
 	private ArrayList<String> collections;
+	private int numberOfOccurences;
 	
 	// constructors
 	public Qualifier(String newDescription, String newJavaClass) {
 		this.description = newDescription;
 		this.javaClass = newJavaClass;
 		this.collections = new ArrayList<String>();
+		this.numberOfOccurences = 0;
 	}
 	
 	public Qualifier(String newOntology, String newDescription, String newDefinition, String newJavaClass, String newProbability, ArrayList<String> newCollections) {
@@ -32,6 +34,7 @@ public class Qualifier {
 		this.javaClass = newJavaClass;
 		this.probability = newProbability;
 		this.collections = newCollections;
+		this.numberOfOccurences = -1;
 	}
 	
 	// getters
@@ -53,11 +56,26 @@ public class Qualifier {
 	public ArrayList<String> getCollections() {
 		return this.collections;
 	}
+	public int getNumberOfOccurences() {
+		return this.numberOfOccurences;
+	}
 	
 	// setters
 	public void setCollections(String collection) {
 		if (!this.collections.contains(collection)) {
 			this.collections.add(collection);
 		}
+	}
+	public boolean setNumberOfOccurences(boolean addition) {
+		if (addition) {
+			this.numberOfOccurences += 1;
+		} else {
+			this.numberOfOccurences -= 1;
+		}
+		
+		if (this.numberOfOccurences == 0) {
+			return true;
+		}
+		return false;
 	}
 }

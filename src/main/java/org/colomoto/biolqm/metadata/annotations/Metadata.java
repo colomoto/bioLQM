@@ -272,6 +272,14 @@ public class Metadata {
 		if (this.listOfAnnotations.containsKey(termDesired) && alternative < this.getNumberOfAlternatives(termDesired)) {
 			this.listOfAnnotations.get(termDesired).remove(alternative);
 			
+			String typeAnnotation = this.suitedJavaClass(termDesired);
+			if (typeAnnotation != null && (typeAnnotation.equals("DateAnnotation") || typeAnnotation.equals("DistributionAnnotation"))) {
+				boolean empty = this.modelConstants.getInstanceOfQualifiersAvailable().updateNumberOfOccurences(this.type, termDesired, false);
+				if (empty) {
+					this.listOfAnnotations.remove(termDesired);
+				}
+			}
+			
 			int number = this.getNumberOfAlternatives(termDesired);
 			if (number == 0) {
 				this.listOfAnnotations.remove(termDesired);
@@ -303,10 +311,13 @@ public class Metadata {
 			System.err.println("You cannot add this kind of information to this type of qualifier." + "\n");
 			return;
 		}
-		
+
 		// now if it's an alternative that does exist
 		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
-				this.listOfAnnotations.get(termDesired).get(alternative).addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
+			boolean done = this.listOfAnnotations.get(termDesired).get(alternative).addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
+			if (done) {
+				this.modelConstants.getInstanceOfQualifiersAvailable().updateNumberOfOccurences(this.type, termDesired, true);
+			}
 		}
 		// else it is an alternative that doesn't exist yet
 		else {
@@ -440,8 +451,10 @@ public class Metadata {
 	 * @throws Exception 
 	 */	
 	public void addDistribution(String termDesired, String distribution) throws Exception {
-		String javaClassDesired = "DistributionAnnotation";
-		this.addAnnotation(termDesired, 0, javaClassDesired, distribution);
+		if (!distribution.equals("")) {
+			String javaClassDesired = "DistributionAnnotation";
+			this.addAnnotation(termDesired, 0, javaClassDesired, distribution);
+		}
 	}
 	
 	
@@ -460,6 +473,10 @@ public class Metadata {
 			}
 			else if (javaClass.equals(javaClassDesired)) {		
 				this.listOfAnnotations.get(termDesired).get(alternative).removeAnnotation(this.modelConstants, contentAnnotation);
+				boolean empty = this.modelConstants.getInstanceOfQualifiersAvailable().updateNumberOfOccurences(this.type, termDesired, false);
+				if (empty) {
+					this.listOfAnnotations.remove(termDesired);
+				}
 			}
 			else {
 				System.err.println("You cannot remove this kind of annotation for this qualifier." + "\n");
@@ -550,26 +567,6 @@ public class Metadata {
 	public void removeAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
 		String javaClassDesired = "AuthorsAnnotation";
 		this.removeAnnotation(termDesired, 0, javaClassDesired, name, surname, email, organisation, orcid);
-	}
-	
-	/**
-	 * Remove a date from the component
-	 *
-	 * @param termDesired the qualifier one wants to remove
-	 */	
-	public void removeDate(String termDesired) {
-		String javaClassDesired = "DateAnnotation";
-		this.removeAnnotation(termDesired, 0, javaClassDesired, "");
-	}
-	
-	/**
-	 * Remove the terms of distribution from the component
-	 * 
-	 * @param termDesired the qualifier one wants to remove
-	 */	
-	public void removeDistribution(String termDesired) {
-		String javaClassDesired = "DistributionAnnotation";
-		this.removeAnnotation(termDesired, 0, javaClassDesired, "");
 	}
 	
 	

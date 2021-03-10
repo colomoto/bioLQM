@@ -37,10 +37,15 @@ class AuthorsAnnotation extends Annotation {
 	
 	// functions
 	@Override
-	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
 		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
+		if (this.listOfAuthors.contains(author)) {
+			return false;
+		}
 		this.listOfAuthors.add(author);
+		
+		return true;
 	}
 
 	@Override
