@@ -245,8 +245,9 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to annotate
 	 * @return the number of the alternative created
+	 * @throws Exception 
 	 */	
-	public int createAlternative(String termDesired) {
+	public int createAlternative(String termDesired) throws Exception {
 		
 		if (this.listOfAnnotations.containsKey(termDesired)) {
 			String fullJavaClass = this.getClassOfQualifier(termDesired);
@@ -261,9 +262,7 @@ public class Metadata {
 			return this.listOfAnnotations.get(termDesired).size()-1;
 		}
 		else {
-			System.err.println("You have to create this qualifier before creating an alternative." + "\n");
-			
-			return -1;
+			throw new Exception("You have to create this qualifier before creating an alternative." + "\n");
 		}
 	}
 	
