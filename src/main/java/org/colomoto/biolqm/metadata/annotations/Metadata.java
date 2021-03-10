@@ -267,6 +267,14 @@ public class Metadata {
 		}
 	}
 	
+	/**
+	 * Permits to remove one of the alternatives of a qualifier (internal use)
+	 * 
+	 * @param termDesired the qualifier
+	 * @param alternative the number of the alternative
+	 * @return true if it isn't the latest alternative for this qualifier, false otherwise
+	 * 
+	 */
 	public boolean removeAlternative(String termDesired, int alternative) {
 		
 		if (this.listOfAnnotations.containsKey(termDesired) && alternative < this.getNumberOfAlternatives(termDesired)) {
@@ -881,6 +889,8 @@ public class Metadata {
 	/**
 	 * Check if a qualifier for a given alternative contains annotations or is empty
 	 *
+	 * @param qualifier the qualifier
+	 * @param alternative the number of the alternative
 	 * @return false if the alternative is empty, true otherwise
 	 */	
 	public boolean isAnnotationNotEmpty(String qualifier, int alternative) {
@@ -1492,7 +1502,7 @@ public class Metadata {
 	}
 	
 	/**
-	 * Permits to export the patterns of the collections used in the json file
+	 * Permits to export the patterns of the collections used in the json file (internal use)
 	 *
 	 */
 	public void exportCollectionsMetadata(JSONObject json) {
@@ -1515,7 +1525,7 @@ public class Metadata {
 	}
 	
 	/**
-	 * Permits to import the patterns of the collections used in the json file
+	 * Permits to import the patterns of the collections used in the json file (internal use)
 	 *
 	 */
 	public void importCollectionsMetadata(JSONArray json) {
@@ -1532,6 +1542,12 @@ public class Metadata {
 		}
 	}
 	
+	/**
+	 * Permits to compare one object Metadata to another (internal use)
+	 * 
+	 * @param the Metadata object you want to compare to this
+	 * @return true if they are equals, false otherwise
+	 */
 	public boolean sameMetadata(Object obj) {
 		
 		Metadata meta = (Metadata) obj;
