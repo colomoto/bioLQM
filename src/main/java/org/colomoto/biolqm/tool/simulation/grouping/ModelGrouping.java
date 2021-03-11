@@ -1,6 +1,7 @@
 
 package org.colomoto.biolqm.tool.simulation.grouping;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +44,8 @@ public class ModelGrouping {
 	public ModelGrouping(LogicalModel m) { 
 		this.model = m;
 		this.pcList = new ArrayList<>();
+		
+		System.out.print(testReadUp.getUpdater("Synchronous", m));
 
 		// Init single class with a single synchronous group
 		List<VarInfo> vars = new ArrayList<VarInfo>();

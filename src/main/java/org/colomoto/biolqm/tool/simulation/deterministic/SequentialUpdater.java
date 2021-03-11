@@ -15,6 +15,7 @@ import java.util.List;
 public class SequentialUpdater extends BaseUpdater implements DeterministicUpdater {
 
 	private final int[] order;
+	private final String name = "Sequential";
 	
 	/**
 	 * Create a new sequential updater, using the default order
@@ -94,8 +95,7 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
 
 	@Override
 	public String getUpdaterName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.name;
 	}
 
 }

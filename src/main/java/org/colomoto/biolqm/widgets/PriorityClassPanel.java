@@ -657,7 +657,6 @@ public class PriorityClassPanel extends JPanel {
 		 JPanel ratesPanel = new JPanel(new GridBagLayout()); 
 		 GridBagConstraints gbcR = new GridBagConstraints(); gbcR.gridx = 0;
 		 
-		 // -- Order variables alphabetically 
 		
 		 Map<String, Double> nodes = new HashMap<String, Double>();
 		 Map<JTextField, int[]>  idxJtf = new HashMap<JTextField, int[]>();

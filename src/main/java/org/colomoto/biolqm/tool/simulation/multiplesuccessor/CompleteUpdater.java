@@ -18,7 +18,7 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
 
     private final int[] changes;
     private final int[] changing;
-
+    private final String name = "Complete";
 	/**
 	 * Create a new full random.
 	 * 
@@ -84,8 +84,7 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
 
 	@Override
 	public String getUpdaterName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.name;
 	}
 
 }

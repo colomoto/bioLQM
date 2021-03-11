@@ -18,6 +18,7 @@ public class RandomUpdaterWrapper implements RandomUpdater {
 
     private final MultipleSuccessorsUpdater updater;
     private final Random random = new Random(); 
+    private final String name = "Random uniform";
     
     
     public RandomUpdaterWrapper(MultipleSuccessorsUpdater updater) {
