@@ -21,7 +21,7 @@ public class AnnotationModule {
 	public ModelConstants modelConstants;
 	
 	public Index modelIndex;
-	public Map<NodeInfo, Index> nodesIndex;
+	public Map<String, Index> nodesIndex;
 	
 	// constructors
 	public AnnotationModule() throws Exception {
@@ -31,7 +31,7 @@ public class AnnotationModule {
 		this.modelIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(modelIndex, modelMetadata);
 		
-		this.nodesIndex = new HashMap<NodeInfo, Index>();
+		this.nodesIndex = new HashMap<String, Index>();
 	}
 	
 	// functions
@@ -42,13 +42,13 @@ public class AnnotationModule {
 	 * @return the Metadata object you created for the node
 	 * @throws Exception 
 	 */
-	public Metadata createMetadataOfNode(NodeInfo node) throws Exception {
+	public Metadata createMetadataOfNode(String nodeId) throws Exception {
 		
 		Metadata nodeMetadata = new Metadata(this.modelConstants, "species");
 		Index nodeIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(nodeIndex, nodeMetadata);
 		
-		this.nodesIndex.put(node, nodeIndex);
+		this.nodesIndex.put(nodeId, nodeIndex);
 		
 		return nodeMetadata;
 	}

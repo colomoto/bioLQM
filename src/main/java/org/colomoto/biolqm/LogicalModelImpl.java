@@ -301,22 +301,22 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 	
 	@Override
-	public boolean isSetMetadataOfNode(NodeInfo node) {
-		if (this.annotationModule.nodesIndex.containsKey(node)) {
+	public boolean isSetMetadataOfNode(String nodeId) {
+		if (this.annotationModule.nodesIndex.containsKey(nodeId)) {
 			return true;
 		}
 		return false;
 	}
 	
 	@Override
-	public Metadata getMetadataOfNode(NodeInfo node) throws Exception {
+	public Metadata getMetadataOfNode(String nodeId) throws Exception {
 		
 		try {
-			if (this.annotationModule.nodesIndex.containsKey(node)) {
-				return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.nodesIndex.get(node));
+			if (this.annotationModule.nodesIndex.containsKey(nodeId)) {
+				return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.nodesIndex.get(nodeId));
 			}
 			else {
-				return this.annotationModule.createMetadataOfNode(node);
+				return this.annotationModule.createMetadataOfNode(nodeId);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -354,9 +354,10 @@ public class LogicalModelImpl implements LogicalModel {
 		JSONArray jsonArray = new JSONArray();
 		
 		for (NodeInfo node: this.coreNodes) {
+			String nodeId = node.getNodeID();
 			
-			if (this.isSetMetadataOfNode(node)) {
-				Metadata metadataSpecies = this.getMetadataOfNode(node);
+			if (this.isSetMetadataOfNode(nodeId)) {
+				Metadata metadataSpecies = this.getMetadataOfNode(nodeId);
 				
 				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 					JSONObject jsonNode = new JSONObject();
@@ -370,9 +371,10 @@ public class LogicalModelImpl implements LogicalModel {
 		}
 		
 		for (NodeInfo node: this.extraNodes) {
+			String nodeId = node.getNodeID();
 			
-			if (this.isSetMetadataOfNode(node)) {
-				Metadata metadataSpecies = this.getMetadataOfNode(node);
+			if (this.isSetMetadataOfNode(nodeId)) {
+				Metadata metadataSpecies = this.getMetadataOfNode(nodeId);
 				
 				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 					JSONObject jsonNode = new JSONObject();
@@ -427,15 +429,12 @@ public class LogicalModelImpl implements LogicalModel {
 			for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
 			{
 				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
-				NodeInfo node = this.getComponent(jsonNode.getString("id"));
+				String nodeId = jsonNode.getString("id");
 				
-				if (node != null) {
+				if (nodeId != null) {
 					try {
-						{
-							Metadata metadataNode = this.getMetadataOfNode(node);
-							
-							metadataNode.importElementMetadata(jsonNode);
-						}
+						Metadata metadataNode = this.getMetadataOfNode(nodeId);
+						metadataNode.importElementMetadata(jsonNode);	
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -448,5 +447,15 @@ public class LogicalModelImpl implements LogicalModel {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void setAnnotationModule(AnnotationModule newAnnotationModule) {
+		this.annotationModule = newAnnotationModule;
+	}
+
+	@Override
+	public AnnotationModule getAnnotationModule() {
+		return this.annotationModule;
 	}
 }

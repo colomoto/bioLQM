@@ -411,9 +411,10 @@ public class SBMLqualExport extends BaseExporter {
 		
 		for (Map.Entry<NodeInfo, QualitativeSpecies> entry : this.node2species.entrySet()) {
 			NodeInfo node = entry.getKey();
+			String nodeId = node.getNodeID();
 			
-			if (this.model.isSetMetadataOfNode(node)) {
-				Metadata metadataSpecies = this.model.getMetadataOfNode(node);
+			if (this.model.isSetMetadataOfNode(nodeId)) {
+				Metadata metadataSpecies = this.model.getMetadataOfNode(nodeId);
 				
 				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 					SBase elementSpecies = (SBase) entry.getValue();

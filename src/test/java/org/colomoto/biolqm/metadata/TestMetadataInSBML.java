@@ -59,7 +59,8 @@ public class TestMetadataInSBML {
 			
 			if (nodeId.equals("p53")) {
 				NodeInfo elementNode = model.getComponents().get(0);
-				Metadata nodeMetadata = model.getMetadataOfNode(elementNode);
+				String elementNodeId = elementNode.getNodeID();
+				Metadata nodeMetadata = model.getMetadataOfNode(elementNodeId);
 				
 				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);
 				nodeMetadata.addAuthor("creator", "Dupond", "Dupont", "moulinsart@tintin.org", "Hergé", null);
@@ -88,17 +89,10 @@ public class TestMetadataInSBML {
 		for (NodeInfo node: model.getComponents()) {
 			String nodeId = node.getNodeID();
 			
-			NodeInfo node2 = null;
-			for (NodeInfo elmt: model2.getComponents()) {
-				if (elmt.getNodeID().equals(nodeId)) {
-					node2 = elmt;
-				}
-			}
+			Metadata nodeMeta = model.getMetadataOfNode(nodeId);
+			Metadata node2Meta = model2.getMetadataOfNode(nodeId);
 			
-			if (node2 != null) {
-				Metadata nodeMeta = model.getMetadataOfNode(node);
-				Metadata node2Meta = model2.getMetadataOfNode(node2);
-				
+			if (node2Meta != null) {
 				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
 				assertEquals(resultNode, true);
 			} else {

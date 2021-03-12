@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
 import org.json.JSONException;
+import org.colomoto.biolqm.metadata.AnnotationModule;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
@@ -171,7 +172,7 @@ public interface LogicalModel {
 	 * @param node the node you want to check
 	 * @return true if it exists, false otherwise
 	 */	
-	boolean isSetMetadataOfNode(NodeInfo node);
+	boolean isSetMetadataOfNode(String nodeId);
 	
 	/**
 	 * Retrieve the Metadata object of the node
@@ -180,7 +181,7 @@ public interface LogicalModel {
 	 * @return the existing Metadata of the node. Create it if it does not exist.
 	 * @throws Exception 
 	 */
-	Metadata getMetadataOfNode(NodeInfo node) throws Exception;
+	Metadata getMetadataOfNode(String nodeId) throws Exception;
 	
 	/**
 	 * Export all the metadata of the model in a structured json file
@@ -198,4 +199,8 @@ public interface LogicalModel {
 	 * @throws Exception 
 	 */
 	void importMetadata(String filename) throws Exception;
+	
+	void setAnnotationModule(AnnotationModule newAnnotationModule);
+
+	AnnotationModule getAnnotationModule();
 }
