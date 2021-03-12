@@ -32,7 +32,7 @@ public class TestMetadataInSBML {
 		LogicalModel model = format.load(new File(dir, "minimal_example.sbml"));
 		
 		// we add some metadata to the model
-		Metadata modelMetadata = model.getMetadataOfModel();
+		Metadata modelMetadata = model.getAnnotationModule().getMetadataOfModel();
 		
 		modelMetadata.addTag("customQualifier", "word1");
 		modelMetadata.addTag("customQualifier", "word2");
@@ -60,7 +60,7 @@ public class TestMetadataInSBML {
 			if (nodeId.equals("p53")) {
 				NodeInfo elementNode = model.getComponents().get(0);
 				String elementNodeId = elementNode.getNodeID();
-				Metadata nodeMetadata = model.getMetadataOfNode(elementNodeId);
+				Metadata nodeMetadata = model.getAnnotationModule().getMetadataOfNode(elementNodeId);
 				
 				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);
 				nodeMetadata.addAuthor("creator", "Dupond", "Dupont", "moulinsart@tintin.org", "Hergé", null);
@@ -81,7 +81,7 @@ public class TestMetadataInSBML {
 		LogicalModel model2 = format.load(new File(dir, "minimal_example_annotated.sbml"));
 
 		// and we compare the two of them to see if not problems were introduced
-		Metadata model2Metadata = model2.getMetadataOfModel();
+		Metadata model2Metadata = model2.getAnnotationModule().getMetadataOfModel();
 		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
 		assertEquals(result, true);
@@ -89,8 +89,8 @@ public class TestMetadataInSBML {
 		for (NodeInfo node: model.getComponents()) {
 			String nodeId = node.getNodeID();
 			
-			Metadata nodeMeta = model.getMetadataOfNode(nodeId);
-			Metadata node2Meta = model2.getMetadataOfNode(nodeId);
+			Metadata nodeMeta = model.getAnnotationModule().getMetadataOfNode(nodeId);
+			Metadata node2Meta = model2.getAnnotationModule().getMetadataOfNode(nodeId);
 			
 			if (node2Meta != null) {
 				boolean resultNode = nodeMeta.sameMetadata(node2Meta);

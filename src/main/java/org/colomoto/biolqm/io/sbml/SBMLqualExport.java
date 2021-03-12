@@ -402,7 +402,7 @@ public class SBMLqualExport extends BaseExporter {
 	
 	private void exportAllMetadata() throws Exception {
 		
-		Metadata metadataModel = this.model.getMetadataOfModel();
+		Metadata metadataModel = this.model.getAnnotationModule().getMetadataOfModel();
 		
 		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
 			SBase elementModel = (SBase) qualBundle.document.getModel();
@@ -413,8 +413,8 @@ public class SBMLqualExport extends BaseExporter {
 			NodeInfo node = entry.getKey();
 			String nodeId = node.getNodeID();
 			
-			if (this.model.isSetMetadataOfNode(nodeId)) {
-				Metadata metadataSpecies = this.model.getMetadataOfNode(nodeId);
+			if (this.model.getAnnotationModule().isSetMetadataOfNode(nodeId)) {
+				Metadata metadataSpecies = this.model.getAnnotationModule().getMetadataOfNode(nodeId);
 				
 				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 					SBase elementSpecies = (SBase) entry.getValue();

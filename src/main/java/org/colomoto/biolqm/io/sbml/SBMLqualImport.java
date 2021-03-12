@@ -1061,7 +1061,7 @@ public class SBMLqualImport extends BaseLoader {
 		SBase elementModel = (SBase) this.qualBundle.document.getModel();
 		
 		if (elementModel.isSetAnnotation() || elementModel.isSetNotes()) {
-			Metadata metadataModel = model.getMetadataOfModel();
+			Metadata metadataModel = model.getAnnotationModule().getMetadataOfModel();
 			
 			if (elementModel.isSetAnnotation()) {
 				Annotation annotationModel = elementModel.getAnnotation();
@@ -1102,7 +1102,7 @@ public class SBMLqualImport extends BaseLoader {
 			if (elementSpecies.isSetAnnotation() || elementSpecies.isSetNotes()) {
 				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
 				String nodeId = node.getNodeID();
-				Metadata metadataSpecies = model.getMetadataOfNode(nodeId);
+				Metadata metadataSpecies = model.getAnnotationModule().getMetadataOfNode(nodeId);
 				
 				if (elementSpecies.isSetAnnotation()) {					
 					Annotation annotationSpecies = elementSpecies.getAnnotation();

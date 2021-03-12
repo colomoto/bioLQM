@@ -161,46 +161,14 @@ public interface LogicalModel {
 	ModelLayout getLayout();
 	
 	/**
-	 * Retrieve the Metadata object of the model
-	 * @return the existing Metadata of the model
+	 * Modify the annotation module of the model
 	 */
-	Metadata getMetadataOfModel();
-	
-	/**
-	 * Check if a metadata object exists for a node
-	 *
-	 * @param node the node you want to check
-	 * @return true if it exists, false otherwise
-	 */	
-	boolean isSetMetadataOfNode(String nodeId);
-	
-	/**
-	 * Retrieve the Metadata object of the node
-	 * 
-	 * @param node the node you want to annotate
-	 * @return the existing Metadata of the node. Create it if it does not exist.
-	 * @throws Exception 
-	 */
-	Metadata getMetadataOfNode(String nodeId) throws Exception;
-	
-	/**
-	 * Export all the metadata of the model in a structured json file
-	 * 
-	 * @param filename the name of the json file
-	 * @throws Exception 
-	 * @throws JSONException 
-	 */
-	void exportMetadata(String filename) throws JSONException, Exception;
-	
-	/**
-	 * Import a structured json file to populate the metadata of the model
-	 * 
-	 * @param filename the name of the json file
-	 * @throws Exception 
-	 */
-	void importMetadata(String filename) throws Exception;
-	
 	void setAnnotationModule(AnnotationModule newAnnotationModule);
 
+	/**
+	 * Retrieve the annotation module of the model
+	 * 
+	 * @return the annotation module
+	 */
 	AnnotationModule getAnnotationModule();
 }

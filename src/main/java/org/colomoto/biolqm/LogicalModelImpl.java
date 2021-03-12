@@ -4,15 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,7 +14,6 @@ import java.io.FileOutputStream;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONTokener;
 
 import org.colomoto.mddlib.MDDManager;
 
@@ -292,161 +285,6 @@ public class LogicalModelImpl implements LogicalModel {
 			this.layout = new ModelLayout();
 		}
 		return this.layout;
-	}
-	
-	@Override
-	public Metadata getMetadataOfModel() {
-		
-		return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.modelIndex);
-	}
-	
-	@Override
-	public boolean isSetMetadataOfNode(String nodeId) {
-		if (this.annotationModule.nodesIndex.containsKey(nodeId)) {
-			return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public Metadata getMetadataOfNode(String nodeId) throws Exception {
-		
-		try {
-			if (this.annotationModule.nodesIndex.containsKey(nodeId)) {
-				return this.annotationModule.modelConstants.getListMetadata().get(this.annotationModule.nodesIndex.get(nodeId));
-			}
-			else {
-				return this.annotationModule.createMetadataOfNode(nodeId);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	private void exportElementMetadata(Metadata metadata, JSONObject json) throws JSONException, Exception {
-		
-		// if there is some metadata we add the json representation in the json object
-		if (metadata.isMetadataNotEmpty()) {
-			
-			json.put("annotation", metadata.getJSONOfMetadata());
-		}
-		// if there is some notes we add the json representation in the json object
-		if (metadata.getNotes() != "") {
-			
-			json.put("notes", metadata.getNotes());
-		}
-	}
-	
-	@Override
-	public void exportMetadata(String filename) throws JSONException, Exception {
-		
-		JSONObject json = new JSONObject();
-		
-		Metadata metadataModel = this.getMetadataOfModel();
-		
-		metadataModel.exportCollectionsMetadata(json);
-		
-		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
-			this.exportElementMetadata(metadataModel, json);
-		}
-		
-		JSONArray jsonArray = new JSONArray();
-		
-		for (NodeInfo node: this.coreNodes) {
-			String nodeId = node.getNodeID();
-			
-			if (this.isSetMetadataOfNode(nodeId)) {
-				Metadata metadataSpecies = this.getMetadataOfNode(nodeId);
-				
-				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
-					JSONObject jsonNode = new JSONObject();
-					
-					jsonNode.put("id", node.getNodeID());
-					exportElementMetadata(metadataSpecies, jsonNode);
-					
-					jsonArray.put(jsonNode);
-				}
-			}
-		}
-		
-		for (NodeInfo node: this.extraNodes) {
-			String nodeId = node.getNodeID();
-			
-			if (this.isSetMetadataOfNode(nodeId)) {
-				Metadata metadataSpecies = this.getMetadataOfNode(nodeId);
-				
-				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
-					JSONObject jsonNode = new JSONObject();
-					
-					jsonNode.put("id", node.getNodeID());
-					exportElementMetadata(metadataSpecies, jsonNode);
-					
-					jsonArray.put(jsonNode);
-				}
-			}
-		}
-		
-		json.put("nodes", jsonArray);
-		
-        // Write JSON file
-        try (Writer file = new OutputStreamWriter(new FileOutputStream(filename+".json"), StandardCharsets.UTF_8)) {
-        	
-            file.write(json.toString());
-            file.flush();
- 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
-	
-	@Override
-	public void importMetadata(String filename) throws Exception {
-		try {
-			// we load the json file
-			JSONObject json = JsonReader.readJsonFromFile(filename);
-			
-			Metadata metadataModel = this.getMetadataOfModel();
-			
-			if (json.has("collections") && !json.isNull("collections")) {	 
-				
-				metadataModel.importCollectionsMetadata(json.getJSONArray("collections"));
-			}
-			
-			// we import the metadata concerning the model
-			try {
-				if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
-					
-					metadataModel.importElementMetadata(json);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			// we import the metadata concerning each node
-			JSONArray arrayNodes = json.getJSONArray("nodes");
-			for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
-			{
-				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
-				String nodeId = jsonNode.getString("id");
-				
-				if (nodeId != null) {
-					try {
-						Metadata metadataNode = this.getMetadataOfNode(nodeId);
-						metadataNode.importElementMetadata(jsonNode);	
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else {
-					System.err.println("The node "+jsonNode.getString("id")+" has no equivalent in the model so its annotations couldn't be imported.");
-				}
-			}
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
