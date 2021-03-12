@@ -79,7 +79,7 @@ public class TestMetadataInJson {
 		
 		LogicalModel model2 = format.load(new File(dir, "minimal_example.sbml"));
 		
-		model2.getAnnotationModule().importMetadata(dir.getAbsolutePath()+"\\minimal_example_annotated.json");
+		model2.getAnnotationModule().importMetadata(dir.getAbsolutePath()+File.separator+"minimal_example_annotated.json");
 		
 		// and we compare the two of them to see if not problems were introduced
 		Metadata model2Metadata = model2.getAnnotationModule().getMetadataOfModel();

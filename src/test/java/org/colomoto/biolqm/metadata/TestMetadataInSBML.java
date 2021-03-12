@@ -68,7 +68,7 @@ public class TestMetadataInSBML {
 		}
 		
 		// we save the model
-		LQMServiceManager.save(model, dir.getAbsolutePath()+"\\minimal_example_saved.sbml", "sbml");
+		LQMServiceManager.save(model, dir.getAbsolutePath()+File.separator+"minimal_example_saved.sbml", "sbml");
 		
 		// we load a sbml model with exactly the same annotations
 		if (!dir.isDirectory()) {
