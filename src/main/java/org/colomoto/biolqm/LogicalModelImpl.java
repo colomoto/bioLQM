@@ -4,22 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import org.colomoto.mddlib.MDDManager;
 
 import org.colomoto.biolqm.metadata.AnnotationModule;
-import org.colomoto.biolqm.metadata.annotations.JsonReader;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
  * Implementation of the LogicalModel interface.

@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
-import org.json.JSONException;
 import org.colomoto.biolqm.metadata.AnnotationModule;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
  * A LogicalModel is a ready to use object containing all necessary information to perform simulations and analysis,

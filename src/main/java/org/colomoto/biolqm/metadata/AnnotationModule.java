@@ -32,7 +32,7 @@ public class AnnotationModule {
 	public ModelConstants modelConstants;
 	
 	public Index modelIndex;
-	public Map<String, Index> nodesIndex;
+	public Map<NodeInfo, Index> nodesIndex;
 	
 	// constructors
 	public AnnotationModule() throws Exception {
@@ -42,7 +42,7 @@ public class AnnotationModule {
 		this.modelIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(modelIndex, modelMetadata);
 		
-		this.nodesIndex = new HashMap<String, Index>();
+		this.nodesIndex = new HashMap<NodeInfo, Index>();
 	}
 	
 	// functions
@@ -53,13 +53,13 @@ public class AnnotationModule {
 	 * @return the Metadata object you created for the node
 	 * @throws Exception 
 	 */
-	public Metadata createMetadataOfNode(String nodeId) throws Exception {
+	public Metadata createMetadataOfNode(NodeInfo node) throws Exception {
 		
 		Metadata nodeMetadata = new Metadata(this.modelConstants, "species");
 		Index nodeIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(nodeIndex, nodeMetadata);
 		
-		this.nodesIndex.put(nodeId, nodeIndex);
+		this.nodesIndex.put(node, nodeIndex);
 		
 		return nodeMetadata;
 	}
@@ -79,8 +79,8 @@ public class AnnotationModule {
 	 * @param nodeId the node you want to check
 	 * @return true if it exists, false otherwise
 	 */	
-	public boolean isSetMetadataOfNode(String nodeId) {
-		if (this.nodesIndex.containsKey(nodeId)) {
+	public boolean isSetMetadataOfNode(NodeInfo node) {
+		if (this.nodesIndex.containsKey(node)) {
 			return true;
 		}
 		return false;
@@ -93,14 +93,14 @@ public class AnnotationModule {
 	 * @return the existing Metadata of the node. Create it if it does not exist.
 	 * @throws Exception 
 	 */
-	public Metadata getMetadataOfNode(String nodeId) throws Exception {
+	public Metadata getMetadataOfNode(NodeInfo node) throws Exception {
 		
 		try {
-			if (this.nodesIndex.containsKey(nodeId)) {
-				return this.modelConstants.getListMetadata().get(this.nodesIndex.get(nodeId));
+			if (this.nodesIndex.containsKey(node)) {
+				return this.modelConstants.getListMetadata().get(this.nodesIndex.get(node));
 			}
 			else {
-				return this.createMetadataOfNode(nodeId);
+				return this.createMetadataOfNode(node);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -143,14 +143,15 @@ public class AnnotationModule {
 		
 		JSONArray jsonArray = new JSONArray();
 		
-		for (String nodeId: nodesIndex.keySet()) {
+		for (NodeInfo node: nodesIndex.keySet()) {
 			
-			if (this.isSetMetadataOfNode(nodeId)) {
-				Metadata metadataSpecies = this.getMetadataOfNode(nodeId);
+			if (this.isSetMetadataOfNode(node)) {
+				Metadata metadataSpecies = this.getMetadataOfNode(node);
 				
 				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 					JSONObject jsonNode = new JSONObject();
 					
+					String nodeId = node.getNodeID();
 					jsonNode.put("id", nodeId);
 					exportElementMetadata(metadataSpecies, jsonNode);
 					
@@ -178,7 +179,7 @@ public class AnnotationModule {
 	 * @param filename the name of the json file
 	 * @throws Exception 
 	 */
-	public void importMetadata(String filename) throws Exception {
+	public void importMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes) throws Exception {
 		try {
 			// we load the json file
 			JSONObject json = JsonReader.readJsonFromFile(filename);
@@ -208,9 +209,22 @@ public class AnnotationModule {
 				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
 				String nodeId = jsonNode.getString("id");
 				
-				if (nodeId != null) {
+
+				NodeInfo node = null;
+				for (NodeInfo elmt: coreNodes) {
+					if (elmt.getNodeID().equals(nodeId)) {
+						node = elmt;
+					}
+				}
+				for (NodeInfo elmt: extraNodes) {
+					if (elmt.getNodeID().equals(nodeId)) {
+						node = elmt;
+					}
+				}
+				
+				if (node != null) {
 					try {
-						Metadata metadataNode = this.getMetadataOfNode(nodeId);
+						Metadata metadataNode = this.getMetadataOfNode(node);
 						metadataNode.importElementMetadata(jsonNode);	
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
