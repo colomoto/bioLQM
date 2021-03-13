@@ -35,9 +35,13 @@ class DateAnnotation extends Annotation {
 	
 	// functions	
 	@Override
-	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
-	
+	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+		
+		if (!this.date.equals("")) {
+			return false;
+		}
 		this.date = contentAnnotation[0];
+		return true;
 	}
 	
 	@Override

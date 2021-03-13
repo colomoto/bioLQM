@@ -129,16 +129,12 @@ public class QualifiersAvailable {
 			case "DateAnnotation":
 				help += "This qualifier accepts a date. To create it you use :\n";
 				help += "- addDate(the qualifier, a date following the standard of the W3C)\n";
-				help += "To remove it you use :\n";
-				help += "- removeDate(the qualifier, a date following the standard of the W3C)\n";
 				help += "You can also start a nested annotation in this qualifier with getMetadataOfQualifier(the qualifier).\n";
 				help += "It returns the Metadata object corresponding to the nested annotation.\n";
 				break;
 			case "DistributionAnnotation":
 				help += "This qualifier accepts the distribution terms. To create them you use :\n";
 				help += "- addDistribution(the qualifier, the distribution terms)\n";
-				help += "To remove them you use :\n";
-				help += "- removeDistribution(the qualifier, the distribution terms)\n";
 				help += "You can also start a nested annotation in this qualifier with getMetadataOfQualifier(the qualifier).\n";
 				help += "It returns the Metadata object corresponding to the nested annotation.\n";
 				break;
@@ -155,5 +151,21 @@ public class QualifiersAvailable {
 		String help = "\tOntology: " + qualifierDesired.getOntology() + "\n" + "\tDescription: " + qualifierDesired.getDescription() + "\n"  + "\tDefinition: " + qualifierDesired.getDefinition() + "\n"  + "\tProbability: " + qualifierDesired.getProbability() + "\n"  + "\tCollections: " + qualifierDesired.getCollections().toString() + "\n";
 		
 		return help;
+	}
+	
+	public boolean updateNumberOfOccurences(String component, String termDesired, boolean addition) {
+		Map<String, Qualifier> componentVariable = this.selectionVariable(component);
+		Qualifier qual = componentVariable.get(termDesired);
+		
+		if (qual.getNumberOfOccurences() != -1) {
+			boolean empty = componentVariable.get(termDesired).setNumberOfOccurences(addition);
+			
+			if (empty) {
+				componentVariable.remove(termDesired);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

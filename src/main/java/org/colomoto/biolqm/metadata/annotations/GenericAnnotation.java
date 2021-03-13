@@ -54,10 +54,13 @@ class GenericAnnotation extends Annotation {
 
 	// functions
 	@Override
-	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
 			case "uri":
 				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
+				if (this.listOfURIs.contains(uri)) {
+					return false;
+				}
 				this.listOfURIs.add(uri);
 				
 				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
@@ -71,6 +74,9 @@ class GenericAnnotation extends Annotation {
 				break;
 			case "tag":
 				String tag = contentAnnotation[1];
+				if (this.listOfTags.contains(tag)) {
+					return false;
+				}
 				this.listOfTags.add(tag);
 				
 				modelConstants.getInstanceOfTagsKeysAvailable().updateTagsAvailable(tag);
@@ -83,6 +89,9 @@ class GenericAnnotation extends Annotation {
 				String value = contentAnnotation[2];
 				
 				if (this.listOfKeysValues.containsKey(key)) {
+					if (this.listOfKeysValues.get(key).contains(value)) {
+						return false;
+					}
 					this.listOfKeysValues.get(key).add(value);
 				}
 				else {
@@ -92,8 +101,10 @@ class GenericAnnotation extends Annotation {
 				break;
 			default:
 				System.err.println("You have to specify the type of annotation you want to create after the qualifier : uri, tag or keyvalue." + "\n");
-				break;
+				return false;
 		}
+		
+		return true;
 	}
 	
 	@Override

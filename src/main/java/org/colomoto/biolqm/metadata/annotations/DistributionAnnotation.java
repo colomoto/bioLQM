@@ -35,9 +35,13 @@ class DistributionAnnotation extends Annotation {
 	
 	// functions
 	@Override
-	protected void addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
+		if (!this.distribution.equals("")) {
+			return false;
+		}
 		this.distribution = contentAnnotation[0];
+		return true;
 	}
 	
 	@Override
