@@ -83,25 +83,22 @@ public class TestMetadataInJson {
 		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
 		
-		if (!result) {
-			System.out.println(modelMetadata.getDescriptionMetadata());
-			System.out.println("aie");
-			System.out.println(model2Metadata.getDescriptionMetadata());
-		}
-		
 		assertEquals(result, true);
 		
 		for (NodeInfo node: model.getComponents()) {
-			Metadata nodeMeta = model.getAnnotationModule().getMetadataOfNode(node);
-			Metadata node2Meta = model2.getAnnotationModule().getMetadataOfNode(node);
 			
-			if (node2Meta != null) {
-				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
+			NodeInfo node2 = null;
+        	for (NodeInfo element: model2.getComponents()) {
+        		if(node.equals(element)) {
+        			node2 = element;
+        		}
+        	}
+			
+			if (node2 != null) {
+				Metadata nodeMeta = model.getAnnotationModule().getMetadataOfNode(node);
+				Metadata node2Meta = model2.getAnnotationModule().getMetadataOfNode(node2);
 				
-				if (!resultNode) {
-					System.out.println(nodeMeta.getDescriptionMetadata());
-					System.out.println(node2Meta.getDescriptionMetadata());
-				}
+				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
 				
 				assertEquals(resultNode, true);
 			} else {

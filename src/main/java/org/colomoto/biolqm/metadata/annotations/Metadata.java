@@ -1504,7 +1504,7 @@ public class Metadata {
 		
 		JSONArray jsonArray = new JSONArray();
 		
-		for (Entry<String, Collection> entry : this.modelConstants.getCollectionsAvailable().entrySet()) {
+		for (Entry<String, Collection> entry : this.modelConstants.getOriginalCollections().entrySet()) {
 			
 			JSONObject contentCollection = new JSONObject();
 			

@@ -85,10 +85,18 @@ public class TestMetadataInSBML {
 		assertEquals(result, true);
 		
 		for (NodeInfo node: model.getComponents()) {
-			Metadata nodeMeta = model.getAnnotationModule().getMetadataOfNode(node);
-			Metadata node2Meta = model2.getAnnotationModule().getMetadataOfNode(node);
 			
-			if (node2Meta != null) {
+			NodeInfo node2 = null;
+        	for (NodeInfo element: model2.getComponents()) {
+        		if(node.equals(element)) {
+        			node2 = element;
+        		}
+        	}
+        	
+        	if (node2 != null) {
+				Metadata nodeMeta = model.getAnnotationModule().getMetadataOfNode(node);
+				Metadata node2Meta = model2.getAnnotationModule().getMetadataOfNode(node2);
+				
 				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
 				assertEquals(resultNode, true);
 			} else {

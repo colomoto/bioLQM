@@ -4,6 +4,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.HashMap;
 import java.io.InputStream;
 
@@ -34,18 +35,31 @@ public class CollectionsAvailable {
 			String pattern = (String) collection.get("pattern");
 			Boolean namespaceEmbedded = Boolean.valueOf(collection.get("namespaceEmbedded"));
 			
-			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded));
+			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded, false));
 		}
 	}
 	
 	// getters
 	public Map<String, Collection> getCollections() {		
 		return this.collections;
-	}	
+	}
+	
+	public Map<String, Collection> getOriginalCollections() {
+		
+		Map<String, Collection> originalCollections = new HashMap<String, Collection>();
+		for (Entry<String, Collection> entry : this.collections.entrySet()) {
+			String pref = entry.getKey();
+			Collection coll = entry.getValue();
+			if (coll.getOriginal()) {
+				originalCollections.put(pref, coll);
+			}
+		}
+		return originalCollections;
+	}
 	
 	public void updateCollections(String prefix, String pattern, boolean namespaceEmbedded) {
 		if (!this.collections.containsKey(prefix)) {
-			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded));
+			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded, true));
 		}
 	}
 }

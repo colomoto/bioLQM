@@ -72,4 +72,7 @@ public class ModelConstants {
 	public Map<String, Collection> getCollectionsAvailable() {
 		return this.instanceOfCollectionsAvailable.getCollections();
 	}
+	public Map<String, Collection> getOriginalCollections() {
+		return this.instanceOfCollectionsAvailable.getOriginalCollections();
+	}
 }

@@ -163,7 +163,7 @@ public class AnnotationModule {
 		json.put("nodes", jsonArray);
 		
         // Write JSON file
-        try (Writer file = new OutputStreamWriter(new FileOutputStream(filename+".json"), StandardCharsets.UTF_8)) {
+        try (Writer file = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8)) {
         	
             file.write(json.toString());
             file.flush();
