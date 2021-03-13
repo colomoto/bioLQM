@@ -27,7 +27,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	private final ModelGrouping pclist; 
 	private final boolean isComplete = false;
-	private final String name = "Priorities";
+	private static final String name = "Priorities";
 
 	public PriorityUpdater(LogicalModel model, String setup) {
 		this((setup == null) ? new ModelGrouping(model) : new ModelGrouping(model, setup));
@@ -96,7 +96,11 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	@Override
 	public String getUpdaterName() {
-		return this.name;
+		return getUpdaterClassName();
+	}
+
+	public static String getUpdaterClassName() {
+		return name;
 	}
 
 }

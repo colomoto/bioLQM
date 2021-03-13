@@ -45,8 +45,10 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterFactory2;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.testReadUp;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
@@ -58,12 +60,14 @@ public class PriorityClassPanel extends JPanel {
 	private static final long serialVersionUID = -6249588129185682333L;
 	public static final Color LIGHT_RED = new Color(255, 120, 120);
 
-	private final int GROUP_WIDTH = 80;
+	private final int GROUP_WIDTH = 83;
 	// HEIGHT = 19 because it needs to match the (rates) textbox height
 	private final int GROUP_HEIGHT = 19;
 	private final int CLASS_SPACING = 15;
 
 	private boolean guiMultipSuc;
+	private boolean multiUpdater;
+	private boolean singleUpdater;
 
 	private List<List<JList<String>>> guiClasses;
 	private ModelGrouping mpc;
@@ -88,8 +92,15 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc) {
+		this(mpc, guiMultipSuc, false, true);
+	}
+	
+	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc,
+			boolean multiUpdater, boolean singleUpdater) {
 		this.mpc = mpc;
 		this.guiMultipSuc = true; //
+		this.multiUpdater = multiUpdater;
+		this.singleUpdater = singleUpdater;
 		
 		this.setLayout(new BorderLayout());
 
@@ -102,7 +113,8 @@ public class PriorityClassPanel extends JPanel {
 
 		// CENTER PANEL
 		
-		this.jpCenter = new JPanel(new GridBagLayout());
+		this.jpCenter = new CenterPanelPriorityPanel();
+		this.jpCenter.setLayout(new GridBagLayout());
 		this.jpCenter.addMouseListener(new MouseListener() {
 
 			@Override
@@ -126,11 +138,9 @@ public class PriorityClassPanel extends JPanel {
 			}
 		});
 		
-		this.jpCenter.setBackground(Color.blue);
         JScrollPane scrollPane = new JScrollPane(this.jpCenter,
-                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//		scrollPane.setVerticalScrollBar(null);
+        		ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+        		ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.add(scrollPane , BorderLayout.CENTER);
 		
 
@@ -314,7 +324,8 @@ public class PriorityClassPanel extends JPanel {
 
 		for (int idxPC = 0; idxPC < mpc.size(); idxPC++) { 
 			this.guiClasses.add(new ArrayList<JList<String>>());
-			JPanel jpPClass = new JPanel(new BorderLayout());
+			JPanel jpPClass = new JPanel();
+			jpPClass.setLayout(new BorderLayout());
 			jpPClass.setAlignmentY(TOP_ALIGNMENT);
 			JPanel jpPClassHeader = new JPanel(new BorderLayout());
 			jpPClass.add(jpPClassHeader, BorderLayout.NORTH);
@@ -360,6 +371,7 @@ public class PriorityClassPanel extends JPanel {
 			}
 
 			// Groups Panel inside a class
+			
 			JPanel jpGroups = new JPanel(new GridBagLayout());
 			GridBagConstraints gbcG = new GridBagConstraints();
 			gbcG.insets = new Insets(3, 3, 3, 3);
@@ -379,8 +391,7 @@ public class PriorityClassPanel extends JPanel {
 				JPanel groupHeader = new JPanel();
 				
 				// get supported updaters
-				JComboBox<String> jcbUpdaters = new JComboBox<String>(ModelGrouping.getUpdatersAvailable());
-				
+				JComboBox<String> jcbUpdaters = new JComboBox<String>(testReadUp.getSupportedUpdaters(multiUpdater, singleUpdater));
 				if (this.guiMultipSuc) {
 					JButton moveUp = this.getNoMargins("↑");
 					moveUp.setActionCommand("" + idxPC + "," + idxGroup);
@@ -424,15 +435,16 @@ public class PriorityClassPanel extends JPanel {
 					groupHeader.add(moveDown);
 				}
 				groupHeader.add(jcbUpdaters);
+				groupHeader.setMinimumSize(getPreferredSize());
 	
 				// get the updaterName from that group
-				String updaterName = mpc.getGroupUpdaterName(idxPC, idxGroup);
+				String updaterName = ((LogicalModelUpdater) mpc.getUpdater(idxPC, idxGroup)).getUpdaterName();
+//				String updaterName = mpc.getGroupUpdaterName(idxPC, idxGroup);
 				jcbUpdaters.setSelectedItem(updaterName);
 				
 				// save updater with idxPC and idxGroup !
 				pcIdxGroup.put(jcbUpdaters, new int[] {idxPC, idxGroup});
-				
-				
+
 				jcbUpdaters.addActionListener(new ActionListener() {
 					@Override
 		            public void actionPerformed(ActionEvent e) {
@@ -443,23 +455,13 @@ public class PriorityClassPanel extends JPanel {
 	                	int[] idx = pcIdxGroup.get(e.getSource());
 	                	Map<JTextField, String> textfields = null;
 
-		                switch (up) {
-		                    case "Synchronous":
-		                		updater = new SynchronousUpdater(mpc.getModel());
-		                		mpc.addUpdater(idx[0], idx[1], updater);
-		                        break;
-		                        
-		                    case "Random uniform":
-		                    	MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(mpc.getModel());
-		                    	updater = new RandomUpdaterWrapper(MultiUpdater);
-
-		                		mpc.addUpdater(idx[0], idx[1], updater);
-		                        break;
-		                        
+		                switch (up) {	                        
 		                    case "Random non uniform":
 		                    	validateTextRates(idx[0],idx[1], textfields);
 		                        break;
 		                    default:
+		                    	updater = UpdaterFactory2.getUpdater(mpc.getModel(), up);
+		                		mpc.addUpdater(idx[0], idx[1], updater);
 		                        break;
 		                }
 						fireActionEvent();
@@ -628,18 +630,22 @@ public class PriorityClassPanel extends JPanel {
 				jpPClass.add(jpTmpAll, BorderLayout.SOUTH);
 			}
 
-			jpPClass.setMinimumSize(new Dimension( 2 * GROUP_WIDTH, 5 * GROUP_WIDTH)); // FIXME
-			jpPClass.setMaximumSize(new Dimension( 2 * GROUP_WIDTH, 5 * GROUP_WIDTH));
+			jpPClass.setMinimumSize(new Dimension(jpPClass.getPreferredSize().width,
+					jpCenter.getHeight())); // FIXME
+			
+//			jpPClass.setMaximumSize(new Dimension(jpPClass.getPreferredSize().width,
+//					jpCenter.getHeight()));
 
 			this.jpCenter.add(jpPClass, gdcCenter);
 			gdcCenter.gridx++;
 			this.jpCenter.add(Box.createRigidArea(new Dimension(this.CLASS_SPACING, 10)), gdcCenter);
 			gdcCenter.gridx++;
+			
 		}
 		updateGUI();
 	}
 	
-	private JPanel ratesPanel(int idxPC, int idxGroup, List<String> vars) {
+	private JPanel ratesPanel(int idxPC, 	int idxGroup, List<String> vars) {
 		// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 		
 		Map<String, Double> rates = new HashMap<String, Double>();
@@ -862,50 +868,50 @@ public class PriorityClassPanel extends JPanel {
 			} 
 		}
 
-	private void enableButtons() {
-		
-		if (mpc.size() == 1) 
-			jbSingle.setEnabled(false);
-		
-		
-		Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
-		 
-		all: for (int i = 0; i < this.guiClasses.size(); i++) {
-			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
-				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
-				if (!values.isEmpty()) {
-					List<String> vars = new ArrayList<String>();
-					vars.addAll(values);
-					groupsSel.put(g, vars);
-					if (!this.guiMultipSuc) {
-						mpc.incPriorities(i, groupsSel, this.guiMultipSuc);
-						break all;
-						}
-				}
-			} if (!groupsSel.isEmpty()) { 
-				mpc.incPriorities(i, groupsSel, this.guiMultipSuc);
-				break all;
-			}
-		}
-		
-		jbSplit.setEnabled(false);
-		jbUnsplit.setEnabled(false);
-		jbCollapse.setEnabled(false);
-		jbExpand.setEnabled(false);
-		jbIncGroup.setEnabled(false);
-		jbDecGroup.setEnabled(false);
-		jbIncClass.setEnabled(false);
-		jbDecClass.setEnabled(false);
-		
-		if (groupsSel.size() == 1) {
-			jbIncGroup.setEnabled(true);
-			jbDecGroup.setEnabled(true);
-			jbIncClass.setEnabled(true);
-			jbDecClass.setEnabled(true);
-
-		}
-	
-	}
+//	private void enableButtons() {
+//		
+//		if (mpc.size() == 1) 
+//			jbSingle.setEnabled(false);
+//		
+//		
+//		Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
+//		 
+//		all: for (int i = 0; i < this.guiClasses.size(); i++) {
+//			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+//				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+//				if (!values.isEmpty()) {
+//					List<String> vars = new ArrayList<String>();
+//					vars.addAll(values);
+//					groupsSel.put(g, vars);
+//					if (!this.guiMultipSuc) {
+//						mpc.incPriorities(i, groupsSel, this.guiMultipSuc);
+//						break all;
+//						}
+//				}
+//			} if (!groupsSel.isEmpty()) { 
+//				mpc.incPriorities(i, groupsSel, this.guiMultipSuc);
+//				break all;
+//			}
+//		}
+//		
+//		jbSplit.setEnabled(false);
+//		jbUnsplit.setEnabled(false);
+//		jbCollapse.setEnabled(false);
+//		jbExpand.setEnabled(false);
+//		jbIncGroup.setEnabled(false);
+//		jbDecGroup.setEnabled(false);
+//		jbIncClass.setEnabled(false);
+//		jbDecClass.setEnabled(false);
+//		
+//		if (groupsSel.size() == 1) {
+//			jbIncGroup.setEnabled(true);
+//			jbDecGroup.setEnabled(true);
+//			jbIncClass.setEnabled(true);
+//			jbDecClass.setEnabled(true);
+//
+//		}
+//	
+//	}
 	
 	private void collapseRanks() {
 		this.mpc.collapseRanks();

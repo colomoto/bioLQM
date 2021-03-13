@@ -30,7 +30,7 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 	
 	// cached state to save the current state after updating each block
 	private final byte[] tmp_state;
-	private final String name = "Block Sequential";
+	private static final String name = "Block Sequential";
 
 	public BlockSequentialUpdater(ModelGrouping grouping) {
 		this(grouping.getModel(), grouping.getDeterministicBlocks());
@@ -86,7 +86,11 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 
 	@Override
 	public String getUpdaterName() {
-		return this.name;
+		return getUpdaterClassName();
+	}
+
+	public static String getUpdaterClassName() {
+		return name;
 	}
 
 }

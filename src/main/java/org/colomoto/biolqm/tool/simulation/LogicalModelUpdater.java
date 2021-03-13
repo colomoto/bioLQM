@@ -20,7 +20,8 @@ import java.util.Map;
  */
 public interface LogicalModelUpdater {
 
-    LogicalModel getModel();
+	LogicalModel getModel();
     void setFilter(Map<NodeInfo, SplittingType> filter);
-    String getUpdaterName();
+	String getUpdaterName();
+
 }

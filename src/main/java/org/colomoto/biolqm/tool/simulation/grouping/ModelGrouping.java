@@ -45,7 +45,6 @@ public class ModelGrouping {
 		this.model = m;
 		this.pcList = new ArrayList<>();
 		
-		System.out.print(testReadUp.getUpdater("Synchronous", m));
 
 		// Init single class with a single synchronous group
 		List<VarInfo> vars = new ArrayList<VarInfo>();
@@ -676,6 +675,7 @@ public class ModelGrouping {
 				break;
 			}
 		}
+		
 	}
 	
 	public void acceptGUI() {
@@ -888,6 +888,8 @@ public class ModelGrouping {
 		public boolean remove(int idxVar, int splitFlag) {
 			for (int g = 0; g < this.groups.size(); g++) {
 				if (this.remove(g, idxVar, splitFlag)) {
+					if (this.groups.get(g).isEmpty())
+						this.removeGrp(g);
 					return true;
 				}
 			}
@@ -1283,16 +1285,20 @@ public class ModelGrouping {
 				
 		public void acceptVars() {
 						
-			for (int i = 0; i < this.vars.size(); i++) {
-				NodeInfo node = model.getComponents().get(this.vars.get(i).idx);
-				// find Node with var nodeID
+			List<VarInfo> tempVars = new ArrayList<VarInfo>();
+			tempVars.addAll(this.vars);
+
 			
-				if (i < this.vars.size() - 2 && !(this.vars.get(i).flag == 0) 
-						&& this.vars.get(i).idx == this.vars.get(i+1).idx) {
+			for (int i = 0; i < tempVars.size(); i++) {
+			
+				if ((i < tempVars.size() - 2) && !(tempVars.get(i).flag == 0) 
+						&& tempVars.get(i).idx == tempVars.get(i+1).idx) {
 					// we want to merge this.vars
 					// except if random rate ?
 					if (!(this.updater instanceof RandomUpdaterWithRates)) {
-						this.unsplit(this.vars.get(i).idx, -1);
+						this.remove(tempVars.get(i).idx,-1);
+						this.remove(tempVars.get(i).idx,+1);
+						this.add(tempVars.get(i).idx,0);
 					}
 				}
 			}

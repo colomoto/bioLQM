@@ -14,7 +14,7 @@ import java.util.List;
 public class AsynchronousUpdater extends AbstractMultipleSuccessorUpdater {
 
     private final int[] changes;
-    private final String name = "Asynchronous";
+    private static final String name = "Asynchronous";
 
 
 	/**
@@ -55,8 +55,13 @@ public class AsynchronousUpdater extends AbstractMultipleSuccessorUpdater {
 		return successors;
 	}
 	
-    public String getUpdaterName() {
-    	return this.name;
-    }
+	@Override
+	public String getUpdaterName() {
+		return getUpdaterClassName();
+	}
+
+	public static String getUpdaterClassName() {
+		return name;
+	}
 
 }

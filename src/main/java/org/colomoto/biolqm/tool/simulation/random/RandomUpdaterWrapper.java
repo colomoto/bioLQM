@@ -56,9 +56,9 @@ public class RandomUpdaterWrapper implements RandomUpdater {
         updater.setFilter(filter);
     }
 
+    @Override
 	public String getUpdaterName() {
-		//return "Random " + this.updater.getUpdaterName();
-		return "Random uniform";
+		return "Random " + this.updater.getUpdaterName();
 	}
     
 }

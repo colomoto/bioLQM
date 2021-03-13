@@ -26,7 +26,7 @@ public class testReadUp {
 			AsynchronousUpdater.class, CompleteUpdater.class, PriorityUpdater.class};
 	
 		
-	public static List getSupportedUpdaters(boolean multi, boolean single) {
+	public static String[] getSupportedUpdaters(boolean multi, boolean single) {
 		ResourceBundle bundle = ResourceBundle.getBundle("Updaters");
 		List<String> updaters = new ArrayList<String>();
 		if (multi) {
@@ -42,8 +42,12 @@ public class testReadUp {
 					updaters.add(updater);
 			}
 		}
-					
-		return updaters;
+		String[] updatersArray = new String[updaters.size()];
+		for (int i = 0; i < updaters.size(); i++)
+			updatersArray[i] = updaters.get(i);
+		
+
+		return updatersArray;
 	}
 	
 	public static LogicalModelUpdater getUpdater(String updaterName, LogicalModel m) {
@@ -57,38 +61,34 @@ public class testReadUp {
 		}
 		
 		for (Class<?> updaterClass : availableUpdaters) {
-			try {
-				Method method = updaterClass.getMethod("getUpdaterName");
+				Method method = null;
 				try {
-					String name = (String) method.invoke(null);
+					method = updaterClass.getMethod("getUpdaterClassName");
+				} catch (NoSuchMethodException | SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					String name = null;
+					try {
+						name = (String) method.invoke(null);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					if (name.equals(updaterName)) {
+						BaseUpdater newUpdater = null;
 						try {
-							BaseUpdater newUpdater = (BaseUpdater) updaterClass.
-									getConstructor(LogicalModel.class).newInstance(m);
-							return newUpdater;
-						} catch (InstantiationException e) {
+							newUpdater = (BaseUpdater) updaterClass.
+										getConstructor(LogicalModel.class).newInstance(m);
+						} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+								| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						return newUpdater;
+
 					}
-				} catch (IllegalAccessException e) {
-					System.out.println("FAILED");
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	
 		return null;

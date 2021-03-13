@@ -145,16 +145,14 @@ public class TestPriorityClasses {
 				"C" + ModelGrouping.SEPGROUP +
 				"D" + ModelGrouping.SEPGROUP +
 				"E", mpc.toString());
-		
-		
+				
 		ModelGrouping mpc2 = new ModelGrouping(model,
 				"A" + ModelGrouping.SEPVAR +
 				"B" + ModelGrouping.SEPVAR +
 				"C" + ModelGrouping.SEPVAR +
 				"D" + ModelGrouping.SEPVAR +
 				"E");
-		
-		
+				
 		mpc2.addUpdater(0, 0, new RandomUpdaterWithRates(model));
 		String aa = mpc2.toString();
 		assertEquals(
@@ -162,11 +160,6 @@ public class TestPriorityClasses {
 				"C" + ModelGrouping.SEPVAR +
 				"D" + ModelGrouping.SEPVAR +
 				"E" + ModelGrouping.SEPUPDATER +
-				"RN[1.0,1.0,1.0,1.0]", mpc2.toString());
-		
-	}
-	
-	
-	
-	
+				"RN[1.0,1.0,1.0,1.0]", mpc2.toString());	
+	}		
 }

@@ -18,7 +18,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     // the rates associated to each component
     private final double[] rates;
-    private final String name = "Random non uniform";
+    private static final String name = "Random non uniform";
 
 	/**
 	 * Create a new random random
@@ -158,8 +158,12 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
     	return this.rates;
     }
 
-	@Override
+    @Override
 	public String getUpdaterName() {
-		return this.name;
+		return getUpdaterClassName();
+	}
+
+	public static String getUpdaterClassName() {
+		return name;
 	}
 }

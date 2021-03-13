@@ -6,6 +6,8 @@ import org.colomoto.biolqm.LogicalModel;
 
 public class RandomAsynchUpdater extends AbstractRandomUpdater{
 
+	private static String name;
+
 	public RandomAsynchUpdater(LogicalModel model) {
 		super(model);
 	}
@@ -55,9 +57,7 @@ public class RandomAsynchUpdater extends AbstractRandomUpdater{
 
 	@Override
 	public String getUpdaterName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
-
 
 }

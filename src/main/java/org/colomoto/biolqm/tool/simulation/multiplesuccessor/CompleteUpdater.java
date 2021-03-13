@@ -18,7 +18,7 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
 
     private final int[] changes;
     private final int[] changing;
-    private final String name = "Complete";
+    private static final String name = "Complete";
 	/**
 	 * Create a new full random.
 	 * 
@@ -82,9 +82,13 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
         }
     }
 
-	@Override
+    @Override
 	public String getUpdaterName() {
-		return this.name;
+		return getUpdaterClassName();
+	}
+
+	public static String getUpdaterClassName() {
+		return name;
 	}
 
 }

@@ -1,3 +1,4 @@
+
 package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
@@ -16,7 +17,7 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 	 * @param model the model for which the random is constructed
 	 */
 
-	public String name = "Synchronous";
+	public static String name = "Synchronous";
 	
 	public SynchronousUpdater(LogicalModel model) {
 		super(model);
@@ -34,11 +35,14 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 
 		return nextstate;
 	}
-
+	
 	@Override
 	public String getUpdaterName() {
-		return this.name;
+		return getUpdaterClassName();
+	}
+
+	public static String getUpdaterClassName() {
+		return name;
 	}
 	
-
 }
