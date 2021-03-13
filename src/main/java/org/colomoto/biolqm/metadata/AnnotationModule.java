@@ -49,7 +49,7 @@ public class AnnotationModule {
 	/**
 	 * Create a Metadata object for a node of the model
 	 *
-	 * @param node the node you want to annotate
+	 * @param nodeId the node you want to annotate
 	 * @return the Metadata object you created for the node
 	 * @throws Exception 
 	 */
@@ -76,7 +76,7 @@ public class AnnotationModule {
 	/**
 	 * Check if a metadata object exists for a node
 	 *
-	 * @param node the node you want to check
+	 * @param nodeId the node you want to check
 	 * @return true if it exists, false otherwise
 	 */	
 	public boolean isSetMetadataOfNode(String nodeId) {
@@ -89,7 +89,7 @@ public class AnnotationModule {
 	/**
 	 * Retrieve the Metadata object of the node
 	 * 
-	 * @param node the node you want to annotate
+	 * @param nodeId the node you want to annotate
 	 * @return the existing Metadata of the node. Create it if it does not exist.
 	 * @throws Exception 
 	 */

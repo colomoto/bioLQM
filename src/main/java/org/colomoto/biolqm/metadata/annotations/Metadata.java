@@ -1540,7 +1540,7 @@ public class Metadata {
 	/**
 	 * Permits to compare one object Metadata to another (internal use)
 	 * 
-	 * @param the Metadata object you want to compare to this
+	 * @param obj the Metadata object you want to compare to this
 	 * @return true if they are equals, false otherwise
 	 */
 	public boolean sameMetadata(Object obj) {
