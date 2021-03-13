@@ -156,12 +156,12 @@ public class PriorityClassPanel extends JPanel {
 		jpSouth.setBorder(BorderFactory.createTitledBorder("Components"));
 		
 		
-		JPanel jpMove= new JPanel(new GridBagLayout());
+		JPanel jpMove= new JPanel();
 		jpMove.setBorder(BorderFactory.createTitledBorder("Move"));
-		GridBagConstraints gbcM = new GridBagConstraints();
-        gbcM.insets = new Insets(4, 4, 4, 4);
-        gbcM.gridx = 0;
-        gbcM.gridy = 0;
+//		GridBagConstraints gbcM = new GridBagConstraints();
+//        gbcM.insets = new Insets(4, 4, 4, 4);
+//        gbcM.gridx = 0;
+//        gbcM.gridy = 0;
         
 
 		this.jbIncClass.addActionListener(new ActionListener() {
@@ -173,9 +173,9 @@ public class PriorityClassPanel extends JPanel {
 		});
 		
 
-		jpMove.add(this.jbIncClass, gbcM);
+		jpMove.add(this.jbIncClass);
 		
-		gbcM.gridy ++;
+//		gbcM.gridy ++;
 
 		this.jbDecClass.addActionListener(new ActionListener() {
 			@Override
@@ -185,19 +185,19 @@ public class PriorityClassPanel extends JPanel {
 			}
 		});
 		
-		jpMove.add(this.jbDecClass, gbcM);
+		jpMove.add(this.jbDecClass);
 
-		JPanel jpMerge= new JPanel(new GridBagLayout());
+		JPanel jpMerge= new JPanel();
 		jpMerge.setBorder(BorderFactory.createTitledBorder("Group"));
-		GridBagConstraints gbcMm = new GridBagConstraints();
-        gbcMm.insets = new Insets(4, 4, 4, 4);
-        gbcMm.gridx = 0;
-        gbcMm.gridy = 0;
+//		GridBagConstraints gbcMm = new GridBagConstraints();
+//        gbcMm.insets = new Insets(4, 4, 4, 4);
+//        gbcMm.gridx = 0;
+//        gbcMm.gridy = 0;
         
 		if (this.guiMultipSuc) {
 			
-			gbcM.gridx ++;
-			gbcM.gridy --;
+//			gbcM.gridx ++;
+//			gbcM.gridy --;
 			
 			this.jbIncGroup.addActionListener(new ActionListener() {
 				@Override
@@ -206,9 +206,9 @@ public class PriorityClassPanel extends JPanel {
 					updateGUI();
 				}
 			});
-			jpMove.add(this.jbIncGroup, gbcM);
+			jpMove.add(this.jbIncGroup);
 			
-			gbcM.gridy ++;
+//			gbcM.gridy ++;
 
 			this.jbDecGroup.addActionListener(new ActionListener() {
 				@Override
@@ -217,7 +217,7 @@ public class PriorityClassPanel extends JPanel {
 					updateGUI();
 				}
 			});
-			jpMove.add(this.jbDecGroup, gbcM);
+			jpMove.add(this.jbDecGroup);
 			
 
 			// Collapse groups -- Sync class
@@ -230,8 +230,8 @@ public class PriorityClassPanel extends JPanel {
 				}
 			});
 			
-			jpMerge.add(jbCollapse, gbcMm);
-			gbcMm.gridy ++;
+			jpMerge.add(jbCollapse);
+//			gbcMm.gridy ++;
 			
 			// Expand groups -- Async class
 			this.jbExpand = this.getNoMargins("Ungroup");
@@ -243,17 +243,17 @@ public class PriorityClassPanel extends JPanel {
 				}
 			});
 			
-			jpMerge.add(jbExpand, gbcMm);
+			jpMerge.add(jbExpand);
 
 		}
 		
 		
-		JPanel jpSplit = new JPanel(new GridBagLayout());
+		JPanel jpSplit = new JPanel();
 		jpSplit.setBorder(BorderFactory.createTitledBorder("Split"));
-		GridBagConstraints gbcS = new GridBagConstraints();
-        gbcS.insets = new Insets(4, 4, 4, 4);
-        gbcS.gridx = 0;
-        gbcS.gridy = 0;
+//		GridBagConstraints gbcS = new GridBagConstraints();
+//        gbcS.insets = new Insets(4, 4, 4, 4);
+//        gbcS.gridx = 0;
+//        gbcS.gridy = 0;
         
 		this.jbSplit = this.getNoMargins("Split");
 		jbSplit.addActionListener(new ActionListener() {
@@ -264,8 +264,8 @@ public class PriorityClassPanel extends JPanel {
 			}
 		});
 		
-		jpSplit.add(jbSplit, gbcS);
-		gbcS.gridy++;
+		jpSplit.add(jbSplit);
+//		gbcS.gridy++;
 		
 		this.jbUnsplit = this.getNoMargins("Unsplit");
 		jbUnsplit.addActionListener(new ActionListener() {
@@ -276,14 +276,14 @@ public class PriorityClassPanel extends JPanel {
 			}
 		});
 
-		jpSplit.add(jbUnsplit,gbcS);
-		jpSouth.add(jpMove, gbcC);
+		jpSplit.add(jbUnsplit);
+		jpSouth.add(jpMove);
 		
-		gbcC.gridx ++;
-		jpSouth.add(jpSplit, gbcC);
-		gbcC.gridx ++;
+//		gbcC.gridx ++;
+		jpSouth.add(jpSplit);
+//		gbcC.gridx ++;
 		if (this.guiMultipSuc)
-			jpSouth.add(jpMerge, gbcC);
+			jpSouth.add(jpMerge);
 		
 		jpSouthCenter.add(jpSouth, BorderLayout.CENTER);
 		
