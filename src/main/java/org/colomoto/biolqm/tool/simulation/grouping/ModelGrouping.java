@@ -1388,15 +1388,8 @@ public class ModelGrouping {
 		
 		public VarInfo(int idx, int flag, LogicalModel model) {
 			this.model = model;
-			this.idx =  -1;
-			this.flag =  -1;
-			if (idx < model.getComponents().size() && idx >= 0) {
-				if (!model.getComponents().get(idx).isInput())
-					this.idx = idx;
-			}
-			
-			if (flag > -2 && flag < 2)
-				this.flag = flag;
+			this.idx = idx;
+			this.flag = flag;
 		}
 		
 		public void setFlag(int flag) {
