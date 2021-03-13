@@ -247,7 +247,6 @@ public class PriorityClassPanel extends JPanel {
 
 		}
 		
-		
 		JPanel jpSplit = new JPanel();
 		jpSplit.setBorder(BorderFactory.createTitledBorder("Split"));
 //		GridBagConstraints gbcS = new GridBagConstraints();

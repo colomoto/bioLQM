@@ -1,28 +1,22 @@
 
 package org.colomoto.biolqm.tool.simulation.grouping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
-import org.hamcrest.core.IsInstanceOf;
 /**
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
@@ -32,14 +26,13 @@ public class ModelGrouping {
 	public static final String SEPVAR = ",";
 	public static final String SEPGROUP = "/";
 	public static final String SEPCLASS = ":";
-	
 	public static final String SEPUPDATER = "$";
 	public static final String[] updatersList = 
 			new String[] {"Random uniform", "Random non uniform", "Synchronous"};
 
 	protected LogicalModel model;
 	private List<RankedClass> pcList;
-
+	
 
 	public ModelGrouping(LogicalModel m) { 
 		this.model = m;
@@ -50,7 +43,7 @@ public class ModelGrouping {
 		List<VarInfo> vars = new ArrayList<VarInfo>();
 		for (int n = 0; n < this.model.getComponents().size(); n++) {
 			if (!this.model.getComponents().get(n).isInput())
-				vars.add(new VarInfo(n,0));
+				vars.add(new VarInfo(n, 0, model));
 		}
 		this.pcList.add(new RankedClass(new RankedClassGroup(vars)));
 	}
@@ -64,11 +57,62 @@ public class ModelGrouping {
 		}
 	}
 
-	private ModelGrouping(LogicalModel m, List<RankedClass> pcList) {
+	public ModelGrouping(LogicalModel m, List<RankedClass> pcList) throws Exception {
 		this.model = m;
 		this.pcList = pcList;
 	}
 	
+	// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
+	public ModelGrouping(LogicalModel m, Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks) 
+			throws Exception {
+		this.model = m;
+		this.pcList = new ArrayList<>();
+	
+		Set<VarInfo> varsTaken = new HashSet<VarInfo>();
+		
+		for (int i= 0; i < this.model.getComponents().size(); i++) {
+			if (!this.model.getComponents().get(i).isInput()) {
+				varsTaken.add(new VarInfo(i, 0, model));
+				varsTaken.add(new VarInfo(i, -1, model));
+				varsTaken.add(new VarInfo(i, 1, model));
+			}
+		}
+		
+		for (int rank = 0; rank < ranks.keySet().size(); rank ++) {
+			if (!ranks.keySet().contains(rank))
+				throw new Exception("Rank order not correct"); 
+		}
+		
+		for (Integer rank : ranks.keySet()) {
+			List<RankedClassGroup> rankGroups = new ArrayList<>();
+			
+			for (List<VarInfo> vars : ranks.get(rank).keySet()) {
+				
+				for (VarInfo var : vars) {
+					
+					if (model.getComponents().get(var.idx).isInput())
+						throw new Exception("Var is input: " + var.toString()); 
+					if (varsTaken.contains(var)) {
+						throw new Exception("Duplicate var: " + var.toString()); 
+					} else {
+						if (var.flag == 0) {
+							varsTaken.remove(var);
+							varsTaken.remove(new VarInfo(var.idx, -1, model));
+							varsTaken.remove(new VarInfo(var.idx, 1, model));
+						} else {
+							varsTaken.remove(var);
+							varsTaken.remove(new VarInfo(var.idx, 0, model));
+						}
+					}			
+				}
+				RankedClassGroup newGroup = new RankedClassGroup(vars, ranks.get(rank).get(vars));
+				rankGroups.add(newGroup);
+			}
+			this.pcList.add(new RankedClass(rankGroups));
+		}	
+		
+	}
+
 
 	public LogicalModel getModel() {
 		return this.model;
@@ -101,11 +145,16 @@ public class ModelGrouping {
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		}
-		return new ModelGrouping(this.model, pcNew);
+		try {
+			return new ModelGrouping(this.model, pcNew);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	// FIXME: hack for EpiLog to pass modified/perturbed models to the PriorityUpdater
-	public ModelGrouping cloneWithModel(LogicalModel modifiedModel) {
+	public ModelGrouping cloneWithModel(LogicalModel modifiedModel) throws Exception {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
@@ -228,12 +277,14 @@ public class ModelGrouping {
 				if (this.model.getComponents().get(idx).getNodeID().equals(var)) {
 					// If group contains var
 					if (this.pcList.get(idxPC).contains(idxGrp, idx, splitFlag)) {
-						this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
+						this.pcList.get(idxPC).remove(idxGrp, idx
+								
+								, splitFlag);
 					}
 					// If a new class is needed
 					if ((idxPC + 1) == this.pcList.size()) {
 						List<VarInfo> newvar = new ArrayList<VarInfo>();
-						newvar.add(new VarInfo(idx, splitFlag));
+						newvar.add(new VarInfo(idx, splitFlag, model));
 						this.pcList.add(new RankedClass(new RankedClassGroup(newvar)));
 					} else {
 						this.pcList.get(idxPC + 1).add(0, idx, splitFlag);
@@ -272,7 +323,7 @@ public class ModelGrouping {
 						this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
 						if ((idxGrp + 1) == this.pcList.get(idxPC).size()) {
 							List<VarInfo> newVar = new ArrayList<VarInfo>();
-							newVar.add(new VarInfo(idx, splitFlag));
+							newVar.add(new VarInfo(idx, splitFlag, model));
 							this.pcList.get(idxPC).addGrp(idxGrp + 1, new RankedClassGroup(newVar));
 						} else {
 							this.pcList.get(idxPC).add(idxGrp + 1, idx, splitFlag);
@@ -308,7 +359,7 @@ public class ModelGrouping {
 						this.pcList.get(idxPC).remove(idxGrp, idx, splitFlag);
 						if (idxGrp == 0) {
 							List<VarInfo> newVar = new ArrayList<VarInfo>();
-							newVar.add(new VarInfo(idx, splitFlag));
+							newVar.add(new VarInfo(idx, splitFlag, model));
 							
 							// if it was in the top group, create a new one and make it top
 							// add variable to it
@@ -429,7 +480,7 @@ public class ModelGrouping {
 			// If a new class is needed
 			if (idxPC == 0) {
 				List<VarInfo> var = new ArrayList<VarInfo>();
-				var.add(new VarInfo(newvars[0], newvars[1]));
+				var.add(new VarInfo(newvars[0], newvars[1], model));
 				this.pcList.add(0, new RankedClass(new RankedClassGroup(var)));
 				idxPC++;
 			} else {
@@ -491,7 +542,7 @@ public class ModelGrouping {
 									// creates new group with var
 									
 									List<VarInfo> varList = new ArrayList<VarInfo>();
-									varList.add(new VarInfo(idx, splitFlag));									
+									varList.add(new VarInfo(idx, splitFlag, model));									
 									
 									RankedClassGroup newGroup = new RankedClassGroup(varList);
 									int rankSize = this.pcList.get(idxPC).size();
@@ -718,11 +769,18 @@ public class ModelGrouping {
 
 		private List<RankedClassGroup> groups;
 
+		public RankedClass() {
+			this.groups = new ArrayList<>();
+		}
+		
 		public RankedClass(RankedClassGroup pcg) {
 			this.groups = new ArrayList<>();
 			this.groups.add(pcg);
 		}
-
+		
+		public RankedClass(List<RankedClassGroup> groups) {
+			this.groups = groups;
+		}
 
 		public RankedClass(LogicalModel m, String textFormat) {
 			this.groups = new ArrayList<>();
@@ -840,7 +898,7 @@ public class ModelGrouping {
 				List<VarInfo> vars = pcg.array();
 				for (int i = 0; i < vars.size(); i ++) {
 					List<VarInfo> varList = new ArrayList<VarInfo>();
-					varList.add(new VarInfo(vars.get(i).idx,vars.get(i).flag));
+					varList.add(new VarInfo(vars.get(i).idx,vars.get(i).flag, model));
 					RankedClassGroup pcgNew = new RankedClassGroup(varList);
 					lPCGs.add(pcgNew);
 				}
@@ -992,7 +1050,7 @@ public class ModelGrouping {
 						if (node.isInput()) {
 							continue vars;
 						} else {
-							varsInfo.add(new VarInfo(idx, split));
+							varsInfo.add(new VarInfo(idx, split, model));
 							break;
 						}
 					}
@@ -1074,8 +1132,8 @@ public class ModelGrouping {
 			for (int i = 0; i < this.vars.size(); i ++) {
 				if (this.vars.get(i).idx == idx)	{
 					this.vars.remove(i);
-					this.vars.add(new VarInfo(idx, -1));
-					this.vars.add(new VarInfo(idx, 1));
+					this.vars.add(new VarInfo(idx, -1, model));
+					this.vars.add(new VarInfo(idx, 1, model));
 					this.setVars(this.vars);
 					break;
 				}	
@@ -1133,7 +1191,7 @@ public class ModelGrouping {
 			if (this.contains(idx, splitFlag))
 				return false;
 
-			this.vars.add(new VarInfo(idx, splitFlag));
+			this.vars.add(new VarInfo(idx, splitFlag, model));
 			this.setVars(this.vars);
 			return true;
 		}
@@ -1322,12 +1380,14 @@ public class ModelGrouping {
 		}
 	}
 	
-	public class VarInfo implements Comparable<VarInfo> {
+	public static class VarInfo implements Comparable<VarInfo> {
 		
 		public int idx;
 		public int flag;
+		public LogicalModel model;
 		
-		VarInfo(int idx, int flag) {
+		public VarInfo(int idx, int flag, LogicalModel model) {
+			this.model = model;
 			this.idx =  -1;
 			this.flag =  -1;
 			if (idx < model.getComponents().size() && idx >= 0) {
@@ -1366,7 +1426,7 @@ public class ModelGrouping {
 		 }
 		
 		public VarInfo clone() {
-			return new VarInfo(this.idx, this.flag);
+			return new VarInfo(this.idx, this.flag, this.model);
 			
 		}
    
