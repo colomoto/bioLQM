@@ -375,7 +375,7 @@ public class SBMLqualExport extends BaseExporter {
         }
     }
 	
-	private void exportElementMetadata(SBase element, Metadata metadata, String type) throws Exception {
+	private void exportElementMetadata(SBase element, Metadata metadata, String type) {
 		
 		if (metadata.isMetadataNotEmpty()) {
 			Annotation annotation = metadata.getSBMLOfMetadata();
@@ -400,7 +400,7 @@ public class SBMLqualExport extends BaseExporter {
 		}
 	}
 	
-	private void exportAllMetadata() throws Exception {
+	private void exportAllMetadata() {
 		
 		Metadata metadataModel = this.model.getAnnotationModule().getMetadataOfModel();
 		
@@ -413,11 +413,16 @@ public class SBMLqualExport extends BaseExporter {
 			NodeInfo node = entry.getKey();
 			
 			if (this.model.getAnnotationModule().isSetMetadataOfNode(node)) {
-				Metadata metadataSpecies = this.model.getAnnotationModule().getMetadataOfNode(node);
-				
-				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
-					SBase elementSpecies = (SBase) entry.getValue();
-					exportElementMetadata(elementSpecies, metadataSpecies, "species");
+				Metadata metadataSpecies;
+				try {
+					metadataSpecies = this.model.getAnnotationModule().getMetadataOfNode(node);
+					
+					if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
+						SBase elementSpecies = (SBase) entry.getValue();
+						exportElementMetadata(elementSpecies, metadataSpecies, "species");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}

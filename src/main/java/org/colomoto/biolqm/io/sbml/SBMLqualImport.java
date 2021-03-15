@@ -206,13 +206,8 @@ public class SBMLqualImport extends BaseLoader {
             }
         }
 		
-		// load the annotations from the SBML model
-		try {
-			this.importAllMetadata(model, variables);
-		} catch (XMLStreamException e) {
-			System.err.println("Error importing model annotations." + "\n");
-		}
-
+		this.importAllMetadata(model, variables);
+		
         return model;
     }
 
@@ -941,7 +936,7 @@ public class SBMLqualImport extends BaseLoader {
         throw new RuntimeException("Multi-valued is not handled here!");
     }
 	
-	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) throws Exception {
+	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
 		
 		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
@@ -950,13 +945,19 @@ public class SBMLqualImport extends BaseLoader {
 		
 		int alternative = metadata.getNumberOfAlternatives(qualifier);
 		if (alternative != 0) {
-			alternative = metadata.createAlternative(qualifier);
+			try {
+				alternative = metadata.createAlternative(qualifier);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// we add all the uris for this qualifier
 		for (String uri: cvterm.getResources()) {			
 			if (uri.indexOf("identifiers.org/") != -1) {
 				uri = uri.split("identifiers.org/")[1];
+			} else if (uri.indexOf("urn:miriam:") != -1) {
+				uri = uri.split("urn:miriam:")[1];
 			}
 			
 			int colon = uri.indexOf(':');
@@ -970,20 +971,29 @@ public class SBMLqualImport extends BaseLoader {
 			String collection = uri.substring(0, index);
 			String identifier = uri.substring(index+1);
 			
-			metadata.addURI(qualifier, alternative, collection, identifier);
+			try {
+				metadata.addURI(qualifier, alternative, collection, identifier);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// and then we add the nested annotation recursively
 		if (cvterm.isSetListOfNestedCVTerms()) {
-			Metadata metadataNested = metadata.getMetadataOfQualifier(qualifier, alternative);
-			
-			for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
-				this.importElementCVTerm(cvtermNested, metadataNested);
+			Metadata metadataNested;
+			try {
+				metadataNested = metadata.getMetadataOfQualifier(qualifier, alternative);
+				for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
+					this.importElementCVTerm(cvtermNested, metadataNested);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+			
 		}
 	}
 		
-    private void importElementHistory(Annotation annotation, Metadata metadata) throws Exception {
+    private void importElementHistory(Annotation annotation, Metadata metadata) {
 		
 		if (annotation.isSetHistory()) {
 			History history = annotation.getHistory();
@@ -991,8 +1001,16 @@ public class SBMLqualImport extends BaseLoader {
 			String pattern = "yyyy-MM-dd";
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 						
-			if (history.isSetCreatedDate()) { metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate())); }
-			if (history.isSetModifiedDate()) { metadata.addDate("modified", LocalDate.now().toString()); }
+			if (history.isSetCreatedDate()) { try {
+				metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			} }
+			if (history.isSetModifiedDate()) { try {
+				metadata.addDate("modified", LocalDate.now().toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			} }
 			
 			// we don't use the old modifiedDate for the "modified" qualifier because we use the current date
 			// it's okay because this change will affect the model only if it is saved, indicating it has indeed been modified
@@ -1003,12 +1021,16 @@ public class SBMLqualImport extends BaseLoader {
 				if (creator.isSetEmail()) { email = creator.getEmail(); }
 				String organisation = null;
 				if (creator.isSetOrganisation()) { organisation = creator.getOrganisation(); }
-				metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), email, organisation, null);
+				try {
+					metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), email, organisation, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
-	private void importElementTagsAndKeys(XMLNode xml, Metadata metadata) throws Exception {
+	private void importElementTagsAndKeys(XMLNode xml, Metadata metadata) {
 	
 		for (XMLNode qualifier: xml.getChildElements("qualifier", "uri_colomoto")) {
 			String qualifierName = qualifier.getAttributes().getValue("name");
@@ -1020,7 +1042,11 @@ public class SBMLqualImport extends BaseLoader {
 						alternativeNumber = 0;
 					}
 					else {
-						alternativeNumber = metadata.createAlternative(qualifierName);
+						try {
+							alternativeNumber = metadata.createAlternative(qualifierName);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 				
@@ -1029,7 +1055,11 @@ public class SBMLqualImport extends BaseLoader {
 					for (XMLNode tagNode: tags.getChildElements("tag", "uri_colomoto")) {
 						
 						String tag = tagNode.getChild(0).getCharacters();
-						metadata.addTag(qualifierName, alternativeNumber, tag);
+						try {
+							metadata.addTag(qualifierName, alternativeNumber, tag);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 				
@@ -1041,22 +1071,30 @@ public class SBMLqualImport extends BaseLoader {
 						List<String> valuesList = Arrays.asList(values.split(";;;"));
 						
 						for (String val: valuesList) {
-							metadata.addKeyValue(qualifierName, alternativeNumber, key, val);
+							try {
+								metadata.addKeyValue(qualifierName, alternativeNumber, key, val);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
 				
 				XMLNode nested = alternative.getChildElement("nested", "uri_colomoto");
 				if (nested != null) {
-					Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternativeNumber);
-					
-					this.importElementTagsAndKeys(nested, metadataQualifier);
+					Metadata metadataQualifier;
+					try {
+						metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternativeNumber);
+						this.importElementTagsAndKeys(nested, metadataQualifier);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 	}
 	
-	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) throws Exception {
+	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) {
 		
 		SBase elementModel = (SBase) this.qualBundle.document.getModel();
 		
@@ -1091,9 +1129,14 @@ public class SBMLqualImport extends BaseLoader {
 					content.clearNamespaces();
 				}
 				
-				String htmlModel = notesModel.toXMLString();
-				String markdownModel = XSLTransform.simpleTransform(htmlModel);
-				metadataModel.setNotes(markdownModel);
+				String htmlModel;
+				try {
+					htmlModel = notesModel.toXMLString();
+					String markdownModel = XSLTransform.simpleTransform(htmlModel);
+					metadataModel.setNotes(markdownModel);
+				} catch (XMLStreamException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -1101,40 +1144,50 @@ public class SBMLqualImport extends BaseLoader {
 			
 			if (elementSpecies.isSetAnnotation() || elementSpecies.isSetNotes()) {
 				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
-				Metadata metadataSpecies = model.getAnnotationModule().getMetadataOfNode(node);
-				
-				if (elementSpecies.isSetAnnotation()) {					
-					Annotation annotationSpecies = elementSpecies.getAnnotation();
-						
-					// to deal with terms of bqbiol and bqmodel
-					for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
-						this.importElementCVTerm(cvterm, metadataSpecies);
-					}
+				Metadata metadataSpecies;
+				try {
+					metadataSpecies = model.getAnnotationModule().getMetadataOfNode(node);
 					
-					// to deal with terms of dcterms
-					this.importElementHistory(annotationSpecies, metadataSpecies);
+					if (elementSpecies.isSetAnnotation()) {					
+						Annotation annotationSpecies = elementSpecies.getAnnotation();
+							
+						// to deal with terms of bqbiol and bqmodel
+						for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
+							this.importElementCVTerm(cvterm, metadataSpecies);
+						}
 						
-					// to deal with tags and keys
-					if (annotationSpecies.isSetNonRDFannotation()) {
-						XMLNode nonRDFAnnotationSpecies = annotationSpecies.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
-						
-						if (nonRDFAnnotationSpecies != null) {
-							this.importElementTagsAndKeys(nonRDFAnnotationSpecies, metadataSpecies);
+						// to deal with terms of dcterms
+						this.importElementHistory(annotationSpecies, metadataSpecies);
+							
+						// to deal with tags and keys
+						if (annotationSpecies.isSetNonRDFannotation()) {
+							XMLNode nonRDFAnnotationSpecies = annotationSpecies.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
+							
+							if (nonRDFAnnotationSpecies != null) {
+								this.importElementTagsAndKeys(nonRDFAnnotationSpecies, metadataSpecies);
+							}
 						}
 					}
-				}
-				if (elementSpecies.isSetNotes()) {
-					XMLNode notesSpecies = elementSpecies.getNotes();
-					notesSpecies.clearNamespaces();
-				
-					// to suppress the xmlns of the html language
-					for (XMLNode content: notesSpecies.getChildElements("", "")) {
-						content.clearNamespaces();
+					if (elementSpecies.isSetNotes()) {
+						XMLNode notesSpecies = elementSpecies.getNotes();
+						notesSpecies.clearNamespaces();
+					
+						// to suppress the xmlns of the html language
+						for (XMLNode content: notesSpecies.getChildElements("", "")) {
+							content.clearNamespaces();
+						}
+						
+						String htmlSpecies;
+						try {
+							htmlSpecies = notesSpecies.toXMLString();
+							String markdownSpecies = XSLTransform.simpleTransform(htmlSpecies);
+							metadataSpecies.setNotes(markdownSpecies);
+						} catch (XMLStreamException e) {
+							e.printStackTrace();
+						}
 					}
-				
-					String htmlSpecies = notesSpecies.toXMLString();
-					String markdownSpecies = XSLTransform.simpleTransform(htmlSpecies);
-					metadataSpecies.setNotes(markdownSpecies);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}

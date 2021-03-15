@@ -9,6 +9,7 @@ import org.colomoto.biolqm.metadata.validations.DateValidator;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
@@ -203,11 +204,10 @@ public class Metadata {
 			
 			this.checkWithCollectionsAvailable(termDesired, alternative, collection, identifier, pattern, namespaceEmbedded);
 			this.modelConstants.getInstanceOfCollectionsAvailable().updateCollections(lowerCollection, pattern, namespaceEmbedded);
-
 			return;
 			
 		} catch (IOException e) {
-			throw new Exception("The collection is not valid according to identifiers.org. You can use a key-value pair instead.");
+			this.addKeyValue(termDesired, alternative, collection, identifier);
 		}
 	}
 	
@@ -796,7 +796,7 @@ public class Metadata {
 	 * @throws Exception 
 	 */	
 	public Metadata getMetadataOfQualifier(String termDesired, int alternative) throws Exception {
-
+		
 		if (!this.listOfAnnotations.containsKey(termDesired)) {
 			this.createQualifier(termDesired, "GenericAnnotation");
 		}
@@ -941,9 +941,8 @@ public class Metadata {
 	 *
 	 * @param nested a boolean to precise if the json will contain the nested parts 
 	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
-	 * @throws Exception 
 	 */
-	public JSONArray getJSONOfMetadata(boolean nested) throws Exception {
+	public JSONArray getJSONOfMetadata(boolean nested) {
 		
 		JSONArray arrayQualifiers = new JSONArray();
 		
@@ -967,21 +966,25 @@ public class Metadata {
 				// to check if the alternative contains a nested metadata
 				if (nested && this.isSetMetadataOfQualifier(qualifierName, alternative)) {
 					Metadata metadataNested;
-					metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
-					
-					JSONObject jsonNested = new JSONObject();
-					
-					// if there is some metadata we add the json representation in the json object
-					if (metadataNested.isMetadataNotEmpty()) {
-						jsonNested.put("annotation", metadataNested.getJSONOfMetadata());
-					}
-					// if there is some notes we add the json representation in the json object
-					if (metadataNested.getNotes() != "") {
-						jsonNested.put("notes", metadataNested.getNotes());
-					}
-					
-					if (!jsonNested.isEmpty()) {
-						jsonAlternative.put("nested", jsonNested);
+					try {
+						metadataNested = this.getMetadataOfQualifier(qualifierName, alternative);
+						
+						JSONObject jsonNested = new JSONObject();
+						
+						// if there is some metadata we add the json representation in the json object
+						if (metadataNested.isMetadataNotEmpty()) {
+							jsonNested.put("annotation", metadataNested.getJSONOfMetadata());
+						}
+						// if there is some notes we add the json representation in the json object
+						if (metadataNested.getNotes() != "") {
+							jsonNested.put("notes", metadataNested.getNotes());
+						}
+						
+						if (!jsonNested.isEmpty()) {
+							jsonAlternative.put("nested", jsonNested);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 				
@@ -1001,9 +1004,8 @@ public class Metadata {
 	 * Produces a json expression of the metadata object with the nested parts (internal use)
 	 *
 	 * @return JSONArray an array of JSONObject, one for each qualifier used in this metadata
-	 * @throws Exception 
 	 */
-	public JSONArray getJSONOfMetadata() throws Exception {
+	public JSONArray getJSONOfMetadata() {
 		return this.getJSONOfMetadata(true);
 	}
 	
@@ -1071,7 +1073,7 @@ public class Metadata {
 		return new AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode>(listOfCVTerms, xml);
 	}
 	
-	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata(Metadata metadata, XMLNode xml, String qualifierName, String qualifierClass) throws Exception {
+	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata(Metadata metadata, XMLNode xml, String qualifierName, String qualifierClass) {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
 		
@@ -1122,15 +1124,20 @@ public class Metadata {
 			// we save the nested parts
 			XMLNode xmlNested = new XMLNode();
 			if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
-				Metadata metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
-				
-				AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> nestedMetadata = metadata.exportNestedMetadata(metadataQualifier);
-				
-				ArrayList<CVTerm> nestedCVTerms = nestedMetadata.getKey();
-				for (CVTerm nestedCVTerm : nestedCVTerms) {
-					cvterm.addNestedCVTerm(nestedCVTerm);
+				Metadata metadataQualifier;
+				try {
+					metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
+					
+					AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> nestedMetadata = metadata.exportNestedMetadata(metadataQualifier);
+					
+					ArrayList<CVTerm> nestedCVTerms = nestedMetadata.getKey();
+					for (CVTerm nestedCVTerm : nestedCVTerms) {
+						cvterm.addNestedCVTerm(nestedCVTerm);
+					}
+					xmlNested = nestedMetadata.getValue();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				xmlNested = nestedMetadata.getValue();
 			}
 			
 			int realAlternative;
@@ -1164,9 +1171,8 @@ public class Metadata {
 	 * Produces a jSBML expression of the metadata object (internal use)
 	 *
 	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
-	 * @throws Exception 
 	 */
-	public org.sbml.jsbml.Annotation getSBMLOfMetadata() throws Exception {
+	public org.sbml.jsbml.Annotation getSBMLOfMetadata() {
 		
 		org.sbml.jsbml.Annotation annotation = new org.sbml.jsbml.Annotation();
 		
@@ -1328,10 +1334,9 @@ public class Metadata {
 	
 	/**
 	 * Permits to import a json file to extend the existent annotations (internal use)
-	 * @throws Exception 
 	 *
 	 */
-	public void importElementMetadata(JSONObject json) throws Exception {
+	public void importElementMetadata(JSONObject json) {
 		
 		// if there is some metadata we add the json representation in the json object
 		if (json.has("annotation") && !json.isNull("annotation")) {
@@ -1357,80 +1362,105 @@ public class Metadata {
 					
 					for(int idAlternative = 0; idAlternative < numAltJson; idAlternative++)
 					{
-						int numAltMetadataUpdated = this.getNumberOfAlternatives(qualifierName);
-						
-						JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
-						
-						int numberAlternative = 0;
-						
-						if (alternativesExist) {
+						try {
+							int numAltMetadataUpdated = this.getNumberOfAlternatives(qualifierName);
 							
-							// we test if the alternative already exist
-							int numSameAlt = this.doesAlternativeExist(jsonAlternative, qualifierName);
+							JSONObject jsonAlternative = arrayAlternatives.getJSONObject(idAlternative);
 							
-							// if it does exist we check if the nested parts are also the same
-							if (numSameAlt != -1) {
+							int numberAlternative = 0;
+							
+							if (alternativesExist) {
 								
-								if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
-									Metadata nestedMetadata = this.getMetadataOfQualifier(qualifierName, numSameAlt);
-									JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
+								// we test if the alternative already exist
+								int numSameAlt = this.doesAlternativeExist(jsonAlternative, qualifierName);
+								
+								// if it does exist we check if the nested parts are also the same
+								if (numSameAlt != -1) {
 									
-									if (nestedMetadata.equalsMetadata(nestedJson)) {
+									if ((jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
+										Metadata nestedMetadata = this.getMetadataOfQualifier(qualifierName, numSameAlt);
+										JSONObject nestedJson = jsonAlternative.getJSONObject("nested");
+										
+										if (nestedMetadata.equalsMetadata(nestedJson)) {
+											numberAlternative = -1;
+										}
+										else {
+											numberAlternative = this.createAlternative(qualifierName);
+										}
+									}
+									else if (!(jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && !this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
 										numberAlternative = -1;
 									}
 									else {
 										numberAlternative = this.createAlternative(qualifierName);
 									}
-								}
-								else if (!(jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) && !this.isSetMetadataOfQualifier(qualifierName, numSameAlt)) {
-									numberAlternative = -1;
-								}
-								else {
+								} else if (numAltMetadataUpdated != 0) {
 									numberAlternative = this.createAlternative(qualifierName);
 								}
-							} else if (numAltMetadataUpdated != 0) {
-								numberAlternative = this.createAlternative(qualifierName);
 							}
-						}
-						
-						// if numberAlternative = -1 at this point it means the alternative already existed so we don't add it
-						// otherwise we add it
-						if (numberAlternative != -1) {
-							if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
-								JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
-								for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
-								{
-									JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
-									this.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
+							
+							// if numberAlternative = -1 at this point it means the alternative already existed so we don't add it
+							// otherwise we add it
+							if (numberAlternative != -1) {
+								if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
+									JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
+									for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
+									{
+										JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
+										try {
+											this.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
+										} catch (JSONException e) {
+											e.printStackTrace();
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
 								}
-							}
-							if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
-								JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
-								for(int idTag = 0; idTag < arrayTags.length(); idTag++)
-								{
-									String tag = arrayTags.getString(idTag);
-									this.addTag(qualifierName, numberAlternative, tag);
+								if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
+									JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
+									for(int idTag = 0; idTag < arrayTags.length(); idTag++)
+									{
+										String tag = arrayTags.getString(idTag);
+										try {
+											this.addTag(qualifierName, numberAlternative, tag);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
 								}
-							}
-							if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
-								JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
-								for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
-								{
-									JSONObject key = arrayKeys.getJSONObject(idKey);
-									JSONArray arrayValues = key.getJSONArray("values");
+								if (jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues")) {
+									JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
+									for(int idKey = 0; idKey < arrayKeys.length(); idKey++)
+									{
+										JSONObject key = arrayKeys.getJSONObject(idKey);
+										JSONArray arrayValues = key.getJSONArray("values");
+										
+										for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
+											try {
+												this.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
+											} catch (JSONException e) {
+												e.printStackTrace();
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+										}
+									}
+								}
 									
-									for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
-										this.addKeyValue(qualifierName, numberAlternative, key.getString("key"), arrayValues.getString(idValue));
+								if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
+									
+									Metadata metadataQualifier;
+									try {
+										metadataQualifier = this.getMetadataOfQualifier(qualifierName, numberAlternative);
+										
+										metadataQualifier.importElementMetadata(jsonAlternative.getJSONObject("nested"));
+									} catch (Exception e) {
+										e.printStackTrace();
 									}
 								}
 							}
-								
-							if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
-								
-								Metadata metadataQualifier = this.getMetadataOfQualifier(qualifierName, numberAlternative);
-								
-								metadataQualifier.importElementMetadata(jsonAlternative.getJSONObject("nested"));
-							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}
@@ -1452,7 +1482,13 @@ public class Metadata {
 							String orcid = null;
 							if (author.has("orcid") && !author.isNull("orcid")) { orcid = author.getString("orcid"); }
 							
-							this.addAuthor(qualifierName, author.getString("name"), author.getString("surname"), email, organisation, orcid);
+							try {
+								this.addAuthor(qualifierName, author.getString("name"), author.getString("surname"), email, organisation, orcid);
+							} catch (JSONException e) {
+								e.printStackTrace();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					else if (qualifierClass.equals("DateAnnotation")) {
@@ -1466,24 +1502,47 @@ public class Metadata {
 								Date dateJSON = sdf.parse(jsonAlternative.getString("date"));
 								
 								if (dateJSON.before(date)) {
-									this.addDate(qualifierName, jsonAlternative.getString("date"));
+									try {
+										this.addDate(qualifierName, jsonAlternative.getString("date"));
+									} catch (JSONException e) {
+										e.printStackTrace();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 								}
 							} catch (ParseException e) {
 								System.err.println("Error parsing a date contained in an annotation of the model." + "\n");
 							}
 						}
-						this.addDate(qualifierName, jsonAlternative.getString("date"));
+						try {
+							this.addDate(qualifierName, jsonAlternative.getString("date"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					else if (qualifierClass.equals("DistributionAnnotation")) {
 
-						this.addDistribution(qualifierName, jsonAlternative.getString("distribution"));
+						try {
+							this.addDistribution(qualifierName, jsonAlternative.getString("distribution"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					
 					if (jsonAlternative.has("nested") && !jsonAlternative.isNull("nested")) {
 						
-						Metadata metadataQualifier = this.getMetadataOfQualifier(qualifierName);
-						
-						metadataQualifier.importElementMetadata(jsonAlternative.getJSONObject("nested"));
+						Metadata metadataQualifier;
+						try {
+							metadataQualifier = this.getMetadataOfQualifier(qualifierName);
+							
+							metadataQualifier.importElementMetadata(jsonAlternative.getJSONObject("nested"));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

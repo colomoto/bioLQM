@@ -49,7 +49,7 @@ public class AnnotationModule {
 	/**
 	 * Create a Metadata object for a node of the model
 	 *
-	 * @param nodeId the node you want to annotate
+	 * @param node the node you want to annotate
 	 * @return the Metadata object you created for the node
 	 * @throws Exception 
 	 */
@@ -76,7 +76,7 @@ public class AnnotationModule {
 	/**
 	 * Check if a metadata object exists for a node
 	 *
-	 * @param nodeId the node you want to check
+	 * @param node the node you want to check
 	 * @return true if it exists, false otherwise
 	 */	
 	public boolean isSetMetadataOfNode(NodeInfo node) {
@@ -89,7 +89,7 @@ public class AnnotationModule {
 	/**
 	 * Retrieve the Metadata object of the node
 	 * 
-	 * @param nodeId the node you want to annotate
+	 * @param node the node you want to annotate
 	 * @return the existing Metadata of the node. Create it if it does not exist.
 	 * @throws Exception 
 	 */
@@ -108,7 +108,7 @@ public class AnnotationModule {
 		}
 	}
 	
-	private void exportElementMetadata(Metadata metadata, JSONObject json) throws JSONException, Exception {
+	private void exportElementMetadata(Metadata metadata, JSONObject json) {
 		
 		// if there is some metadata we add the json representation in the json object
 		if (metadata.isMetadataNotEmpty()) {
@@ -126,10 +126,9 @@ public class AnnotationModule {
 	 * Export all the metadata of the model in a structured json file
 	 * 
 	 * @param filename the name of the json file
-	 * @throws Exception 
 	 * @throws JSONException 
 	 */
-	public void exportMetadata(String filename) throws JSONException, Exception {
+	public void exportMetadata(String filename) {
 		
 		JSONObject json = new JSONObject();
 		
@@ -146,16 +145,21 @@ public class AnnotationModule {
 		for (NodeInfo node: nodesIndex.keySet()) {
 			
 			if (this.isSetMetadataOfNode(node)) {
-				Metadata metadataSpecies = this.getMetadataOfNode(node);
-				
-				if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
-					JSONObject jsonNode = new JSONObject();
+				Metadata metadataSpecies;
+				try {
+					metadataSpecies = this.getMetadataOfNode(node);
 					
-					String nodeId = node.getNodeID();
-					jsonNode.put("id", nodeId);
-					exportElementMetadata(metadataSpecies, jsonNode);
-					
-					jsonArray.put(jsonNode);
+					if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
+						JSONObject jsonNode = new JSONObject();
+						
+						String nodeId = node.getNodeID();
+						jsonNode.put("id", nodeId);
+						exportElementMetadata(metadataSpecies, jsonNode);
+						
+						jsonArray.put(jsonNode);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -177,9 +181,8 @@ public class AnnotationModule {
 	 * Import a structured json file to populate the metadata of the model
 	 * 
 	 * @param filename the name of the json file
-	 * @throws Exception 
 	 */
-	public void importMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes) throws Exception {
+	public void importMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes) {
 		try {
 			// we load the json file
 			JSONObject json = JsonReader.readJsonFromFile(filename);
@@ -192,14 +195,8 @@ public class AnnotationModule {
 			}
 			
 			// we import the metadata concerning the model
-			try {
-				if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
-					
-					metadataModel.importElementMetadata(json);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
+				metadataModel.importElementMetadata(json);
 			}
 			
 			// we import the metadata concerning each node
@@ -237,6 +234,9 @@ public class AnnotationModule {
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 }
