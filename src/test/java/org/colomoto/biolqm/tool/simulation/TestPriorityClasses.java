@@ -1,17 +1,24 @@
 package org.colomoto.biolqm.tool.simulation;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.VarInfo;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
+import org.colomoto.biolqm.widgets.UpdaterFactoryModelGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -101,13 +108,13 @@ public class TestPriorityClasses {
 				"D" + ModelGrouping.SEPGROUP +
 				"E[-]"+ ModelGrouping.SEPVAR +
 				"E[+]", mpc.toString());
-		
+				
 		mpc.collapseAll();
-		assertEquals("E" + ModelGrouping.SEPVAR +
-				"A" + ModelGrouping.SEPVAR +
+		assertEquals("A" + ModelGrouping.SEPVAR +
 				"B" + ModelGrouping.SEPVAR +
-				"C"+ ModelGrouping.SEPVAR +
-				"D", mpc.toString());
+				"C" + ModelGrouping.SEPVAR +
+				"D"+ ModelGrouping.SEPVAR +
+				"E", mpc.toString());
 	}
 	
 	@Test
@@ -161,5 +168,115 @@ public class TestPriorityClasses {
 				"D" + ModelGrouping.SEPVAR +
 				"E" + ModelGrouping.SEPUPDATER +
 				"RN[1.0,1.0,1.0,1.0]", mpc2.toString());	
-	}		
+	}
+	
+	//@Test
+	public void testPriorityClassesInitError() throws IOException {
+		// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
+		
+		LogicalModel model = getOtherModel();
+		model.getComponents().get(0).setInput(true);
+
+		List<VarInfo> group1 = new ArrayList<VarInfo>();
+		List<VarInfo> group2 = new ArrayList<VarInfo>();
+		List<VarInfo> group3 = new ArrayList<VarInfo>();
+
+		
+		group1.add(new VarInfo(0, 0, model));
+		group1.add(new VarInfo(1, -1, model));
+		
+		group2.add(new VarInfo(1, 1, model));
+		group2.add(new VarInfo(2, 0, model));
+		
+		group3.add(new VarInfo(3, -1, model));
+		group3.add(new VarInfo(3, 1, model));
+		group3.add(new VarInfo(4, 0, model));
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank0 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank1 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+
+		groupsRank0.put(group1, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));
+		groupsRank0.put(group2, UpdaterFactoryModelGrouping.getUpdater(model,
+				"Random non uniform"));
+		groupsRank1.put(group3, UpdaterFactoryModelGrouping.getUpdater(model, "Random uniform"));
+		
+		
+		Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks = 
+				new HashMap<Integer, Map<List<VarInfo>, LogicalModelUpdater>>();
+		
+		ranks.put(0, groupsRank0);
+		ranks.put(1, groupsRank1);
+		
+
+		try {
+			ModelGrouping mpc = new ModelGrouping(model, ranks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+	}
+	@Test
+	public void testPriorityClassesInit() throws IOException {
+		// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
+		
+		LogicalModel model = getOtherModel();
+		model.getComponents().get(0).setInput(true);
+
+		List<VarInfo> group1 = new ArrayList<VarInfo>();
+		List<VarInfo> group2 = new ArrayList<VarInfo>();
+		List<VarInfo> group3 = new ArrayList<VarInfo>();
+
+		
+		group1.add(new VarInfo(1, -1, model));
+		
+		group2.add(new VarInfo(1, 1, model));
+		group2.add(new VarInfo(2, 0, model));
+		
+		group3.add(new VarInfo(3, -1, model));
+		group3.add(new VarInfo(3, 1, model));
+		group3.add(new VarInfo(4, 0, model));
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank0 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank1 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+
+		groupsRank0.put(group1, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));
+		groupsRank0.put(group2, UpdaterFactoryModelGrouping.getUpdater(model,
+				"Random non uniform"));
+		groupsRank1.put(group3, UpdaterFactoryModelGrouping.getUpdater(model, "Random uniform"));
+		
+		
+		Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks = 
+				new HashMap<Integer, Map<List<VarInfo>, LogicalModelUpdater>>();
+		
+		ranks.put(0, groupsRank0);
+		ranks.put(1, groupsRank1);
+		
+		ModelGrouping mpc = null;
+
+		try {
+			mpc = new ModelGrouping(model, ranks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(mpc.toString());
+		assertEquals(mpc.toString(),"B[-]/B[+],C$RN[1.0,1.0,1.0,1.0]:D[-],D[+],E$RU");
+
+	
+	}
+	
+	   
 }
+
+
+
+
+
+
+

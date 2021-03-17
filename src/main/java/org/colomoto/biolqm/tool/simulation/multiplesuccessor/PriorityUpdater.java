@@ -55,8 +55,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 				
 				// pcVars
 //				 the individual groups are the classes 
-				
-				
+			
 				LogicalModelUpdater groupUpdater = this.pclist.getUpdater(p, g);
 				
 				if (this.isComplete) {
@@ -66,7 +65,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			}
 
 			// stop if previous block already generated successors
-			if (currStates != null) {
+			if (currStates != null && !lTmpSucc.isEmpty()) {
 				currStates = lTmpSucc;
 				break;
 			}

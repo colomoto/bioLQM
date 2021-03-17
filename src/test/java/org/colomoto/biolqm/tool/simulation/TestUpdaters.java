@@ -9,6 +9,7 @@ import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.VarInfo;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
@@ -16,6 +17,7 @@ import org.colomoto.biolqm.tool.simulation.random.RandomAsynchUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
+import org.colomoto.biolqm.widgets.UpdaterFactoryModelGrouping;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -90,6 +92,7 @@ public class TestUpdaters {
 		
 		return new LogicalModelImpl(vars, manager, functions);
 	}
+	
 	private LogicalModel getThirdModel() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
@@ -120,6 +123,53 @@ public class TestUpdaters {
 		functions[4] = 1;
 		
 		return new LogicalModelImpl(vars, manager, functions);
+	}
+	
+
+	private ModelGrouping getMpcModel() throws IOException {
+		// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
+		
+		LogicalModel model = getOtherModel();
+		model.getComponents().get(0).setInput(true);
+
+		List<VarInfo> group0 = new ArrayList<VarInfo>();
+		List<VarInfo> group1 = new ArrayList<VarInfo>();
+
+		
+		// Group = 0, Rank = 0, B and C
+		group0.add(new VarInfo(1, 0, model));
+		group0.add(new VarInfo(2, 0, model));
+		
+		// Group = 0, Rank = 1, D and E
+		group1.add(new VarInfo(3, 0, model));
+		group1.add(new VarInfo(4, 0, model));
+		
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank0 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank1 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+
+		groupsRank0.put(group0, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));
+		groupsRank1.put(group1, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));		
+		
+		Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks = 
+				new HashMap<Integer, Map<List<VarInfo>, LogicalModelUpdater>>();
+		
+		ranks.put(0, groupsRank0);
+		ranks.put(1, groupsRank1);
+		
+		ModelGrouping mpc = null;
+
+		try {
+			mpc = new ModelGrouping(model, ranks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mpc;
+		
 	}
 	
 	
@@ -180,7 +230,7 @@ public class TestUpdaters {
 
 	}
 	
-	@Test
+	//@Test
 	public void testBlockSequentialUpdater() throws IOException {
 		
 		LogicalModel model = getOtherModel();
@@ -695,7 +745,8 @@ public class TestUpdaters {
 			ModelGrouping mpc = new ModelGrouping(model, "A" + ModelGrouping.SEPVAR +
 														 "B" + ModelGrouping.SEPVAR +
 														 "C" + ModelGrouping.SEPUPDATER +
-														 "RN[2.0,2.0,2.0,0.0,6.0,1.0]" + ModelGrouping.SEPGROUP +
+														 "RN[2.0,2.0,2.0,0.0,6.0,1.0]" + 
+														 ModelGrouping.SEPGROUP +
 														 "D" + ModelGrouping.SEPVAR +
 														 "E");
 						
@@ -713,7 +764,28 @@ public class TestUpdaters {
 			Assert.assertTrue(Arrays.equals(lNext.get(1), secondG));
 			
 		}
-	
+		
+	@Test
+	public void testPriorityClasses() throws IOException {
+		ModelGrouping mpc = getMpcModel();
+		PriorityUpdater pc = new PriorityUpdater(mpc);		
+
+		byte[] state = new byte[] {1,1,1,0,0};
+		byte[] cChange = new byte[] {1,1,0,0,0};
+		byte[] eChange = new byte[] {1,1,1,0,1};
+
+		List<byte[]> lNext = pc.getSuccessors(state);
+		Assert.assertTrue(Arrays.equals(lNext.get(0),cChange));
+		
+		mpc.switchClasses(0, 1);
+		List<byte[]> lNewNext = pc.getSuccessors(state);
+		Assert.assertTrue(Arrays.equals(lNewNext.get(0),eChange));
+		
+		lNewNext = pc.getSuccessors(state);
+		Assert.assertTrue(Arrays.equals(lNewNext.get(0),eChange));
+			
+	}
+
 	
 	private int getIdxChange(byte[] state1, byte[] state2) {
 		int idx = 0;

@@ -1156,7 +1156,7 @@ public class ModelGrouping {
 				return false;
 
 			for (int i = 0; i < this.vars.size(); i ++) {
-				if (this.vars.get(i).idx == idx) {
+				if (this.vars.get(i).idx == idx && this.vars.get(i).flag == splitFlag) {
 					this.vars.get(i).setFlag(0);
 					this.setVars(this.vars);
 					break;

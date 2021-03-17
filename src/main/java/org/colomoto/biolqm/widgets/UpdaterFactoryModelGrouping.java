@@ -1,21 +1,19 @@
-package org.colomoto.biolqm.tool.simulation;
+package org.colomoto.biolqm.widgets;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicPriorityUpdater;
-import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.CompleteUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
-public class UpdaterFactory2 {
+public class UpdaterFactoryModelGrouping {
 
 	 public static LogicalModelUpdater getUpdater(LogicalModel model, String updater) {
 
@@ -31,8 +29,11 @@ public class UpdaterFactory2 {
 	        } else if (updater.equalsIgnoreCase("Complete")) {
 	            return new CompleteUpdater(model);
 	            
-	        } else if (updater.equalsIgnoreCase("Random Asynchronous")) {
+	        } else if (updater.equalsIgnoreCase("Random uniform")) {
 		        return new RandomUpdaterWrapper(new AsynchronousUpdater(model));
+		        
+	        } else if (updater.equalsIgnoreCase("Random non uniform")) {
+		        return new RandomUpdaterWithRates(model);
 		        
 	        } else  if (updater.equalsIgnoreCase("Block Sequential")) {
 	            return new BlockSequentialUpdater(new ModelGrouping(model));

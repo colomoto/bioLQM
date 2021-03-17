@@ -3,7 +3,10 @@ package org.colomoto.biolqm.tool.simulation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,13 +19,15 @@ import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicSimulation;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorSimulation;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
+import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.VarInfo;
 import org.colomoto.biolqm.tool.simulation.random.RandomWalkSimulation;
+import org.colomoto.biolqm.widgets.UpdaterFactoryModelGrouping;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
-
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
@@ -94,6 +99,31 @@ public class TestSimulations {
 		return new LogicalModelImpl(vars, manager, functions);
 	}
 	
+	private LogicalModel getSimpleModel() {
+		// build a list of variables and functions for a model
+		List<NodeInfo> vars = new ArrayList<NodeInfo>();
+		vars.add(new NodeInfo("A"));
+		vars.add(new NodeInfo("B"));
+		vars.add(new NodeInfo("C"));
+		
+		MDDManager manager = new MDDStoreImpl(vars, 2);
+		int[] functions = new int[vars.size()];
+
+		
+		MDDVariable va = manager.getVariableForKey(vars.get(0));
+		MDDVariable vb = manager.getVariableForKey(vars.get(1));
+		MDDVariable vc = manager.getVariableForKey(vars.get(2));
+		int fa = va.getNode(0, 1);
+		int fb = vb.getNode(0, 1);
+		int fc = vc.getNode(0, 1);
+
+		functions[0] = MDDBaseOperators.AND.combine(manager, fb, fc);
+		functions[1] = fa;
+		functions[2] = fb;
+		
+		return new LogicalModelImpl(vars, manager, functions);
+	}
+	
 	private LogicalModel getComponents() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
@@ -130,6 +160,50 @@ public class TestSimulations {
 		functions[3] = fna;
 		functions[4] = MDDBaseOperators.OR.combine(manager, fb, fd);
 		return new LogicalModelImpl(vars, manager, functions);
+	}
+	
+	private ModelGrouping getMpcModel() throws IOException {
+		// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
+		
+		LogicalModel model = getComponents();
+		model.getComponents().get(0).setInput(true);
+
+		List<VarInfo> group0 = new ArrayList<VarInfo>();
+		List<VarInfo> group1 = new ArrayList<VarInfo>();
+		
+		// Group = 0, Rank = 0, B and C
+		group0.add(new VarInfo(1, 0, model));
+		group0.add(new VarInfo(2, 0, model));
+		
+		// Group = 0, Rank = 1, D and E
+		group1.add(new VarInfo(3, 0, model));
+		group1.add(new VarInfo(4, 0, model));
+		
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank0 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+		
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank1 = 
+				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+
+		groupsRank0.put(group0, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));
+		groupsRank1.put(group1, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));		
+		
+		Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks = 
+				new HashMap<Integer, Map<List<VarInfo>, LogicalModelUpdater>>();
+		
+		ranks.put(0, groupsRank0);
+		ranks.put(1, groupsRank1);
+		
+		ModelGrouping mpc = null;
+
+		try {
+			mpc = new ModelGrouping(model, ranks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return mpc;
 	}
 	
 	@Test
@@ -193,8 +267,7 @@ public class TestSimulations {
 		LogicalModel model = getComponents();
 		// SYNCHROUNOUS 
 		DeterministicUpdater updater = new SynchronousUpdater(model);
-//		byte[] state = {0, 0, 0, 0, 0};
-		
+//		byte[] state = {0, 0, 0, 0, 0};	
 //		byte[] state = {1, 1, 1, 1, 1};
 		byte[] state = {1, 1, 0, 1, 0};
 
@@ -251,11 +324,9 @@ public class TestSimulations {
                   assertTrue(simUpdates[compIdx] >= simRuns * probs[compIdx] * 0.9
                                 && simUpdates[compIdx] <= simRuns * probs[compIdx] * 1.1);
            }
-
     }
 	
 	  @Test
-
       public void testRandomRatesSimulation() throws IOException {
 		  
       LogicalModel model = getComponents();
@@ -307,8 +378,84 @@ public class TestSimulations {
                                   && simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);		
              }
       }
-     
+  
+	  @Test
+      public void testPriotityRanks() throws IOException {
+		  
+		  ModelGrouping mpc = getMpcModel();
+	   	  PriorityUpdater pc = new PriorityUpdater(mpc);
+	   	  
+	   	  byte[] initState = new byte[] {1,0,1,0,0};
+	   	  
+	      Map<String, Integer> finalStatesCount = new HashMap<String, Integer>();
+	      
+	      // cyclic attractor when Rank 0: B/C, Rank 1: D/E
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 0, 1, 0, 0}), 0);
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 1, 1, 0, 0}), 0);
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 1, 0, 0, 0}), 0);
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 0, 0, 0, 0}), 0);
+		
+	     int simRuns = 1000; 
+ 
+	     for (int run = 0; run < simRuns ; run++) {
+	    	 Random random = new Random();
+		     int steps = random.nextInt(1000);
+			 RandomWalkSimulation simulation = new RandomWalkSimulation(
+					  new RandomUpdaterWrapper(pc),
+		    		  initState,steps);
+		    Iterator<byte[]> it = simulation.iterator();
+		    byte[] successor = null;
+	    	while (it.hasNext()) {
+	            successor = it.next();
+	    	}
+            Integer count = finalStatesCount.get(Arrays.toString(successor));
+            count ++;
+            finalStatesCount.put(Arrays.toString(successor), count);                
+	     }
+	     
+	     int size = finalStatesCount.keySet().size();
+	     for (String key : finalStatesCount.keySet()) {
+		     assertTrue(finalStatesCount.get(key) * 0.9 <= (1.0/size)*simRuns
+		    		 && finalStatesCount.get(key) * 1.1 >= (1.0/size)*simRuns);
+	     }
+	     
+	  }
+        
+	  @Test
+	  public void testPriorityUpdater() {
+		LogicalModel model = getSimpleModel();
+		  byte[] state = {1, 0, 0};
+	      // C and D
+	      Map<String, Integer> finalStatesCount = new HashMap<String, Integer>();
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 1, 1}), 0);
+	      finalStatesCount.put(Arrays.toString(new byte[] {0, 0, 0}), 0);
 
+	      AsynchronousUpdater updater = new AsynchronousUpdater(model);
+	      RandomWalkSimulation simulation = new RandomWalkSimulation(new RandomUpdaterWrapper(updater),
+	    		  state,10);
+
+	      Iterator<byte[]> it = simulation.iterator();
+
+	     int simRuns = 1000; 
+ 
+	     for (int run = 0; run < simRuns ; run++) {
+	    	it = simulation.iterator();
+		    byte[] successor = null;
+	    	while (it.hasNext()) {
+	            successor = it.next();
+	    	}
+            Integer count = finalStatesCount.get(Arrays.toString(successor));
+            count ++;
+            finalStatesCount.put(Arrays.toString(successor), count);                
+	     }
+
+	     assertTrue(finalStatesCount.get("[0, 0, 0]") * 0.9 <= 0.6875*simRuns
+	    		 && finalStatesCount.get("[0, 0, 0]") * 1.1 >= 0.6875*simRuns);
+	     
+	     
+	     assertTrue(finalStatesCount.get("[1, 1, 1]") * 0.9 <= 0.3125*simRuns
+	    		 && finalStatesCount.get("[1, 1, 1]") * 1.1 >= 0.3125*simRuns);	
+     }
       private int getIdxChange(byte[] state1, byte[] state2) {
 
              int idx = 0;
@@ -322,9 +469,6 @@ public class TestSimulations {
                     }                   
              }
              return idx;
-      }
-
-	
-	
+      }	
 }
 

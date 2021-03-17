@@ -45,7 +45,6 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
-import org.colomoto.biolqm.tool.simulation.UpdaterFactory2;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
 import org.colomoto.biolqm.tool.simulation.grouping.testReadUp;
@@ -92,15 +91,15 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc) {
-		this(mpc, guiMultipSuc, false, true);
+		this(mpc, guiMultipSuc, true, false);
 	}
 	
 	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc,
-			boolean multiUpdater, boolean singleUpdater) {
+			 boolean singleUpdater, boolean multiUpdater) {
 		this.mpc = mpc;
-		this.guiMultipSuc = true; //
-		this.multiUpdater = multiUpdater;
+		this.guiMultipSuc = guiMultipSuc; //
 		this.singleUpdater = singleUpdater;
+		this.multiUpdater = multiUpdater;
 		
 		this.setLayout(new BorderLayout());
 
@@ -294,8 +293,11 @@ public class PriorityClassPanel extends JPanel {
 		jbSingle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//collapseAll();
-				collapseRanks();
+				if (guiMultipSuc) {
+					collapseRanks();
+				} else {
+					collapseAll();
+				}
 				updateGUI();
 			}
 		});
@@ -459,7 +461,7 @@ public class PriorityClassPanel extends JPanel {
 		                    	validateTextRates(idx[0],idx[1], textfields);
 		                        break;
 		                    default:
-		                    	updater = UpdaterFactory2.getUpdater(mpc.getModel(), up);
+		                    	updater = UpdaterFactoryModelGrouping.getUpdater(mpc.getModel(), up);
 		                		mpc.addUpdater(idx[0], idx[1], updater);
 		                        break;
 		                }
@@ -912,6 +914,12 @@ public class PriorityClassPanel extends JPanel {
 //	
 //	}
 	
+	private void collapseAll() {
+		this.mpc.collapseAll();
+		fireActionEvent();
+		this.updatePriorityList();
+	}
+	
 	private void collapseRanks() {
 		this.mpc.collapseRanks();
 		fireActionEvent();
@@ -991,4 +999,17 @@ public class PriorityClassPanel extends JPanel {
 			}
 		}
 	}
+	
+	public class CenterPanelPriorityPanel extends JPanel {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public java.awt.Dimension getPreferredSize() {
+			   return new java.awt.Dimension(super.getPreferredSize().width,
+					   super.getSize().height);
+		}
+	}
+
+	
 }
