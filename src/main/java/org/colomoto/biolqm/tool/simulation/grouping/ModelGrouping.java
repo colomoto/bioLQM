@@ -1,4 +1,3 @@
-
 package org.colomoto.biolqm.tool.simulation.grouping;
 
 import java.util.ArrayList;
@@ -1015,7 +1014,6 @@ public class ModelGrouping {
 
 		private List<VarInfo> vars;
 		private LogicalModelUpdater updater;
-		List<VarInfo> varsInfo = new ArrayList<VarInfo>();
 
 		
 		public RankedClassGroup(List<VarInfo> varList) {
@@ -1207,44 +1205,53 @@ public class ModelGrouping {
 		    } else {
 		    	List<Double> tempRates = new ArrayList<Double>();
 
-		    	for(int e = 0; e < this.vars.size(); e++) {
-		    		
-		    		VarInfo nodeRate = this.vars.get(e);
-		    		String var = model.getComponents().get(nodeRate.idx).getNodeID();   		
-		    			
-			    		// if split, and both [+], [-] are present 
-		    			if (e + 1 < this.vars.size() 
-		    					&& this.vars.get(e+1).idx == nodeRate.idx) {
-		    				String deepVar = var;
- 
-			    			var = deepVar + SplittingType.NEGATIVE.toString();
-				   			tempRates.add(rates.get(var));
-				   			
+		    	List<NodeInfo> nodes = model.getComponents();
+		    	for(int idx = 0; idx < nodes.size(); idx++) {
+		    		int found = -1;
+		        	for (int varIdx = 0; varIdx < this.vars.size(); varIdx++) {
+		        		if (this.vars.get(varIdx).idx == idx)
+		        			found = varIdx;
+		        	}
+		        		
+		        	if (found != -1) {
+		        			
+		        		VarInfo node = this.vars.get(found);
+		        		String var = nodes.get(idx).getNodeID();
+		        		// if split, and both [+], [-] are present 
+				    	if (idx + 1 < this.vars.size() 
+				    			&& this.vars.get(idx+1).idx == node.idx) {
+				    		String deepVar = var;
+		
+					    	var = deepVar + SplittingType.NEGATIVE.toString();
+						   	tempRates.add(rates.get(var));
+						   			
 							var = deepVar + SplittingType.POSITIVE.toString();
-				   			tempRates.add(rates.get(var));
-				   			
-				   			e ++; 				
-		    			} else {
-		    				// verificar se 
-		    				if (nodeRate.flag == 1) {
-		    					var = var + SplittingType.POSITIVE.toString();
+						   	tempRates.add(rates.get(var));
+						   			
+				    	} else {
+				    		// verificar se 
+				    		if (node.flag == 1) {
+				    			var = var + SplittingType.POSITIVE.toString();
 
-		    				} else if (nodeRate.flag == -1){
-		    					var = var + SplittingType.NEGATIVE.toString();
-		    	 
-		    				}
-		    				
-		    				tempRates.add(rates.get(var));
-		    				tempRates.add(rates.get(var));
-		    			}
-		    		
-		    	}
-		    	double[] newRates = new double[tempRates.size()];
-		    	for (int j = 0; j < newRates.length; j++)
-		    		newRates[j] = tempRates.get(j);
+				   			} else if (node.flag == -1){
+				   				var = var + SplittingType.NEGATIVE.toString();	
+				   			}
+				    				
+				   			tempRates.add(rates.get(var));
+			    			tempRates.add(rates.get(var));
+			    		}
+	        		} else {
+		    			tempRates.add(1.0);
+			    		tempRates.add(1.0);
+		        	}
+		       	}    	
+			  	double[] newRates = new double[tempRates.size()];
+			   	for (int j = 0; j < newRates.length; j++)
+			   		newRates[j] = tempRates.get(j);
 		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
-		    }
-		}
+		   	}
+	    }
+	
 		
 		public Map<String, Double> getRates(List<String> vars) {
 			Map<String, Double> rates = this.getRates();
@@ -1286,8 +1293,7 @@ public class ModelGrouping {
 	    			} else if (splt[idx] == SplittingType.NEGATIVE) {
 	    				nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
 	    			}
-	    			rate += 2;
-	    		}
+	    		 } 	rate += 2;
 	    	}
 	    	return nodeRates;
 		}			
@@ -1363,11 +1369,12 @@ public class ModelGrouping {
 		}
 		
 		public void setVars(List<VarInfo> vars) {
-			this.vars = vars;
+			this.vars = new ArrayList<VarInfo>();
+			this.vars.addAll(vars);
 			if (!this.vars.isEmpty())
 				java.util.Collections.sort(this.vars);
 		}
-
+		
 		public RankedClassGroup clone() {
 			return new RankedClassGroup(new ArrayList<VarInfo>(this.vars), this.updater);
 		}

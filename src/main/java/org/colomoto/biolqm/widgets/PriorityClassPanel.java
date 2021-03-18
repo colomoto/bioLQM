@@ -68,6 +68,7 @@ public class PriorityClassPanel extends JPanel {
 	private boolean multiUpdater;
 	private boolean singleUpdater;
 
+	private Map<String, Double> ratesCache;
 	private List<List<JList<String>>> guiClasses;
 	private ModelGrouping mpc;
 
@@ -100,6 +101,7 @@ public class PriorityClassPanel extends JPanel {
 		this.guiMultipSuc = guiMultipSuc; //
 		this.singleUpdater = singleUpdater;
 		this.multiUpdater = multiUpdater;
+		this.ratesCache = new HashMap<String, Double>();
 		
 		this.setLayout(new BorderLayout());
 
@@ -674,13 +676,16 @@ public class PriorityClassPanel extends JPanel {
 			 if (rate == null)
 				 rate = 1.0;
 			 
-			 String nodeRate = Double.toString(rate);
 			 nodes.put(node, rate);
+			 this.ratesCache.put(node, rate);
 	 
-			 JTextField jtf = new JTextField(nodeRate); 
+			 JTextField jtf = new JTextField(Double.toString(rate)); 
 			 
 			 idxJtf.put(jtf, new int[] {idxPC, idxGroup});
 			 jtf.setToolTipText(node);
+			 // put(textfield, node string) 
+			 textfields.put(jtf, node);
+			 jtf.setColumns(3); 
 			 jtf.addKeyListener(new KeyListener() {
 				 @Override
 				 public void keyTyped(KeyEvent e) {
@@ -696,10 +701,6 @@ public class PriorityClassPanel extends JPanel {
 				}
 	
 			});
-		 
-			 // put(textfield, node string) 
-			 textfields.put(jtf, node);
-			 jtf.setColumns(3); 
 			 
 			 ratesPanel.add(jtf, gbcR); 
 		 }
@@ -846,7 +847,23 @@ public class PriorityClassPanel extends JPanel {
 		
 		Map<String, Double> nodeRates = new HashMap<String, Double>();
 		if (textfields == null) {
+			List<String> vars = mpc.getClassVars(idxPC).get(idxGrp);
+			Set<String> cacheVars = this.ratesCache.keySet();
+			
+			boolean allVars = true;
+			for (String var : vars) {
+				if (!cacheVars.contains(var)) {
+					allVars = false;
+					break;
+				}
+			}
+			if (allVars) {
+				for (String var : vars)
+					nodeRates.put(var, this.ratesCache.get(var));				
+			}
+			
      		mpc.addUpdater(idxPC, idxGrp, nodeRates);
+     		
 		} else {
 			int i = 0;
 			for (JTextField jtf : textfields.keySet()) {
@@ -857,6 +874,7 @@ public class PriorityClassPanel extends JPanel {
 					Double rate = Double.parseDouble(text);
 					jtf.setBackground(Color.white);
 					nodeRates.put(node, rate);
+					this.ratesCache.put(node, rate);
 				}
 				catch(NumberFormatException er) {
 					jtf.setBackground(LIGHT_RED);
@@ -1010,6 +1028,6 @@ public class PriorityClassPanel extends JPanel {
 					   super.getSize().height);
 		}
 	}
-
+	
 	
 }

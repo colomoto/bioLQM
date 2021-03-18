@@ -1,3 +1,4 @@
+
 package org.colomoto.biolqm.tool.simulation.random;
 
 import java.util.ArrayList;
@@ -42,35 +43,26 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 	 * @param model the model for which the random is constructed
      * @param rates the rates associated to each component
      */
-    public RandomUpdaterWithRates(LogicalModel model, double[] rates, Map<NodeInfo, SplittingType> filter) {
+    public RandomUpdaterWithRates(LogicalModel model, double[] rates, 
+    		Map<NodeInfo, SplittingType> filter) {
         super(model);
-        
+        if (filter != null) 
+			this.setFilter(filter);
         // if no rates passed
         if (rates == null) {
-        	if(filter == null) {
-        		List<Double> nodeRates = new ArrayList<Double>();
-        		List<NodeInfo> nodes = model.getComponents();
-        		
-        		for (NodeInfo node : nodes) {
-        			if (!node.isInput())
+        	List<Double> nodeRates = new ArrayList<Double>();
+        	List<NodeInfo> nodes = model.getComponents();
+
+        	for (NodeInfo node : nodes) {
+        		nodeRates.add(1.0);
+        		if(filter != null) 
         				nodeRates.add(1.0);
-        		}
-        		this.rates = new double[nodeRates.size()];
-        		for (int i=0; i < nodeRates.size(); i++)
-        			this.rates[i] = 1.0;
-        		
-        		
-        	} else {
-                this.setFilter(filter);
-        		// cast from ArrayList to array
-        		this.rates = new double[filter.size()*2];
-        		Arrays.fill(this.rates, 1.0);
-  
         	}
+        	this.rates = new double[nodeRates.size()];
+        	for (int i=0; i < nodeRates.size(); i++)
+        		this.rates[i] = 1.0;
         } else {
         		this.rates = rates;
-        		if (filter != null ) 
-        			this.setFilter(filter);
         	}
     }
 
@@ -82,30 +74,29 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         double[] step_rates = new double[size];
         int[][] step_changes = new int[this.size][2];
 
-        int merged = 0;
-		for (int idx=0 ; idx < size ; idx++) {
+		for (int idx=0 , rates = 0; idx < size ; idx++) {
+			if (model.getComponents().get(idx).isInput())
+				continue;
 			int change = nodeChange(state, idx);
 						            			
 			if (change == 0) {
 				if (this.filter != null 
 						&& this.filter.length != 0 && this.filter[idx] != null) {
-					merged += 2;
 				}
                 continue;
             }
 			
 			double r = 0.0;
-	
 			if (this.filter != null && this.filter.length != 0) {
 				SplittingType splt = this.filter[idx]; 
 				if (splt.equals(SplittingType.MERGED)) { 
 					
 					if (change == -1) {
-						r = this.rates[merged];
+						r = this.rates[idx];
 					} else {
-						r = this.rates[merged+1];
+						r = this.rates[idx+1];
 					}
-				} merged += 2;
+				} rates += 2;
 			} else {
 				r = this.rates[idx];
 			}
