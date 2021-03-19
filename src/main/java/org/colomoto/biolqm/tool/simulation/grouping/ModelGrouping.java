@@ -196,17 +196,28 @@ public class ModelGrouping {
 		if (!this.isValid(idxPC))
 			return;
 		
+		
+		List<RankedClassGroup> clone = this.pcList.get(idxPC).clone().groups;
+		int pcSize = this.pcList.size();
+		
 		if (multiGroups) {
-			int i = 0;
+
+			int groupsDeleted = 0;
 			for (int group : groupsSel.keySet()) {
-				this.decPrioritiesGrp(idxPC, group - i, groupsSel.get(group));
-				i ++;
+			
+				this.decPrioritiesGrp(idxPC, group - groupsDeleted, groupsSel.get(group));
+				// Whole group was removed
+				if (clone.get(group).size() == groupsSel.get(group).size()) 
+					groupsDeleted ++;
+				// New rank needed
+
 			}
 		} else {
 			for (int group : groupsSel.keySet()) {
 				this.decPriorities(idxPC, group, groupsSel.get(group));
-			}
+			}			
 		}
+
 	}
 	
 	public void decPrioritiesGrp(int idxPC, int idxGrp, List<String> vars) {
@@ -393,11 +404,8 @@ public class ModelGrouping {
 				if (clone.get(group).size() == groupsSel.get(group).size()) 
 					groupsDeleted ++;
 				// New rank needed
-				if (idxPC == 0) {
+				if (idxPC == 0) 
 					idxPC = 1;
-				}
-				
-			
 			}
 		} else {
 			for (int group : groupsSel.keySet()) {
