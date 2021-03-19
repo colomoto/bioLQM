@@ -381,16 +381,28 @@ public class ModelGrouping {
 		if (!this.isValid(idxPC))
 			return;
 		
+		List<RankedClassGroup> clone = this.pcList.get(idxPC).clone().groups;
+		
 		if (multiGroups) {
-			int i = 0;
+
+			int groupsDeleted = 0;
 			for (int group : groupsSel.keySet()) {
-				this.incPrioritiesGrp(idxPC, group - i, groupsSel.get(group));
-				i ++;
+			
+				this.incPrioritiesGrp(idxPC, group - groupsDeleted, groupsSel.get(group));
+				// Whole group was removed
+				if (clone.get(group).size() == groupsSel.get(group).size()) 
+					groupsDeleted ++;
+				// New rank needed
+				if (idxPC == 0) {
+					idxPC = 1;
+				}
+				
+			
 			}
 		} else {
 			for (int group : groupsSel.keySet()) {
 				this.incPriorities(idxPC, group, groupsSel.get(group));
-			}
+			}			
 		}
 	}
 		
