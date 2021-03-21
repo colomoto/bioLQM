@@ -392,16 +392,22 @@ public class ModelGrouping {
 		if (!this.isValid(idxPC))
 			return;
 		
-		List<RankedClassGroup> clone = this.pcList.get(idxPC).clone().groups;
+		List<RankedClassGroup> cloned = new ArrayList<RankedClassGroup>();
+		for (RankedClassGroup groups : this.pcList.get(idxPC).groups) {
+			cloned.add(groups.clone());
+		}
+		
 		
 		if (multiGroups) {
 
 			int groupsDeleted = 0;
 			for (int group : groupsSel.keySet()) {
 			
+				
 				this.incPrioritiesGrp(idxPC, group - groupsDeleted, groupsSel.get(group));
 				// Whole group was removed
-				if (clone.get(group).size() == groupsSel.get(group).size()) 
+				int clonedSize = cloned.get(group).size();
+				if (cloned.get(group).size() == groupsSel.get(group).size()) 
 					groupsDeleted ++;
 				// New rank needed
 				if (idxPC == 0) 
@@ -1238,8 +1244,8 @@ public class ModelGrouping {
 		        		VarInfo node = this.vars.get(found);
 		        		String var = nodes.get(idx).getNodeID();
 		        		// if split, and both [+], [-] are present 
-				    	if (idx + 1 < this.vars.size() 
-				    			&& this.vars.get(idx+1).idx == node.idx) {
+				    	if (found + 1 < this.vars.size() 
+				    			&& this.vars.get(found+1).idx == node.idx) {
 				    		String deepVar = var;
 		
 					    	var = deepVar + SplittingType.NEGATIVE.toString();
@@ -1256,7 +1262,6 @@ public class ModelGrouping {
 				   			} else if (node.flag == -1){
 				   				var = var + SplittingType.NEGATIVE.toString();	
 				   			}
-				    				
 				   			tempRates.add(rates.get(var));
 			    			tempRates.add(rates.get(var));
 			    		}
@@ -1396,7 +1401,12 @@ public class ModelGrouping {
 		}
 		
 		public RankedClassGroup clone() {
-			return new RankedClassGroup(new ArrayList<VarInfo>(this.vars), this.updater);
+			
+			List<VarInfo> cloneVars = new ArrayList<VarInfo>();
+			for (VarInfo var : this.vars)
+				cloneVars.add(var.clone());
+			
+			return new RankedClassGroup(cloneVars, this.updater);
 		}
 		
 		public boolean equals(Object o) {

@@ -127,6 +127,7 @@ public class PriorityClassPanel extends JPanel {
 					for (JList<String> lGroup : guiClasses.get(pc)) 
 						lGroup.clearSelection();
 					}
+				enableButtons();
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -309,10 +310,14 @@ public class PriorityClassPanel extends JPanel {
 		jpSouthCenter.add(jpSouthLeft, BorderLayout.WEST);
 		this.add(jpSouthCenter, BorderLayout.SOUTH);
 		jpSouthCenter.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		
 	}
 
 	public void updatePriorityList() { 
 		
+		// enable or disable Collapse Ranks button
+		jbSingle.setEnabled(!(mpc.size() == 1));
+
 		// CLASS PANEL
 		this.guiClasses.clear(); 
 		this.jpCenter.removeAll();
@@ -495,11 +500,15 @@ public class PriorityClassPanel extends JPanel {
 	
 						JList<String> selJList = (JList<String>) e.getSource();
 						for (int pc = 0; pc < guiClasses.size(); pc ++) {
+							
+							// If a class does not contain the selected group,
+							// clear that class selection 
 							if(guiClasses.get(pc).indexOf(selJList) == -1) {
 								for (JList<String> lGroup : guiClasses.get(pc)) 
 									lGroup.clearSelection();
 								}
 						}
+						enableButtons();
 					}
 
 					@Override
@@ -605,6 +614,8 @@ public class PriorityClassPanel extends JPanel {
 							JList<String> group = rankGroups.get(g);
 							group.setSelectionInterval(0, group.getModel().getSize() - 1);
 						}
+						
+						enableButtons();
 					}
 				});
 				jpTmpAll.add(jbAllGrp);
@@ -623,7 +634,8 @@ public class PriorityClassPanel extends JPanel {
 								for (JList<String> lGroup : guiClasses.get(pc)) 
 									lGroup.clearSelection();
 								}
-						}	
+						}
+						enableButtons();
 					}
 				});
 				gbcT.gridx ++;
@@ -887,32 +899,41 @@ public class PriorityClassPanel extends JPanel {
 			} 
 		}
 
-//	private void enableButtons() {
-//		
-//		if (mpc.size() == 1) 
-//			jbSingle.setEnabled(false);
-//		
-//		
-//		Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
-//		 
-//		all: for (int i = 0; i < this.guiClasses.size(); i++) {
-//			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
-//				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
-//				if (!values.isEmpty()) {
-//					List<String> vars = new ArrayList<String>();
-//					vars.addAll(values);
-//					groupsSel.put(g, vars);
-//					if (!this.guiMultipSuc) {
-//						mpc.incPriorities(i, groupsSel, this.guiMultipSuc);
-//						break all;
-//						}
-//				}
-//			} if (!groupsSel.isEmpty()) { 
-//				mpc.incPriorities(i, groupsSel, this.guiMultipSuc);
-//				break all;
-//			}
-//		}
-//		
+	private void enableButtons() {
+	
+		jbSingle.setEnabled(!(mpc.size() == 1));
+	
+		Map<Integer, List<String>> groupsSel = new HashMap<Integer, List<String>>();
+		int rank = -1;
+		 
+		all: for (int i = 0; i < this.guiClasses.size(); i++) {
+			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
+				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
+				if (!values.isEmpty()) {
+					List<String> vars = new ArrayList<String>();
+					vars.addAll(values);
+					groupsSel.put(g, vars);
+					if (!this.guiMultipSuc) {
+						rank = i;
+						break all;
+						}
+				}
+			} if (!groupsSel.isEmpty()) { 
+				rank = i;
+				break all;
+			}
+		}
+		
+		
+		
+		boolean incDecGrp = (groupsSel.keySet().size() > 1);
+		jbIncGroup.setEnabled(!incDecGrp);
+		jbDecGroup.setEnabled(!incDecGrp);
+
+//		boolean group = (groupsSel.keySet().size() == 1 
+//				&& mpc.getClass(rank).size() == 1);
+//		jbCollapse.setEnabled(!group);
+		
 //		jbSplit.setEnabled(false);
 //		jbUnsplit.setEnabled(false);
 //		jbCollapse.setEnabled(false);
@@ -921,16 +942,9 @@ public class PriorityClassPanel extends JPanel {
 //		jbDecGroup.setEnabled(false);
 //		jbIncClass.setEnabled(false);
 //		jbDecClass.setEnabled(false);
-//		
-//		if (groupsSel.size() == 1) {
-//			jbIncGroup.setEnabled(true);
-//			jbDecGroup.setEnabled(true);
-//			jbIncClass.setEnabled(true);
-//			jbDecClass.setEnabled(true);
-//
-//		}
-//	
-//	}
+
+	
+	}
 	
 	private void collapseAll() {
 		this.mpc.collapseAll();
