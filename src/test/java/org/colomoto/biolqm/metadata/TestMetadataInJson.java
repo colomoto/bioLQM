@@ -32,7 +32,7 @@ public class TestMetadataInJson {
 		LogicalModel model = format.load(new File(dir, "minimal_example.sbml"));
 		
 		// we add some metadata to the model
-		Metadata modelMetadata = model.getAnnotationModule().getMetadataOfModel();
+		Metadata modelMetadata = model.getMetadataOfModel();
 		
 		modelMetadata.addTag("customQualifier", "word1");
 		modelMetadata.addTag("customQualifier", "word2");
@@ -60,7 +60,7 @@ public class TestMetadataInJson {
 			String nodeId = node.getNodeID();
 			
 			if (nodeId.equals("p53")) {
-				Metadata nodeMetadata = model.getAnnotationModule().getMetadataOfNode(node);
+				Metadata nodeMetadata = model.getMetadataOfNode(node);
 				
 				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);
 				nodeMetadata.addAuthor("creator", "Dupond", "Dupont", "moulinsart@tintin.org", "Hergé", "0000-1111-2222-3333");
@@ -76,10 +76,10 @@ public class TestMetadataInJson {
 		}
 		
 		LogicalModel model2 = format.load(new File(dir, "minimal_example.sbml"));
-		model2.getAnnotationModule().importMetadata(dir.getAbsolutePath()+File.separator+"minimal_example_annotated.json", model2.getComponents(), model2.getExtraComponents());
+		model2.importMetadata(dir.getAbsolutePath()+File.separator+"minimal_example_annotated.json");
 		
 		// and we compare the two of them to see if not problems were introduced
-		Metadata model2Metadata = model2.getAnnotationModule().getMetadataOfModel();
+		Metadata model2Metadata = model2.getMetadataOfModel();
 		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
 		
@@ -95,8 +95,8 @@ public class TestMetadataInJson {
         	}
 			
 			if (node2 != null) {
-				Metadata nodeMeta = model.getAnnotationModule().getMetadataOfNode(node);
-				Metadata node2Meta = model2.getAnnotationModule().getMetadataOfNode(node2);
+				Metadata nodeMeta = model.getMetadataOfNode(node);
+				Metadata node2Meta = model2.getMetadataOfNode(node2);
 				
 				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
 				

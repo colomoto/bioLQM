@@ -1094,50 +1094,55 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 	
+	private void importElementMetadata(SBase element, Metadata metadata) {
+		if (element.isSetAnnotation()) {					
+			Annotation annotation = element.getAnnotation();
+				
+			// to deal with terms of bqbiol and bqmodel
+			for (CVTerm cvterm: annotation.getListOfCVTerms()) {
+				this.importElementCVTerm(cvterm, metadata);
+			}
+			
+			// to deal with terms of dcterms
+			this.importElementHistory(annotation, metadata);
+				
+			// to deal with tags and keys
+			if (annotation.isSetNonRDFannotation()) {
+				XMLNode nonRDFAnnotation = annotation.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
+				
+				if (nonRDFAnnotation != null) {
+					this.importElementTagsAndKeys(nonRDFAnnotation, metadata);
+				}
+			}
+		}
+		if (element.isSetNotes()) {
+			XMLNode notes = element.getNotes();
+			notes.clearNamespaces();
+		
+			// to suppress the xmlns of the html language
+			for (XMLNode content: notes.getChildElements("", "")) {
+				content.clearNamespaces();
+			}
+			
+			String html;
+			try {
+				html = notes.toXMLString();
+				String markdown = XSLTransform.simpleTransform(html);
+				metadata.setNotes(markdown);
+			} catch (XMLStreamException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) {
 		
 		SBase elementModel = (SBase) this.qualBundle.document.getModel();
 		
 		if (elementModel.isSetAnnotation() || elementModel.isSetNotes()) {
-			Metadata metadataModel = model.getAnnotationModule().getMetadataOfModel();
+			Metadata metadataModel = model.getMetadataOfModel();
 			
-			if (elementModel.isSetAnnotation()) {
-				Annotation annotationModel = elementModel.getAnnotation();
-				
-				// to deal with terms of bqbiol and bqmodel
-				for (CVTerm cvterm: annotationModel.getListOfCVTerms()) {
-					this.importElementCVTerm(cvterm, metadataModel);
-				}
-				
-				// to deal with terms of dcterms
-				this.importElementHistory(annotationModel, metadataModel);
-				
-				// to deal with tags and keys
-				if (annotationModel.isSetNonRDFannotation()) {		
-					XMLNode nonRDFAnnotationModel = annotationModel.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
-					
-					if (nonRDFAnnotationModel != null) {
-						this.importElementTagsAndKeys(nonRDFAnnotationModel, metadataModel);
-					}
-				}
-			}
-			if (elementModel.isSetNotes()) {
-				XMLNode notesModel = elementModel.getNotes();
-				
-				// to suppress the xmlns of the html language
-				for (XMLNode content: notesModel.getChildElements("", "")) {
-					content.clearNamespaces();
-				}
-				
-				String htmlModel;
-				try {
-					htmlModel = notesModel.toXMLString();
-					String markdownModel = XSLTransform.simpleTransform(htmlModel);
-					metadataModel.setNotes(markdownModel);
-				} catch (XMLStreamException e) {
-					e.printStackTrace();
-				}
-			}
+			this.importElementMetadata(elementModel, metadataModel);
 		}
 		
 		for (QualitativeSpecies elementSpecies: this.qualBundle.qmodel.getListOfQualitativeSpecies()) {
@@ -1146,50 +1151,48 @@ public class SBMLqualImport extends BaseLoader {
 				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
 				Metadata metadataSpecies;
 				try {
-					metadataSpecies = model.getAnnotationModule().getMetadataOfNode(node);
+					metadataSpecies = model.getMetadataOfNode(node);
 					
-					if (elementSpecies.isSetAnnotation()) {					
-						Annotation annotationSpecies = elementSpecies.getAnnotation();
-							
-						// to deal with terms of bqbiol and bqmodel
-						for (CVTerm cvterm: annotationSpecies.getListOfCVTerms()) {
-							this.importElementCVTerm(cvterm, metadataSpecies);
-						}
-						
-						// to deal with terms of dcterms
-						this.importElementHistory(annotationSpecies, metadataSpecies);
-							
-						// to deal with tags and keys
-						if (annotationSpecies.isSetNonRDFannotation()) {
-							XMLNode nonRDFAnnotationSpecies = annotationSpecies.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
-							
-							if (nonRDFAnnotationSpecies != null) {
-								this.importElementTagsAndKeys(nonRDFAnnotationSpecies, metadataSpecies);
-							}
-						}
-					}
-					if (elementSpecies.isSetNotes()) {
-						XMLNode notesSpecies = elementSpecies.getNotes();
-						notesSpecies.clearNamespaces();
-					
-						// to suppress the xmlns of the html language
-						for (XMLNode content: notesSpecies.getChildElements("", "")) {
-							content.clearNamespaces();
-						}
-						
-						String htmlSpecies;
-						try {
-							htmlSpecies = notesSpecies.toXMLString();
-							String markdownSpecies = XSLTransform.simpleTransform(htmlSpecies);
-							metadataSpecies.setNotes(markdownSpecies);
-						} catch (XMLStreamException e) {
-							e.printStackTrace();
-						}
-					}
+					this.importElementMetadata(elementSpecies, metadataSpecies);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		
+		System.out.println("coucou");
+		
+		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
+			System.out.println("coucoutr");
+			
+			Output elementOutput = elementTransition.getListOfOutputs().get(0);
+			System.out.println(elementOutput.getQualitativeSpecies());
+			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
+			System.out.println(node2);
+
+			for (Input elementInput: elementTransition.getListOfInputs()) {
+				System.out.println("coucouin");
+				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
+					
+					System.out.println("coucouaie");
+					System.out.println(elementInput.getQualitativeSpecies());
+					NodeInfo node1 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
+					System.out.println(node1);
+					
+					Metadata metadataInput;
+					try {
+						metadataInput = model.getMetadataOfEdge(node1, node2);
+						
+						this.importElementMetadata(elementInput, metadataInput);
+						
+						System.out.println(metadataInput.getDescriptionMetadata());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		System.out.println("coucou2");
 	}
 }

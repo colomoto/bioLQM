@@ -8,6 +8,7 @@ import org.colomoto.biolqm.io.BaseExporter;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
+import org.colomoto.biolqm.metadata.NodeInfoPair;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 import com.github.rjeschke.txtmark.Processor;
 
@@ -48,6 +49,9 @@ public class SBMLqualExport extends BaseExporter {
     private boolean needFilled = true;
 
     private String tr_prefix = "tr_";
+    
+    // to keep a track of the transitions objects
+    private Map<NodeInfoPair, Input> edge2input = new HashMap<NodeInfoPair, Input>();
 
     public SBMLqualExport(LogicalModel model) {
         this(model, model.hasLayout());
@@ -269,6 +273,9 @@ public class SBMLqualExport extends BaseExporter {
         for (int idx: regulators) {
             NodeInfo ni_reg = coreNodes.get(idx);
             Input in = tr.createInput(trID+"_in_"+idx, node2species.get(ni_reg), InputTransitionEffect.none);
+            
+            NodeInfoPair edge = new NodeInfoPair(ni_reg, ni);
+            edge2input.put(edge, in);
 
             // determine the sign of the regulation
             Sign sign = Sign.unknown;
@@ -402,7 +409,7 @@ public class SBMLqualExport extends BaseExporter {
 	
 	private void exportAllMetadata() {
 		
-		Metadata metadataModel = this.model.getAnnotationModule().getMetadataOfModel();
+		Metadata metadataModel = this.model.getMetadataOfModel();
 		
 		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
 			SBase elementModel = (SBase) qualBundle.document.getModel();
@@ -412,14 +419,32 @@ public class SBMLqualExport extends BaseExporter {
 		for (Map.Entry<NodeInfo, QualitativeSpecies> entry : this.node2species.entrySet()) {
 			NodeInfo node = entry.getKey();
 			
-			if (this.model.getAnnotationModule().isSetMetadataOfNode(node)) {
+			if (this.model.isSetMetadataOfNode(node)) {
 				Metadata metadataSpecies;
 				try {
-					metadataSpecies = this.model.getAnnotationModule().getMetadataOfNode(node);
+					metadataSpecies = this.model.getMetadataOfNode(node);
 					
 					if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
 						SBase elementSpecies = (SBase) entry.getValue();
 						exportElementMetadata(elementSpecies, metadataSpecies, "species");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		for (Map.Entry<NodeInfoPair, Input> entry : this.edge2input.entrySet()) {
+			NodeInfoPair edge = entry.getKey();
+			
+			if (this.model.isSetMetadataOfEdge(edge)) {
+				Metadata metadataEdge;
+				try {
+					metadataEdge = this.model.getMetadataOfEdge(edge);
+					
+					if (metadataEdge.isMetadataNotEmpty() || metadataEdge.getNotes() != "") {
+						SBase elementInput = (SBase) entry.getValue();
+						exportElementMetadata(elementInput, metadataEdge, "species");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

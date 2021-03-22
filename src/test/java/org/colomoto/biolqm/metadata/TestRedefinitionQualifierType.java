@@ -32,7 +32,7 @@ public class TestRedefinitionQualifierType {
 		
 		
 		// we add some metadata to the model
-		Metadata modelMetadata = model.getAnnotationModule().getMetadataOfModel();
+		Metadata modelMetadata = model.getMetadataOfModel();
 		modelMetadata.addTag("is", "word1");
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("is");
 		
@@ -48,7 +48,7 @@ public class TestRedefinitionQualifierType {
 		
 		// we add some metadata to the first node
 		NodeInfo node = model.getComponents().get(0);
-		Metadata nodeMetadata = model.getAnnotationModule().getMetadataOfNode(node);
+		Metadata nodeMetadata = model.getMetadataOfNode(node);
 		nodeMetadata.addTag("is", "word1");
 		Metadata nestedMetadata2 = nodeMetadata.getMetadataOfQualifier("is");
 
