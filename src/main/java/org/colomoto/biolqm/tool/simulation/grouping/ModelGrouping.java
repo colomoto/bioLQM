@@ -1411,9 +1411,14 @@ public class ModelGrouping {
 		
 		public boolean equals(Object o) {
 			RankedClassGroup outPC = (RankedClassGroup) o;
-			if (outPC.toString().equals(this.toString()))
-				return this.vars.equals(outPC.vars);
-			return false;
+			System.out.println(outPC.toString());
+			System.out.println(this.toString());
+
+			if(!this.vars.equals(outPC.vars))
+				return false;
+			if (!this.updater.equals(outPC.updater))
+				return false;
+			return true;
 		}
 	}
 	
@@ -1458,6 +1463,17 @@ public class ModelGrouping {
 		public VarInfo clone() {
 			return new VarInfo(this.idx, this.flag, this.model);
 			
+		}
+		
+		public boolean equals(Object o) {
+			VarInfo newVar = (VarInfo) o;
+			if (this.idx != newVar.idx)
+				return false;
+			if (this.flag != newVar.flag)
+				return false;
+			if (this.model != newVar.model) 
+				return false;
+			return true;
 		}
    
 	}
