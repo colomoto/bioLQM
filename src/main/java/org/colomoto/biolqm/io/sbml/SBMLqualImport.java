@@ -1159,40 +1159,5 @@ public class SBMLqualImport extends BaseLoader {
 				}
 			}
 		}
-		
-		System.out.println("coucou");
-		
-		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
-			System.out.println("coucoutr");
-			
-			Output elementOutput = elementTransition.getListOfOutputs().get(0);
-			System.out.println(elementOutput.getQualitativeSpecies());
-			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
-			System.out.println(node2);
-
-			for (Input elementInput: elementTransition.getListOfInputs()) {
-				System.out.println("coucouin");
-				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
-					
-					System.out.println("coucouaie");
-					System.out.println(elementInput.getQualitativeSpecies());
-					NodeInfo node1 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
-					System.out.println(node1);
-					
-					Metadata metadataInput;
-					try {
-						metadataInput = model.getMetadataOfEdge(node1, node2);
-						
-						this.importElementMetadata(elementInput, metadataInput);
-						
-						System.out.println(metadataInput.getDescriptionMetadata());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		
-		System.out.println("coucou2");
 	}
 }

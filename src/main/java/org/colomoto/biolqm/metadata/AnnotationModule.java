@@ -342,82 +342,86 @@ public class AnnotationModule {
 			}
 			
 			// we import the metadata concerning each node
-			JSONArray arrayNodes = json.getJSONArray("nodes");
-			for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
-			{
-				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
-				String nodeId = jsonNode.getString("id");
+			if (json.has("nodes") && !json.isNull("nodes")) {
+				JSONArray arrayNodes = json.getJSONArray("nodes");
+				for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
+				{
+					JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
+					String nodeId = jsonNode.getString("id");
 
-				NodeInfo node = null;
-				if (coreNodes != null) {
-					for (NodeInfo elmt: coreNodes) {
-						if (elmt.getNodeID().equals(nodeId)) {
-							node = elmt;
+					NodeInfo node = null;
+					if (coreNodes != null) {
+						for (NodeInfo elmt: coreNodes) {
+							if (elmt.getNodeID().equals(nodeId)) {
+								node = elmt;
+							}
 						}
 					}
-				}
-				if (extraNodes != null) {
-					for (NodeInfo elmt: extraNodes) {
-						if (elmt.getNodeID().equals(nodeId)) {
-							node = elmt;
+					if (extraNodes != null) {
+						for (NodeInfo elmt: extraNodes) {
+							if (elmt.getNodeID().equals(nodeId)) {
+								node = elmt;
+							}
 						}
 					}
-				}
-				
-				if (node != null) {
-					try {
-						Metadata metadataNode = this.getMetadataOfNode(node);
-						metadataNode.importElementMetadata(jsonNode);	
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					
+					if (node != null) {
+						try {
+							Metadata metadataNode = this.getMetadataOfNode(node);
+							metadataNode.importElementMetadata(jsonNode);	
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else {
+						System.err.println("The node "+jsonNode.getString("id")+" has no equivalent in the model so its annotations couldn't be imported.");
 					}
-				} else {
-					System.err.println("The node "+jsonNode.getString("id")+" has no equivalent in the model so its annotations couldn't be imported.");
 				}
 			}
 			
 			// we import the metadata concerning each edge
-			JSONArray arrayEdges = json.getJSONArray("edges");
-			for(int idEdge = 0; idEdge < arrayEdges.length(); idEdge++)
-			{
-				JSONObject jsonEdge = arrayEdges.getJSONObject(idEdge);
-				String nodeId1 = jsonEdge.getString("id1");
-				String nodeId2 = jsonEdge.getString("id2");
+			if (json.has("edges") && !json.isNull("edges")) {
+				JSONArray arrayEdges = json.getJSONArray("edges");
+				for(int idEdge = 0; idEdge < arrayEdges.length(); idEdge++)
+				{
+					JSONObject jsonEdge = arrayEdges.getJSONObject(idEdge);
+					String nodeId1 = jsonEdge.getString("id1");
+					String nodeId2 = jsonEdge.getString("id2");
 
-				NodeInfo node1 = null;
-				NodeInfo node2 = null;
-				if (coreNodes != null) {
-					for (NodeInfo elmt: coreNodes) {
-						if (elmt.getNodeID().equals(nodeId1)) {
-							node1 = elmt;
-						}
-						if (elmt.getNodeID().equals(nodeId2)) {
-							node2 = elmt;
-						}
-					}
-				}
-				if (extraNodes != null) {
-					for (NodeInfo elmt: extraNodes) {
-						if (elmt.getNodeID().equals(nodeId1)) {
-							node1 = elmt;
-						}
-						if (elmt.getNodeID().equals(nodeId2)) {
-							node2 = elmt;
+					NodeInfo node1 = null;
+					NodeInfo node2 = null;
+					if (coreNodes != null) {
+						for (NodeInfo elmt: coreNodes) {
+							if (elmt.getNodeID().equals(nodeId1)) {
+								node1 = elmt;
+							}
+							if (elmt.getNodeID().equals(nodeId2)) {
+								node2 = elmt;
+							}
 						}
 					}
-				}
-				
-				if (node1 != null && node2 != null) {
-					try {
-						Metadata metadataEdge = this.getMetadataOfEdge(node1, node2);
-						metadataEdge.importElementMetadata(jsonEdge);	
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if (extraNodes != null) {
+						for (NodeInfo elmt: extraNodes) {
+							if (elmt.getNodeID().equals(nodeId1)) {
+								node1 = elmt;
+							}
+							if (elmt.getNodeID().equals(nodeId2)) {
+								node2 = elmt;
+							}
+						}
 					}
-				} else {
-					System.err.println("The edge ("+jsonEdge.getString("id1")+", "+jsonEdge.getString("id2")+") has no equivalent in the model so its annotations couldn't be imported.");
+					
+					if (node1 != null && node2 != null) {
+						try {
+							Metadata metadataEdge = this.getMetadataOfEdge(node1, node2);
+							metadataEdge.importElementMetadata(jsonEdge);	
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else {
+						System.err.println("The edge ("+jsonEdge.getString("id1")+", "+jsonEdge.getString("id2")+") has no equivalent in the model so its annotations couldn't be imported.");
+					}
 				}
 			}
 			
