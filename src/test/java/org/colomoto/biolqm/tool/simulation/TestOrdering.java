@@ -43,7 +43,6 @@ public class TestOrdering {
     }
 
 
-    @Test
     public void testOrdering() {
 
         LogicalModel model = getModel();

@@ -230,7 +230,7 @@ public class TestUpdaters {
 
 	}
 	
-	//@Test
+	@Test
 	public void testBlockSequentialUpdater() throws IOException {
 		
 		LogicalModel model = getOtherModel();
@@ -426,7 +426,7 @@ public class TestUpdaters {
 			filter.put(node, splt);
 		}
 	
-		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
+		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model);
 		assert(updater.getRates().length == ratesCount);
 	}
 	
@@ -436,7 +436,7 @@ public class TestUpdaters {
 				
 		LogicalModel model = getOtherModel();
 		
-		// C has different rates or [-] 0.7 and [+] 0.2
+		// C has different rates for [-] 0.7 and [+] 0.2
 		double[] rates =  new double[] {0.5,0.5, 0.3,0.3, 0.7,0.2, 0.1,0.1, 0.4,0.4};
 		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
 		
@@ -451,7 +451,8 @@ public class TestUpdaters {
 			filter.put(node, splt);
 			i++;
 		}
-		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, rates, filter);
+		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, rates);
+		updater.setFilter(filter);
 	
 		// updatables = C[+], D[-] and E[+].
 		byte[] state = {1,0,0,1,0};
@@ -523,14 +524,12 @@ public class TestUpdaters {
 				SplittingType.POSITIVE};
 		
 		Random random = new Random();
-		int rateCount = 0;
 		for (int j = 0; j <  random.nextInt(model.getComponents().size()); j++) {
 			SplittingType splt = test[random.nextInt(test.length)];
-			rateCount +=2;
 			filter.put(model.getComponents().get(j), splt);
 		}
-		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, filter);
-		assert(updater.getRates().length == rateCount);
+		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model);
+		assert(updater.getRates().length == model.getComponents().size()*2);
 	}
 	
 	
@@ -745,7 +744,7 @@ public class TestUpdaters {
 			ModelGrouping mpc = new ModelGrouping(model, "A" + ModelGrouping.SEPVAR +
 														 "B" + ModelGrouping.SEPVAR +
 														 "C" + ModelGrouping.SEPUPDATER +
-														 "RN[2.0,2.0,2.0,0.0,6.0,1.0]" + 
+														 "RN[2.0,2.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0]" + 
 														 ModelGrouping.SEPGROUP +
 														 "D" + ModelGrouping.SEPVAR +
 														 "E");
@@ -758,10 +757,14 @@ public class TestUpdaters {
 			byte[] firstAG = new byte[] {1,0,0,0,0};
 			
 			byte[] secondG =  new byte[] {0,0,0,1,1};
-			List<byte[]> lNext = pc.getSuccessors(state);
-			Assert.assertTrue((Arrays.equals(lNext.get(0),firstAG)) ||
-					Arrays.equals(lNext.get(0),firstCG));
-			Assert.assertTrue(Arrays.equals(lNext.get(1), secondG));
+			
+			for (int i = 0; i < 1000; i++) {
+				List<byte[]> lNext = pc.getSuccessors(state);
+				Assert.assertTrue(lNext.size() == 2);
+				Assert.assertTrue((Arrays.equals(lNext.get(0),firstAG)) ||
+						Arrays.equals(lNext.get(0),firstCG));
+				Assert.assertTrue(Arrays.equals(lNext.get(1), secondG));
+			}
 			
 		}
 		

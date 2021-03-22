@@ -167,7 +167,18 @@ public class TestPriorityClasses {
 				"C" + ModelGrouping.SEPVAR +
 				"D" + ModelGrouping.SEPVAR +
 				"E" + ModelGrouping.SEPUPDATER +
-				"RN[1.0,1.0,1.0,1.0]", mpc2.toString());	
+				"RN[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]", mpc2.toString());
+		
+		mpc2.addUpdater(0, 0, new RandomUpdaterWithRates(model, new double[] {1.0,1.0,3.0,4.0,6.0,8.0,5.0,1.0,1.0,1.0}));
+		assertEquals(
+				"B" + ModelGrouping.SEPVAR +
+				
+				"C" + ModelGrouping.SEPVAR +
+				"D" + ModelGrouping.SEPVAR +
+				"E" + ModelGrouping.SEPUPDATER +
+				"RN[1.0,1.0,3.0,4.0,6.0,8.0,5.0,1.0,1.0,1.0]", mpc2.toString());
+		
+		;	
 	}
 	
 	//@Test
@@ -256,7 +267,6 @@ public class TestPriorityClasses {
 		
 		ranks.put(0, groupsRank0);
 		ranks.put(1, groupsRank1);
-		
 		ModelGrouping mpc = null;
 
 		try {
@@ -264,14 +274,9 @@ public class TestPriorityClasses {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println(mpc.toString());
-		assertEquals(mpc.toString(),"B[-]/B[+],C$RN[1.0,1.0,1.0,1.0]:D[-],D[+],E$RU");
+		assertEquals(mpc.toString(),"B[+],C$RN[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]/B[-]:D[-],D[+],E$RU");
 
-	
 	}
-	
-	   
 }
 
 

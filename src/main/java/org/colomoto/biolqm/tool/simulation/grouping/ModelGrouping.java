@@ -119,6 +119,7 @@ public class ModelGrouping {
 
 	public int[][] getDeterministicBlocks() {
 		int n = this.pcList.size();
+		// each array as all the vars of a particular rank/class
 		int[][] blocks = new int[n][];
 		int idx = 0;
 		for (RankedClass cl : this.pcList) {
@@ -126,11 +127,16 @@ public class ModelGrouping {
 			for (RankedClassGroup grp : cl.groups) {
 				l += grp.vars.size();
 			}
-			int[] cur = new int[l];
+			int[] cur = new int[l*2];
 			int pos = 0;
+			// merge of all vars of a rank/class
 			for (RankedClassGroup grp : cl.groups) {
-				System.arraycopy(grp.vars, 0, cur, pos, grp.vars.size());
-				pos += grp.vars.size();
+				for (VarInfo var : grp.vars) {
+					cur[pos] = var.idx;
+					pos ++;
+					cur[pos] = var.flag;
+					pos ++;
+				}
 			}
 			blocks[idx] = cur;
 			idx++;
@@ -881,13 +887,13 @@ public class ModelGrouping {
 		
 		public void addUpdater(int idxGrp, LogicalModelUpdater updater) {
 			if (idxGrp >= 0 && idxGrp < this.size()) {
-				this.groups.get(idxGrp).addUpdater(updater);
+				this.groups.get(idxGrp).setUpdater(updater);
 			}
 		}
 		
 		public void addUpdater(int idxGrp, Map<String, Double> rates ) {
 			if (idxGrp >= 0 && idxGrp < this.size()) {
-				this.groups.get(idxGrp).addUpdater(rates);
+				this.groups.get(idxGrp).setUpdater(rates);
 			}
 		}
 		
@@ -1044,12 +1050,12 @@ public class ModelGrouping {
 		
 		public RankedClassGroup(List<VarInfo> varList) {
 			this.setVars(varList);
-			this.addUpdater(new SynchronousUpdater(model));
+			this.setUpdater(new SynchronousUpdater(model));
 		}
 		
 		public RankedClassGroup(List<VarInfo> vars, LogicalModelUpdater updater) {
 			this.setVars(vars);
-			this.addUpdater(updater);
+			this.setUpdater(updater);
 		}
 		
 		public RankedClassGroup(LogicalModel m, String textFormat) {
@@ -1085,14 +1091,14 @@ public class ModelGrouping {
 			// get updater
 			if (up.length == 1) {
 				// default, Synchronous
-				this.addUpdater(new SynchronousUpdater(model));
+				this.setUpdater(new SynchronousUpdater(model));
 			} else if (up.length == 2) {
 				// either $S, $RN or $RU
 				if (up[1].equals("S")) {
-					this.addUpdater(new SynchronousUpdater(model));
+					this.setUpdater(new SynchronousUpdater(model));
 				} else if (up[1].equals("RU")) {
 					MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
-					this.addUpdater(new RandomUpdaterWrapper(MultiUpdater));
+					this.setUpdater(new RandomUpdaterWrapper(MultiUpdater));
 		
 				} else if (up[1].equals("C")) {
 					// ?? 
@@ -1107,8 +1113,8 @@ public class ModelGrouping {
 					for (int e = 0; e < doubleRates.length; e++) {
 						doubleRates[e] = Double.parseDouble(rates[e]);
 					}
-			
-					this.updater = new RandomUpdaterWithRates(model, doubleRates, this.getFilter());
+					this.setUpdater(new RandomUpdaterWithRates(model, doubleRates));
+
 				}						
 			}
 		}
@@ -1220,14 +1226,14 @@ public class ModelGrouping {
 			return true;
 		}
 
-		public void addUpdater(LogicalModelUpdater updater) {
+		public void setUpdater(LogicalModelUpdater updater) {
 		    this.updater = updater;
 		    this.updater.setFilter(this.getFilter());
 		}
 		
-		public void addUpdater(Map<String, Double> rates) {
+		public void setUpdater(Map<String, Double> rates) {
 		    if (rates.size() == 0) {
-		    	this.updater = new RandomUpdaterWithRates(model, this.getFilter()); 
+		    	this.setUpdater(new RandomUpdaterWithRates(model)); 
 		    } else {
 		    	List<Double> tempRates = new ArrayList<Double>();
 
@@ -1273,7 +1279,7 @@ public class ModelGrouping {
 			  	double[] newRates = new double[tempRates.size()];
 			   	for (int j = 0; j < newRates.length; j++)
 			   		newRates[j] = tempRates.get(j);
-		    	this.updater = new RandomUpdaterWithRates(model, newRates, this.getFilter()); 
+			   	this.setUpdater(new RandomUpdaterWithRates(model, newRates)); 
 		   	}
 	    }
 	
@@ -1411,9 +1417,6 @@ public class ModelGrouping {
 		
 		public boolean equals(Object o) {
 			RankedClassGroup outPC = (RankedClassGroup) o;
-			System.out.println(outPC.toString());
-			System.out.println(this.toString());
-
 			if(!this.vars.equals(outPC.vars))
 				return false;
 			if (!this.updater.equals(outPC.updater))

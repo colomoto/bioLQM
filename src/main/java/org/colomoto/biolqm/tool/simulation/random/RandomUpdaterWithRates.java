@@ -27,27 +27,15 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 	 * @param model the model for which the random is constructed
 	 */
     public RandomUpdaterWithRates(LogicalModel model) {
-        this(model, null, null);
+        this(model, null);
     }
-    
-    public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
-        this(model, rates, null);
-    }
-    
-    public RandomUpdaterWithRates(LogicalModel model,  Map<NodeInfo, SplittingType> filter) {
-        this(model, null, filter);
-    }
-
     /**
      * 
 	 * @param model the model for which the random is constructed
      * @param rates the rates associated to each component
      */
-    public RandomUpdaterWithRates(LogicalModel model, double[] rates, 
-    		Map<NodeInfo, SplittingType> filter) {
+    public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
         super(model);
-        if (filter != null) 
-			this.setFilter(filter);
         // if no rates passed
         if (rates == null) {
         	List<Double> nodeRates = new ArrayList<Double>();
@@ -55,8 +43,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
         	for (NodeInfo node : nodes) {
         		nodeRates.add(1.0);
-        		if(filter != null) 
-        				nodeRates.add(1.0);
+        		nodeRates.add(1.0);
         	}
         	this.rates = new double[nodeRates.size()];
         	for (int i=0; i < nodeRates.size(); i++)
@@ -74,29 +61,28 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         double[] step_rates = new double[size];
         int[][] step_changes = new int[this.size][2];
 
-		for (int idx=0 , rates = 0; idx < size ; idx++) {
+		for (int idx=0 , rates = 0; idx < size ; idx++, rates += 2) {
 			if (model.getComponents().get(idx).isInput())
 				continue;
 			int change = nodeChange(state, idx);
 						            			
-			if (change == 0) {
-				if (this.filter != null 
-						&& this.filter.length != 0 && this.filter[idx] != null) {
-				}
+			if (change == 0) 
                 continue;
-            }
 			
 			double r = 0.0;
 			if (this.filter != null && this.filter.length != 0) {
 				SplittingType splt = this.filter[idx]; 
 				if (splt.equals(SplittingType.MERGED)) { 
-					
 					if (change == -1) {
-						r = this.rates[idx];
+						r = this.rates[rates];
 					} else {
-						r = this.rates[idx+1];
+						r = this.rates[rates+1];
 					}
-				} rates += 2;
+				} else if (splt.equals(SplittingType.POSITIVE)){
+					r = this.rates[rates+1];						
+				} else if (splt.equals(SplittingType.NEGATIVE)){
+					r = this.rates[rates];						
+				}
 			} else {
 				r = this.rates[idx];
 			}
