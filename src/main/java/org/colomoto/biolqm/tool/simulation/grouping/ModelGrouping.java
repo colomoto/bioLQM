@@ -258,6 +258,7 @@ public class ModelGrouping {
 				}
 			}
 		}
+		
 			
 		if (idxPC == this.pcList.size() - 1) {
 			this.pcList.add(this.pcList.size(), new RankedClass(newGroup));
@@ -458,7 +459,7 @@ public class ModelGrouping {
 				}
 			}
 		}
-			
+
 		if (idxPC == 0) {
 			this.pcList.add(0, new RankedClass(newGroup));
 			idxPC++;
@@ -474,6 +475,8 @@ public class ModelGrouping {
 		if (this.pcList.get(idxPC).isEmpty()) {
 			this.pcList.remove(idxPC);
 		}
+		
+		
 	}
 	
 	public void incPriorities(int idxPC, int idxGrp, List<String> vars) {
@@ -1049,13 +1052,13 @@ public class ModelGrouping {
 
 		
 		public RankedClassGroup(List<VarInfo> varList) {
+			this.updater = new SynchronousUpdater(model);
 			this.setVars(varList);
-			this.setUpdater(new SynchronousUpdater(model));
 		}
 		
 		public RankedClassGroup(List<VarInfo> vars, LogicalModelUpdater updater) {
+			this.updater = updater;
 			this.setVars(vars);
-			this.setUpdater(updater);
 		}
 		
 		public RankedClassGroup(LogicalModel m, String textFormat) {
@@ -1223,6 +1226,7 @@ public class ModelGrouping {
 
 			this.vars.add(new VarInfo(idx, splitFlag, model));
 			this.setVars(this.vars);
+		    
 			return true;
 		}
 
@@ -1230,6 +1234,12 @@ public class ModelGrouping {
 		    this.updater = updater;
 		    this.updater.setFilter(this.getFilter());
 		}
+		
+		public void setFilter() {
+		    this.updater.setFilter(this.getFilter());
+		}
+		
+
 		
 		public void setUpdater(Map<String, Double> rates) {
 		    if (rates.size() == 0) {
@@ -1241,8 +1251,10 @@ public class ModelGrouping {
 		    	for(int idx = 0; idx < nodes.size(); idx++) {
 		    		int found = -1;
 		        	for (int varIdx = 0; varIdx < this.vars.size(); varIdx++) {
-		        		if (this.vars.get(varIdx).idx == idx)
+		        		if (this.vars.get(varIdx).idx == idx) {
 		        			found = varIdx;
+		        			break;
+		        		}
 		        	}
 		        		
 		        	if (found != -1) {
@@ -1272,6 +1284,8 @@ public class ModelGrouping {
 			    			tempRates.add(rates.get(var));
 			    		}
 	        		} else {
+	        			// will not be used by the updater.
+	        			// filler
 		    			tempRates.add(1.0);
 			    		tempRates.add(1.0);
 		        	}
@@ -1302,7 +1316,6 @@ public class ModelGrouping {
 		
 		public Map<String, Double> getRates() {
 			
-			// old Rates and oldFilter (might have changed)
 			double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
 			SplittingType[] splt = ((RandomUpdaterWithRates) this.updater).getFilter();
 			Map<String, Double> nodeRates = new HashMap<String, Double>();
@@ -1330,6 +1343,7 @@ public class ModelGrouping {
 		}			
 		
 		public LogicalModelUpdater getUpdater() {
+			this.setUpdater(this.updater);
 			return this.updater;
 		}
 		
@@ -1404,6 +1418,8 @@ public class ModelGrouping {
 			this.vars.addAll(vars);
 			if (!this.vars.isEmpty())
 				java.util.Collections.sort(this.vars);
+			this.setFilter();
+
 		}
 		
 		public RankedClassGroup clone() {
