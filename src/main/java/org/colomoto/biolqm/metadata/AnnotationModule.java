@@ -172,20 +172,6 @@ public class AnnotationModule {
 	 * @throws Exception 
 	 */
 	public Metadata getMetadataOfEdge(NodeInfoPair edge) throws Exception {
-		System.out.println("this.edgesIndex.size()");
-		System.out.println(this.edgesIndex.size());
-		System.out.println(this.edgesIndex.containsKey(edge));
-
-		System.out.println("edge.getNode1()");
-		System.out.println(edge.getNode1());
-		System.out.println(edge.getNode2());
-		
-		for (NodeInfoPair edge2: edgesIndex.keySet()) {
-			System.out.println("edge2.getNode1()");
-			System.out.println(edge2.getNode1());
-			System.out.println(edge2.getNode2());
-		}
-		
 		try {
 			if (this.edgesIndex.containsKey(edge)) {
 				return this.modelConstants.getListMetadata().get(this.edgesIndex.get(edge));

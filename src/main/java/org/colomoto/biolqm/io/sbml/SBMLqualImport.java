@@ -1159,5 +1159,25 @@ public class SBMLqualImport extends BaseLoader {
 				}
 			}
 		}
+
+		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
+			Output elementOutput = elementTransition.getListOfOutputs().get(0);
+			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
+
+			for (Input elementInput: elementTransition.getListOfInputs()) {
+				
+				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
+					NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
+					
+					Metadata metadataInput;
+					try {
+						metadataInput = model.getMetadataOfEdge(node1, node2);
+						this.importElementMetadata(elementInput, metadataInput);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 }
