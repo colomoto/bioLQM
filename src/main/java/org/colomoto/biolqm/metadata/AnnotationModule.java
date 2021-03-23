@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,11 +29,11 @@ import java.util.List;
 public class AnnotationModule {
 	
 	// variables
-	public ModelConstants modelConstants;
+	private ModelConstants modelConstants;
 	
-	public Index modelIndex;
-	public Map<NodeInfo, Index> nodesIndex;
-	public Map<NodeInfoPair, Index> edgesIndex;
+	private Index modelIndex;
+	private Map<NodeInfo, Index> nodesIndex;
+	private Map<NodeInfoPair, Index> edgesIndex;
 	
 	// constructors
 	public AnnotationModule() throws Exception {
@@ -47,6 +45,28 @@ public class AnnotationModule {
 		
 		this.nodesIndex = new HashMap<NodeInfo, Index>();
 		this.edgesIndex = new HashMap<NodeInfoPair, Index>();
+	}
+	
+	// getters
+	public ModelConstants getModelConstants() {
+		return this.modelConstants;
+	}
+	public Index getModelIndex() {
+		return this.modelIndex;
+	}
+	public Map<NodeInfo, Index> getNodesIndex() {
+		return this.nodesIndex;
+	}
+	public Map<NodeInfoPair, Index> getEdgesIndex() {
+		return this.edgesIndex;
+	}
+	
+	// setters
+	public void setNodesIndex(Map<NodeInfo, Index> newNodesIndex) {
+		this.nodesIndex = newNodesIndex;
+	}
+	public void setEdgesIndex(Map<NodeInfoPair, Index> newEdgesIndex) {
+		this.edgesIndex = newEdgesIndex;
 	}
 	
 	// functions
