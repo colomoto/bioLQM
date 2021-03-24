@@ -10,11 +10,13 @@ public class Reference {
 	// variables
 	private String title;
 	private String year;
+	private String author;
 	
 	// constructors
-	public Reference(String newTitle, String newYear) {
+	public Reference(String newTitle, String newYear, String fullName) {
 		this.title = newTitle;
 		this.year = newYear;
+		this.author = fullName;
 	}
 	
 	// getters
@@ -23,5 +25,8 @@ public class Reference {
 	}
 	public String getYear() {
 		return this.year;
+	}
+	public String getAuthor() {
+		return this.author;
 	}
 }

@@ -66,7 +66,7 @@ class GenericAnnotation extends Annotation {
 				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
 								
 				if (contentAnnotation[1].equals("doi") && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
-					modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, "", "");
+					modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, "", "", "");
 					
 					GetExternalMetadata gem = new GetExternalMetadata(modelConstants, contentAnnotation[1], contentAnnotation[2]);
 					gem.start();

@@ -2,7 +2,6 @@ package org.colomoto.biolqm.metadata.constants;
 
 import org.colomoto.biolqm.metadata.annotations.URI;
 import org.colomoto.biolqm.metadata.annotations.JsonReader;
-
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,8 +43,16 @@ public class GetExternalMetadata extends Thread {
 				year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
 			}
 			
+			String fullName = null;
+			if (jsonMessage.has("author") && !jsonMessage.isNull("author")) {
+				JSONObject author = jsonMessage.getJSONArray("author").getJSONObject(0);
+				String given = author.getString("given");
+				String family = author.getString("family");
+				fullName = family + " " + given;
+			}
+			
 			if (title != null && year != null) {
-				this.modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year));
+				this.modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, title, String.valueOf(year), fullName);
 			}
 			else {
 				System.err.println("Error retrieving the metadata of the doi: at least one of the characteristics couldn't be fetched." + "\n");

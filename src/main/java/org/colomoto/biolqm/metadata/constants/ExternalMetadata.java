@@ -4,7 +4,9 @@ import org.colomoto.biolqm.metadata.annotations.URI;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.ArrayList;
 
 /**
@@ -31,12 +33,12 @@ public class ExternalMetadata {
 		return false;
 	}
 	
-	public synchronized void updateExternalMetadata(URI uri, String title, String year) {
+	public synchronized void updateExternalMetadata(URI uri, String title, String year, String fullName) {
 		if (title.equals("") && year.equals("")) {
 			this.externalMetadata.put(uri, null);
 		}
 		else {
-			this.externalMetadata.put(uri, new Reference(title, year));
+			this.externalMetadata.put(uri, new Reference(title, year, fullName));
 		}
 	}
 	
@@ -80,6 +82,18 @@ public class ExternalMetadata {
 				
 				refs.add(doi);
 			}
+		}
+		return refs;
+	}
+	
+	public Set<String> getListOfReferences() {
+		
+		Set<String> refs = new HashSet<String>();
+		
+		for (Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
+			Reference ref = entry.getValue();
+			
+			refs.add(ref.getAuthor() + ";" + ref.getYear() + ";" + ref.getTitle());
 		}
 		return refs;
 	}
