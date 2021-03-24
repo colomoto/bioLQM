@@ -37,11 +37,11 @@ class AuthorsAnnotation extends Annotation {
 	
 	// functions
 	@Override
-	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) throws Exception {
 
 		Author author = new Author(contentAnnotation[0], contentAnnotation[1], contentAnnotation[2], contentAnnotation[3], contentAnnotation[4]);
 		if (this.listOfAuthors.contains(author)) {
-			return false;
+			throw new Exception("The author could not be added because it already exists.");
 		}
 		this.listOfAuthors.add(author);
 		

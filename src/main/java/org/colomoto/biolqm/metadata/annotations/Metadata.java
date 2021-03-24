@@ -208,6 +208,7 @@ public class Metadata {
 			
 		} catch (IOException e) {
 			this.addKeyValue(termDesired, alternative, collection, identifier);
+			throw new KeyValueException();
 		}
 	}
 	

@@ -54,12 +54,12 @@ class GenericAnnotation extends Annotation {
 
 	// functions
 	@Override
-	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
+	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) throws Exception {
 		switch (contentAnnotation[0]) {
 			case "uri":
 				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
 				if (this.listOfURIs.contains(uri)) {
-					return false;
+					throw new Exception("The uri could not be added because it already exists.");
 				}
 				this.listOfURIs.add(uri);
 				
@@ -75,7 +75,7 @@ class GenericAnnotation extends Annotation {
 			case "tag":
 				String tag = contentAnnotation[1];
 				if (this.listOfTags.contains(tag)) {
-					return false;
+					throw new Exception("The tag could not be added because it already exists.");
 				}
 				this.listOfTags.add(tag);
 				
@@ -90,7 +90,7 @@ class GenericAnnotation extends Annotation {
 				
 				if (this.listOfKeysValues.containsKey(key)) {
 					if (this.listOfKeysValues.get(key).contains(value)) {
-						return false;
+						throw new Exception("The pair key-value could not be added because it already exists.");
 					}
 					this.listOfKeysValues.get(key).add(value);
 				}

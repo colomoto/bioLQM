@@ -16,7 +16,7 @@ import java.util.ArrayList;
 abstract class Annotation {
 	
 	// functions
-	protected abstract boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation);
+	protected abstract boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) throws Exception;
 	protected abstract void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation);
 	protected abstract String getValue(String tab);
 	protected abstract boolean isSetIndex(ModelConstants modelConstants, Index indexParent);
