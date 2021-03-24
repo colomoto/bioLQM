@@ -1660,4 +1660,9 @@ public class Metadata {
 		
 		return true;
 	}
+	
+	// the functions used for the autocomplete in GINsim
+	public Set<String> getListOfQualifiersAvailable() {
+		return this.modelConstants.getQualifiersAvailable(this.type).keySet();
+	}
 }
