@@ -356,7 +356,7 @@ public class TestUpdaters {
 	@Test
 	public void testRandomUpdaterWithRates() throws IOException {
 		LogicalModel model = getModel();
-		double[] rates =  new double[] {0.5,0.3,0.2};
+		Double[] rates =  new Double[] {0.5,0.3,0.2};
 		RandomUpdater updater = new RandomUpdaterWithRates(model,rates);
 		byte[] state = {0,0,0};
 		// two updatable states A and B
@@ -437,7 +437,7 @@ public class TestUpdaters {
 		LogicalModel model = getOtherModel();
 		
 		// C has different rates for [-] 0.7 and [+] 0.2
-		double[] rates =  new double[] {0.5,0.5, 0.3,0.3, 0.7,0.2, 0.1,0.1, 0.4,0.4};
+		Double[] rates =  new Double[] {0.5,0.5, 0.3,0.3, 0.7,0.2, 0.1,0.1, 0.4,0.4};
 		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
 		
 		
@@ -537,7 +537,7 @@ public class TestUpdaters {
 	public void testRandomUpdaterWithRatesOther() throws IOException {
 		
 		LogicalModel model = getOtherModel();
-		double[] rates = {0.4,0.1,0.1,0.2,0.2};
+		Double[] rates = {0.4,0.1,0.1,0.2,0.2};
 		
 		RandomUpdater updater = new RandomUpdaterWithRates(model, rates);
 		byte[] state = {0,0,0,0,0};
@@ -591,7 +591,7 @@ public class TestUpdaters {
 		
 		LogicalModel model = getOtherModel();
 		model.getComponents().get(1).setInput(true);
-		double[] rates = {0.4,0.1,0.1,0.2,0.2};
+		Double[] rates = {0.4,0.1,0.1,0.2,0.2};
 		
 		RandomUpdater updater = new RandomUpdaterWithRates(model, rates);
 		byte[] state = {0,0,0,0,0};

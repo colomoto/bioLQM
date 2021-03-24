@@ -18,7 +18,7 @@ import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     // the rates associated to each component
-    private final double[] rates;
+    private final Double[] rates;
     private static final String name = "Random non uniform";
 
 	/**
@@ -34,7 +34,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 	 * @param model the model for which the random is constructed
      * @param rates the rates associated to each component
      */
-    public RandomUpdaterWithRates(LogicalModel model, double[] rates) {
+    public RandomUpdaterWithRates(LogicalModel model, Double[] rates) {
         super(model);
         // if no rates passed
         if (rates == null) {
@@ -45,7 +45,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         		nodeRates.add(1.0);
         		nodeRates.add(1.0);
         	}
-        	this.rates = new double[nodeRates.size()];
+        	this.rates = new Double[nodeRates.size()];
         	for (int i=0; i < nodeRates.size(); i++)
         		this.rates[i] = 1.0;
         } else {
@@ -131,7 +131,7 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
         return idx;
     }
     
-    public double[] getRates() {
+    public Double[] getRates() {
     	return this.rates;
     }
 
@@ -143,4 +143,6 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 	public static String getUpdaterClassName() {
 		return name;
 	}
+	
+    
 }

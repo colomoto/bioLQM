@@ -54,7 +54,7 @@ public class testReadUp {
 		return getUpdater(updaterName, m, null);
 	}
 
-	public static LogicalModelUpdater getUpdater(String updaterName, LogicalModel m, double[] rates) {
+	public static LogicalModelUpdater getUpdater(String updaterName, LogicalModel m, Double[] rates) {
 		
 		if (updaterName == "Random non uniform") {
 			return new RandomUpdaterWithRates(m, rates);

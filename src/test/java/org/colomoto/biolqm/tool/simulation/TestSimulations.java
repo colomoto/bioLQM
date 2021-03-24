@@ -333,7 +333,7 @@ public class TestSimulations {
       byte[] state = {0, 0, 0, 0, 0};
       // C and D
       int[] count = new int[2];
-      double[] rates = new double[] {0.4,0.1,0.1,0.2,0.2};
+      Double[] rates = new Double[] {0.4,0.1,0.1,0.2,0.2};
 
 
       RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model,rates);

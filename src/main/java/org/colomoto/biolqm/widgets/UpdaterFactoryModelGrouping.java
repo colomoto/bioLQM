@@ -73,7 +73,7 @@ public class UpdaterFactoryModelGrouping {
 	        throw new RuntimeException("Unrecognized updater: " + updater);
 	    }
 	 
-	 public static LogicalModelUpdater getUpdater(LogicalModel model, String updater, double[] rates) {
+	 public static LogicalModelUpdater getUpdater(LogicalModel model, String updater, Double[] rates) {
 		 	if (updater.equalsIgnoreCase("Random non uniform")) 
 		 		return  new RandomUpdaterWithRates(model, rates);
 		 	

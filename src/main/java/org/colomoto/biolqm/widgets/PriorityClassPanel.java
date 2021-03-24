@@ -47,6 +47,7 @@ import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 import org.colomoto.biolqm.tool.simulation.grouping.testReadUp;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
@@ -461,11 +462,10 @@ public class PriorityClassPanel extends JPanel {
 
 	                	// get the PC index and Group index
 	                	int[] idx = pcIdxGroup.get(e.getSource());
-	                	Map<JTextField, String> textfields = null;
 
 		                switch (up) {	                        
 		                    case "Random non uniform":
-		                    	validateTextRates(idx[0],idx[1], textfields);
+		                    	initTextRates(idx[0], idx[1]);
 		                        break;
 		                    default:
 		                    	updater = UpdaterFactoryModelGrouping.getUpdater(mpc.getModel(), up);
@@ -660,7 +660,7 @@ public class PriorityClassPanel extends JPanel {
 		updateGUI();
 	}
 	
-	private JPanel ratesPanel(int idxPC, 	int idxGroup, List<String> vars) {
+	private JPanel ratesPanel(int idxPC, int idxGroup, List<String> vars) {
 		// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 		
 		Map<String, Double> rates = new HashMap<String, Double>();
@@ -676,20 +676,21 @@ public class PriorityClassPanel extends JPanel {
 		}
 				
 		 JPanel ratesPanel = new JPanel(new GridBagLayout()); 
-		 GridBagConstraints gbcR = new GridBagConstraints(); gbcR.gridx = 0;
-		 
+		 GridBagConstraints gbcR = new GridBagConstraints(); 
+		 gbcR.gridx = 0;
 		
-		 Map<String, Double> nodes = new HashMap<String, Double>();
 		 Map<JTextField, int[]>  idxJtf = new HashMap<JTextField, int[]>();
 		 for (int d = 0; d < rates.keySet().size(); d++) { 
 			 String node = vars.get(d);
 			 
-			 Double rate = rates.get(node);
-			 if (rate == null)
-				 rate = 1.0;
-			 
-			 nodes.put(node, rate);
-			 this.ratesCache.put(node, rate);
+			 // hack so 
+			 Double rate = null;
+			 if (this.ratesCache.containsKey(node)) {
+				 rate = this.ratesCache.get(node);
+			 } else {
+				 rate = rates.get(node);
+				 this.ratesCache.put(node, rate);
+			 }
 	 
 			 JTextField jtf = new JTextField(Double.toString(rate)); 
 			 
@@ -713,11 +714,55 @@ public class PriorityClassPanel extends JPanel {
 				}
 	
 			});
-			 
+	     	 mpc.addUpdater(idxPC, idxGroup, this.ratesCache);
 			 ratesPanel.add(jtf, gbcR); 
 		 }
 		return ratesPanel;
 	}
+	
+	private void initTextRates(int idxPC, int idxGrp) {
+		Map<String, Double> nodeRates = new HashMap<String, Double>();
+
+			List<String> vars = mpc.getClassVars(idxPC).get(idxGrp);
+			Set<String> cacheVars = this.ratesCache.keySet();
+			
+			boolean allVars = true;
+			for (String var : vars) {
+				if (!cacheVars.contains(var)) {
+					allVars = false;
+					break;
+				}
+			}
+			if (allVars) {
+				for (String var : vars)
+					nodeRates.put(var, this.ratesCache.get(var));				
+			}
+     		mpc.addUpdater(idxPC, idxGrp, nodeRates);
+	}
+	
+	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
+		
+		Map<String, Double> nodeRates = new HashMap<String, Double>();
+
+		for (JTextField jtf : textfields.keySet()) {
+			
+			String text = jtf.getText();
+			String node = jtf.getToolTipText();
+				
+			try {
+				Double rate = Double.parseDouble(text);
+				jtf.setBackground(Color.white);
+				nodeRates.put(node, rate);
+				this.ratesCache.put(node, rate);
+			}
+			catch(NumberFormatException er) {
+				jtf.setBackground(LIGHT_RED);
+				break;
+			}
+		}
+		fireActionEvent();
+		mpc.addUpdater(idxPC, idxGrp, nodeRates);
+		}
 
 	private void splitSelVars() {
 		
@@ -819,85 +864,33 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	private void incGroupOfSelVars() {
-		boolean pc = false;
 		all: for (int i = 0; i < this.guiClasses.size(); i++) {
 			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
 				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
 				if (!values.isEmpty()) {
-					pc = true;
 					mpc.incGroup(i, g, values);
+					fireActionEvent();
+					break all;
 				}
-			}
-			if (pc) { 
-				fireActionEvent();
-				break all;
 			}
 		}
 		this.updatePriorityList();
 	}
 
 	private void decGroupOfSelVars() {
-		boolean pc = false;
 		all: for (int i = 0; i < this.guiClasses.size(); i++) {
 			for (int g = 0; g < this.guiClasses.get(i).size(); g++) {
 				List<String> values = this.guiClasses.get(i).get(g).getSelectedValuesList();
 				if (!values.isEmpty()) {
-					pc = true;
 					mpc.decGroup(i, g, values);
+					fireActionEvent();
+					break all;
 				}
-			}
-			if (pc) { 
-				fireActionEvent();
-				break all;
 			}
 		} 
 		this.updatePriorityList();
 	}
-	
-	
-	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
-		
-		Map<String, Double> nodeRates = new HashMap<String, Double>();
-		if (textfields == null) {
-			List<String> vars = mpc.getClassVars(idxPC).get(idxGrp);
-			Set<String> cacheVars = this.ratesCache.keySet();
-			
-			boolean allVars = true;
-			for (String var : vars) {
-				if (!cacheVars.contains(var)) {
-					allVars = false;
-					break;
-				}
-			}
-			if (allVars) {
-				for (String var : vars)
-					nodeRates.put(var, this.ratesCache.get(var));				
-			}
-			
-     		mpc.addUpdater(idxPC, idxGrp, nodeRates);
-     		
-		} else {
-			int i = 0;
-			for (JTextField jtf : textfields.keySet()) {
-			
-				String text = jtf.getText();
-				String node = jtf.getToolTipText();
-				try {
-					Double rate = Double.parseDouble(text);
-					jtf.setBackground(Color.white);
-					nodeRates.put(node, rate);
-					this.ratesCache.put(node, rate);
-				}
-				catch(NumberFormatException er) {
-					jtf.setBackground(LIGHT_RED);
-					break;
-				}
-				i++;
-			}
-			fireActionEvent();
-			mpc.addUpdater(idxPC, idxGrp, nodeRates);
-			} 
-		}
+
 
 	private void enableButtons() {
 	
@@ -923,27 +916,46 @@ public class PriorityClassPanel extends JPanel {
 				break all;
 			}
 		}
-		
-		
-		
+
+		// enable and disable inc and dec Groups. 
+		// If a group is last. It cant be deacreased. If first likewise.
+		// Buttons are disabled if vars of different groups are selected;
 		boolean incDecGrp = (groupsSel.keySet().size() > 1);
-		jbIncGroup.setEnabled(!incDecGrp);
-		jbDecGroup.setEnabled(!incDecGrp);
-
-//		boolean group = (groupsSel.keySet().size() == 1 
-//				&& mpc.getClass(rank).size() == 1);
-//		jbCollapse.setEnabled(!group);
+		boolean wholeGrp = false;
+		boolean firstWholeGrp = false;
+		boolean lastWholeGrp = false;
 		
-//		jbSplit.setEnabled(false);
-//		jbUnsplit.setEnabled(false);
-//		jbCollapse.setEnabled(false);
-//		jbExpand.setEnabled(false);
-//		jbIncGroup.setEnabled(false);
-//		jbDecGroup.setEnabled(false);
-//		jbIncClass.setEnabled(false);
-//		jbDecClass.setEnabled(false);
+		if (!groupsSel.isEmpty() && (this.mpc.getClass(rank).size() == 1 || groupsSel.keySet().size() == 1)){
+			int firstGrp = new ArrayList<Integer>(groupsSel.keySet()).get(0);
+			wholeGrp = (groupsSel.get(firstGrp).size() ==
+					this.mpc.getClass(rank).getGroup(firstGrp).size());
+			
+			if (wholeGrp) {
+				lastWholeGrp = (firstGrp == this.mpc.getClass(rank).size() - 1);
+				firstWholeGrp = (firstGrp == 0);
+			}
+		}
+		
+		jbIncGroup.setEnabled(!incDecGrp && !firstWholeGrp);
+		jbDecGroup.setEnabled(!incDecGrp  && !lastWholeGrp);
+		
+		
+		// enable and disable SPLIT and UNSPLIT buttons.
+		// Disable SPLIT if all selected vars are already split. UNSPLIT likewise.
+		boolean allUnSplit = true;
+		boolean allSplit = true;
+		for (int group : groupsSel.keySet()) {
+			for (String var : groupsSel.get(group)) {
+				if (var.contains(SplittingType.NEGATIVE.toString()) || var.contains(SplittingType.POSITIVE.toString())) {
+					allUnSplit = false;
+				} else {
+					allSplit = false;
+				}
+			}
+		}
+		jbSplit.setEnabled(!allSplit);
+		jbUnsplit.setEnabled(!allUnSplit);
 
-	
 	}
 	
 	private void collapseAll() {

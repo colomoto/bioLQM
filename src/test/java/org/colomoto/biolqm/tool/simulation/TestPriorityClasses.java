@@ -169,7 +169,7 @@ public class TestPriorityClasses {
 				"E" + ModelGrouping.SEPUPDATER +
 				"RN[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]", mpc2.toString());
 		
-		mpc2.addUpdater(0, 0, new RandomUpdaterWithRates(model, new double[] {1.0,1.0,3.0,4.0,6.0,8.0,5.0,1.0,1.0,1.0}));
+		mpc2.addUpdater(0, 0, new RandomUpdaterWithRates(model, new Double[] {1.0,1.0,3.0,4.0,6.0,8.0,5.0,1.0,1.0,1.0}));
 		assertEquals(
 				"B" + ModelGrouping.SEPVAR +
 				
