@@ -1665,4 +1665,13 @@ public class Metadata {
 	public Set<String> getListOfQualifiersAvailable() {
 		return this.modelConstants.getQualifiersAvailable(this.type).keySet();
 	}
+	public Set<String> getListOfTagsAvailable() {
+		return this.modelConstants.getTagsAvailable();
+	}
+	public Set<String> getListOfKeysAvailable() {
+		return this.modelConstants.getKeysValuesAvailable().keySet();
+	}
+	public Set<String> getListOfCollectionsAvailable() {
+		return this.modelConstants.getCollectionsAvailable().keySet();
+	}
 }
