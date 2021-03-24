@@ -1674,7 +1674,7 @@ public class Metadata {
 	public Set<String> getListOfCollectionsAvailable() {
 		return this.modelConstants.getCollectionsAvailable().keySet();
 	}
-	public Set<String> getListOfReferencesAvailable() {
-		return this.modelConstants.getInstanceOfExternalMetadata().getListOfReferences();
+	public Map<String, String> getListOfReferencesAvailable(String inputTrimmed) {
+		return this.modelConstants.getInstanceOfExternalMetadata().getListOfReferences(inputTrimmed);
 	}
 }

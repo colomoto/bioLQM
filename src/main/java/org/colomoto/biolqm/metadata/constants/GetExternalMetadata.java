@@ -43,7 +43,7 @@ public class GetExternalMetadata extends Thread {
 				year = jsonMessage.getJSONObject("created").getJSONArray("date-parts").getJSONArray(0).getInt(0);
 			}
 			
-			String fullName = null;
+			String fullName = "";
 			if (jsonMessage.has("author") && !jsonMessage.isNull("author")) {
 				JSONObject author = jsonMessage.getJSONArray("author").getJSONObject(0);
 				String given = author.getString("given");
