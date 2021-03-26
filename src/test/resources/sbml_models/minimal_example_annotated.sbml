@@ -1,38 +1,37 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" layout:required="false" level="3" qual:required="true" version="1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1">
-  <model id="model_id" metaid="af45cdca-09ca-4979-ad33-0289dd57c3d1">
+  <model id="model_id" metaid="de91481c-37d3-484a-a337-1ac86a4b4191">
     <annotation>
-  <colomoto:nonRDFAnnotation xmlns:colomoto="uri_colomoto">
-        <colomoto:qualifier colomoto:name="customQualifier" colomoto:type="GenericAnnotation">
-          <colomoto:alternative colomoto:number="0">
-            <colomoto:tags>
-              <colomoto:tag>word1</colomoto:tag><colomoto:tag>word2</colomoto:tag></colomoto:tags><colomoto:keys>
-              <colomoto:values colomoto:key="key1">val11;;;value12</colomoto:values><colomoto:values colomoto:key="key2">val21</colomoto:values></colomoto:keys><colomoto:nested>
-              <colomoto:qualifier colomoto:name="is" colomoto:type="GenericAnnotation">
-                <colomoto:alternative colomoto:number="0">
-                  <colomoto:nested>
-                    <colomoto:qualifier colomoto:name="hasKey" colomoto:type="GenericAnnotation">
-                      <colomoto:alternative colomoto:number="-1">
-                        <colomoto:keys>
-                          <colomoto:values colomoto:key="keyNested">valueNested</colomoto:values></colomoto:keys></colomoto:alternative></colomoto:qualifier><colomoto:qualifier colomoto:name="hasTag" colomoto:type="GenericAnnotation">
-                      <colomoto:alternative colomoto:number="-1">
-                        <colomoto:tags>
-                          <colomoto:tag>wordNested</colomoto:tag></colomoto:tags></colomoto:alternative></colomoto:qualifier></colomoto:nested></colomoto:alternative></colomoto:qualifier></colomoto:nested></colomoto:alternative></colomoto:qualifier></colomoto:nonRDFAnnotation><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-	<rdf:Description rdf:about="#af45cdca-09ca-4979-ad33-0289dd57c3d1">
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+	<rdf:Description rdf:about="#de91481c-37d3-484a-a337-1ac86a4b4191">
 	<dcterms:created rdf:parseType="Resource">
 	<dcterms:W3CDTF>2021-03-07T23:00:00Z</dcterms:W3CDTF>
 	</dcterms:created>
 	<dcterms:modified rdf:parseType="Resource">
-	<dcterms:W3CDTF>2021-03-07T23:00:00Z</dcterms:W3CDTF>
+	<dcterms:W3CDTF>2021-03-25T23:00:00Z</dcterms:W3CDTF>
 	</dcterms:modified>
 	<bqmodel:customQualifier>
 	<rdf:Bag>
-              <bqmodel:is>
+	<rdf:li rdf:resource="tag:word1"/>
+	<rdf:li rdf:resource="tag:word2"/>
+	<rdf:li rdf:resource="keyvalue:key1:val11"/>
+	<rdf:li rdf:resource="keyvalue:key1:value12"/>
+	<rdf:li rdf:resource="keyvalue:key2:val21"/>
+	<bqmodel:is>
 	<rdf:Bag>
 	<rdf:li rdf:resource="uniprot:P0DP23"/>
+	<bqmodel:hasKey>
+	<rdf:Bag>
+	<rdf:li rdf:resource="keyvalue:keyNested:valueNested"/>
+	</rdf:Bag>
+	</bqmodel:hasKey>
+	<bqmodel:hasTag>
+	<rdf:Bag>
+	<rdf:li rdf:resource="tag:wordNested"/>
+	</rdf:Bag>
+	</bqmodel:hasTag>
 	</rdf:Bag>
 	</bqmodel:is>
-	
 	<bqmodel:is>
 	<rdf:Bag>
 	<rdf:li rdf:resource="doi:10.15252/msb.20199110"/>

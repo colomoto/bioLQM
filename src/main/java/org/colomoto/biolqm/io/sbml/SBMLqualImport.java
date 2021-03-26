@@ -953,26 +953,74 @@ public class SBMLqualImport extends BaseLoader {
 		}
 		
 		// we add all the uris for this qualifier
-		for (String uri: cvterm.getResources()) {			
-			if (uri.indexOf("identifiers.org/") != -1) {
-				uri = uri.split("identifiers.org/")[1];
-			} else if (uri.indexOf("urn:miriam:") != -1) {
-				uri = uri.split("urn:miriam:")[1];
+		for (String resource: cvterm.getResources()) {
+			
+			// first we check if the resource is a tag or a keyvalue
+			if (resource.indexOf("tag:") != -1) {
+				String tag = resource.split("tag:")[1];
+				try {
+					metadata.addTag(qualifier, alternative, tag);
+					continue;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (resource.indexOf("keyvalue:") != -1) {
+				String keyvalue = resource.split("keyvalue:")[1];
+				
+				String key = null;
+				String value = null;
+				if (keyvalue.indexOf("urn:") != -1 && keyvalue.indexOf(":", 3) != -1) {
+					int index = keyvalue.indexOf(":", 3);
+					
+					key = keyvalue.substring(0, index);
+					value = keyvalue.substring(index+1);
+				} else {
+					key = keyvalue.split(":")[0];
+					value = keyvalue.split(":")[1];
+				}
+
+				try {
+					metadata.addKeyValue(qualifier, alternative, key, value);
+					continue;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			
-			int colon = uri.indexOf(':');
-			int slash = uri.indexOf('/');
+			// if it wasn't a key or a value then it's a uri (except for the urn case)
+			if (resource.indexOf("identifiers.org/") != -1) {
+				resource = resource.split("identifiers.org/")[1];
+			} else if (resource.indexOf("urn:miriam:") != -1) {
+				resource = resource.split("urn:miriam:")[1];
+				
+			} else if (resource.indexOf("urn:") != -1 && resource.indexOf(":", 3) != -1) {
+				int index = resource.indexOf(":", 3);
+				
+				String key = resource.substring(0, index);
+				String value = resource.substring(index+1);
+				
+				try {
+					metadata.addKeyValue(qualifier, alternative, key, value);
+					continue;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			int colon = resource.indexOf(':');
+			int slash = resource.indexOf('/');
 			
 			int index = colon;
 			if (colon == -1 || (slash != -1 && slash < colon)) {
 				index = slash;
 			}
 			
-			String collection = uri.substring(0, index);
-			String identifier = uri.substring(index+1);
+			String collection = resource.substring(0, index);
+			String identifier = resource.substring(index+1);
 			
 			try {
 				metadata.addURI(qualifier, alternative, collection, identifier);
+				continue;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -989,7 +1037,6 @@ public class SBMLqualImport extends BaseLoader {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 		}
 	}
 		
@@ -1030,70 +1077,6 @@ public class SBMLqualImport extends BaseLoader {
 		}
 	}
 	
-	private void importElementTagsAndKeys(XMLNode xml, Metadata metadata) {
-	
-		for (XMLNode qualifier: xml.getChildElements("qualifier", "uri_colomoto")) {
-			String qualifierName = qualifier.getAttributes().getValue("name");
-
-			for (XMLNode alternative: qualifier.getChildElements("alternative", "uri_colomoto")) {
-				int alternativeNumber = Integer.parseInt(alternative.getAttributes().getValue("number"));
-				if (alternativeNumber < 0) {
-					if (metadata.getNumberOfAlternatives(qualifierName) == 0) {
-						alternativeNumber = 0;
-					}
-					else {
-						try {
-							alternativeNumber = metadata.createAlternative(qualifierName);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				
-				XMLNode tags = alternative.getChildElement("tags", "uri_colomoto");
-				if (tags != null) {
-					for (XMLNode tagNode: tags.getChildElements("tag", "uri_colomoto")) {
-						
-						String tag = tagNode.getChild(0).getCharacters();
-						try {
-							metadata.addTag(qualifierName, alternativeNumber, tag);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				
-				XMLNode keys = alternative.getChildElement("keys", "uri_colomoto");
-				if (keys != null) {
-					for (XMLNode valuesNode: keys.getChildElements("values", "uri_colomoto")) {
-						String key = valuesNode.getAttributes().getValue("key");
-						String values = (String) valuesNode.getChild(0).getCharacters();
-						List<String> valuesList = Arrays.asList(values.split(";;;"));
-						
-						for (String val: valuesList) {
-							try {
-								metadata.addKeyValue(qualifierName, alternativeNumber, key, val);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-				
-				XMLNode nested = alternative.getChildElement("nested", "uri_colomoto");
-				if (nested != null) {
-					Metadata metadataQualifier;
-					try {
-						metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternativeNumber);
-						this.importElementTagsAndKeys(nested, metadataQualifier);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-	
 	private void importElementMetadata(SBase element, Metadata metadata) {
 		if (element.isSetAnnotation()) {					
 			Annotation annotation = element.getAnnotation();
@@ -1105,15 +1088,6 @@ public class SBMLqualImport extends BaseLoader {
 			
 			// to deal with terms of dcterms
 			this.importElementHistory(annotation, metadata);
-				
-			// to deal with tags and keys
-			if (annotation.isSetNonRDFannotation()) {
-				XMLNode nonRDFAnnotation = annotation.getNonRDFannotation().getChildElement("nonRDFAnnotation", "uri_colomoto");
-				
-				if (nonRDFAnnotation != null) {
-					this.importElementTagsAndKeys(nonRDFAnnotation, metadata);
-				}
-			}
 		}
 		if (element.isSetNotes()) {
 			XMLNode notes = element.getNotes();
@@ -1160,6 +1134,26 @@ public class SBMLqualImport extends BaseLoader {
 			}
 		}
 
+		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
+			Output elementOutput = elementTransition.getListOfOutputs().get(0);
+			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
+
+			for (Input elementInput: elementTransition.getListOfInputs()) {
+				
+				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
+					NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
+					
+					Metadata metadataInput;
+					try {
+						metadataInput = model.getMetadataOfEdge(node1, node2);
+						this.importElementMetadata(elementInput, metadataInput);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
 		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
 			Output elementOutput = elementTransition.getListOfOutputs().get(0);
 			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
