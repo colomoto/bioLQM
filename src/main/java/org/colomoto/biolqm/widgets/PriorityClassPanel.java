@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -47,6 +48,7 @@ import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 import org.colomoto.biolqm.tool.simulation.grouping.testReadUp;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
@@ -115,7 +117,8 @@ public class PriorityClassPanel extends JPanel {
 
 		// CENTER PANEL
 		
-		this.jpCenter = new CenterPanelPriorityPanel();
+//		this.jpCenter = new CenterPanelPriorityPanel();
+		this.jpCenter = new JPanel();
 		this.jpCenter.setLayout(new GridBagLayout());
 		this.jpCenter.addMouseListener(new MouseListener() {
 
@@ -142,7 +145,7 @@ public class PriorityClassPanel extends JPanel {
 		});
 		
         JScrollPane scrollPane = new JScrollPane(this.jpCenter,
-        		ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+        		ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
         		ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.add(scrollPane , BorderLayout.CENTER);
 		
@@ -334,6 +337,7 @@ public class PriorityClassPanel extends JPanel {
 		for (int idxPC = 0; idxPC < mpc.size(); idxPC++) { 
 			this.guiClasses.add(new ArrayList<JList<String>>());
 			JPanel jpPClass = new JPanel();
+			jpPClass.setBorder(BorderFactory.createLineBorder(Color.gray));
 			jpPClass.setLayout(new BorderLayout());
 			jpPClass.setAlignmentY(TOP_ALIGNMENT);
 			JPanel jpPClassHeader = new JPanel(new BorderLayout());
@@ -507,6 +511,17 @@ public class PriorityClassPanel extends JPanel {
 								for (JList<String> lGroup : guiClasses.get(pc)) 
 									lGroup.clearSelection();
 								}
+							else {
+								for (JList<String> lGroup : guiClasses.get(pc)) {
+									boolean down = (e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK ||
+											e.getModifiersEx() == 
+													Toolkit.getDefaultToolkit()
+													.getMenuShortcutKeyMaskEx()); 
+									
+									if (!lGroup.equals(selJList) && !down)
+										lGroup.clearSelection();
+								}
+							}
 						}
 						enableButtons();
 					}
@@ -583,12 +598,12 @@ public class PriorityClassPanel extends JPanel {
 				;
 			}
 
-			JScrollPane jScroll = new JScrollPane(jpGroups);
-			jScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-			jScroll.setHorizontalScrollBar(null);
-			jpPClass.add(jScroll, BorderLayout.CENTER);
+//			JScrollPane jScroll = new JScrollPane(jpGroups);
+//			jScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+//			jScroll.setHorizontalScrollBar(null);
+//			jpPClass.add(jScroll, BorderLayout.CENTER);
+			jpPClass.add(jpGroups, BorderLayout.CENTER);
 
-			if (this.guiMultipSuc) {
 				JPanel jpTmpAll = new JPanel(new GridBagLayout());
 				GridBagConstraints gbcT = new GridBagConstraints();
 				gbcT.gridx = 0;
@@ -643,7 +658,6 @@ public class PriorityClassPanel extends JPanel {
 
 				jpTmpAll.add(jbDGrp);				
 				jpPClass.add(jpTmpAll, BorderLayout.SOUTH);
-			}
 
 			jpPClass.setMinimumSize(new Dimension(jpPClass.getPreferredSize().width,
 					jpCenter.getHeight())); // FIXME
@@ -920,43 +934,103 @@ public class PriorityClassPanel extends JPanel {
 		// enable and disable inc and dec Groups. 
 		// If a group is last. It cant be deacreased. If first likewise.
 		// Buttons are disabled if vars of different groups are selected;
-		boolean incDecGrp = (groupsSel.keySet().size() > 1);
-		boolean wholeGrp = false;
-		boolean firstWholeGrp = false;
-		boolean lastWholeGrp = false;
+
 		
-		if (!groupsSel.isEmpty() && (this.mpc.getClass(rank).size() == 1 || groupsSel.keySet().size() == 1)){
-			int firstGrp = new ArrayList<Integer>(groupsSel.keySet()).get(0);
-			wholeGrp = (groupsSel.get(firstGrp).size() ==
-					this.mpc.getClass(rank).getGroup(firstGrp).size());
+		if (groupsSel.isEmpty()) {
+			jbIncClass.setEnabled(false);
+			jbDecClass.setEnabled(false);
+			jbSplit.setEnabled(false);
+			jbUnsplit.setEnabled(false);
 			
-			if (wholeGrp) {
-				lastWholeGrp = (firstGrp == this.mpc.getClass(rank).size() - 1);
-				firstWholeGrp = (firstGrp == 0);
+			if (this.guiMultipSuc) {
+				
+				jbExpand.setEnabled(false);
+				jbCollapse.setEnabled(false);
+			
+				jbIncGroup.setEnabled(false);
+				jbDecGroup.setEnabled(false);
 			}
-		}
-		
-		jbIncGroup.setEnabled(!incDecGrp && !firstWholeGrp);
-		jbDecGroup.setEnabled(!incDecGrp  && !lastWholeGrp);
-		
-		
-		// enable and disable SPLIT and UNSPLIT buttons.
-		// Disable SPLIT if all selected vars are already split. UNSPLIT likewise.
-		boolean allUnSplit = true;
-		boolean allSplit = true;
-		for (int group : groupsSel.keySet()) {
-			for (String var : groupsSel.get(group)) {
-				if (var.contains(SplittingType.NEGATIVE.toString()) || var.contains(SplittingType.POSITIVE.toString())) {
-					allUnSplit = false;
-				} else {
-					allSplit = false;
+			
+		} else {
+			
+			boolean incDecGrp = (groupsSel.keySet().size() > 1);
+			boolean wholeGrp = false;
+			boolean firstWholeGrp = false;
+			boolean lastWholeGrp = false;
+			int firstGrp = -1;
+			
+			if (this.mpc.getClass(rank).size() == 1 || groupsSel.keySet().size() == 1){
+				firstGrp = new ArrayList<Integer>(groupsSel.keySet()).get(0);
+				wholeGrp = (groupsSel.get(firstGrp).size() ==
+						this.mpc.getClass(rank).getGroup(firstGrp).size());
+			
+				if (wholeGrp) {
+					lastWholeGrp = (firstGrp == this.mpc.getClass(rank).size() - 1);
+					firstWholeGrp = (firstGrp == 0);
 				}
 			}
-		}
-		jbSplit.setEnabled(!allSplit);
-		jbUnsplit.setEnabled(!allUnSplit);
+		
+			boolean firstWholeRank = false;
+			boolean lastWholeRank = false;
+			if (!groupsSel.isEmpty()) {
+			
+				int sizeRank = 0;
+				for (List<String> group : this.mpc.getClassVars(rank)) 
+					sizeRank += group.size();
+				int sizeSel = 0;
+				for (Integer group : groupsSel.keySet()) 
+					sizeSel += groupsSel.get(group).size();
+				
+				if (sizeSel == sizeRank) {
+					if (rank == this.mpc.size() - 1) {
+						lastWholeRank = true;
+					} 
+					if (rank == 0) {
+						firstWholeRank = true;
+					}
+				}		
+			}
+			jbIncClass.setEnabled(!firstWholeRank);
+			jbDecClass.setEnabled(!lastWholeRank);
+		
+			// enable and disable SPLIT and UNSPLIT buttons.
+			// Disable SPLIT if all selected vars are already split. UNSPLIT likewise.
+			boolean allUnSplit = true;
+			boolean allSplit = true;
+			for (int group : groupsSel.keySet()) {
+				for (String var : groupsSel.get(group)) {
+					if (var.contains(SplittingType.NEGATIVE.toString()) || var.contains(SplittingType.POSITIVE.toString())) {
+						allUnSplit = false;
+					} else {
+						allSplit = false;
+					}
+				}
+			}
+			jbSplit.setEnabled(!allSplit);
+			jbUnsplit.setEnabled(!allUnSplit);
+		
+			if (this.guiMultipSuc) {
+				// COLLAPSE
+			
+				jbCollapse.setEnabled(!wholeGrp && 
+						!(groupsSel.keySet().size() == 1 && groupsSel.get(firstGrp).size() == 1));
 
-	}
+				boolean allSingleTons = true;
+				for (Integer group : groupsSel.keySet()) {
+					if (this.mpc.getClass(rank).getGroup(group).size() != 1) {
+						allSingleTons = false;
+						break;
+					}	
+				}
+				// EXPAND
+				jbExpand.setEnabled(!allSingleTons);
+			}
+				
+				jbIncGroup.setEnabled(!incDecGrp && !firstWholeGrp);
+				jbDecGroup.setEnabled(!incDecGrp  && !lastWholeGrp);
+			}
+		}
+
 	
 	private void collapseAll() {
 		this.mpc.collapseAll();
@@ -1022,6 +1096,7 @@ public class PriorityClassPanel extends JPanel {
 	}
 
 	private void updateGUI() {
+		this.enableButtons();
 		this.jpCenter.revalidate();
 		this.jpCenter.repaint();
 	}
@@ -1040,20 +1115,21 @@ public class PriorityClassPanel extends JPanel {
 		for (int i = 0; i < listeners.length; i += 2) {
 			if (listeners[i] == PanelChangedEventListener.class) {
 				((PanelChangedEventListener) listeners[i + 1]).panelChangedOccurred();
+
 			}
 		}
 	}
 	
-	public class CenterPanelPriorityPanel extends JPanel {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public java.awt.Dimension getPreferredSize() {
-			   return new java.awt.Dimension(super.getPreferredSize().width,
-					   super.getSize().height);
-		}
-	}
+//	public class CenterPanelPriorityPanel extends JPanel {
+//
+//		private static final long serialVersionUID = 1L;
+//
+//		@Override
+//		public java.awt.Dimension getPreferredSize() {
+//			   return new java.awt.Dimension(super.getPreferredSize().width,
+//					   super.getSize().height);
+//		}
+//	}
 	
 	
 }

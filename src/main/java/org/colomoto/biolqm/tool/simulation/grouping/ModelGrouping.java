@@ -1433,8 +1433,13 @@ public class ModelGrouping {
 		public void setNewRates() {
 			
 			Double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
+			
+			int[] flags = new int[] {-1,1,0};
+			
 			for (int idx = 0, rates = 0; idx < model.getComponents().size()
 					&& rates < model.getComponents().size()*2 - 1; idx++, rates += 2) {
+				
+				
 				if (this.contains(idx, 0)) {
 					if (upRates[rates] == null) {
 						// add new var happened
@@ -1450,13 +1455,16 @@ public class ModelGrouping {
 					} 
 				// idx with -1 flag was added
 				} else if (this.contains(idx, -1)) {
-					if (upRates[rates] == null) {
+					if (upRates[rates] == null) 
 						upRates[rates] = 1.0;
-					} 
+					if (upRates[rates+1] != null && !this.contains(idx,1)) 
+						upRates[rates+1] = null;
+					
 				// idx with +1 flag was added
 				} else if (this.contains(idx, 1)) {
 					if (upRates[rates+1] == null)
 						upRates[rates+1] = 1.0;
+					upRates[rates] = null;
 				
 				// A var was deleted or never existed
 				} else {
@@ -1466,9 +1474,7 @@ public class ModelGrouping {
 			}
 			this.updater = new RandomUpdaterWithRates(model, upRates);
 		}
-		
-		
-		
+
 		public RankedClassGroup clone() {
 			
 			LogicalModelUpdater newUpdater = this.updater;

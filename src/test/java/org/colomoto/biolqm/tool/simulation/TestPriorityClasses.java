@@ -23,6 +23,7 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 public class TestPriorityClasses {
@@ -274,9 +275,18 @@ public class TestPriorityClasses {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals(mpc.toString(),"B[+],C$RN[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]/B[-]:D[-],D[+],E$RU");
+		
+		// since Groups were passed in a Map object, the order of appearance 
+		// differs between B[-] and B[+]
+		Assert.assertTrue(
+				mpc.toString().equals("B[+],C$RN[null,null,null,1.0,1.0,1.0,null,null,null,null]/"
+						+ "B[-]:D[-],D[+],E$RU") ||
+				mpc.toString().equals("B[-]/B[+],C$RN[null,null,null,1.0,1.0,1.0,null,null,null,null]"
+						+ ":D[-],D[+],E$RU")
+				);
 
 	}
+
 }
 
 
