@@ -82,7 +82,11 @@ class DateAnnotation extends Annotation {
 			indexParent.setIndexOfChildren(existingIndex);
 			
 			this.indexOfDate = existingIndex;
-			modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, "nested"));
+			
+			// we get the type of the parent Metadata
+			String type = modelConstants.getListMetadata().get(indexParent).getType();
+			
+			modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, type));
 		}
 		
 		return existingIndex;

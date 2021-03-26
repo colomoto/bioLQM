@@ -19,14 +19,12 @@ public class QualifiersAvailable {
 	public Map<String, Qualifier> model;
 	public Map<String, Qualifier> species;
 	public Map<String, Qualifier> transition;
-	public Map<String, Qualifier> nested;
 	
 	// constructors
 	public QualifiersAvailable() {
 		this.model = new HashMap<String, Qualifier>();
 		this.species = new HashMap<String, Qualifier>();
 		this.transition = new HashMap<String, Qualifier>();
-		this.nested = new HashMap<String, Qualifier>();
 	
 		Yaml yaml = new Yaml();
 		InputStream inputStream = QualifiersAvailable.class
@@ -76,8 +74,6 @@ public class QualifiersAvailable {
 				return this.species;
 			case "transition":
 				return this.transition;
-			case "nested":
-				return this.nested;
 		}
 		
 		return null;

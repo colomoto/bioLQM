@@ -100,9 +100,6 @@ bqbiol:
     transition: 
       probability: compulsory
       collections: [uniprot, chebi]
-    nested: 
-      probability: possible
-      collections: [uniprot, chebi]
 
 - term: isEncodedBy
   description: encoder
@@ -182,9 +179,6 @@ dcterms:
     transition: 
       probability: compulsory
       collections: [uniprot, chebi]
-    nested: 
-      probability: possible
-      collections: [uniprot, chebi]
 
 - term: created
   description: date created
@@ -199,9 +193,6 @@ dcterms:
       collections: [uniprot, chebi]
     transition: 
       probability: compulsory
-      collections: [uniprot, chebi]
-    nested: 
-      probability: possible
       collections: [uniprot, chebi]
 
 - term: modified
@@ -218,9 +209,6 @@ dcterms:
     transition: 
       probability: compulsory
       collections: [uniprot, chebi]
-    nested: 
-      probability: possible
-      collections: [uniprot, chebi]
   
 - term: license
   description: license
@@ -235,8 +223,5 @@ dcterms:
       collections: [uniprot, chebi]
     transition: 
       probability: compulsory
-      collections: [uniprot, chebi]
-    nested: 
-      probability: possible
       collections: [uniprot, chebi]
   

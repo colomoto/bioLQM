@@ -6,7 +6,6 @@ import java.io.File;
 
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.service.LQMServiceManager;
@@ -36,27 +35,20 @@ public class TestRedefinitionQualifierType {
 		modelMetadata.addTag("is", "word1");
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("is");
 		
-		// customQualifier does not have any instances yet so its type is null
+		// customQualifier (in model components) does not have any instances yet so its type is null
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), null);
 		
-		// we initialize the type of customQualifier as a GenericAnnotation
+		// we initialize the type of customQualifier as a GenericAnnotation (in model components) 
 		nestedMetadata.addURI("customQualifier", "uniprot", "P0DP23");
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), "GenericAnnotation");
 		
 		nestedMetadata.removeURI("customQualifier", "uniprot", "P0DP23");
-		
-		
-		// we add some metadata to the first node
-		NodeInfo node = model.getComponents().get(0);
-		Metadata nodeMetadata = model.getMetadataOfNode(node);
-		nodeMetadata.addTag("is", "word1");
-		Metadata nestedMetadata2 = nodeMetadata.getMetadataOfQualifier("is");
 
-		// customQualifier does not have any instances anymore so its type is null
+		// customQualifier (in model components) does not have any instances anymore so its type is null
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), null);
 		
-		// we reinitialize the type of customQualifier as a DistributionAnnotation
-		nestedMetadata2.addDistribution("customQualifier", "coucou");
+		// we reinitialize the type of customQualifier (in model components) as a DistributionAnnotation
+		modelMetadata.addDistribution("customQualifier", "coucou");
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), "DistributionAnnotation");
 	}
 }

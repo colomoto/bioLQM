@@ -1028,18 +1028,6 @@ public class Metadata {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
 		
-		// if the metadata is nested we need to find the type of the original parent (model or node)
-		String type = metadata.getType();
-		
-		if (type.equals("nested")) {
-			Index indexMetadata = metadata.getLocalIndex();
-			
-			while (type.equals("nested")) {
-				indexMetadata = indexMetadata.getIndexOfParent();
-				type = modelConstants.getListMetadata().get(indexMetadata).getType();
-			}
-		}
-		
 		// for each alternative of this qualifier we save its content
 		for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
 			
