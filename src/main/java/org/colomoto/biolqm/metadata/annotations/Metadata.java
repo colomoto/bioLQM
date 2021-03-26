@@ -13,9 +13,6 @@ import org.json.JSONException;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
-import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.XMLTriple;
-import org.sbml.jsbml.xml.XMLAttributes;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,8 +25,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.text.ParseException;
-import java.util.stream.Collectors;
-import java.util.AbstractMap;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -441,7 +436,7 @@ public class Metadata {
 	public void addDate(String termDesired, String date) throws Exception {
 		DateValidator validator = new DateValidator("yyyy-MM-dd");
 		
-		if (validator.isValid(date)) { 		
+		if (validator.isValid(date)) {
 			String javaClassDesired = "DateAnnotation";
 			this.addAnnotation(termDesired, 0, javaClassDesired, date);
 		}
@@ -1011,49 +1006,9 @@ public class Metadata {
 	}
 	
 	// the functions to export the metadata towards the sbml format	
-	private XMLNode exportTagsAndKeys(int alternative, Set<String> listOfTags, Map<String, ArrayList<String>> listOfKeysValues, XMLNode xmlNested) {
-
-		XMLAttributes attributesAlternative = new XMLAttributes();
-		attributesAlternative.add("colomoto:number", String.valueOf(alternative));
-		XMLNode xmlAlternative = new XMLNode(new XMLTriple("colomoto:alternative"), attributesAlternative);
-		
-		if (listOfTags.size() > 0) {
-			XMLNode xmlTags = new XMLNode(new XMLTriple("colomoto:tags"));
-			
-			for (String tag: listOfTags) {
-				XMLNode xmlTag = new XMLNode(new XMLTriple("colomoto:tag"));
-				xmlTag.addChild(new XMLNode(tag));
-				xmlTags.addChild(xmlTag);
-			}
-			
-			xmlAlternative.addChild(xmlTags);
-		}
-		if (listOfKeysValues.size() > 0) {
-			XMLNode xmlKeys = new XMLNode(new XMLTriple("colomoto:keys"));
-			
-			for (String key : listOfKeysValues.keySet()) {
-				XMLAttributes attributesKey = new XMLAttributes();
-				attributesKey.add("colomoto:key", String.valueOf(key));
-				XMLNode xmlKey = new XMLNode(new XMLTriple("colomoto:values"), attributesKey);
-				
-				String values = listOfKeysValues.get(key).stream().map(Object::toString).collect(Collectors.joining(";;;"));
-				xmlKey.addChild(new XMLNode(values));
-				
-				xmlKeys.addChild(xmlKey);
-			}
-			
-			xmlAlternative.addChild(xmlKeys);
-		}
-		if (xmlNested.getChildCount() > 0) {
-			xmlAlternative.addChild(xmlNested);
-		}
-		return xmlAlternative;
-	}
-	
-	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> exportNestedMetadata(Metadata metadata) throws Exception {
+	private ArrayList<CVTerm> exportNestedMetadata(Metadata metadata) throws Exception {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
-		XMLNode xml = new XMLNode(new XMLTriple("colomoto:nested"));
 		
 		for (String qualifierName: metadata.getListOfQualifiers()) {
 			
@@ -1062,29 +1017,20 @@ public class Metadata {
 			String qualifierClass = qualifierFullClass.substring(colon+1);
 			
 			if (qualifierClass.equals("GenericAnnotation")) {
-				AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata = this.commonExportMetadata(metadata, xml, qualifierName, qualifierClass);
+				ArrayList<CVTerm> commonExportMetadata = this.commonExportMetadata(metadata, qualifierName, qualifierClass);
 				
-				for (CVTerm cvterm: commonExportMetadata.getKey()) {
+				for (CVTerm cvterm: commonExportMetadata) {
 					listOfCVTerms.add(cvterm);
 				}
-				xml = commonExportMetadata.getValue();
 			}
 		}
 		
-		return new AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode>(listOfCVTerms, xml);
+		return listOfCVTerms;
 	}
 	
-	private AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata(Metadata metadata, XMLNode xml, String qualifierName, String qualifierClass) {
+	private ArrayList<CVTerm> commonExportMetadata(Metadata metadata, String qualifierName, String qualifierClass) {
 		
 		ArrayList<CVTerm> listOfCVTerms = new ArrayList<CVTerm>();
-		
-		// XMLNode for the tags and keys of the qualifier
-		XMLAttributes attributesQualifier = new XMLAttributes();
-		attributesQualifier.add("colomoto:name", qualifierName);
-		attributesQualifier.add("colomoto:type", qualifierClass);
-		XMLNode xmlQualifier = new XMLNode(new XMLTriple("colomoto:qualifier"), attributesQualifier);
-		
-		boolean tagsorkeys = false;
 		
 		// if the metadata is nested we need to find the type of the original parent (model or node)
 		String type = metadata.getType();
@@ -1098,7 +1044,7 @@ public class Metadata {
 			}
 		}
 		
-		int alternativeWithoutResources = 0;
+		// for each alternative of this qualifier we save its content
 		for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
 			CVTerm cvterm = new CVTerm();
 			
@@ -1115,57 +1061,52 @@ public class Metadata {
 			if (qualifier.getElementNameEquivalent().equals("unknownQualifier") || (qualifier.getElementNameEquivalent().equals("isRelatedTo") && !qualifierName.equals("isRelatedTo"))) {
 				cvterm.setUnknownQualifierName(qualifierName);
 			}
-		
+			
+			// we save the uris
 			ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName, alternative);
-
 			for (ArrayList<String> resource: listOfResources) {
 				cvterm.addResource(resource.get(0)+":"+resource.get(1));
 			}
 			
+			// we save the tags
+			GenericAnnotation generic = (GenericAnnotation) metadata.listOfAnnotations.get(qualifierName).get(alternative);
+			Set<String> listOfTags = generic.getListOfTags();
+			for (String tag: listOfTags) {
+				cvterm.addResource("tag:"+tag);
+			}
+			
+			// we save the keysvalues
+			Map<String, ArrayList<String>> listOfKeysValues = generic.getListOfKeysValues();
+			for (Map.Entry<String, ArrayList<String>> entry: listOfKeysValues.entrySet()) {
+				String key = entry.getKey();
+				
+				for (String value: entry.getValue()) {
+					cvterm.addResource("keyvalue:"+key+":"+value);
+				}
+			}
+			
 			// we save the nested parts
-			XMLNode xmlNested = new XMLNode();
 			if (metadata.isSetMetadataOfQualifier(qualifierName, alternative)) {
 				Metadata metadataQualifier;
 				try {
 					metadataQualifier = metadata.getMetadataOfQualifier(qualifierName, alternative);
 					
-					AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> nestedMetadata = metadata.exportNestedMetadata(metadataQualifier);
+					ArrayList<CVTerm> nestedCVTerms = metadata.exportNestedMetadata(metadataQualifier);
 					
-					ArrayList<CVTerm> nestedCVTerms = nestedMetadata.getKey();
 					for (CVTerm nestedCVTerm : nestedCVTerms) {
 						cvterm.addNestedCVTerm(nestedCVTerm);
 					}
-					xmlNested = nestedMetadata.getValue();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			
-			int realAlternative;
 			if (cvterm.getResourceCount() > 0 || cvterm.getNestedCVTermCount() > 0) {
 				listOfCVTerms.add(cvterm);
-				realAlternative = alternative-alternativeWithoutResources;
-			}
-			else {
-				alternativeWithoutResources += 1;
-				realAlternative = -1;
-			}
-			
-			// we save the tags and keysvalues in an XMLNode aside
-			GenericAnnotation generic = (GenericAnnotation) metadata.listOfAnnotations.get(qualifierName).get(alternative);
-			Set<String> listOfTags = generic.getListOfTags();
-			Map<String, ArrayList<String>> listOfKeysValues = generic.getListOfKeysValues();
-			if (listOfTags.size() > 0 || listOfKeysValues.size() > 0 || xmlNested.getChildCount() > 0) {
-				tagsorkeys = true;
-				xmlQualifier.addChild(metadata.exportTagsAndKeys(realAlternative, listOfTags, listOfKeysValues, xmlNested));
 			}
 		}
 		
-		if (tagsorkeys) {
-			xml.addChild(xmlQualifier);
-		}
-		
-		return new AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode>(listOfCVTerms, xml);
+		return listOfCVTerms;
 	}
 	
 	/**
@@ -1179,11 +1120,6 @@ public class Metadata {
 		
 		History history = new History();
 		
-		XMLAttributes attributesXml = new XMLAttributes();
-		attributesXml.add("xmlns:colomoto", "uri_colomoto");
-		
-		XMLNode xml = new XMLNode(new XMLTriple("colomoto:nonRDFAnnotation"), attributesXml);
-		
 		for (String qualifierName: this.getListOfQualifiers()) {
 			
 			String qualifierFullClass = this.getClassOfQualifier(qualifierName);
@@ -1191,12 +1127,11 @@ public class Metadata {
 			String qualifierClass = qualifierFullClass.substring(colon+1);
 			
 			if (qualifierClass.equals("GenericAnnotation")) {
-				AbstractMap.SimpleEntry<ArrayList<CVTerm>, XMLNode> commonExportMetadata = this.commonExportMetadata(this, xml, qualifierName, qualifierClass);
+				ArrayList<CVTerm> commonExportMetadata = this.commonExportMetadata(this, qualifierName, qualifierClass);
 				
-				for (CVTerm cvterm: commonExportMetadata.getKey()) {
+				for (CVTerm cvterm: commonExportMetadata) {
 					annotation.addCVTerm(cvterm);
 				}
-				xml = commonExportMetadata.getValue();
 			}
 			else if (qualifierClass.equals("AuthorsAnnotation")) {
 				ArrayList<ArrayList<String>> listOfAuthors = this.getResourcesOfQualifier(qualifierName, 0);
@@ -1230,9 +1165,6 @@ public class Metadata {
 		}
 		
 		annotation.setHistory(history);
-		if (xml.getChildCount() > 0) {
-			annotation.setNonRDFAnnotation(xml);
-		}
 		
 		return annotation;
 	}

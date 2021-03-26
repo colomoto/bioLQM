@@ -38,6 +38,7 @@ class DateAnnotation extends Annotation {
 	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 		
 		if (!this.date.equals("")) {
+			this.date = contentAnnotation[0];
 			return false;
 		}
 		this.date = contentAnnotation[0];

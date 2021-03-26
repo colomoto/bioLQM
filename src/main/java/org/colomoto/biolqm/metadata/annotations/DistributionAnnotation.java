@@ -38,6 +38,7 @@ class DistributionAnnotation extends Annotation {
 	protected boolean addAnnotation(ModelConstants modelConstants, String component, String termDesired, String[] contentAnnotation) {
 
 		if (!this.distribution.equals("")) {
+			this.distribution = contentAnnotation[0];
 			return false;
 		}
 		this.distribution = contentAnnotation[0];
