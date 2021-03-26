@@ -391,6 +391,7 @@ public class SBMLqualExport extends BaseExporter {
 				if (!type.equals("model")) {
 					element.setMetaId("meta_"+element.getId());
 				}
+				
 				element.setAnnotation(annotation);
 			}
 		}
@@ -444,7 +445,7 @@ public class SBMLqualExport extends BaseExporter {
 					
 					if (metadataEdge.isMetadataNotEmpty() || metadataEdge.getNotes() != "") {
 						SBase elementInput = (SBase) entry.getValue();
-						exportElementMetadata(elementInput, metadataEdge, "species");
+						exportElementMetadata(elementInput, metadataEdge, "transition");
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

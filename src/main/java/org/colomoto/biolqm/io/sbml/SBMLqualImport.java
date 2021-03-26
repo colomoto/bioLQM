@@ -969,8 +969,8 @@ public class SBMLqualImport extends BaseLoader {
 				
 				String key = null;
 				String value = null;
-				if (keyvalue.indexOf("urn:") != -1 && keyvalue.indexOf(":", 3) != -1) {
-					int index = keyvalue.indexOf(":", 3);
+				if (keyvalue.indexOf("urn:") != -1 && keyvalue.indexOf(":", 4) != -1) {
+					int index = keyvalue.indexOf(":", 4);
 					
 					key = keyvalue.substring(0, index);
 					value = keyvalue.substring(index+1);
@@ -993,8 +993,8 @@ public class SBMLqualImport extends BaseLoader {
 			} else if (resource.indexOf("urn:miriam:") != -1) {
 				resource = resource.split("urn:miriam:")[1];
 				
-			} else if (resource.indexOf("urn:") != -1 && resource.indexOf(":", 3) != -1) {
-				int index = resource.indexOf(":", 3);
+			} else if (resource.indexOf("urn:") != -1 && resource.indexOf(":", 4) != -1) {
+				int index = resource.indexOf(":", 4);
 				
 				String key = resource.substring(0, index);
 				String value = resource.substring(index+1);

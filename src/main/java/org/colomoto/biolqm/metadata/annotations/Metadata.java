@@ -1046,6 +1046,7 @@ public class Metadata {
 		
 		// for each alternative of this qualifier we save its content
 		for (int alternative = 0; alternative < metadata.getNumberOfAlternatives(qualifierName); alternative++) {
+			
 			CVTerm cvterm = new CVTerm();
 			
 			org.sbml.jsbml.CVTerm.Qualifier qualifier;
@@ -1112,7 +1113,7 @@ public class Metadata {
 	/**
 	 * Produces a jSBML expression of the metadata object (internal use)
 	 *
-	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not acceptted in SBML
+	 * @return org.sbml.jsbml.Annotation all the information contained in the metadata minus some details that are not accepted in SBML
 	 */
 	public org.sbml.jsbml.Annotation getSBMLOfMetadata() {
 		
@@ -1132,8 +1133,7 @@ public class Metadata {
 				for (CVTerm cvterm: commonExportMetadata) {
 					annotation.addCVTerm(cvterm);
 				}
-			}
-			else if (qualifierClass.equals("AuthorsAnnotation")) {
+			} else if (qualifierClass.equals("AuthorsAnnotation")) {
 				ArrayList<ArrayList<String>> listOfAuthors = this.getResourcesOfQualifier(qualifierName, 0);
 				for (ArrayList<String> author: listOfAuthors) {
 					Creator creator = new Creator();
@@ -1144,8 +1144,7 @@ public class Metadata {
 					//if (author.get(4) != null) { creator.setOtherAttribute("orcid", author.get(4)); }
 					history.addCreator(creator);
 				}
-			}
-			else if (qualifierClass.equals("DateAnnotation")) {
+			} else if (qualifierClass.equals("DateAnnotation")) {
 				String date = this.getResourcesOfQualifier(qualifierName, 0).get(0).get(0);
 				
 				String pattern = "yyyy-MM-dd";
@@ -1168,7 +1167,6 @@ public class Metadata {
 		
 		return annotation;
 	}
-	
 	
 	// the functions to import a json file of annotations as the annotations
 	private int doesAlternativeExist(JSONObject jsonAlternative, String termDesired) {
