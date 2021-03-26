@@ -793,10 +793,6 @@ public class Metadata {
 	 */	
 	public Metadata getMetadataOfQualifier(String termDesired, int alternative) throws Exception {
 		
-		if (!this.listOfAnnotations.containsKey(termDesired)) {
-			this.createQualifier(termDesired, "GenericAnnotation");
-		}
-		
 		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
 			Index indexParent = this.getLocalIndex();
 			Index index = this.listOfAnnotations.get(termDesired).get(alternative).getIndex(modelConstants, indexParent);
