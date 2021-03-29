@@ -35,7 +35,7 @@ public class CollectionsAvailable {
 			String pattern = (String) collection.get("pattern");
 			Boolean namespaceEmbedded = Boolean.valueOf(collection.get("namespaceEmbedded"));
 			
-			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded, false));
+			this.collections.put(prefix, new Collection(prefix, pattern, namespaceEmbedded, false));
 		}
 	}
 	
@@ -59,7 +59,7 @@ public class CollectionsAvailable {
 	
 	public void updateCollections(String prefix, String pattern, boolean namespaceEmbedded) {
 		if (!this.collections.containsKey(prefix)) {
-			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded, true));
+			this.collections.put(prefix, new Collection(prefix, pattern, namespaceEmbedded, true));
 		}
 	}
 }

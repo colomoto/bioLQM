@@ -94,7 +94,7 @@ public class ExternalMetadata {
 			
 			boolean searched = true;
 			for (String piece: pieces) {
-				if (!ref.getTitle().contains(piece) && !ref.getYear().contains(piece) && !ref.getAuthor().contains(piece)) {
+				if (!ref.getTitle().toLowerCase().contains(piece) && !ref.getYear().toLowerCase().contains(piece) && !ref.getAuthor().toLowerCase().contains(piece)) {
 					searched = false;
 					break;
 				}
@@ -106,6 +106,10 @@ public class ExternalMetadata {
 				String uriStr = uri.getCollection() + ":" + uri.getIdentifier();
 				
 				refs.put(refStr, uriStr);
+			}
+			
+			if (refs.size() == 10) {
+				break;
 			}
 		}
 		return refs;

@@ -15,6 +15,7 @@ import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -1587,7 +1588,11 @@ public class Metadata {
 		return this.modelConstants.getKeysValuesAvailable().keySet();
 	}
 	public Set<String> getListOfCollectionsAvailable() {
-		return this.modelConstants.getCollectionsAvailable().keySet();
+		Set<String> collections = new HashSet<String>();
+		for (Collection coll: this.modelConstants.getCollectionsAvailable().values()) {
+			collections.add(coll.getNameInPattern());
+		}
+		return collections;
 	}
 	public Map<String, String> getListOfReferencesAvailable(String inputTrimmed) {
 		return this.modelConstants.getInstanceOfExternalMetadata().getListOfReferences(inputTrimmed);
