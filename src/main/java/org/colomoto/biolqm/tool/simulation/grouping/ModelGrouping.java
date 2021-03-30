@@ -69,11 +69,13 @@ public class ModelGrouping {
 	
 		Set<VarInfo> varsTaken = new HashSet<VarInfo>();
 		
+		int sizeModel = 0;
 		for (int i= 0; i < this.model.getComponents().size(); i++) {
 			if (!this.model.getComponents().get(i).isInput()) {
 				varsTaken.add(new VarInfo(i, 0, model));
 				varsTaken.add(new VarInfo(i, -1, model));
 				varsTaken.add(new VarInfo(i, 1, model));
+				sizeModel ++;
 			}
 		}
 		
@@ -82,31 +84,42 @@ public class ModelGrouping {
 				throw new Exception("Rank order not correct"); 
 		}
 		
+		int varCount = 0;
 		for (Integer rank : ranks.keySet()) {
 			List<RankedClassGroup> rankGroups = new ArrayList<>();
 			
+	
 			for (List<VarInfo> vars : ranks.get(rank).keySet()) {
 				
 				for (VarInfo var : vars) {
 					
-					if (model.getComponents().get(var.idx).isInput())
-						throw new Exception("Var is input: " + var.toString()); 
-					if (varsTaken.contains(var)) {
-						throw new Exception("Duplicate var: " + var.toString()); 
-					} else {
-						if (var.flag == 0) {
-							varsTaken.remove(var);
-							varsTaken.remove(new VarInfo(var.idx, -1, model));
-							varsTaken.remove(new VarInfo(var.idx, 1, model));
+					if (model.getComponents().get(var.idx) != null) {
+						if (model.getComponents().get(var.idx).isInput())
+							throw new Exception("Var is input: " + var.toString()); 
+						if (varsTaken.contains(var)) {
+							throw new Exception("Duplicate var: " + var.toString()); 
 						} else {
-							varsTaken.remove(var);
-							varsTaken.remove(new VarInfo(var.idx, 0, model));
+							if (var.flag == 0) {
+								varsTaken.remove(var);
+								varsTaken.remove(new VarInfo(var.idx, -1, model));
+								varsTaken.remove(new VarInfo(var.idx, 1, model));
+							} else {
+								varsTaken.remove(var);
+								varsTaken.remove(new VarInfo(var.idx, 0, model));
+							}
 						}
-					}			
+						varCount ++;
+					} else {
+						throw new Exception("Var does not exists: " + var.toString()); 
+					}
 				}
 				RankedClassGroup newGroup = new RankedClassGroup(vars, ranks.get(rank).get(vars));
 				rankGroups.add(newGroup);
 			}
+			
+			if (varCount != sizeModel)
+				throw new Exception("Missing vars"); 
+
 			this.pcList.add(new RankedClass(rankGroups));
 		}	
 		
