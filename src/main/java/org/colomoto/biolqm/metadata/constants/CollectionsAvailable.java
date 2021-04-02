@@ -5,7 +5,9 @@ import org.yaml.snakeyaml.Yaml;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.io.InputStream;
 
 /**
@@ -18,6 +20,7 @@ public class CollectionsAvailable {
 	
 	// variables
 	public Map<String, Collection> collections;
+	private Set<String> namesInPatterns = new HashSet<String>();
 	
 	// constructors
 	public CollectionsAvailable() {
@@ -35,7 +38,8 @@ public class CollectionsAvailable {
 			String pattern = (String) collection.get("pattern");
 			Boolean namespaceEmbedded = Boolean.valueOf(collection.get("namespaceEmbedded"));
 			
-			this.collections.put(prefix, new Collection(prefix, pattern, namespaceEmbedded, false));
+			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded, false));
+			this.updateNamesInPatterns(prefix, pattern, namespaceEmbedded);
 		}
 	}
 	
@@ -57,10 +61,33 @@ public class CollectionsAvailable {
 		return originalCollections;
 	}
 	
+	public Set<String> getNamesInPatterns() {		
+		return this.namesInPatterns;
+	}
+	
+	// update functions
 	public void updateCollections(String prefix, String pattern, boolean namespaceEmbedded) {
 		if (!this.collections.containsKey(prefix)) {
-			this.collections.put(prefix, new Collection(prefix, pattern, namespaceEmbedded, true));
+			this.collections.put(prefix, new Collection(pattern, namespaceEmbedded, true));
+			this.updateNamesInPatterns(prefix, pattern, namespaceEmbedded);
 		}
+	}
+	
+	private void updateNamesInPatterns(String prefix, String pattern, boolean namespaceEmbedded) {
+		String nameInPattern;
+		
+		if (namespaceEmbedded) {
+			String split = pattern.split(":")[0];
+			if (split.charAt(0) == '^') {
+				nameInPattern = split.substring(1);
+			} else {
+				nameInPattern = split;
+			}
+		} else {
+			nameInPattern = prefix;
+		}
+		
+		namesInPatterns.add(nameInPattern);
 	}
 }
 	

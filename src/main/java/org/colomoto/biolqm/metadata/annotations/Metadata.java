@@ -15,7 +15,6 @@ import org.sbml.jsbml.History;
 import org.sbml.jsbml.Creator;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +39,7 @@ public class Metadata {
 	
 	// variables
 	private String type;
+	
 	private String notes;
 	private Map<String, ArrayList<Annotation>> listOfAnnotations;
 	
@@ -47,15 +47,16 @@ public class Metadata {
 	
 	
 	// constructors
-	public Metadata(ModelConstants newModelConstants, String newType) throws Exception
+	public Metadata(ModelConstants newModelConstants, String newType, boolean nested) throws Exception
 	{
 		this.type = newType;
+		
 		this.notes = "";
 		this.listOfAnnotations = new HashMap<String, ArrayList<Annotation>>();
 		
 		this.modelConstants = newModelConstants;
 		
-		if (newType == "model") {
+		if (newType == "model" & !nested) {
 			LocalDate currentDate = LocalDate.now();
 			this.addDate("created", currentDate.toString());
 			this.addDate("modified", currentDate.toString());
@@ -111,6 +112,7 @@ public class Metadata {
 		return null;
 	}
 	
+	// the functions to validate stuff
 	private boolean isValidEmail(String email) {
 		if (email != null) {
 			return email.matches("^(.+)@(.+)$");
@@ -208,6 +210,9 @@ public class Metadata {
 		}
 	}
 	
+	public boolean validateNameCollection(String namespace) {
+		return this.modelConstants.getInstanceOfCollectionsAvailable().getNamesInPatterns().contains(namespace);
+	}
 	
 	// the functions to manage the alternatives
 	private void createQualifier(String termDesired, String javaClassDesired) throws Exception {
@@ -1588,11 +1593,7 @@ public class Metadata {
 		return this.modelConstants.getKeysValuesAvailable().keySet();
 	}
 	public Set<String> getListOfCollectionsAvailable() {
-		Set<String> collections = new HashSet<String>();
-		for (Collection coll: this.modelConstants.getCollectionsAvailable().values()) {
-			collections.add(coll.getNameInPattern());
-		}
-		return collections;
+		return this.modelConstants.getInstanceOfCollectionsAvailable().getNamesInPatterns();
 	}
 	public Map<String, String> getListOfReferencesAvailable(String inputTrimmed) {
 		return this.modelConstants.getInstanceOfExternalMetadata().getListOfReferences(inputTrimmed);

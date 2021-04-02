@@ -25,7 +25,7 @@ public class JsonReader {
 		return sb.toString();
 	}
   
-	private static JSONObject readInputStream(InputStream is) throws IOException, JSONException {
+	public static JSONObject readInputStream(InputStream is) throws IOException, JSONException {
 		try {
 			BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 			String jsonText = readAll(rd);

@@ -5,7 +5,6 @@ import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.colomoto.biolqm.metadata.constants.Index;
 import org.colomoto.biolqm.ConnectivityMatrix;
@@ -39,7 +38,7 @@ public class AnnotationModule {
 	public AnnotationModule() throws Exception {
 		this.modelConstants = new ModelConstants();
 		
-		Metadata modelMetadata = new Metadata(this.modelConstants, "model");
+		Metadata modelMetadata = new Metadata(this.modelConstants, "model", false);
 		this.modelIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(modelIndex, modelMetadata);
 		
@@ -79,7 +78,7 @@ public class AnnotationModule {
 	 */
 	public Metadata createMetadataOfNode(NodeInfo node) throws Exception {
 		
-		Metadata nodeMetadata = new Metadata(this.modelConstants, "species");
+		Metadata nodeMetadata = new Metadata(this.modelConstants, "species", false);
 		Index nodeIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(nodeIndex, nodeMetadata);
 		
@@ -97,7 +96,7 @@ public class AnnotationModule {
 	 */
 	public Metadata createMetadataOfEdge(NodeInfoPair edge) throws Exception {
 		
-		Metadata edgeMetadata = new Metadata(this.modelConstants, "transition");
+		Metadata edgeMetadata = new Metadata(this.modelConstants, "transition", false);
 		Index edgeIndex = new Index(this.modelConstants.getIncrement());
 		this.modelConstants.getListMetadata().put(edgeIndex, edgeMetadata);
 		
@@ -214,15 +213,13 @@ public class AnnotationModule {
 	}
 	
 	/**
-	 * Export all the metadata of the model in a structured json file
+	 * Write the json of all the annotations in the model
 	 * 
-	 * @param filename the name of the json file
-	 * @param extraNodes 
-	 * @param coreNodes 
-	 * @throws JSONException 
+	 * @param coreNodes
+	 * @param extraNodes
+	 * 
 	 */
-	public void exportMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes, ConnectivityMatrix matrix) {
-		
+	public JSONObject writeAnnotationsInJSON(List<NodeInfo> coreNodes, List<NodeInfo> extraNodes, ConnectivityMatrix matrix) {
 		JSONObject json = new JSONObject();
 		
 		Metadata metadataModel = this.getMetadataOfModel();
@@ -314,6 +311,21 @@ public class AnnotationModule {
 		
 		json.put("edges", jsonArrayEdges);
 		
+		return json;
+	}
+	
+	/**
+	 * Export all the metadata of the model in a structured json file
+	 * 
+	 * @param filename the name of the json file
+	 * @param coreNodes
+	 * @param extraNodes
+	 * 
+	 */
+	public void exportMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes, ConnectivityMatrix matrix) {
+		
+		JSONObject json = writeAnnotationsInJSON(coreNodes, extraNodes, matrix);
+		
         // Write JSON file
         try (Writer file = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8)) {
         	
@@ -325,111 +337,127 @@ public class AnnotationModule {
         }
 	}
 	
+	
+	/**
+	 * Put all the annotations of the json in the model
+	 * 
+	 * @param filename the name of the json file
+	 * @param coreNodes
+	 * @param extraNodes
+	 * 
+	 */
+	public void readAnnotationsFromJSON(JSONObject json, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes) {
+		Metadata metadataModel = this.getMetadataOfModel();
+		
+		if (json.has("collections") && !json.isNull("collections")) {	 
+			
+			metadataModel.importCollectionsMetadata(json.getJSONArray("collections"));
+		}
+		
+		// we import the metadata concerning the model
+		if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
+			metadataModel.importElementMetadata(json);
+		}
+		
+		// we import the metadata concerning each node
+		if (json.has("nodes") && !json.isNull("nodes")) {
+			JSONArray arrayNodes = json.getJSONArray("nodes");
+			for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
+			{
+				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
+				String nodeId = jsonNode.getString("id");
+
+				NodeInfo node = null;
+				if (coreNodes != null) {
+					for (NodeInfo elmt: coreNodes) {
+						if (elmt.getNodeID().equals(nodeId)) {
+							node = elmt;
+						}
+					}
+				}
+				if (extraNodes != null) {
+					for (NodeInfo elmt: extraNodes) {
+						if (elmt.getNodeID().equals(nodeId)) {
+							node = elmt;
+						}
+					}
+				}
+				
+				if (node != null) {
+					try {
+						Metadata metadataNode = this.getMetadataOfNode(node);
+						metadataNode.importElementMetadata(jsonNode);	
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					System.err.println("The node "+jsonNode.getString("id")+" has no equivalent in the model so its annotations couldn't be imported.");
+				}
+			}
+		}
+		
+		// we import the metadata concerning each edge
+		if (json.has("edges") && !json.isNull("edges")) {
+			JSONArray arrayEdges = json.getJSONArray("edges");
+			for(int idEdge = 0; idEdge < arrayEdges.length(); idEdge++)
+			{
+				JSONObject jsonEdge = arrayEdges.getJSONObject(idEdge);
+				String nodeId1 = jsonEdge.getString("id1");
+				String nodeId2 = jsonEdge.getString("id2");
+
+				NodeInfo node1 = null;
+				NodeInfo node2 = null;
+				if (coreNodes != null) {
+					for (NodeInfo elmt: coreNodes) {
+						if (elmt.getNodeID().equals(nodeId1)) {
+							node1 = elmt;
+						}
+						if (elmt.getNodeID().equals(nodeId2)) {
+							node2 = elmt;
+						}
+					}
+				}
+				if (extraNodes != null) {
+					for (NodeInfo elmt: extraNodes) {
+						if (elmt.getNodeID().equals(nodeId1)) {
+							node1 = elmt;
+						}
+						if (elmt.getNodeID().equals(nodeId2)) {
+							node2 = elmt;
+						}
+					}
+				}
+				
+				if (node1 != null && node2 != null) {
+					try {
+						Metadata metadataEdge = this.getMetadataOfEdge(node1, node2);
+						metadataEdge.importElementMetadata(jsonEdge);	
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					System.err.println("The edge ("+jsonEdge.getString("id1")+", "+jsonEdge.getString("id2")+") has no equivalent in the model so its annotations couldn't be imported.");
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Import a structured json file to populate the metadata of the model
 	 * 
 	 * @param filename the name of the json file
+	 * @param coreNodes
+	 * @param extraNodes
+	 * 
 	 */
 	public void importMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes) {
 		try {
 			// we load the json file
 			JSONObject json = JsonReader.readJsonFromFile(filename);
 			
-			Metadata metadataModel = this.getMetadataOfModel();
-			
-			if (json.has("collections") && !json.isNull("collections")) {	 
-				
-				metadataModel.importCollectionsMetadata(json.getJSONArray("collections"));
-			}
-			
-			// we import the metadata concerning the model
-			if ((json.has("annotation") && !json.isNull("annotation")) || (json.has("notes") && !json.isNull("notes"))) {	 
-				metadataModel.importElementMetadata(json);
-			}
-			
-			// we import the metadata concerning each node
-			if (json.has("nodes") && !json.isNull("nodes")) {
-				JSONArray arrayNodes = json.getJSONArray("nodes");
-				for(int idNode = 0; idNode < arrayNodes.length(); idNode++)
-				{
-					JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
-					String nodeId = jsonNode.getString("id");
-
-					NodeInfo node = null;
-					if (coreNodes != null) {
-						for (NodeInfo elmt: coreNodes) {
-							if (elmt.getNodeID().equals(nodeId)) {
-								node = elmt;
-							}
-						}
-					}
-					if (extraNodes != null) {
-						for (NodeInfo elmt: extraNodes) {
-							if (elmt.getNodeID().equals(nodeId)) {
-								node = elmt;
-							}
-						}
-					}
-					
-					if (node != null) {
-						try {
-							Metadata metadataNode = this.getMetadataOfNode(node);
-							metadataNode.importElementMetadata(jsonNode);	
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} else {
-						System.err.println("The node "+jsonNode.getString("id")+" has no equivalent in the model so its annotations couldn't be imported.");
-					}
-				}
-			}
-			
-			// we import the metadata concerning each edge
-			if (json.has("edges") && !json.isNull("edges")) {
-				JSONArray arrayEdges = json.getJSONArray("edges");
-				for(int idEdge = 0; idEdge < arrayEdges.length(); idEdge++)
-				{
-					JSONObject jsonEdge = arrayEdges.getJSONObject(idEdge);
-					String nodeId1 = jsonEdge.getString("id1");
-					String nodeId2 = jsonEdge.getString("id2");
-
-					NodeInfo node1 = null;
-					NodeInfo node2 = null;
-					if (coreNodes != null) {
-						for (NodeInfo elmt: coreNodes) {
-							if (elmt.getNodeID().equals(nodeId1)) {
-								node1 = elmt;
-							}
-							if (elmt.getNodeID().equals(nodeId2)) {
-								node2 = elmt;
-							}
-						}
-					}
-					if (extraNodes != null) {
-						for (NodeInfo elmt: extraNodes) {
-							if (elmt.getNodeID().equals(nodeId1)) {
-								node1 = elmt;
-							}
-							if (elmt.getNodeID().equals(nodeId2)) {
-								node2 = elmt;
-							}
-						}
-					}
-					
-					if (node1 != null && node2 != null) {
-						try {
-							Metadata metadataEdge = this.getMetadataOfEdge(node1, node2);
-							metadataEdge.importElementMetadata(jsonEdge);	
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} else {
-						System.err.println("The edge ("+jsonEdge.getString("id1")+", "+jsonEdge.getString("id2")+") has no equivalent in the model so its annotations couldn't be imported.");
-					}
-				}
-			}
+			this.readAnnotationsFromJSON(json, coreNodes, extraNodes);
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -16,6 +18,7 @@ import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
+import org.colomoto.biolqm.metadata.annotations.KeyValueException;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.metadata.constants.XSLTransform;
 import org.colomoto.mddlib.MDDManager;
@@ -967,17 +970,8 @@ public class SBMLqualImport extends BaseLoader {
 			} else if (resource.indexOf("keyvalue:") != -1) {
 				String keyvalue = resource.split("keyvalue:")[1];
 				
-				String key = null;
-				String value = null;
-				if (keyvalue.indexOf("urn:") != -1 && keyvalue.indexOf(":", 4) != -1) {
-					int index = keyvalue.indexOf(":", 4);
-					
-					key = keyvalue.substring(0, index);
-					value = keyvalue.substring(index+1);
-				} else {
-					key = keyvalue.split(":")[0];
-					value = keyvalue.split(":")[1];
-				}
+				String key = keyvalue.split(":")[0];
+				String value = keyvalue.split(":")[1];
 
 				try {
 					metadata.addKeyValue(qualifier, alternative, key, value);
@@ -987,24 +981,43 @@ public class SBMLqualImport extends BaseLoader {
 				}
 			}
 			
-			// if it wasn't a key or a value then it's a uri (except for the urn case)
+			// then we check if it's a urn
+			Pattern patternURN = Pattern.compile("urn:([a-zA-Z_.][a-zA-Z0-9_.]*):(([a-zA-Z_.][a-zA-Z0-9_.]*(:[a-zA-Z_.][a-zA-Z0-9_.]*)*):)?(.*)");
+			Matcher matchURN = patternURN.matcher(resource);
+			
+			if (matchURN.find()) {
+				String namespace = matchURN.group(1);
+				String key = matchURN.group(3);
+				String value = matchURN.group(5);
+				
+				if (namespace.equals("miriam")) {
+					try {
+						metadata.addURI(qualifier, alternative, key, value);
+						continue;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if (key == null && metadata.validateNameCollection(namespace)) {
+					try {
+						metadata.addURI(qualifier, alternative, namespace, key);
+						continue;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					String newKey = "urn:"+namespace+":"+key;
+					try {
+						metadata.addKeyValue(qualifier, alternative, newKey, value);
+						continue;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			// if it wasn't a key or a value or a urn then it's a uri for sure
 			if (resource.indexOf("identifiers.org/") != -1) {
 				resource = resource.split("identifiers.org/")[1];
-			} else if (resource.indexOf("urn:miriam:") != -1) {
-				resource = resource.split("urn:miriam:")[1];
-				
-			} else if (resource.indexOf("urn:") != -1 && resource.indexOf(":", 4) != -1) {
-				int index = resource.indexOf(":", 4);
-				
-				String key = resource.substring(0, index);
-				String value = resource.substring(index+1);
-				
-				try {
-					metadata.addKeyValue(qualifier, alternative, key, value);
-					continue;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 			
 			int colon = resource.indexOf(':');

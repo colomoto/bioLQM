@@ -99,7 +99,7 @@ class AuthorsAnnotation extends Annotation {
 			// we get the type of the parent Metadata
 			String type = modelConstants.getListMetadata().get(indexParent).getType();
 			
-			modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, type));
+			modelConstants.getListMetadata().put(existingIndex, new Metadata(modelConstants, type, true));
 		}
 		
 		return existingIndex;
