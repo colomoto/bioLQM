@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -161,6 +163,10 @@ public class Metadata {
 	private void isValidURI(String termDesired, int alternative, String collection, String identifier) throws Exception {
 		
  		String javaClassDesired = "GenericAnnotation";
+ 		
+ 		if (collection.equals("pmid")) {
+ 			collection = "pubmed";
+ 		}
 		
 		// first we look into the patterns saved because they are saved by default or because they were used already in the model
 		Map<String, Collection> collections = this.modelConstants.getCollectionsAvailable();
@@ -566,7 +572,7 @@ public class Metadata {
 	 * Remove an author from the component
 	 *
 	 * @param termDesired the qualifier one wants to remove
-	 * @param name the name of the author
+	 * @param alternative the number of the alternative one wants to modify
 	 * @param surname the surname of the author
 	 * @param email the email of the author (optional: put null if you don't want to define it)
 	 * @param organisation the organisation of the author (optional: put null if you don't want to define it)
@@ -575,6 +581,96 @@ public class Metadata {
 	public void removeAuthor(String termDesired, String name, String surname, String email, String organisation, String orcid) {
 		String javaClassDesired = "AuthorsAnnotation";
 		this.removeAnnotation(termDesired, 0, javaClassDesired, name, surname, email, organisation, orcid);
+	}
+	
+	/**
+	 * Add an element (tag, key-value or uri) (internal use)
+	 *
+	 * @param qualifier the qualifier
+	 * @param alternative the number of the alternative
+	 * @param resource the value of the resource which has to be broken into a tag, a key-value or a uri
+	 */
+	public void addElement(String qualifier, int alternative, String resource) {
+		
+		// first we check if the resource is a tag or a keyvalue
+		if (resource.indexOf("tag:") != -1) {
+			String tag = resource.split("tag:")[1];
+			try {
+				this.addTag(qualifier, alternative, tag);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (resource.indexOf("keyvalue:") != -1) {
+			String keyvalue = resource.split("keyvalue:")[1];
+			
+			String key = keyvalue.split(":")[0];
+			String value = keyvalue.split(":")[1];
+
+			try {
+				this.addKeyValue(qualifier, alternative, key, value);
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// then we check if it's a urn
+		Pattern patternURN = Pattern.compile("urn:([a-zA-Z_.][a-zA-Z0-9_.]*):(([a-zA-Z_.][a-zA-Z0-9_.]*(:[a-zA-Z_.][a-zA-Z0-9_.]*)*):)?(.*)");
+		Matcher matchURN = patternURN.matcher(resource);
+		
+		if (matchURN.find()) {
+			String namespace = matchURN.group(1);
+			String key = matchURN.group(3);
+			String value = matchURN.group(5);
+			
+			if (namespace.equals("miriam")) {
+				try {
+					this.addURI(qualifier, alternative, key, value);
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (key == null && this.validateNameCollection(namespace)) {
+				try {
+					this.addURI(qualifier, alternative, namespace, key);
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				String newKey = "urn:"+namespace+":"+key;
+				try {
+					this.addKeyValue(qualifier, alternative, newKey, value);
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		// if it wasn't a key or a value or a urn then it's a uri for sure
+		if (resource.indexOf("identifiers.org/") != -1) {
+			resource = resource.split("identifiers.org/")[1];
+		}
+		
+		int colon = resource.indexOf(':');
+		int slash = resource.indexOf('/');
+		
+		int index = colon;
+		if (colon == -1 || (slash != -1 && slash < colon)) {
+			index = slash;
+		}
+		
+		String collection = resource.substring(0, index);
+		String identifier = resource.substring(index+1);
+		
+		try {
+			this.addURI(qualifier, alternative, collection, identifier);
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

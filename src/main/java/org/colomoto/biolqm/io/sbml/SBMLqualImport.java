@@ -957,86 +957,7 @@ public class SBMLqualImport extends BaseLoader {
 		
 		// we add all the uris for this qualifier
 		for (String resource: cvterm.getResources()) {
-			
-			// first we check if the resource is a tag or a keyvalue
-			if (resource.indexOf("tag:") != -1) {
-				String tag = resource.split("tag:")[1];
-				try {
-					metadata.addTag(qualifier, alternative, tag);
-					continue;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (resource.indexOf("keyvalue:") != -1) {
-				String keyvalue = resource.split("keyvalue:")[1];
-				
-				String key = keyvalue.split(":")[0];
-				String value = keyvalue.split(":")[1];
-
-				try {
-					metadata.addKeyValue(qualifier, alternative, key, value);
-					continue;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			
-			// then we check if it's a urn
-			Pattern patternURN = Pattern.compile("urn:([a-zA-Z_.][a-zA-Z0-9_.]*):(([a-zA-Z_.][a-zA-Z0-9_.]*(:[a-zA-Z_.][a-zA-Z0-9_.]*)*):)?(.*)");
-			Matcher matchURN = patternURN.matcher(resource);
-			
-			if (matchURN.find()) {
-				String namespace = matchURN.group(1);
-				String key = matchURN.group(3);
-				String value = matchURN.group(5);
-				
-				if (namespace.equals("miriam")) {
-					try {
-						metadata.addURI(qualifier, alternative, key, value);
-						continue;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else if (key == null && metadata.validateNameCollection(namespace)) {
-					try {
-						metadata.addURI(qualifier, alternative, namespace, key);
-						continue;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					String newKey = "urn:"+namespace+":"+key;
-					try {
-						metadata.addKeyValue(qualifier, alternative, newKey, value);
-						continue;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			// if it wasn't a key or a value or a urn then it's a uri for sure
-			if (resource.indexOf("identifiers.org/") != -1) {
-				resource = resource.split("identifiers.org/")[1];
-			}
-			
-			int colon = resource.indexOf(':');
-			int slash = resource.indexOf('/');
-			
-			int index = colon;
-			if (colon == -1 || (slash != -1 && slash < colon)) {
-				index = slash;
-			}
-			
-			String collection = resource.substring(0, index);
-			String identifier = resource.substring(index+1);
-			
-			try {
-				metadata.addURI(qualifier, alternative, collection, identifier);
-				continue;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			metadata.addElement(qualifier, alternative, resource);
 		}
 		
 		// and then we add the nested annotation recursively
@@ -1061,26 +982,34 @@ public class SBMLqualImport extends BaseLoader {
 			String pattern = "yyyy-MM-dd";
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 						
-			if (history.isSetCreatedDate()) { try {
-				metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			} }
-			if (history.isSetModifiedDate()) { try {
-				metadata.addDate("modified", LocalDate.now().toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			} }
+			if (history.isSetCreatedDate()) {
+				try {
+					metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (history.isSetModifiedDate()) {
+				try {
+					metadata.addDate("modified", LocalDate.now().toString());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			
 			// we don't use the old modifiedDate for the "modified" qualifier because we use the current date
 			// it's okay because this change will affect the model only if it is saved, indicating it has indeed been modified
 			// metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
 			
-			for (Creator creator: history.getListOfCreators()) {
+			for (Creator creator : history.getListOfCreators()) {
 				String email = null;
-				if (creator.isSetEmail()) { email = creator.getEmail(); }
+				if (creator.isSetEmail()) {
+					email = creator.getEmail();
+				}
 				String organisation = null;
-				if (creator.isSetOrganisation()) { organisation = creator.getOrganisation(); }
+				if (creator.isSetOrganisation()) {
+					organisation = creator.getOrganisation();
+				}
 				try {
 					metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), email, organisation, null);
 				} catch (Exception e) {
