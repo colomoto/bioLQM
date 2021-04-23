@@ -42,9 +42,9 @@ public class TestMetadataInJson {
 		
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("customQualifier");
 		
-		nestedMetadata.addURI("is", "uniprot", "P0DP23");
+		nestedMetadata.addURI("is", "uniprot:P0DP23");
 		nestedMetadata.createAlternative("is");
-		nestedMetadata.addURI("is", 1, "doi", "10.15252/msb.20199110");
+		nestedMetadata.addURI("is", 1, "doi:10.15252/msb.20199110");
 		
 		Metadata doubleNestedMetadata = nestedMetadata.getMetadataOfQualifier("is");
 		

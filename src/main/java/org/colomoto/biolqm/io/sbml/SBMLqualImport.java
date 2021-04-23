@@ -18,7 +18,6 @@ import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.biolqm.metadata.annotations.KeyValueException;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.metadata.constants.XSLTransform;
 import org.colomoto.mddlib.MDDManager;
@@ -957,7 +956,11 @@ public class SBMLqualImport extends BaseLoader {
 		
 		// we add all the uris for this qualifier
 		for (String resource: cvterm.getResources()) {
-			metadata.addElement(qualifier, alternative, resource);
+			try {
+				metadata.addElement(qualifier, alternative, resource);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// and then we add the nested annotation recursively

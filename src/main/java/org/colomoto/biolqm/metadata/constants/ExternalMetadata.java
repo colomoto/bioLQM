@@ -45,7 +45,7 @@ public class ExternalMetadata {
 		
 		for (Entry<URI, Reference> entry : this.externalMetadata.entrySet()) {
 			Reference ref = entry.getValue();
-			help += "\t" + entry.getKey().getIdentifier() + ": " + ref.getAuthor() + ", " + ref.getYear() + ", " + ref.getTitle() + "\n"; 
+			help += "\t" + entry.getKey().getContent().substring(4)+ ": " + ref.getAuthor() + ", " + ref.getYear() + ", " + ref.getTitle() + "\n"; 
 		}
 		
 		return help;
@@ -60,7 +60,7 @@ public class ExternalMetadata {
 			
 			if (ref.getYear().equals(year)) {
 				URI uri = entry.getKey();
-				String doi = uri.getCollection()+":"+uri.getIdentifier();
+				String doi = uri.getContent();
 				
 				refs.add(doi);
 			}
@@ -77,7 +77,7 @@ public class ExternalMetadata {
 			
 			if (ref.getTitle().contains(word)) {
 				URI uri = entry.getKey();
-				String doi = uri.getCollection()+":"+uri.getIdentifier();
+				String doi = uri.getContent();
 				
 				refs.add(doi);
 			}
@@ -104,7 +104,7 @@ public class ExternalMetadata {
 			if (searched) {
 				String refStr = ref.getAuthor() + ";" + ref.getYear() + ";" + ref.getTitle();
 				URI uri = entry.getKey();
-				String uriStr = uri.getCollection() + ":" + uri.getIdentifier();
+				String uriStr = uri.getContent();
 				
 				refs.put(refStr, uriStr);
 			}

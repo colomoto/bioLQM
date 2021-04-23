@@ -8,21 +8,21 @@ package org.colomoto.biolqm.metadata.annotations;
 public class URI {
 	
 	// variables
-	private String collection;
-	private String identifier;
+	private String flag;
+	private String content;
 	
 	// constructors
-	public URI(String newCollection, String newIdentifier) {
-		this.collection = newCollection;
-		this.identifier = newIdentifier;
+	public URI(String newFlag, String newContent) {
+		this.flag = newFlag;
+		this.content = newContent;
 	}
 	
 	// getters
-	public String getCollection() {
-		return this.collection;
+	public String getFlag() {
+		return this.flag;
 	}
-	public String getIdentifier() {
-		return this.identifier;
+	public String getContent() {
+		return this.content;
 	}
 		
 	// functions
@@ -31,7 +31,7 @@ public class URI {
         boolean retVal = false;
 
 		URI uri = (URI) obj;
-        if (uri.getCollection().equals(this.getCollection()) && uri.getIdentifier().equals(this.getIdentifier())){
+        if (uri.getContent().equals(this.getContent())){
             retVal = true;
         }
 
@@ -41,6 +41,6 @@ public class URI {
     @Override
 	public int hashCode() {
 
-		return (int) this.getCollection().hashCode() + this.getIdentifier().hashCode();
+		return (int) this.getContent().hashCode();
 	}
 }

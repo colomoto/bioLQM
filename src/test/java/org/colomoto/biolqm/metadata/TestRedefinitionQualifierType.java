@@ -39,10 +39,10 @@ public class TestRedefinitionQualifierType {
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), null);
 		
 		// we initialize the type of customQualifier as a GenericAnnotation (in model components) 
-		nestedMetadata.addURI("customQualifier", "uniprot", "P0DP23");
+		nestedMetadata.addURI("customQualifier", "uniprot:P0DP23");
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), "GenericAnnotation");
 		
-		nestedMetadata.removeURI("customQualifier", "uniprot", "P0DP23");
+		nestedMetadata.removeURI("customQualifier", "uniprot:P0DP23");
 
 		// customQualifier (in model components) does not have any instances anymore so its type is null
 		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), null);

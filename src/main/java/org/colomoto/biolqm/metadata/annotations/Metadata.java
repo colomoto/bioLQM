@@ -129,15 +129,15 @@ public class Metadata {
 		return true;
 	}
 	
-	private void checkWithCollectionsAvailable(String termDesired, int alternative, String collection, String identifier, String pattern, boolean namespaceEmbedded) throws Exception {
+	private void checkWithCollectionsAvailable(String termDesired, int alternative, String collection, String identifier, String pattern, boolean namespaceEmbedded) throws AnnotationExistsException, Exception {
 		String javaClassDesired = "GenericAnnotation";
 	
 		if (!namespaceEmbedded && identifier.matches(pattern)) {
-			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", "miriam", collection+":"+identifier);
 			return;
 		}
 		else if (namespaceEmbedded && (collection+":"+identifier).matches(pattern)) {
-			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", "miriam", collection+":"+identifier);
 			return;
 		}
 		else if (namespaceEmbedded && identifier.matches(pattern)) {
@@ -152,7 +152,7 @@ public class Metadata {
 			collection = identifier.substring(0, index);
 			identifier = identifier.substring(index+1);
 			
-			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", "miriam", collection+":"+identifier);
 			return;
 		}
 		else {
@@ -160,7 +160,7 @@ public class Metadata {
 		}
 	}
 	
-	private void isValidURI(String termDesired, int alternative, String collection, String identifier) throws Exception {
+	private void isValidMiriamURI(String termDesired, int alternative, String collection, String identifier) throws AnnotationExistsException, Exception {
 		
  		String javaClassDesired = "GenericAnnotation";
  		
@@ -189,11 +189,11 @@ public class Metadata {
 			URLConnection connection = url.openConnection();
 			connection.connect();
 		} catch (MalformedURLException e) {
-			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", "miriam", collection+":"+identifier);
 			
 			throw new Exception("Internet is not connected: the uri will be added without validation against the entries of identifiers.org.");
 		} catch (IOException e) {
-			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+			this.addAnnotation(termDesired, alternative, javaClassDesired, "uri", "miriam", collection+":"+identifier);
 
 			throw new Exception("Internet is not connected: the uri will be added without validation against the entries of identifiers.org.");
 		}
@@ -211,9 +211,74 @@ public class Metadata {
 			return;
 			
 		} catch (IOException e) {
-			this.addKeyValue(termDesired, alternative, collection, identifier);
-			throw new KeyValueException();
+			throw new Exception();
 		}
+	}
+	
+	private String isValidURI(String qualifier, int alternative, String uri) throws Exception {
+		String javaClassDesired = "GenericAnnotation";
+		
+		// urn check
+		Pattern patternURN = Pattern.compile("urn:([a-zA-Z_.][a-zA-Z0-9_.]*):(([a-zA-Z_.][a-zA-Z0-9_.]*(:[a-zA-Z_.][a-zA-Z0-9_.]*)*):)?(.*)");
+		Matcher matchURN = patternURN.matcher(uri);
+		
+		if (matchURN.find()) {
+			String namespace = matchURN.group(1);
+			String key = matchURN.group(3);
+			String value = matchURN.group(5);
+			
+			if (namespace.equals("miriam")) {
+				this.isValidMiriamURI(qualifier, alternative, key, value);
+				return "miriam="+key+":"+value;
+			} else if (key == null && this.validateNameCollection(namespace)) {
+				try {
+					this.isValidMiriamURI(qualifier, alternative, namespace, key);
+					return "miriam="+key+":"+value;
+				} catch (AnnotationExistsException e) {
+					throw new Exception("The annotation already exists.");
+				} catch (Exception e) {
+					this.addAnnotation(qualifier, alternative, javaClassDesired, "uri", "urn", uri);
+				}
+			} else {
+				this.addAnnotation(qualifier, alternative, javaClassDesired, "uri", "urn", uri);
+				return "urn="+uri;
+			}
+		}
+		
+		// miriam check
+		
+		
+		// url check
+		Pattern patternURL = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$");
+		Matcher matchURL = patternURL.matcher(uri);
+		
+		if (matchURL.find() && uri.indexOf("identifiers.org/") == -1) {
+			this.addAnnotation(qualifier, alternative, javaClassDesired, "uri", "url", uri);
+			return "url="+uri;
+		}
+		
+		// miriam check
+		if (uri.indexOf("identifiers.org/") != -1) {
+			uri = uri.split("identifiers.org/")[1];
+		}
+		
+		int colon = uri.indexOf(':');
+		int slash = uri.indexOf('/');
+		
+		int index = colon;
+		if (colon == -1 || (slash != -1 && slash < colon)) {
+			index = slash;
+		}
+		
+		if (index != -1) {
+			String collection = uri.substring(0, index);
+			String identifier = uri.substring(index+1);
+			
+			this.isValidMiriamURI(qualifier, alternative, collection, identifier);
+			return "miriam="+collection+":"+identifier;
+		}
+		
+		throw new Exception("The URI should be a valid entry in identifiers.org or a URN or a URL.");
 	}
 	
 	public boolean validateNameCollection(String namespace) {
@@ -310,7 +375,7 @@ public class Metadata {
 
 
 	// the functions to add an annotation
-	private void addAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) throws Exception {
+	private void addAnnotation(String termDesired, int alternative, String javaClassDesired, String... contentAnnotation) throws AnnotationExistsException, Exception {
 		
 		// if it's a new qualifier we create a first alternative
 		if (!this.listOfAnnotations.containsKey(termDesired) && alternative == 0) {
@@ -328,7 +393,12 @@ public class Metadata {
 
 		// now if it's an alternative that does exist
 		if (alternative >= 0 && alternative < this.listOfAnnotations.get(termDesired).size()) {
-			boolean done = this.listOfAnnotations.get(termDesired).get(alternative).addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
+			boolean done = false;
+			try {
+				done = this.listOfAnnotations.get(termDesired).get(alternative).addAnnotation(this.modelConstants, this.type, termDesired, contentAnnotation);
+			} catch (Exception e) {
+				throw new AnnotationExistsException("The annotation already exists.");
+			}
 			if (done) {
 				this.modelConstants.getInstanceOfQualifiersAvailable().updateNumberOfOccurences(this.type, termDesired, true);
 			}
@@ -344,23 +414,21 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to annotate
 	 * @param alternative the number of the alternative one wants to modify
-	 * @param collection the collection of the uri one wants to create (uniprot, chebi...)
-	 * @param identifier the entry one wants to point at in the collection
+	 * @param uri the content of the uri
 	 * @throws Exception 
 	 */	
-	public void addURI(String termDesired, int alternative, String collection, String identifier) throws Exception {
-		this.isValidURI(termDesired, alternative, collection, identifier);
+	public String addURI(String termDesired, int alternative, String uri) throws Exception {
+		return this.isValidURI(termDesired, alternative, uri);
 	}
 	/**
 	 * Add a new URI to the component
 	 *
 	 * @param termDesired the qualifier one wants to annotate
-	 * @param collection the collection of the uri one wants to create (uniprot, chebi...)
-	 * @param identifier the entry one wants to point at in the collection
+	 * @param uri the content of the uri
 	 * @throws Exception 
 	 */	
-	public void addURI(String termDesired, String collection, String identifier) throws Exception {
-		this.addURI(termDesired, 0, collection, identifier);
+	public String addURI(String termDesired, String uri) throws Exception {
+		return this.addURI(termDesired, 0, uri);
 	}
 
 	/**
@@ -506,22 +574,20 @@ public class Metadata {
 	 *
 	 * @param termDesired the qualifier one wants to remove
 	 * @param alternative the number of the alternative one wants to modify
-	 * @param collection the collection of the uri one wants to remove
-	 * @param identifier the entry in the collection one wants to remove
+	 * @param element the uri one wants to remove
 	 */	
-	public void removeURI(String termDesired, int alternative, String collection, String identifier) {
+	public void removeURI(String termDesired, int alternative, String element) {
 		String javaClassDesired = "GenericAnnotation";
-		this.removeAnnotation(termDesired, alternative, javaClassDesired, "uri", collection, identifier);
+		this.removeAnnotation(termDesired, alternative, javaClassDesired, "uri", element);
 	}
 	/**
 	 * Remove an URI from the component
 	 *
 	 * @param termDesired the qualifier one wants to remove
-	 * @param collection the collection of the uri one wants to remove
-	 * @param identifier the entry in the collection one wants to remove
+	 * @param element the uri one wants to remove
 	 */	
-	public void removeURI(String termDesired, String collection, String identifier) {
-		this.removeURI(termDesired, 0, collection, identifier);
+	public void removeURI(String termDesired, String element) {
+		this.removeURI(termDesired, 0, element);
 	}
 	
 	/**
@@ -572,7 +638,6 @@ public class Metadata {
 	 * Remove an author from the component
 	 *
 	 * @param termDesired the qualifier one wants to remove
-	 * @param alternative the number of the alternative one wants to modify
 	 * @param surname the surname of the author
 	 * @param email the email of the author (optional: put null if you don't want to define it)
 	 * @param organisation the organisation of the author (optional: put null if you don't want to define it)
@@ -589,8 +654,9 @@ public class Metadata {
 	 * @param qualifier the qualifier
 	 * @param alternative the number of the alternative
 	 * @param resource the value of the resource which has to be broken into a tag, a key-value or a uri
+	 * @throws Exception 
 	 */
-	public void addElement(String qualifier, int alternative, String resource) {
+	public void addElement(String qualifier, int alternative, String resource) throws Exception {
 		
 		// first we check if the resource is a tag or a keyvalue
 		if (resource.indexOf("tag:") != -1) {
@@ -615,62 +681,7 @@ public class Metadata {
 			}
 		}
 		
-		// then we check if it's a urn
-		Pattern patternURN = Pattern.compile("urn:([a-zA-Z_.][a-zA-Z0-9_.]*):(([a-zA-Z_.][a-zA-Z0-9_.]*(:[a-zA-Z_.][a-zA-Z0-9_.]*)*):)?(.*)");
-		Matcher matchURN = patternURN.matcher(resource);
-		
-		if (matchURN.find()) {
-			String namespace = matchURN.group(1);
-			String key = matchURN.group(3);
-			String value = matchURN.group(5);
-			
-			if (namespace.equals("miriam")) {
-				try {
-					this.addURI(qualifier, alternative, key, value);
-					return;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (key == null && this.validateNameCollection(namespace)) {
-				try {
-					this.addURI(qualifier, alternative, namespace, key);
-					return;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else {
-				String newKey = "urn:"+namespace+":"+key;
-				try {
-					this.addKeyValue(qualifier, alternative, newKey, value);
-					return;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		// if it wasn't a key or a value or a urn then it's a uri for sure
-		if (resource.indexOf("identifiers.org/") != -1) {
-			resource = resource.split("identifiers.org/")[1];
-		}
-		
-		int colon = resource.indexOf(':');
-		int slash = resource.indexOf('/');
-		
-		int index = colon;
-		if (colon == -1 || (slash != -1 && slash < colon)) {
-			index = slash;
-		}
-		
-		String collection = resource.substring(0, index);
-		String identifier = resource.substring(index+1);
-		
-		try {
-			this.addURI(qualifier, alternative, collection, identifier);
-			return;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.isValidURI(qualifier, alternative, resource);
 	}
 	
 	
@@ -1152,7 +1163,7 @@ public class Metadata {
 			// we save the uris
 			ArrayList<ArrayList<String>> listOfResources = metadata.getResourcesOfQualifier(qualifierName, alternative);
 			for (ArrayList<String> resource: listOfResources) {
-				cvterm.addResource(resource.get(0)+":"+resource.get(1));
+				cvterm.addResource(resource.get(1));
 			}
 			
 			// we save the tags
@@ -1425,7 +1436,7 @@ public class Metadata {
 									{
 										JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
 										try {
-											this.addURI(qualifierName, numberAlternative, jsonURI.getString("collection"), jsonURI.getString("identifier"));
+											this.addAnnotation(qualifierName, numberAlternative, "GenericAnnotation", "uri", jsonURI.getString("type"), jsonURI.getString("content"));
 										} catch (JSONException e) {
 											e.printStackTrace();
 										} catch (Exception e) {
@@ -1628,7 +1639,7 @@ public class Metadata {
 			
 			if (!(this.getType().equals("model") && qualifier.equals("modified"))) {
 				if (!listQualifiersMeta.contains(qualifier)) {
-					System.err.println("The list of qualifiers is not the same.");
+					System.err.println("The list of qualifiers is not the same: "+qualifier+" is in one Metadata but not the other.");
 					return false;
 				} 
 				int numberAlternatives = this.getNumberOfAlternatives(qualifier);

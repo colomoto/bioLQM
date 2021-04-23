@@ -341,7 +341,7 @@ public class AnnotationModule {
 	/**
 	 * Put all the annotations of the json in the model
 	 * 
-	 * @param filename the name of the json file
+	 * @param json the content of the json file
 	 * @param coreNodes
 	 * @param extraNodes
 	 * 

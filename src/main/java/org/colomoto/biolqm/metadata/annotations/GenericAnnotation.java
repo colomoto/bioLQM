@@ -63,13 +63,17 @@ class GenericAnnotation extends Annotation {
 				}
 				this.listOfURIs.add(uri);
 				
-				modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, contentAnnotation[1]);
-								
-				if (contentAnnotation[1].equals("doi") && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
-					modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, "", "", "");
+				if (contentAnnotation[1].equals("miriam")) {
+					String[] miriam = contentAnnotation[2].split(":");
 					
-					GetExternalMetadata gem = new GetExternalMetadata(modelConstants, contentAnnotation[1], contentAnnotation[2]);
-					gem.start();
+					modelConstants.getInstanceOfQualifiersAvailable().updateCollections(component, termDesired, miriam[0]);
+					
+					if (miriam[0].equals("doi") && !modelConstants.getInstanceOfExternalMetadata().isSetExternalMetadata(uri)) {
+						modelConstants.getInstanceOfExternalMetadata().updateExternalMetadata(uri, "", "", "");
+						
+						GetExternalMetadata gem = new GetExternalMetadata(modelConstants, miriam[0], miriam[1]);
+						gem.start();
+					}
 				}
 				break;
 			case "tag":
@@ -111,7 +115,7 @@ class GenericAnnotation extends Annotation {
 	protected void removeAnnotation(ModelConstants modelConstants, String[] contentAnnotation) {
 		switch (contentAnnotation[0]) {
 			case "uri":
-				URI uri = new URI(contentAnnotation[1], contentAnnotation[2]);
+				URI uri = new URI(null, contentAnnotation[1]);
 				if (!this.listOfURIs.contains(uri)) {
 					System.err.println("This uri has not been defined yet for this qualifier." + "\n");
 				}
@@ -155,7 +159,7 @@ class GenericAnnotation extends Annotation {
 		
 		chaine += tab + "\tURIs :\n";
 		for (URI uri : this.listOfURIs) {
-			chaine += tab + "\t\t" + uri.getCollection() + ":" + uri.getIdentifier() + "\n";
+			chaine += tab + "\t\t" + uri.getContent() + "\n";
 		}
 		
 		chaine += tab + "\tTags :\n";
@@ -220,8 +224,8 @@ class GenericAnnotation extends Annotation {
 		
 		for (URI uri : this.listOfURIs) {
 			ArrayList<String> resource = new ArrayList<String>();
-			resource.add(uri.getCollection());
-			resource.add(uri.getIdentifier());
+			resource.add(uri.getFlag());
+			resource.add(uri.getContent());
 			
 			resources.add(resource);
 		}
@@ -239,8 +243,8 @@ class GenericAnnotation extends Annotation {
 			for (URI uri : this.listOfURIs) {
 				JSONObject jsonURI = new JSONObject();
 				
-				jsonURI.put("collection", uri.getCollection());
-				jsonURI.put("identifier", uri.getIdentifier());
+				jsonURI.put("type", uri.getFlag());
+				jsonURI.put("content", uri.getContent());
 				
 				arrayURIs.put(jsonURI);
 			}
@@ -290,7 +294,7 @@ class GenericAnnotation extends Annotation {
 				for(int idUri = 0; idUri < arrayURIs.length(); idUri++)
 				{
 					JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
-					URI uri = new URI(jsonURI.getString("collection"), jsonURI.getString("identifier"));
+					URI uri = new URI(jsonURI.getString("type"), jsonURI.getString("content"));
 					if (!this.listOfURIs.contains(uri)) {
 						return false;
 					}
