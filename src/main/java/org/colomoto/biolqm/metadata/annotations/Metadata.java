@@ -1065,7 +1065,6 @@ public class Metadata {
 			JSONArray arrayAlternatives = new JSONArray();
 			
 			for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
-				
 				JSONObject jsonAlternative = this.listOfAnnotations.get(qualifierName).get(alternative).getJSONOfAnnotation();
 
 				// to check if the alternative contains a nested metadata

@@ -95,10 +95,6 @@ public class TestMetadataOnEdge {
 		Metadata meta3 = model2.getMetadataOfEdge(node2p53, node2Mdm2cyt);
 		Metadata meta4 = model2.getMetadataOfEdge(node2DNAdam, node2Mdm2cyt);
 		
-		System.out.println(meta1.getDescriptionMetadata());
-		System.out.println("meta");
-		System.out.println(meta2.getDescriptionMetadata());
-		
 		boolean result1 = meta1.sameMetadata(meta3);
 		assertEquals(result1, true);
 		
