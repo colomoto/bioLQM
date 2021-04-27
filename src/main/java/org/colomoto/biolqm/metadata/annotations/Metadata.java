@@ -1263,6 +1263,52 @@ public class Metadata {
 		return annotation;
 	}
 	
+	// the function to export the annotations towards the ginml format (for the users of the old versions of GINsim)
+	// we want a simple XML for the old versions of GINsim
+	// we keep only the GenericAnnotations without their qualifiers and their nested parts
+	public ArrayList<String> getListOfResources() {
+		
+		ArrayList<String> resources = new ArrayList<String>();
+			
+		for (String qualifierName: this.getListOfQualifiers()) {
+			
+			String qualifierFullClass = this.getClassOfQualifier(qualifierName);
+			int colon = qualifierFullClass.lastIndexOf('.');
+			String qualifierClass = qualifierFullClass.substring(colon+1);
+			
+			if (qualifierClass.equals("GenericAnnotation")) {
+				
+				for (int alternative = 0; alternative < this.getNumberOfAlternatives(qualifierName); alternative++) {
+					
+					// we save the uris
+					ArrayList<ArrayList<String>> listOfURIs = this.getResourcesOfQualifier(qualifierName, alternative);
+					for (ArrayList<String> resource: listOfURIs) {
+						resources.add(resource.get(1));
+					}
+					
+					// we save the tags
+					GenericAnnotation generic = (GenericAnnotation) this.listOfAnnotations.get(qualifierName).get(alternative);
+					Set<String> listOfTags = generic.getListOfTags();
+					for (String tag: listOfTags) {
+						resources.add("tag:"+tag);
+					}
+					
+					// we save the keysvalues
+					Map<String, ArrayList<String>> listOfKeysValues = generic.getListOfKeysValues();
+					for (Map.Entry<String, ArrayList<String>> entry: listOfKeysValues.entrySet()) {
+						String key = entry.getKey();
+						
+						for (String value: entry.getValue()) {
+							resources.add("keyvalue:"+key+":"+value);
+						}
+					}
+				}
+			}
+		}
+		
+		return resources;
+	}
+	
 	// the functions to import a json file of annotations as the annotations
 	private int doesAlternativeExist(JSONObject jsonAlternative, String termDesired) {
 		

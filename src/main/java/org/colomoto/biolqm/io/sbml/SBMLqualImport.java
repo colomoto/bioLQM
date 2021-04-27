@@ -993,7 +993,6 @@ public class SBMLqualImport extends BaseLoader {
 				}
 			}
 			if (history.isSetModifiedDate()) {
-				System.out.println(history.getModifiedDate());
 				try {
 					metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
 				} catch (Exception e) {
