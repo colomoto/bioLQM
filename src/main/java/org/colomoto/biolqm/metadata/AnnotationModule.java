@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
@@ -325,6 +326,48 @@ public class AnnotationModule {
 	public void exportMetadata(String filename, List<NodeInfo> coreNodes, List<NodeInfo> extraNodes, ConnectivityMatrix matrix) {
 		
 		JSONObject json = writeAnnotationsInJSON(coreNodes, extraNodes, matrix);
+		
+		// we add the date of the day to the modified qualifier before saving
+		boolean modifiedAdded = false;
+		if (json.has("annotation") && !json.isNull("annotation")) {	 
+			JSONArray arrayQualifiers = json.getJSONArray("annotation");
+			
+			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++)
+			{
+				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
+				String qualifierName = jsonQualifier.getString("qualifier");
+				
+				// if modified field already exists
+				if (qualifierName.equals("modified")) {
+					JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
+					arrayAlternatives.remove(0);
+					
+					JSONObject jsonDate = new JSONObject();
+					jsonDate.put("date", LocalDate.now().toString());
+					
+					arrayAlternatives.put(jsonDate);
+					
+					modifiedAdded = true;
+				}
+			}
+			// if modified field doesn't exist yet
+			if (!modifiedAdded) {
+				JSONObject jsonGlobalDate = new JSONObject();
+				
+				JSONArray arrayAlternatives = new JSONArray();
+				
+				JSONObject jsonDate = new JSONObject();
+				jsonDate.put("date", LocalDate.now().toString());
+				
+				arrayAlternatives.put(jsonDate);
+				
+				jsonGlobalDate.put("qualifier", "modified");
+				jsonGlobalDate.put("alternatives", arrayAlternatives);
+				jsonGlobalDate.put("type", "DateAnnotation");
+				
+				arrayQualifiers.put(jsonGlobalDate);
+			}
+		}
 		
         // Write JSON file
         try (Writer file = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8)) {

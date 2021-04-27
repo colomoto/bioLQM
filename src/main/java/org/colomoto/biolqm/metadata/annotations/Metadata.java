@@ -61,7 +61,6 @@ public class Metadata {
 		if (newType == "model" & !nested) {
 			LocalDate currentDate = LocalDate.now();
 			this.addDate("created", currentDate.toString());
-			this.addDate("modified", currentDate.toString());
 		}
 	}
 	

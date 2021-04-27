@@ -15,6 +15,7 @@ import com.github.rjeschke.txtmark.Processor;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.History;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.layout.*;
@@ -25,6 +26,9 @@ import org.sbml.jsbml.xml.XMLNode;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -380,6 +384,13 @@ public class SBMLqualExport extends BaseExporter {
 		
 		if (metadata.isMetadataNotEmpty()) {
 			Annotation annotation = metadata.getSBMLOfMetadata();
+			
+			// we add the date of the day to the modified qualifier before saving
+			History history = annotation.getHistory();
+			ZoneId defaultZoneId = ZoneId.systemDefault();
+			LocalDate localDate = LocalDate.now();
+			Date date = Date.from(localDate.atStartOfDay(defaultZoneId).toInstant());
+			history.setModifiedDate(date);
 			
 			if (!annotation.isEmpty()) {
 				if (!type.equals("model")) {

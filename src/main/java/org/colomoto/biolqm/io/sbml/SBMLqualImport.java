@@ -993,16 +993,13 @@ public class SBMLqualImport extends BaseLoader {
 				}
 			}
 			if (history.isSetModifiedDate()) {
+				System.out.println(history.getModifiedDate());
 				try {
-					metadata.addDate("modified", LocalDate.now().toString());
+					metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			
-			// we don't use the old modifiedDate for the "modified" qualifier because we use the current date
-			// it's okay because this change will affect the model only if it is saved, indicating it has indeed been modified
-			// metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
 			
 			for (Creator creator : history.getListOfCreators()) {
 				String email = null;
