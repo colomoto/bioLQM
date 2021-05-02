@@ -69,6 +69,8 @@ public class ModelGrouping {
 	
 		Set<VarInfo> varsTaken = new HashSet<VarInfo>();
 		
+		
+		// count how many vars there should be so a mpc is valid
 		int sizeModel = 0;
 		for (int i= 0; i < this.model.getComponents().size(); i++) {
 			if (!this.model.getComponents().get(i).isInput()) {
@@ -79,25 +81,38 @@ public class ModelGrouping {
 			}
 		}
 		
+		// check if rank order is correct
 		for (int rank = 0; rank < ranks.keySet().size(); rank ++) {
 			if (!ranks.keySet().contains(rank))
 				throw new Exception("Rank order not correct"); 
 		}
 		
 		int varCount = 0;
+		// for each rank
 		for (Integer rank : ranks.keySet()) {
 			List<RankedClassGroup> rankGroups = new ArrayList<>();
 			
-	
+			// for each group
 			for (List<VarInfo> vars : ranks.get(rank).keySet()) {
-				
-				for (VarInfo var : vars) {
+				for (int v = 0; v < vars.size(); v++) {
+					VarInfo var = vars.get(v);
 					
 					if (model.getComponents().get(var.idx) != null) {
+						
+						VarInfo nextVar = null;
+						if (v + 1 < vars.size())
+							nextVar = vars.get(v+1);
+						if (nextVar != null && var.idx == nextVar.idx)
+							varCount --;
+						
+						// check if var is input
 						if (model.getComponents().get(var.idx).isInput())
 							throw new Exception("Var is input: " + var.toString()); 
+						// check if var was already used
 						if (varsTaken.contains(var)) {
-							throw new Exception("Duplicate var: " + var.toString()); 
+							throw new Exception("Duplicate var: " + var.toString());
+							
+						// remove from taken vars list.
 						} else {
 							if (var.flag == 0) {
 								varsTaken.remove(var);
@@ -107,6 +122,7 @@ public class ModelGrouping {
 								varsTaken.remove(var);
 								varsTaken.remove(new VarInfo(var.idx, 0, model));
 							}
+							
 						}
 						varCount ++;
 					} else {
@@ -117,14 +133,26 @@ public class ModelGrouping {
 				rankGroups.add(newGroup);
 			}
 			
-			if (varCount != sizeModel)
-				throw new Exception("Missing vars"); 
-
 			this.pcList.add(new RankedClass(rankGroups));
-		}	
+		}
+
+		if (varCount != sizeModel)
+			throw new Exception("Missing vars"); 
 		
 	}
-
+	public ModelGrouping cloneRetroCompatible() {
+		List<RankedClass> pcNew = new ArrayList<RankedClass>();
+		for (RankedClass pc : this.pcList) {
+			pcNew.add(pc.cloneRetroCompatible());
+		}
+		try {
+			return new ModelGrouping(this.model, pcNew);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 
 	public LogicalModel getModel() {
 		return this.model;
@@ -820,6 +848,7 @@ public class ModelGrouping {
 			this.groups = new ArrayList<>();
 		}
 		
+
 		public RankedClass(RankedClassGroup pcg) {
 			this.groups = new ArrayList<>();
 			this.groups.add(pcg);
@@ -836,6 +865,15 @@ public class ModelGrouping {
 				this.groups.add(new RankedClassGroup(m, sPCG));
 			}
 		}
+		
+		public RankedClass cloneRetroCompatible() {
+			RankedClass pc = new RankedClass(this.groups.get(0).cloneRetroCompatible());
+			for (int g = 1; g < this.groups.size(); g++) {
+				pc.addGrp(g, this.groups.get(g).cloneRetroCompatible());
+			}
+			return pc;
+		}
+		
 
 		public boolean isValid(int idxGrp) {
 			return idxGrp >= 0 && this.groups.size() > idxGrp;
@@ -1068,7 +1106,8 @@ public class ModelGrouping {
 			this.updater = new SynchronousUpdater(model);
 			this.setVars(varList);
 		}
-		
+	
+
 		public RankedClassGroup(List<VarInfo> vars, LogicalModelUpdater updater) {
 			this.updater = updater;
 			this.setVars(vars);
@@ -1133,6 +1172,21 @@ public class ModelGrouping {
 				}						
 			} this.setVars(varsInfo);
 		}
+		
+		
+		// compatability with Avatar algorithm 
+		public RankedClassGroup cloneRetroCompatible() {
+			if (this.updater instanceof SynchronousUpdater) {
+				return this.clone();
+			} else {
+				RankedClassGroup groupClone = this.clone();
+				MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
+				this.updater =  new RandomUpdaterWrapper(MultiUpdater);
+				groupClone.setUpdater(this.updater);
+				return groupClone;
+			}
+		}
+		
 
 		public List<VarInfo> array() {
 			return this.vars;
@@ -1158,7 +1212,6 @@ public class ModelGrouping {
 		public List<String> getVars() {
 			
 			List<String> lVars = new ArrayList<String>();
-			// i += 2 in order to look for only Node idx, skip splitFlag
 			for (int i = 0; i < this.vars.size(); i ++) {
 				lVars.add(this.vars.get(i).toString());
 			}
@@ -1314,8 +1367,6 @@ public class ModelGrouping {
 			   	this.setUpdater(new RandomUpdaterWithRates(model, newRates)); 
 		   	}
 	    }
-	
-		
 		public Map<String, Double> getRates(List<String> vars) {
 			Map<String, Double> rates = this.getRates();
 			
@@ -1330,7 +1381,6 @@ public class ModelGrouping {
 			return rates;
 			
 		}
-		
 		
 		public Map<String, Double> getRates() {
 			

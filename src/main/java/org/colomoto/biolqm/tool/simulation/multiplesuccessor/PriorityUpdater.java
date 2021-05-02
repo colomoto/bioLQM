@@ -25,7 +25,7 @@ import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 // April 2015 - Pedro added support for split transitions.
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
-	private final ModelGrouping pclist; 
+	private ModelGrouping pclist; 
 	private final boolean isComplete = false;
 	private static final String name = "Priorities";
 
@@ -91,6 +91,10 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			lTmp = this.addSuccessor(lTmp, succState);
 		}
 		return lTmp;
+	}
+	
+	public void makeRetroCompatible() {
+		this.pclist = this.pclist.cloneRetroCompatible();
 	}
 
 	@Override

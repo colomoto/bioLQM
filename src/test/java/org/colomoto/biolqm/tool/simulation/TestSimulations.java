@@ -420,15 +420,64 @@ public class TestSimulations {
 	     }
 	     
 	  }
+	  
+	  @Test
+      public void testPCSim() throws IOException {
+		  
+		  ModelGrouping mpc = getMpcModel();
+	   	  PriorityUpdater pc = new PriorityUpdater(mpc);
+	   	  
+	   	  byte[] initState = new byte[] {1, 0, 1, 1, 0};
+	   	  
+	      Map<String, Integer> finalStatesCount = new HashMap<String, Integer>();
+	      
+	      // cyclic attractor when Rank 0: B/C, Rank 1: D/E
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 0, 1, 1, 0}), 0);
+	      // C update
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 1, 1, 1, 0}), 0);
+	      // B update
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 1, 0, 1, 0}), 0);
+	      // C update
+	      finalStatesCount.put(Arrays.toString(new byte[] {1, 0, 0, 1, 0}), 0);
+	      
+	      // in all these updates, E and D are also updatable
+		
+	     int simRuns = 1000; 
+ 
+	     for (int run = 0; run < simRuns ; run++) {
+	    	 Random random = new Random();
+		     int steps = random.nextInt(1000);
+			 RandomWalkSimulation simulation = new RandomWalkSimulation(
+					  new RandomUpdaterWrapper(pc),
+		    		  initState,steps);
+		    Iterator<byte[]> it = simulation.iterator();
+		    byte[] successor = null;
+	    	while (it.hasNext()) {
+	            successor = it.next();
+	    	}
+            Integer count = finalStatesCount.get(Arrays.toString(successor));
+            count ++;
+            finalStatesCount.put(Arrays.toString(successor), count);                
+	     }
+	     
+	     int size = finalStatesCount.keySet().size();
+	     for (String key : finalStatesCount.keySet()) {
+		     assertTrue(finalStatesCount.get(key) * 0.9 <= (1.0/size)*simRuns
+		    		 && finalStatesCount.get(key) * 1.1 >= (1.0/size)*simRuns);
+	     }
+	     
+	  }
+	  
+	  
         
 	  @Test
-	  public void testPriorityUpdater() {
+	  public void testRandomWalkAsyn() {
 		LogicalModel model = getSimpleModel();
 		  byte[] state = {1, 0, 0};
 	      // C and D
 	      Map<String, Integer> finalStatesCount = new HashMap<String, Integer>();
 	      finalStatesCount.put(Arrays.toString(new byte[] {1, 1, 1}), 0);
-	      finalStatesCount.put(Arrays.toString(new byte[] {0, 0, 0}), 0);
+	      finalStatesCount .put(Arrays.toString(new byte[] {0, 0, 0}), 0);
 
 	      AsynchronousUpdater updater = new AsynchronousUpdater(model);
 	      RandomWalkSimulation simulation = new RandomWalkSimulation(new RandomUpdaterWrapper(updater),
@@ -449,12 +498,12 @@ public class TestSimulations {
             finalStatesCount.put(Arrays.toString(successor), count);                
 	     }
 
-	     assertTrue(finalStatesCount.get("[0, 0, 0]") * 0.9 <= 0.6875*simRuns
-	    		 && finalStatesCount.get("[0, 0, 0]") * 1.1 >= 0.6875*simRuns);
+	     assertTrue(finalStatesCount.get("[0, 0, 0]") * 0.9 <= 0.6875 * simRuns
+	    		 && finalStatesCount.get("[0, 0, 0]") * 1.1 >= 0.6875 * simRuns);
 	     
+	     assertTrue(finalStatesCount.get("[1, 1, 1]") * 0.9 <= 0.3125 * simRuns
+	    		 && finalStatesCount.get("[1, 1, 1]") * 1.1 >= 0.3125 * simRuns);
 	     
-	     assertTrue(finalStatesCount.get("[1, 1, 1]") * 0.9 <= 0.3125*simRuns
-	    		 && finalStatesCount.get("[1, 1, 1]") * 1.1 >= 0.3125*simRuns);	
      }
       private int getIdxChange(byte[] state1, byte[] state2) {
 
