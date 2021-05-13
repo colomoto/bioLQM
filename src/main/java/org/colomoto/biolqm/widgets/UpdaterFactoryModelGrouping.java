@@ -1,5 +1,9 @@
 package org.colomoto.biolqm.widgets;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
@@ -14,6 +18,31 @@ import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
 public class UpdaterFactoryModelGrouping {
+	
+	
+	public static String[] getSupportedUpdaters(boolean multi, boolean single) {
+		ResourceBundle bundle = ResourceBundle.getBundle("Updaters");
+		List<String> updaters = new ArrayList<String>();
+		if (multi) {
+			if (bundle.containsKey("MULTI_SUCCESSOR_UPDATERS")) {
+				String[] upd = bundle.getString("MULTI_SUCCESSOR_UPDATERS").split(",");
+				for (String updater : upd)
+					updaters.add(updater);
+			}
+		} if (single) {
+			if (bundle.containsKey("SINGLE_SUCCESSOR_UPDATERS")) {
+				String[] upd = bundle.getString("SINGLE_SUCCESSOR_UPDATERS").split(",");
+				for (String updater : upd)
+					updaters.add(updater);
+			}
+		}
+		String[] updatersArray = new String[updaters.size()];
+		for (int i = 0; i < updaters.size(); i++)
+			updatersArray[i] = updaters.get(i);
+		
+
+		return updatersArray;
+	}
 
 	 public static LogicalModelUpdater getUpdater(LogicalModel model, String updater) {
 

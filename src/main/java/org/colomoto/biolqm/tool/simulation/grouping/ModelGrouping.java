@@ -69,17 +69,18 @@ public class ModelGrouping {
 	
 		Set<VarInfo> varsTaken = new HashSet<VarInfo>();
 		
-		
+		int varsUsed = 0;
 		// count how many vars there should be so a mpc is valid
-		int sizeModel = 0;
 		for (int i= 0; i < this.model.getComponents().size(); i++) {
 			if (!this.model.getComponents().get(i).isInput()) {
 				varsTaken.add(new VarInfo(i, 0, model));
 				varsTaken.add(new VarInfo(i, -1, model));
 				varsTaken.add(new VarInfo(i, 1, model));
-				sizeModel ++;
+				varsUsed ++;
 			}
 		}
+		
+		byte[] completeVars = new byte[this.model.getComponents().size()];
 		
 		// check if rank order is correct
 		for (int rank = 0; rank < ranks.keySet().size(); rank ++) {
@@ -87,7 +88,8 @@ public class ModelGrouping {
 				throw new Exception("Rank order not correct"); 
 		}
 		
-		int varCount = 0;
+		
+		int varsCount = 0;
 		// for each rank
 		for (Integer rank : ranks.keySet()) {
 			List<RankedClassGroup> rankGroups = new ArrayList<>();
@@ -102,14 +104,14 @@ public class ModelGrouping {
 						VarInfo nextVar = null;
 						if (v + 1 < vars.size())
 							nextVar = vars.get(v+1);
-						if (nextVar != null && var.idx == nextVar.idx)
-							varCount --;
 						
 						// check if var is input
 						if (model.getComponents().get(var.idx).isInput())
 							throw new Exception("Var is input: " + var.toString()); 
+						
+						
 						// check if var was already used
-						if (varsTaken.contains(var)) {
+						if (!varsTaken.contains(var)) {
 							throw new Exception("Duplicate var: " + var.toString());
 							
 						// remove from taken vars list.
@@ -118,13 +120,17 @@ public class ModelGrouping {
 								varsTaken.remove(var);
 								varsTaken.remove(new VarInfo(var.idx, -1, model));
 								varsTaken.remove(new VarInfo(var.idx, 1, model));
+								
+								varsCount ++;
 							} else {
 								varsTaken.remove(var);
 								varsTaken.remove(new VarInfo(var.idx, 0, model));
+								completeVars[var.idx] += var.flag;
+								if (var.flag == -1)
+									varsCount++;
 							}
-							
+	
 						}
-						varCount ++;
 					} else {
 						throw new Exception("Var does not exists: " + var.toString()); 
 					}
@@ -136,8 +142,13 @@ public class ModelGrouping {
 			this.pcList.add(new RankedClass(rankGroups));
 		}
 
-		if (varCount != sizeModel)
+		if (varsCount != varsUsed)
 			throw new Exception("Missing vars"); 
+
+		for (byte flag : completeVars) {
+			if (flag != 0) 
+				throw new Exception("Missing vars"); 
+		}
 		
 	}
 	public ModelGrouping cloneRetroCompatible() {
@@ -1175,6 +1186,7 @@ public class ModelGrouping {
 		
 		
 		// compatability with Avatar algorithm 
+		// Sync
 		public RankedClassGroup cloneRetroCompatible() {
 			if (this.updater instanceof SynchronousUpdater) {
 				return this.clone();
@@ -1606,6 +1618,7 @@ public class ModelGrouping {
 			
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			VarInfo newVar = (VarInfo) o;
 			if (this.idx != newVar.idx)
@@ -1615,6 +1628,12 @@ public class ModelGrouping {
 			if (this.model != newVar.model) 
 				return false;
 			return true;
+		}
+		
+		@Override
+		public int hashCode() {
+			return (this.idx + 1) * this.model.getComponents().size() * (this.flag + 2);
+			
 		}
    
 	}

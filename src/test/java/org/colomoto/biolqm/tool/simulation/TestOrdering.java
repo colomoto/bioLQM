@@ -42,7 +42,7 @@ public class TestOrdering {
         return new LogicalModelImpl(vars, manager, functions);
     }
 
-
+    @Test
     public void testOrdering() {
 
         LogicalModel model = getModel();

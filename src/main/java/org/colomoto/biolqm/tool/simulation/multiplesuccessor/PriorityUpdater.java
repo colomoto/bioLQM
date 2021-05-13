@@ -53,8 +53,6 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			List<byte[]> lTmpSucc = new ArrayList<>();
 			for (int g = 0; g < pc.size(); g++) {
 				
-				// pcVars
-//				 the individual groups are the classes 
 			
 				LogicalModelUpdater groupUpdater = this.pclist.getUpdater(p, g);
 				

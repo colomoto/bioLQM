@@ -3,8 +3,6 @@ package org.colomoto.biolqm.widgets;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,12 +14,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,27 +28,15 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 
-import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.NodeInfo;
-import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
-import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
-import org.colomoto.biolqm.tool.simulation.grouping.testReadUp;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
 
 
@@ -331,7 +313,6 @@ public class PriorityClassPanel extends JPanel {
 		gdcCenter.gridy = 0;
 		
 		Map<JComboBox<String>, int[]> pcIdxGroup = new HashMap<JComboBox<String>, int[]>();
-		Map<JTextField, int[]> idxJtf = new HashMap<JTextField, int[]>();
 
 
 		for (int idxPC = 0; idxPC < mpc.size(); idxPC++) { 
@@ -404,7 +385,7 @@ public class PriorityClassPanel extends JPanel {
 				JPanel groupHeader = new JPanel();
 				
 				// get supported updaters
-				JComboBox<String> jcbUpdaters = new JComboBox<String>(testReadUp.getSupportedUpdaters(multiUpdater, singleUpdater));
+				JComboBox<String> jcbUpdaters = new JComboBox<String>(UpdaterFactoryModelGrouping.getSupportedUpdaters(multiUpdater, singleUpdater));
 				if (this.guiMultipSuc) {
 					JButton moveUp = this.getNoMargins("↑");
 					moveUp.setActionCommand("" + idxPC + "," + idxGroup);

@@ -353,7 +353,7 @@ public class TestUpdaters {
 	}
 	
 	@Test
-	public void testRandomUpdaterWithRates() throws IOException {
+	public void testRandomUpdaterWithRatesBasic() throws IOException {
 		LogicalModel model = getModel();
 		Double[] rates =  new Double[] {0.5,0.3,0.2};
 		Map<String, Double> nodeRates = new HashMap<String, Double>();
@@ -440,7 +440,7 @@ public class TestUpdaters {
 	
 	
 	@Test
-	public void testRandomUpdaterWithRatesAndFilter() throws IOException {
+	public void testRandomUpdaterWithRatesAndSplit() throws IOException {
 				
 		LogicalModel model = getOtherModel();
 		
@@ -542,7 +542,7 @@ public class TestUpdaters {
 	
 	
 	@Test
-	public void testRandomUpdaterWithRatesOther() throws IOException {
+	public void testRandomUpdaterWithRates() throws IOException {
 		
 		LogicalModel model = getOtherModel();
 		Double[] rates = {0.4,0.1,0.1,0.2,0.2};
