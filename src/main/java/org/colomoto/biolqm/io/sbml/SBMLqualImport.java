@@ -1,24 +1,52 @@
 package org.colomoto.biolqm.io.sbml;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.stream.XMLStreamException;
+
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.mddlib.*;
+import org.colomoto.biolqm.metadata.annotations.Metadata;
+import org.colomoto.biolqm.metadata.constants.XSLTransform;
+import org.colomoto.mddlib.MDDManager;
+import org.colomoto.mddlib.MDDManagerFactory;
+import org.colomoto.mddlib.MDDOperator;
+import org.colomoto.mddlib.MDDVariable;
+import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNode.Type;
+import org.sbml.jsbml.Annotation;
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.History;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.ext.layout.*;
-import org.sbml.jsbml.ext.qual.*;
-
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.ext.layout.BoundingBox;
+import org.sbml.jsbml.ext.layout.Dimensions;
+import org.sbml.jsbml.ext.layout.GeneralGlyph;
+import org.sbml.jsbml.ext.layout.GraphicalObject;
+import org.sbml.jsbml.ext.layout.Layout;
+import org.sbml.jsbml.ext.layout.Point;
+import org.sbml.jsbml.ext.qual.FunctionTerm;
+import org.sbml.jsbml.ext.qual.Input;
+import org.sbml.jsbml.ext.qual.Output;
+import org.sbml.jsbml.ext.qual.OutputTransitionEffect;
+import org.sbml.jsbml.ext.qual.QualitativeSpecies;
+import org.sbml.jsbml.ext.qual.Transition;
+import org.sbml.jsbml.xml.XMLNode;
 
 /**
  * Crude SBML import using JSBML and the qual extension.
@@ -39,7 +67,7 @@ public class SBMLqualImport extends BaseLoader {
         return qualBundle;
     }
 
-    public LogicalModel performTask() throws IOException {
+    public LogicalModel performTask() throws Exception {
 
         try {
             this.qualBundle = SBMLqualHelper.parseInputStream(streams.input());
@@ -179,7 +207,9 @@ public class SBMLqualImport extends BaseLoader {
                 }
             }
         }
-
+		
+		this.importAllMetadata(model, variables);
+		
         return model;
     }
 
@@ -907,5 +937,182 @@ public class SBMLqualImport extends BaseLoader {
 
         throw new RuntimeException("Multi-valued is not handled here!");
     }
+	
+	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
+		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+		
+		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
+			qualifier = cvterm.getUnknownQualifierName();
+		}
+		
+		int alternative = metadata.getNumberOfAlternatives(qualifier);
+		if (alternative != 0) {
+			try {
+				alternative = metadata.createAlternative(qualifier);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// we add all the uris for this qualifier
+		for (String resource: cvterm.getResources()) {
+			try {
+				metadata.addElement(qualifier, alternative, resource);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// and then we add the nested annotation recursively
+		if (cvterm.isSetListOfNestedCVTerms()) {
+			Metadata metadataNested;
+			try {
+				metadataNested = metadata.getMetadataOfQualifier(qualifier, alternative);
+				for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
+					this.importElementCVTerm(cvtermNested, metadataNested);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+		
+    private void importElementHistory(Annotation annotation, Metadata metadata) {
+		
+		if (annotation.isSetHistory()) {
+			History history = annotation.getHistory();
+			
+			String pattern = "yyyy-MM-dd";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+						
+			if (history.isSetCreatedDate()) {
+				try {
+					metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (history.isSetModifiedDate()) {
+				try {
+					metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			for (Creator creator : history.getListOfCreators()) {
+				String email = null;
+				if (creator.isSetEmail()) {
+					email = creator.getEmail();
+				}
+				String organisation = null;
+				if (creator.isSetOrganisation()) {
+					organisation = creator.getOrganisation();
+				}
+				try {
+					metadata.addAuthor("creator", creator.getGivenName(), creator.getFamilyName(), email, organisation, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private void importElementMetadata(SBase element, Metadata metadata) {
+		if (element.isSetAnnotation()) {					
+			Annotation annotation = element.getAnnotation();
+				
+			// to deal with terms of bqbiol and bqmodel
+			for (CVTerm cvterm: annotation.getListOfCVTerms()) {
+				this.importElementCVTerm(cvterm, metadata);
+			}
+			
+			// to deal with terms of dcterms
+			this.importElementHistory(annotation, metadata);
+		}
+		if (element.isSetNotes()) {
+			XMLNode notes = element.getNotes();
+			notes.clearNamespaces();
+		
+			// to suppress the xmlns of the html language
+			for (XMLNode content: notes.getChildElements("", "")) {
+				content.clearNamespaces();
+			}
+			
+			String html;
+			try {
+				html = notes.toXMLString();
+				String markdown = XSLTransform.simpleTransform(html);
+				metadata.setNotes(markdown);
+			} catch (XMLStreamException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) {
+		
+		SBase elementModel = (SBase) this.qualBundle.document.getModel();
+		
+		if (elementModel.isSetAnnotation() || elementModel.isSetNotes()) {
+			Metadata metadataModel = model.getMetadataOfModel();
+			
+			this.importElementMetadata(elementModel, metadataModel);
+		}
+		
+		for (QualitativeSpecies elementSpecies: this.qualBundle.qmodel.getListOfQualitativeSpecies()) {
+			
+			if (elementSpecies.isSetAnnotation() || elementSpecies.isSetNotes()) {
+				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
+				Metadata metadataSpecies;
+				try {
+					metadataSpecies = model.getMetadataOfNode(node);
+					
+					this.importElementMetadata(elementSpecies, metadataSpecies);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
+		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
+			Output elementOutput = elementTransition.getListOfOutputs().get(0);
+			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
+
+			for (Input elementInput: elementTransition.getListOfInputs()) {
+				
+				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
+					NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
+					
+					Metadata metadataInput;
+					try {
+						metadataInput = model.getMetadataOfEdge(node1, node2);
+						this.importElementMetadata(elementInput, metadataInput);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
+			Output elementOutput = elementTransition.getListOfOutputs().get(0);
+			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
+
+			for (Input elementInput: elementTransition.getListOfInputs()) {
+				
+				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
+					NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
+					
+					Metadata metadataInput;
+					try {
+						metadataInput = model.getMetadataOfEdge(node1, node2);
+						this.importElementMetadata(elementInput, metadataInput);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 }

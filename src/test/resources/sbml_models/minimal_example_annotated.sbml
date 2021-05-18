@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" layout:required="false" level="3" qual:required="true" version="1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1">
+  <model id="model_id" metaid="de91481c-37d3-484a-a337-1ac86a4b4191">
+    <annotation>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+	<rdf:Description rdf:about="#de91481c-37d3-484a-a337-1ac86a4b4191">
+	<dcterms:created rdf:parseType="Resource">
+	<dcterms:W3CDTF>2021-03-07T23:00:00Z</dcterms:W3CDTF>
+	</dcterms:created>
+	<dcterms:modified rdf:parseType="Resource">
+	<dcterms:W3CDTF>2021-03-25T23:00:00Z</dcterms:W3CDTF>
+	</dcterms:modified>
+	<bqmodel:customQualifier>
+	<rdf:Bag>
+	<rdf:li rdf:resource="tag:word1"/>
+	<rdf:li rdf:resource="tag:word2"/>
+	<rdf:li rdf:resource="keyvalue:key1:val11"/>
+	<rdf:li rdf:resource="keyvalue:key1:value12"/>
+	<rdf:li rdf:resource="keyvalue:key2:val21"/>
+	<bqmodel:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="uniprot:P0DP23"/>
+	<bqmodel:hasKey>
+	<rdf:Bag>
+	<rdf:li rdf:resource="keyvalue:keyNested:valueNested"/>
+	</rdf:Bag>
+	</bqmodel:hasKey>
+	<bqmodel:hasTag>
+	<rdf:Bag>
+	<rdf:li rdf:resource="tag:wordNested"/>
+	</rdf:Bag>
+	</bqmodel:hasTag>
+	</rdf:Bag>
+	</bqmodel:is>
+	<bqmodel:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="doi:10.15252/msb.20199110"/>
+	</rdf:Bag>
+	</bqmodel:is>
+	</rdf:Bag>
+	</bqmodel:customQualifier>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+      <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="__layout__">
+        <layout:dimensions layout:height="399" layout:width="547"/>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="_ly_p53" layout:reference="p53">
+            <layout:boundingBox>
+              <layout:position layout:x="160" layout:y="153"/>
+              <layout:dimensions layout:height="40" layout:width="75"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="_ly_Mdm2cyt" layout:reference="Mdm2cyt">
+            <layout:boundingBox>
+              <layout:position layout:x="164" layout:y="359"/>
+              <layout:dimensions layout:height="40" layout:width="75"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="_ly_Mdm2nuc" layout:reference="Mdm2nuc">
+            <layout:boundingBox>
+              <layout:position layout:x="472" layout:y="357"/>
+              <layout:dimensions layout:height="40" layout:width="75"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="_ly_DNAdam" layout:reference="DNAdam">
+            <layout:boundingBox>
+              <layout:position layout:x="471" layout:y="149"/>
+              <layout:dimensions layout:height="40" layout:width="75"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <qual:listOfQualitativeSpecies xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1">
+      <qual:qualitativeSpecies metaid="meta_p53" qual:compartment="comp1" qual:constant="false" qual:id="p53" qual:maxLevel="2">
+        <annotation>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#">
+	<rdf:Description rdf:about="#meta_p53">
+	<dc:creator>
+	<rdf:Bag>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Boutroux</vCard:Family>
+	<vCard:Given>Martin</vCard:Given>
+	</vCard:N>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Dupont</vCard:Family>
+	<vCard:Given>Dupond</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>moulinsart@tintin.org</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>Hergé</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	</rdf:Bag>
+	</dc:creator>
+	</rdf:Description>
+	</rdf:RDF>
+	</annotation>
+            </qual:qualitativeSpecies>
+      <qual:qualitativeSpecies qual:compartment="comp1" qual:constant="false" qual:id="Mdm2cyt" qual:maxLevel="2"/>
+      <qual:qualitativeSpecies qual:compartment="comp1" qual:constant="false" qual:id="Mdm2nuc" qual:maxLevel="1"/>
+      <qual:qualitativeSpecies qual:compartment="comp1" qual:constant="false" qual:id="DNAdam" qual:maxLevel="1"/>
+    </qual:listOfQualitativeSpecies>
+    <qual:listOfTransitions xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1">
+      <qual:transition qual:id="tr_p53_">
+        <qual:listOfInputs>
+          <qual:input qual:id="tr_p53_in_2" qual:qualitativeSpecies="Mdm2nuc" qual:sign="negative" qual:transitionEffect="none"/>
+        </qual:listOfInputs>
+        <qual:listOfOutputs>
+          <qual:output qual:id="tr_p53_out" qual:qualitativeSpecies="p53" qual:transitionEffect="assignmentLevel"/>
+        </qual:listOfOutputs>
+        <qual:listOfFunctionTerms>
+          <qual:defaultTerm qual:resultLevel="0">
+          </qual:defaultTerm>
+          <qual:functionTerm qual:resultLevel="2">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <apply>
+                <eq/>
+                <ci> Mdm2nuc </ci>
+                <cn type="integer"> 0 </cn>
+              </apply>
+            </math>
+                    </qual:functionTerm>
+        </qual:listOfFunctionTerms>
+      </qual:transition>
+      <qual:transition qual:id="tr_Mdm2cyt_">
+        <qual:listOfInputs>
+          <qual:input qual:id="tr_Mdm2cyt_in_0" qual:qualitativeSpecies="p53" qual:sign="positive" qual:transitionEffect="none"/>
+        </qual:listOfInputs>
+        <qual:listOfOutputs>
+          <qual:output qual:id="tr_Mdm2cyt_out" qual:qualitativeSpecies="Mdm2cyt" qual:transitionEffect="assignmentLevel"/>
+        </qual:listOfOutputs>
+        <qual:listOfFunctionTerms>
+          <qual:defaultTerm qual:resultLevel="0">
+          </qual:defaultTerm>
+          <qual:functionTerm qual:resultLevel="1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <apply>
+                <leq/>
+                <ci> p53 </ci>
+                <cn type="integer"> 1 </cn>
+              </apply>
+            </math>
+                    </qual:functionTerm>
+          <qual:functionTerm qual:resultLevel="2">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <apply>
+                <eq/>
+                <ci> p53 </ci>
+                <cn type="integer"> 2 </cn>
+              </apply>
+            </math>
+                    </qual:functionTerm>
+        </qual:listOfFunctionTerms>
+      </qual:transition>
+      <qual:transition qual:id="tr_Mdm2nuc_">
+        <qual:listOfInputs>
+          <qual:input qual:id="tr_Mdm2nuc_in_0" qual:qualitativeSpecies="p53" qual:sign="negative" qual:transitionEffect="none"/>
+          <qual:input qual:id="tr_Mdm2nuc_in_1" qual:qualitativeSpecies="Mdm2cyt" qual:sign="positive" qual:transitionEffect="none"/>
+          <qual:input qual:id="tr_Mdm2nuc_in_3" qual:qualitativeSpecies="DNAdam" qual:sign="negative" qual:transitionEffect="none"/>
+        </qual:listOfInputs>
+        <qual:listOfOutputs>
+          <qual:output qual:id="tr_Mdm2nuc_out" qual:qualitativeSpecies="Mdm2nuc" qual:transitionEffect="assignmentLevel"/>
+        </qual:listOfOutputs>
+        <qual:listOfFunctionTerms>
+          <qual:defaultTerm qual:resultLevel="0">
+          </qual:defaultTerm>
+          <qual:functionTerm qual:resultLevel="1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <apply>
+                <or/>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
+                    <ci> p53 </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> Mdm2cyt </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> DNAdam </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <and/>
+                  <apply>
+                    <eq/>
+                    <ci> p53 </ci>
+                    <cn type="integer"> 0 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> Mdm2cyt </ci>
+                    <cn type="integer"> 2 </cn>
+                  </apply>
+                </apply>
+                <apply>
+                  <and/>
+                  <apply>
+                    <geq/>
+                    <ci> p53 </ci>
+                    <cn type="integer"> 1 </cn>
+                  </apply>
+                  <apply>
+                    <eq/>
+                    <ci> Mdm2cyt </ci>
+                    <cn type="integer"> 2 </cn>
+                  </apply>
+                </apply>
+              </apply>
+            </math>
+                    </qual:functionTerm>
+        </qual:listOfFunctionTerms>
+      </qual:transition>
+      <qual:transition qual:id="tr_DNAdam_">
+        <qual:listOfInputs>
+          <qual:input qual:id="tr_DNAdam_in_0" qual:qualitativeSpecies="p53" qual:sign="negative" qual:transitionEffect="none"/>
+          <qual:input qual:id="tr_DNAdam_in_3" qual:qualitativeSpecies="DNAdam" qual:sign="positive" qual:transitionEffect="none"/>
+        </qual:listOfInputs>
+        <qual:listOfOutputs>
+          <qual:output qual:id="tr_DNAdam_out" qual:qualitativeSpecies="DNAdam" qual:transitionEffect="assignmentLevel"/>
+        </qual:listOfOutputs>
+        <qual:listOfFunctionTerms>
+          <qual:defaultTerm qual:resultLevel="0">
+          </qual:defaultTerm>
+          <qual:functionTerm qual:resultLevel="1">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">            
+              <apply>
+                <and/>
+                <apply>
+                  <leq/>
+                  <ci> p53 </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+                <apply>
+                  <eq/>
+                  <ci> DNAdam </ci>
+                  <cn type="integer"> 1 </cn>
+                </apply>
+              </apply>
+            </math>
+                    </qual:functionTerm>
+        </qual:listOfFunctionTerms>
+      </qual:transition>
+    </qual:listOfTransitions>
+    <listOfCompartments>
+      <compartment constant="true" id="comp1"/>
+    </listOfCompartments>
+  </model>
+</sbml>
