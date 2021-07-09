@@ -11,14 +11,13 @@ import org.colomoto.biolqm.tool.simulation.BaseUpdater;
  */
 public class SynchronousUpdater extends BaseUpdater implements DeterministicUpdater {
 
+	public static String name = "Synchronous";
+
 	/**
 	 * Create a new synchronous updater
 	 * 
 	 * @param model the model for which the random is constructed
 	 */
-
-	public static String name = "Synchronous";
-	
 	public SynchronousUpdater(LogicalModel model) {
 		super(model);
 	}
