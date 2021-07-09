@@ -10,7 +10,7 @@ import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicPriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.CompleteUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
@@ -65,13 +65,13 @@ public class UpdaterFactoryModelGrouping {
 		        return new RandomUpdaterWithRates(model);
 		        
 	        } else  if (updater.equalsIgnoreCase("Block Sequential")) {
-	            return new BlockSequentialUpdater(new ModelGrouping(model));
+	            return new BlockSequentialUpdater(new PCRankGroupsVars(model));
 	            
 	        } else if (updater.equalsIgnoreCase("Deterministic Priority")) {
-	            return new DeterministicPriorityUpdater(new ModelGrouping(model));
+	            return new DeterministicPriorityUpdater(new PCRankGroupsVars(model));
 	   
 	        } else if (updater.equalsIgnoreCase("priority")) {
-	            return new PriorityUpdater(new ModelGrouping(model));
+	            return new PriorityUpdater(new PCRankGroupsVars(model));
 	        }
 
 	        throw new RuntimeException("Unrecognized updater: " + updater);
@@ -90,7 +90,7 @@ public class UpdaterFactoryModelGrouping {
 	        throw new RuntimeException("Unrecognized updater: " + updater);
 	    }
 	 
-	 public static LogicalModelUpdater getUpdater(LogicalModel model, String updater, ModelGrouping mpc) {
+	 public static LogicalModelUpdater getUpdater(LogicalModel model, String updater, PCRankGroupsVars mpc) {
 
 		 	if (updater.equalsIgnoreCase("Block Sequential")) {
 	            return new BlockSequentialUpdater(mpc);	            	         

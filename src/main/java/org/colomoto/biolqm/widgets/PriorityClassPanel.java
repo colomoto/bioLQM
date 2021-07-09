@@ -35,7 +35,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 
 
@@ -55,7 +55,7 @@ public class PriorityClassPanel extends JPanel {
 
 	private Map<String, Double> ratesCache;
 	private List<List<JList<String>>> guiClasses;
-	private ModelGrouping mpc;
+	private PCRankGroupsVars mpc;
 
 	private JPanel jpCenter;
 	private JButton jbIncClass;
@@ -76,11 +76,11 @@ public class PriorityClassPanel extends JPanel {
 		return jb;
 	}
 
-	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc) {
+	public PriorityClassPanel(PCRankGroupsVars mpc, boolean guiMultipSuc) {
 		this(mpc, guiMultipSuc, true, false);
 	}
 	
-	public PriorityClassPanel(ModelGrouping mpc, boolean guiMultipSuc,
+	public PriorityClassPanel(PCRankGroupsVars mpc, boolean guiMultipSuc,
 			 boolean singleUpdater, boolean multiUpdater) {
 		this.mpc = mpc;
 		this.guiMultipSuc = guiMultipSuc; //

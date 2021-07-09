@@ -8,8 +8,8 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars.RankedClass;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
@@ -25,15 +25,15 @@ import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 // April 2015 - Pedro added support for split transitions.
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
-	private ModelGrouping pclist; 
+	private PCRankGroupsVars pclist; 
 	private final boolean isComplete = false;
 	private static final String name = "Priorities";
 
 	public PriorityUpdater(LogicalModel model, String setup) {
-		this((setup == null) ? new ModelGrouping(model) : new ModelGrouping(model, setup));
+		this((setup == null) ? new PCRankGroupsVars(model) : new PCRankGroupsVars(model, setup));
 	}
 
-	public PriorityUpdater(ModelGrouping pcs) {
+	public PriorityUpdater(PCRankGroupsVars pcs) {
 		super(pcs.getModel());
 		this.pclist = pcs;
 	}
@@ -52,8 +52,6 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 			List<byte[]> lTmpSucc = new ArrayList<>();
 			for (int g = 0; g < pc.size(); g++) {
-				
-			
 				LogicalModelUpdater groupUpdater = this.pclist.getUpdater(p, g);
 				
 				if (this.isComplete) {
@@ -63,7 +61,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			}
 
 			// stop if previous block already generated successors
-			if (currStates != null && !lTmpSucc.isEmpty()) {
+			if (!lTmpSucc.isEmpty()) {
 				currStates = lTmpSucc;
 				break;
 			}

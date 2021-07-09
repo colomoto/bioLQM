@@ -22,8 +22,8 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsU
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.VarInfo;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars.VarInfo;
 import org.colomoto.biolqm.tool.simulation.random.RandomWalkSimulation;
 import org.colomoto.biolqm.widgets.UpdaterFactoryModelGrouping;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
@@ -162,7 +162,7 @@ public class TestSimulations {
 		return new LogicalModelImpl(vars, manager, functions);
 	}
 	
-	private ModelGrouping getMpcModel() throws IOException {
+	private PCRankGroupsVars getMpcModel() throws IOException {
 		// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
 		
 		LogicalModel model = getComponents();
@@ -195,10 +195,10 @@ public class TestSimulations {
 		ranks.put(0, groupsRank0);
 		ranks.put(1, groupsRank1);
 		
-		ModelGrouping mpc = null;
+		PCRankGroupsVars mpc = null;
 
 		try {
-			mpc = new ModelGrouping(model, ranks);
+			mpc = new PCRankGroupsVars(model, ranks);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -380,9 +380,9 @@ public class TestSimulations {
       }
   
 	  @Test
-      public void testPriotityRanks() throws IOException {
+      public void testPriotityClassRanks() throws IOException {
 		  
-		  ModelGrouping mpc = getMpcModel();
+		  PCRankGroupsVars mpc = getMpcModel();
 	   	  PriorityUpdater pc = new PriorityUpdater(mpc);
 	   	  
 	   	  byte[] initState = new byte[] {1,0,1,0,0};
@@ -422,9 +422,9 @@ public class TestSimulations {
 	  }
 	  
 	  @Test
-      public void testPCSim() throws IOException {
+      public void testPriorityClassSimulation() throws IOException {
 		  
-		  ModelGrouping mpc = getMpcModel();
+		  PCRankGroupsVars mpc = getMpcModel();
 	   	  PriorityUpdater pc = new PriorityUpdater(mpc);
 	   	  
 	   	  byte[] initState = new byte[] {1, 0, 1, 1, 0};
@@ -471,7 +471,7 @@ public class TestSimulations {
 	  
         
 	  @Test
-	  public void testRandomWalkAsyn() {
+	  public void testRandomWalkAsync() {
 		LogicalModel model = getSimpleModel();
 		  byte[] state = {1, 0, 0};
 	      // C and D

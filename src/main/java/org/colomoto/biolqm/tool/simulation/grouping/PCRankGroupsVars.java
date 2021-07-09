@@ -19,8 +19,9 @@ import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 /**
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
+ * @author Sofia Torres
  */
-public class ModelGrouping {
+public class PCRankGroupsVars {
 
 	public static final String SEPVAR = ",";
 	public static final String SEPGROUP = "/";
@@ -33,7 +34,7 @@ public class ModelGrouping {
 	private List<RankedClass> pcList;
 	
 
-	public ModelGrouping(LogicalModel m) { 
+	public PCRankGroupsVars(LogicalModel m) { 
 		this.model = m;
 		this.pcList = new ArrayList<>();
 		
@@ -47,7 +48,7 @@ public class ModelGrouping {
 		this.pcList.add(new RankedClass(new RankedClassGroup(vars)));
 	}
 
-	public ModelGrouping(LogicalModel m, String textFormat) {
+	public PCRankGroupsVars(LogicalModel m, String textFormat) {
 		this.model = m;
 		this.pcList = new ArrayList<>();
 		String[] saPCs = textFormat.split(SEPCLASS);
@@ -56,13 +57,13 @@ public class ModelGrouping {
 		}
 	}
 
-	public ModelGrouping(LogicalModel m, List<RankedClass> pcList) throws Exception {
+	public PCRankGroupsVars(LogicalModel m, List<RankedClass> pcList) throws Exception {
 		this.model = m;
 		this.pcList = pcList;
 	}
 	
 	// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
-	public ModelGrouping(LogicalModel m, Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks) 
+	public PCRankGroupsVars(LogicalModel m, Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks) 
 			throws Exception {
 		this.model = m;
 		this.pcList = new ArrayList<>();
@@ -70,7 +71,7 @@ public class ModelGrouping {
 		Set<VarInfo> varsTaken = new HashSet<VarInfo>();
 		
 		int varsUsed = 0;
-		// count how many vars there should be so a mpc is valid
+		// count how many vars there should be so a group is valid
 		for (int i= 0; i < this.model.getComponents().size(); i++) {
 			if (!this.model.getComponents().get(i).isInput()) {
 				varsTaken.add(new VarInfo(i, 0, model));
@@ -151,13 +152,13 @@ public class ModelGrouping {
 		}
 		
 	}
-	public ModelGrouping cloneRetroCompatible() {
+	public PCRankGroupsVars cloneRetroCompatible() {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.cloneRetroCompatible());
 		}
 		try {
-			return new ModelGrouping(this.model, pcNew);
+			return new PCRankGroupsVars(this.model, pcNew);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -197,13 +198,13 @@ public class ModelGrouping {
 	}
 
 	@Override
-	public ModelGrouping clone() {
+	public PCRankGroupsVars clone() {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		}
 		try {
-			return new ModelGrouping(this.model, pcNew);
+			return new PCRankGroupsVars(this.model, pcNew);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -211,12 +212,12 @@ public class ModelGrouping {
 	}
 	
 	// FIXME: hack for EpiLog to pass modified/perturbed models to the PriorityUpdater
-	public ModelGrouping cloneWithModel(LogicalModel modifiedModel) throws Exception {
+	public PCRankGroupsVars cloneWithModel(LogicalModel modifiedModel) throws Exception {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
 			pcNew.add(pc.clone());
 		} 
-		return new ModelGrouping(modifiedModel, pcNew);
+		return new PCRankGroupsVars(modifiedModel, pcNew);
 	}
 
 	public void switchClasses(int i, int j) {
@@ -247,7 +248,7 @@ public class ModelGrouping {
 	}
 	
 	public static String[] getUpdatersAvailable() {
-		return ModelGrouping.updatersList;
+		return PCRankGroupsVars.updatersList;
 	}
 
 	public void decPriorities(int idxPC, Map<Integer, List<String>> groupsSel, boolean multiGroups) {
@@ -823,12 +824,12 @@ public class ModelGrouping {
 	
 	@Override
 	public boolean equals(Object a) {
-		ModelGrouping outMPC = (ModelGrouping) a;
-		if (outMPC.getModel() != this.getModel() || outMPC.size() != this.size()) {
+		PCRankGroupsVars outRGV = (PCRankGroupsVars) a;
+		if (outRGV.getModel() != this.getModel() || outRGV.size() != this.size()) {
 			return false;
 		}
 		for (int i = 0; i < this.size(); i++) {
-			if (!outMPC.pcList.get(i).equals(this.pcList.get(i))) {
+			if (!outRGV.pcList.get(i).equals(this.pcList.get(i))) {
 				return false;
 			}
 		}
@@ -1019,7 +1020,6 @@ public class ModelGrouping {
 		 * @param idxGrp
 		 * @param idxVar
 		 * @param splitFlag
-		 * @param model TODO
 		 * @return
 		 */
 		public boolean unsplit(int idxGrp, int idxVar, int splitFlag) {

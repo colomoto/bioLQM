@@ -7,9 +7,9 @@ import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.VarInfo;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars.VarInfo;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.PriorityUpdater;
@@ -40,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestUpdaters {
- 
+
 	private LogicalModel getModel() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
 		vars.add(new NodeInfo("A"));
 		vars.add(new NodeInfo("B"));
 		vars.add(new NodeInfo("C"));
-		
+
 		MDDManager manager = new MDDStoreImpl(vars, 2);
 		int[] functions = new int[vars.size()];
 		functions[0] = 1;
@@ -57,10 +57,10 @@ public class TestUpdaters {
 		int fa = va.getNode(0, 1);
 		int fb = vb.getNode(0, 1);
 		functions[2] = MDDBaseOperators.AND.combine(manager, fa, fb);
-		
+
 		return new LogicalModelImpl(vars, manager, functions);
 	}
-	
+
 	private LogicalModel getOtherModel() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
@@ -69,7 +69,7 @@ public class TestUpdaters {
 		vars.add(new NodeInfo("C"));
 		vars.add(new NodeInfo("D"));
 		vars.add(new NodeInfo("E"));
-		
+
 		MDDManager manager = new MDDStoreImpl(vars, 2);
 		int[] functions = new int[vars.size()];
 		MDDVariable va = manager.getVariableForKey(vars.get(0));
@@ -80,7 +80,7 @@ public class TestUpdaters {
 		int fa = va.getNode(0, 1);
 		int fna = va.getNode(1, 0);
 		int fb = vb.getNode(0, 1);
-		int fnb = vb.getNode(1,0);
+		int fnb = vb.getNode(1, 0);
 		int fc = vc.getNode(0, 1);
 		int fd = vd.getNode(0, 1);
 
@@ -89,10 +89,10 @@ public class TestUpdaters {
 		functions[2] = fnb;
 		functions[3] = fna;
 		functions[4] = MDDBaseOperators.OR.combine(manager, fb, fd);
-		
+
 		return new LogicalModelImpl(vars, manager, functions);
 	}
-	
+
 	private LogicalModel getThirdModel() {
 		// build a list of variables and functions for a model
 		List<NodeInfo> vars = new ArrayList<NodeInfo>();
@@ -101,7 +101,7 @@ public class TestUpdaters {
 		vars.add(new NodeInfo("C"));
 		vars.add(new NodeInfo("D"));
 		vars.add(new NodeInfo("E"));
-		
+
 		MDDManager manager = new MDDStoreImpl(vars, 2);
 		int[] functions = new int[vars.size()];
 		MDDVariable va = manager.getVariableForKey(vars.get(0));
@@ -112,7 +112,7 @@ public class TestUpdaters {
 		int fa = va.getNode(0, 1);
 		int fna = va.getNode(1, 0);
 		int fb = vb.getNode(0, 1);
-		int fnb = vb.getNode(1,0);
+		int fnb = vb.getNode(1, 0);
 		int fc = vc.getNode(0, 1);
 		int fd = vd.getNode(0, 1);
 
@@ -121,126 +121,112 @@ public class TestUpdaters {
 		functions[2] = 1;
 		functions[3] = 1;
 		functions[4] = 1;
-		
+
 		return new LogicalModelImpl(vars, manager, functions);
 	}
-	
 
-	private ModelGrouping getMpcModel() throws IOException {
+	private PCRankGroupsVars getPCRankGroupVarsModel() throws IOException {
 		// LogicalModel, Map<Rank, Map<List<GroupVars>,updater>>
-		
+
 		LogicalModel model = getOtherModel();
 		model.getComponents().get(0).setInput(true);
 
 		List<VarInfo> group0 = new ArrayList<VarInfo>();
 		List<VarInfo> group1 = new ArrayList<VarInfo>();
 
-		
 		// Group = 0, Rank = 0, B and C
 		group0.add(new VarInfo(1, 0, model));
 		group0.add(new VarInfo(2, 0, model));
-		
+
 		// Group = 0, Rank = 1, D and E
 		group1.add(new VarInfo(3, 0, model));
 		group1.add(new VarInfo(4, 0, model));
-		
-		
-		Map<List<VarInfo>, LogicalModelUpdater> groupsRank0 = 
-				new HashMap<List<VarInfo>, LogicalModelUpdater>();
-		
-		Map<List<VarInfo>, LogicalModelUpdater> groupsRank1 = 
-				new HashMap<List<VarInfo>, LogicalModelUpdater>();
+
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank0 = new HashMap<List<VarInfo>, LogicalModelUpdater>();
+
+		Map<List<VarInfo>, LogicalModelUpdater> groupsRank1 = new HashMap<List<VarInfo>, LogicalModelUpdater>();
 
 		groupsRank0.put(group0, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));
-		groupsRank1.put(group1, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));		
-		
-		Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks = 
-				new HashMap<Integer, Map<List<VarInfo>, LogicalModelUpdater>>();
-		
+		groupsRank1.put(group1, UpdaterFactoryModelGrouping.getUpdater(model, "Synchronous"));
+
+		Map<Integer, Map<List<VarInfo>, LogicalModelUpdater>> ranks = new HashMap<Integer, Map<List<VarInfo>, LogicalModelUpdater>>();
+
 		ranks.put(0, groupsRank0);
 		ranks.put(1, groupsRank1);
-		
-		ModelGrouping mpc = null;
+
+		PCRankGroupsVars pcranks = null;
 
 		try {
-			mpc = new ModelGrouping(model, ranks);
+			pcranks = new PCRankGroupsVars(model, ranks);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return mpc;
-		
+
+		return pcranks;
 	}
-	
-	//private int findChange(byte[] state1, byte[] state2) {
-	//}
-	
+
 	@Test
 	public void testAsynchronousUpdater() throws IOException {
 		LogicalModel model = getModel();
 		MultipleSuccessorsUpdater updater = new AsynchronousUpdater(model);
-		byte[] state = {0,0,0};
+		byte[] state = { 0, 0, 0 };
 		List<byte[]> successors = updater.getSuccessors(state);
 		assertEquals(2, successors.size());
-
 
 		byte[] next = successors.get(0);
 		assertEquals(1, next[0]);
 		assertEquals(0, next[1]);
 		assertEquals(0, next[2]);
 
-        next = successors.get(1);
-        assertEquals(0, next[0]);
+		next = successors.get(1);
+		assertEquals(0, next[0]);
 		assertEquals(1, next[1]);
 		assertEquals(0, next[2]);
-
 	}
-	
+
 	@Test
 	public void testRandomAsynchronousUpdater() throws IOException {
 		LogicalModel model = getModel();
 		RandomUpdater updater = new RandomAsynchUpdater(model);
-		byte[] state = {0,0,0};
+		byte[] state = { 0, 0, 0 };
 		byte[] successor = updater.pickSuccessor(state);
 
-
+		// TODO: test missing
 	}
-	
+
 	@Test
 	public void testRandomAsynchronousUpdaterOther() throws IOException {
 		LogicalModel model = getOtherModel();
 		RandomUpdater updater = new RandomAsynchUpdater(model);
-		byte[] state = {0,0,0,0,0};
+		byte[] state = { 0, 0, 0, 0, 0 };
 		byte[] successor = updater.pickSuccessor(state);
 
+		// TODO: test missing
 	}
-
 
 	@Test
 	public void testSynchronousUpdater() throws IOException {
 		LogicalModel model = getModel();
-        DeterministicUpdater updater = new SynchronousUpdater(model);
-		byte[] state = {0,0,0};
-        byte[] next = updater.getSuccessor(state);
-		
+		DeterministicUpdater updater = new SynchronousUpdater(model);
+		byte[] state = { 0, 0, 0 };
+		byte[] next = updater.getSuccessor(state);
+
 		assertEquals(1, next[0]);
 		assertEquals(1, next[1]);
 		assertEquals(0, next[2]);
-
 	}
-	
+
 	@Test
 	public void testBlockSequentialUpdater() throws IOException {
-		
 		LogicalModel model = getOtherModel();
-		
+
 		// create the block sequential scheme
 		String scheme = "A,C,D:B,E";
-		ModelGrouping grouping = new ModelGrouping(model, scheme);
-        DeterministicUpdater updater = new BlockSequentialUpdater(grouping);
-		byte[] state = {1,1,1,1,1};
-        byte[] next = updater.getSuccessor(state);
-		
+		PCRankGroupsVars grouping = new PCRankGroupsVars(model, scheme);
+		DeterministicUpdater updater = new BlockSequentialUpdater(grouping);
+		byte[] state = { 1, 1, 1, 1, 1 };
+		byte[] next = updater.getSuccessor(state);
+
 		assertEquals(1, next[0]);
 		assertEquals(0, next[1]);
 		assertEquals(0, next[2]);
@@ -248,10 +234,10 @@ public class TestUpdaters {
 		assertEquals(1, next[4]);
 
 		String scheme1 = "A,B,C,D:E";
-		grouping = new ModelGrouping(model, scheme1);
+		grouping = new PCRankGroupsVars(model, scheme1);
 		updater = new BlockSequentialUpdater(grouping);
-        next = updater.getSuccessor(state);
-		
+		next = updater.getSuccessor(state);
+
 		assertEquals(1, next[0]);
 		assertEquals(1, next[1]);
 		assertEquals(0, next[2]);
@@ -259,29 +245,28 @@ public class TestUpdaters {
 		assertEquals(1, next[4]);
 
 		String scheme2 = "A:B:C:D:E";
-		grouping = new ModelGrouping(model, scheme2);
+		grouping = new PCRankGroupsVars(model, scheme2);
 		updater = new BlockSequentialUpdater(grouping);
-        next = updater.getSuccessor(state);
+		next = updater.getSuccessor(state);
 
-        DeterministicUpdater updater1 = new SequentialUpdater(model);
-        byte[] next1 = updater1.getSuccessor(state);
+		DeterministicUpdater updater1 = new SequentialUpdater(model);
+		byte[] next1 = updater1.getSuccessor(state);
 
 		assertEquals(next1[0], next[0]);
 		assertEquals(next1[1], next[1]);
 		assertEquals(next1[2], next[2]);
 		assertEquals(next1[3], next[3]);
 		assertEquals(next1[4], next[4]);
-		
 	}
 
 	@Test
 	public void testSequentialUpdater() throws IOException {
 		LogicalModel model = getModel();
 		model.getComponents().get(1).setInput(true);
-        DeterministicUpdater updater = new SequentialUpdater(model);
-		byte[] state = {0,0,0};
-        byte[] next = updater.getSuccessor(state);
-		
+		DeterministicUpdater updater = new SequentialUpdater(model);
+		byte[] state = { 0, 0, 0 };
+		byte[] next = updater.getSuccessor(state);
+
 		assertEquals(1, next[0]);
 		assertEquals(1, next[1]);
 		assertEquals(1, next[2]);
@@ -290,29 +275,25 @@ public class TestUpdaters {
 	@Test
 	public void testCustomSequentialUpdater() {
 		LogicalModel model = getModel();
-		int[] order = {1,2,0};
-        DeterministicUpdater updater = new SequentialUpdater(model, order);
-		byte[] state = {0,0,0};
-        byte[] next = updater.getSuccessor(state);
+		int[] order = { 1, 2, 0 };
+		DeterministicUpdater updater = new SequentialUpdater(model, order);
+		byte[] state = { 0, 0, 0 };
+		byte[] next = updater.getSuccessor(state);
 
 		assertEquals(1, next[0]);
 		assertEquals(1, next[1]);
 		assertEquals(0, next[2]);
 	}
-	
+
 	@Test
 	public void testPriorityUpdater() {
 		LogicalModel model = getOtherModel();
 		// One class Sync
-		ModelGrouping mpc = new ModelGrouping(model,
-				"A" + ModelGrouping.SEPVAR +
-				"B" + ModelGrouping.SEPVAR +
-				"C" + ModelGrouping.SEPVAR +
-				"D" + ModelGrouping.SEPVAR +
-				"E");
-		
+		PCRankGroupsVars mpc = new PCRankGroupsVars(model, "A" + PCRankGroupsVars.SEPVAR + "B" + PCRankGroupsVars.SEPVAR
+				+ "C" + PCRankGroupsVars.SEPVAR + "D" + PCRankGroupsVars.SEPVAR + "E");
+
 		PriorityUpdater updater = new PriorityUpdater(mpc);
-		byte[] state = {1,1,0,1,0};
+		byte[] state = { 1, 1, 0, 1, 0 };
 		List<byte[]> lNext = updater.getSuccessors(state);
 		assertEquals(1, lNext.size());
 		assertEquals(1, lNext.get(0)[0]);
@@ -320,28 +301,19 @@ public class TestUpdaters {
 		assertEquals(0, lNext.get(0)[2]);
 		assertEquals(0, lNext.get(0)[3]);
 		assertEquals(1, lNext.get(0)[4]);
-		
+
 		// One class Async
-		mpc = new ModelGrouping(model,
-				"A" + ModelGrouping.SEPGROUP +
-				"B" + ModelGrouping.SEPGROUP +
-				"C" + ModelGrouping.SEPGROUP +
-				"D" + ModelGrouping.SEPGROUP +
-				"E");
+		mpc = new PCRankGroupsVars(model, "A" + PCRankGroupsVars.SEPGROUP + "B" + PCRankGroupsVars.SEPGROUP + "C"
+				+ PCRankGroupsVars.SEPGROUP + "D" + PCRankGroupsVars.SEPGROUP + "E");
 		updater = new PriorityUpdater(mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(3, lNext.size());
 
 		// Two class s[B-E+] s[AB+CDE-]
-		mpc = new ModelGrouping(model,
-				"B[-]" + ModelGrouping.SEPVAR +
-				"E[+]" + ModelGrouping.SEPCLASS +
-				
-				"A" + ModelGrouping.SEPVAR +
-				"B[+]" + ModelGrouping.SEPVAR +
-				"C" + ModelGrouping.SEPVAR +
-				"D" + ModelGrouping.SEPVAR +
-				"E[-]");
+		mpc = new PCRankGroupsVars(model, "B[-]" + PCRankGroupsVars.SEPVAR + "E[+]" + PCRankGroupsVars.SEPCLASS +
+
+				"A" + PCRankGroupsVars.SEPVAR + "B[+]" + PCRankGroupsVars.SEPVAR + "C" + PCRankGroupsVars.SEPVAR + "D"
+				+ PCRankGroupsVars.SEPVAR + "E[-]");
 		updater = new PriorityUpdater(mpc);
 		lNext = updater.getSuccessors(state);
 		assertEquals(1, lNext.size());
@@ -351,40 +323,40 @@ public class TestUpdaters {
 		assertEquals(1, lNext.get(0)[3]);
 		assertEquals(1, lNext.get(0)[4]);
 	}
-	
+
 	@Test
-	public void testRandomUpdaterWithRatesBasic() throws IOException {
+	public void testPriorityUpdaterRandomWithRatesBasic() throws IOException {
 		LogicalModel model = getModel();
-		Double[] rates =  new Double[] {0.5,0.3,0.2};
+		Double[] rates = new Double[] { 0.5, 0.3, 0.2 };
 		Map<String, Double> nodeRates = new HashMap<String, Double>();
 		for (int i = 0; i < model.getComponents().size(); i++) {
 			nodeRates.put(model.getComponents().get(i).getNodeID(), rates[i]);
 		}
-			
-		ModelGrouping mpc = new ModelGrouping(model);
+
+		PCRankGroupsVars mpc = new PCRankGroupsVars(model);
 		mpc.addUpdater(0, 0, nodeRates);
-		
+
 		PriorityUpdater updater = new PriorityUpdater(mpc);
-		
-		byte[] state = {0,0,0};
+
+		byte[] state = { 0, 0, 0 };
 		// two updatable states A and B
 		// 0.5/0.8 = 0.625
 		// 0.3/0.8 = 0.375
-		
-		byte[] state2 = {1,1,0};
+
+		byte[] state2 = { 1, 1, 0 };
 		// one updatable state, C
 		// 0.3/0.3
-		
+
 		state = state2.clone();
-		
+
 		int size = model.getComponents().size();
 
-		Set<Integer> updatables = new HashSet<Integer>();		
+		Set<Integer> updatables = new HashSet<Integer>();
 		int[] simUpdates = new int[size];
 		int simRuns = 10000;
-		
+
 		int run = 0;
-		for (; run < simRuns ; run++) {
+		for (; run < simRuns; run++) {
 			List<byte[]> successor = updater.getSuccessors(state);
 			// System.out.println(Arrays.toString(successor));
 			if (successor == null) {
@@ -394,65 +366,61 @@ public class TestUpdaters {
 			int idx = getIdxChange(state, successor.get(0));
 			updatables.add(idx);
 			simUpdates[idx] += 1;
-				
+
 		}
-		
+
 		double[] newRates = new double[size];
 		double sum = 0.0;
-		// sum of rates of updatable components 
+		// sum of rates of updatable components
 		for (int id : updatables) {
 			sum += rates[id];
-			}
-		
+		}
+
 		// calculate new rates
 		for (int id : updatables) {
-			newRates[id] = rates[id]/sum;
+			newRates[id] = rates[id] / sum;
 		}
 		for (int compIdx = 0; compIdx < size; compIdx++) {
-			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9
 					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
 		}
-		
-	}
-	
 
-	
+	}
 
 	@Test
 	public void testRandomUpWithRatesFilter() throws IOException {
 		LogicalModel model = getModel();
 		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
-		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.NEGATIVE, SplittingType.POSITIVE};
-		
+		SplittingType[] test = new SplittingType[] { SplittingType.MERGED, SplittingType.NEGATIVE,
+				SplittingType.POSITIVE };
+
 		int ratesCount = 0;
 
-        Random random = new Random();
+		Random random = new Random();
 		for (NodeInfo node : model.getComponents()) {
 			SplittingType splt = test[random.nextInt(test.length)];
 			if (splt != null)
-				ratesCount +=2;
+				ratesCount += 2;
 			filter.put(node, splt);
 		}
-	
+
 		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model);
-		assert(updater.getRates().length == ratesCount);
+		assert (updater.getRates().length == ratesCount);
 	}
-	
-	
+
 	@Test
 	public void testRandomUpdaterWithRatesAndSplit() throws IOException {
-				
+
 		LogicalModel model = getOtherModel();
-		
+
 		// C has different rates for [-] 0.7 and [+] 0.2
-		Double[] rates =  new Double[] {0.5,0.5, 0.3,0.3, 0.7,0.2, 0.1,0.1, 0.4,0.4};
+		Double[] rates = new Double[] { 0.5, 0.5, 0.3, 0.3, 0.7, 0.2, 0.1, 0.1, 0.4, 0.4 };
 		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
-		
-		
-		// split transitions 
-		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.MERGED,
-				SplittingType.MERGED, SplittingType.POSITIVE, SplittingType.POSITIVE};
-		
+
+		// split transitions
+		SplittingType[] test = new SplittingType[] { SplittingType.MERGED, SplittingType.MERGED, SplittingType.MERGED,
+				SplittingType.POSITIVE, SplittingType.POSITIVE };
+
 		int i = 0;
 		for (NodeInfo node : model.getComponents()) {
 			SplittingType splt = test[i];
@@ -461,36 +429,36 @@ public class TestUpdaters {
 		}
 		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model, rates);
 		updater.setFilter(filter);
-	
+
 		// updatables = C[+], D[-] and E[+].
-		byte[] state = {1,0,0,1,0};
+		byte[] state = { 1, 0, 0, 1, 0 };
 		// 0.2, 0.1, 0.4
 		// 0.28, 0.14, 0.57
 		// with split transitions : 0.2, 0.4 > 0.3, 0.6
 
 		// updatables = C[-], and E[+].
-		byte[] state2 = {1,1,1,0,0};
+		byte[] state2 = { 1, 1, 1, 0, 0 };
 		// 0.7, 0.4
 		// 0.63, 0.36
-		// with split transitions : ... same 
+		// with split transitions : ... same
 		state = state2.clone();
-		
+
 		int size = model.getComponents().size();
 
-		Set<Integer> updatables = new HashSet<Integer>();	
+		Set<Integer> updatables = new HashSet<Integer>();
 		// for both [-] and [+]
 		int[] simUpdates = new int[size * 2];
 		int simRuns = 1000;
-		
-		for (int run = 0; run < simRuns ; run++) {
+
+		for (int run = 0; run < simRuns; run++) {
 			byte[] successor = updater.pickSuccessor(state);
 			if (successor == null) {
 				break;
 			}
-			
+
 			int idx = getIdxChange(state, successor);
 			int change = getChange(state, successor);
-			
+
 			if (change == 1) {
 				simUpdates[idx * 2 + 1] += 1;
 				updatables.add(idx * 2 + 1);
@@ -498,358 +466,300 @@ public class TestUpdaters {
 			} else {
 				simUpdates[idx * 2] += 1;
 				updatables.add(idx * 2);
-			}	
+			}
 		}
-				
+
 		double[] newRates = new double[size * 2];
 		double sum = 0.0;
-		// sum of rates of updatable components 
+		// sum of rates of updatable components
 		for (int id : updatables) {
 			sum += rates[id];
-			}
-		
+		}
+
 		// calculate new rates
 		for (int id : updatables) {
-			newRates[id] = rates[id]/sum;
+			newRates[id] = rates[id] / sum;
 		}
 
 		for (int compIdx = 0; compIdx < size * 2; compIdx++) {
-			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9
 					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
 		}
-		
 	}
-	
+
 	@Test
 	public void testRandomUpdaterRateFilter() throws IOException {
-		
-	LogicalModel model = getOtherModel();
-		
+
+		LogicalModel model = getOtherModel();
+
 		Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
-		
-		// split transitions 
-		SplittingType[] test = new SplittingType[]{SplittingType.MERGED, SplittingType.NEGATIVE,
-				SplittingType.POSITIVE};
-		
+
+		// split transitions
+		SplittingType[] test = new SplittingType[] { SplittingType.MERGED, SplittingType.NEGATIVE,
+				SplittingType.POSITIVE };
+
 		Random random = new Random();
-		for (int j = 0; j <  random.nextInt(model.getComponents().size()); j++) {
+		for (int j = 0; j < random.nextInt(model.getComponents().size()); j++) {
 			SplittingType splt = test[random.nextInt(test.length)];
 			filter.put(model.getComponents().get(j), splt);
 		}
 		RandomUpdaterWithRates updater = new RandomUpdaterWithRates(model);
-		assert(updater.getRates().length == model.getComponents().size()*2);
+		assert (updater.getRates().length == model.getComponents().size() * 2);
 	}
-	
-	
+
 	@Test
 	public void testRandomUpdaterWithRates() throws IOException {
-		
+
 		LogicalModel model = getOtherModel();
-		Double[] rates = {0.4,0.1,0.1,0.2,0.2};
-		
+		Double[] rates = { 0.4, 0.1, 0.1, 0.2, 0.2 };
+
 		RandomUpdater updater = new RandomUpdaterWithRates(model, rates);
-		byte[] state = {0,0,0,0,0};
+		byte[] state = { 0, 0, 0, 0, 0 };
 		// two updatable states C and D
 		// [0, 0, 0.33, 0.66, 0]
-	
-		
-		byte[] state2 = {0,1,0,0,0};
+
+		byte[] state2 = { 0, 1, 0, 0, 0 };
 		// three updatable states, B, D and E
 		// [0, 0.2, 0, 0.4, 0.4]
-		
+
 		state = state2.clone();
-		
+
 		int size = model.getComponents().size();
 		int[] simUpdates = new int[size];
 		Set<Integer> updatables = new HashSet<Integer>();
 		int simRuns = 10000;
-		
-		for (int run = 0; run < simRuns ; run++) {
+
+		for (int run = 0; run < simRuns; run++) {
 			byte[] successor = updater.pickSuccessor(state);
 			if (successor == null) {
 				break;
 			}
 			int idx = getIdxChange(state, successor);
 			simUpdates[idx] += 1;
-			// save idx of component updated 
+			// save idx of component updated
 			updatables.add(idx);
 		}
-		
+
 		double[] newRates = new double[size];
 		double sum = 0.0;
-		// sum of rates of updatable components 
+		// sum of rates of updatable components
 		for (int id : updatables) {
 			sum += rates[id];
-			}
-		
+		}
+
 		// calculate new rates
 		for (int id : updatables) {
-			newRates[id] = rates[id]/sum;
+			newRates[id] = rates[id] / sum;
 		}
 
 		for (int compIdx = 0; compIdx < size; compIdx++) {
-			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9
 					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testRandomUpdaterWithRatesOtherInput() throws IOException {
-		
+
 		LogicalModel model = getOtherModel();
 		model.getComponents().get(1).setInput(true);
-		Double[] rates = {0.4,0.1,0.1,0.2,0.2};
-		
+		Double[] rates = { 0.4, 0.1, 0.1, 0.2, 0.2 };
+
 		RandomUpdater updater = new RandomUpdaterWithRates(model, rates);
-		byte[] state = {0,0,0,0,0};
+		byte[] state = { 0, 0, 0, 0, 0 };
 		// two updatable states C and D
 		// [0, 0, 0.33, 0.66, 0]
-	
-		
-		byte[] state2 = {0,1,0,0,0};
+
+		byte[] state2 = { 0, 1, 0, 0, 0 };
 		// three updatable states, B, D and E
 		// [0, 0.2, 0, 0.4, 0.4]
-		
+
 		state = state2.clone();
-		
+
 		int size = model.getComponents().size();
 		int[] simUpdates = new int[size];
 		Set<Integer> updatables = new HashSet<Integer>();
 		int simRuns = 10000;
-		
-		for (int run = 0; run < simRuns ; run++) {
+
+		for (int run = 0; run < simRuns; run++) {
 			byte[] successor = updater.pickSuccessor(state);
 			if (successor == null) {
 				break;
 			}
 			int idx = getIdxChange(state, successor);
 			simUpdates[idx] += 1;
-			// save idx of component updated 
+			// save idx of component updated
 			updatables.add(idx);
 		}
-		
+
 		double[] newRates = new double[size];
 		double sum = 0.0;
-		// sum of rates of updatable components 
+		// sum of rates of updatable components
 		for (int id : updatables) {
 			sum += rates[id];
-			}
-		
+		}
+
 		// calculate new rates
 		for (int id : updatables) {
-			newRates[id] = rates[id]/sum;
+			newRates[id] = rates[id] / sum;
 		}
 
 		for (int compIdx = 0; compIdx < size; compIdx++) {
-			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9 
+			assertTrue(simUpdates[compIdx] >= simRuns * newRates[compIdx] * 0.9
 					&& simUpdates[compIdx] <= simRuns * newRates[compIdx] * 1.1);
 		}
-		
 	}
-	
-	
-	
-	//@Test
+
+	// @Test
 	public void testRandomUpdaterWraper() throws IOException {
 		LogicalModel model = getOtherModel();
-		
+
 		MultipleSuccessorsUpdater MultiUpdater = new AsynchronousUpdater(model);
 
 		RandomUpdater updater = new RandomUpdaterWrapper(MultiUpdater);
-		byte[] state = {0,0,0,0,0};
-		
+		byte[] state = { 0, 0, 0, 0, 0 };
+
 		// two updatable states C and D
-	    Set<Integer> updatables = new HashSet<Integer>();
+		Set<Integer> updatables = new HashSet<Integer>();
 		int size = model.getComponents().size();
 		int[] simUpdates = new int[size];
 		int simRuns = 10000;
-		
-		
-		for (int run = 0; run < simRuns ; run++) {
+
+		for (int run = 0; run < simRuns; run++) {
 			byte[] successor = updater.pickSuccessor(state);
 			if (successor == null) {
 				break;
 			}
 			int idx = getIdxChange(state, successor);
-	        updatables.add(idx);
+			updatables.add(idx);
 			simUpdates[idx] += 1;
 		}
-		
-		double prob = 1.0/updatables.size();
-        double[] probs = new double[simUpdates.length];
-        for (int i = 0; i < probs.length; i++)
-               probs[i] = (simUpdates[i] == 0) ? 0 : prob;
-                          
-        for (int compIdx = 0; compIdx < size; compIdx++) {
-               assertTrue(simUpdates[compIdx] >= simRuns * probs[compIdx] * 0.9
-                             && simUpdates[compIdx] <= simRuns * probs[compIdx] * 1.1);
-        }
+
+		double prob = 1.0 / updatables.size();
+		double[] probs = new double[simUpdates.length];
+		for (int i = 0; i < probs.length; i++)
+			probs[i] = (simUpdates[i] == 0) ? 0 : prob;
+
+		for (int compIdx = 0; compIdx < size; compIdx++) {
+			assertTrue(simUpdates[compIdx] >= simRuns * probs[compIdx] * 0.9
+					&& simUpdates[compIdx] <= simRuns * probs[compIdx] * 1.1);
+		}
 	}
-//	
-//		@Test
-//		public void testPriorityClassesModelGrouping() throws IOException {
-//			LogicalModel model = getThirdModel();
-//			List<NodeInfo> nodes = model.getComponents();
-//			model.getComponents().get(0).setInput(true);
-//			int nodeCount = 0;
-//			String modelGroup = "";
-//			for (NodeInfo node : nodes) {
-//				if (!node.isInput()) {
-//					modelGroup += node.toString() + ModelGrouping.SEPGROUP;
-//					nodeCount ++;
-//				}
-//			}
-//			modelGroup = modelGroup.substring(0, modelGroup.length() - 
-//					ModelGrouping.SEPGROUP.length());
-//			
-//			ModelGrouping mpc = new ModelGrouping(model, modelGroup);
-//			
-//			PriorityUpdater pc = new PriorityUpdater(mpc);
-//			byte[] state = {0,0,0,0,0};
-//
-//			List<byte[]> lNext = pc.getSuccessors(state);
-//			assertEquals(nodeCount, lNext.size());
-//
-//		}
-		
-		@Test
-		public void testPCsMpcStateChange() throws IOException {
-			LogicalModel model = getThirdModel();
-			List<NodeInfo> nodes = model.getComponents();
-			int nodeCount = 0;
-			String modelGroup = "";
-			for (NodeInfo node : nodes) {
-				if (!node.isInput()) {
-					modelGroup += node.toString() + ModelGrouping.SEPGROUP;
-					nodeCount ++;
-				}
-			}
-			modelGroup = modelGroup.substring(0, modelGroup.length() - 
-					ModelGrouping.SEPGROUP.length());
-			
-			ModelGrouping mpc = new ModelGrouping(model, modelGroup);
-			
-			PriorityUpdater pc = new PriorityUpdater(mpc);
-			byte[] state = {0,0,0,0,0};
 
-			List<byte[]> lNext = pc.getSuccessors(state);
-			assertEquals(nodeCount, lNext.size());
-			
-			int i = 0;
-			for (byte[] currState : lNext) {
-				assertEquals(1, getNumChanges(state, currState));
-				assertEquals(i, getIdxChange(state, currState));
-				i++;
+	@Test
+	public void testPriorityUpdaterStateChange() throws IOException {
+		LogicalModel model = getThirdModel();
+		List<NodeInfo> nodes = model.getComponents();
+		int nodeCount = 0;
+		String modelGroup = "";
+		for (NodeInfo node : nodes) {
+			if (!node.isInput()) {
+				modelGroup += node.toString() + PCRankGroupsVars.SEPGROUP;
+				nodeCount++;
 			}
-
 		}
-		
-		@Test
-		public void testPCGroupSucc() throws IOException {
-			LogicalModel model = getThirdModel();
-			ModelGrouping mpc = new ModelGrouping(model, "A" + ModelGrouping.SEPVAR +
-														 "B" + ModelGrouping.SEPVAR +
-														 "C" + ModelGrouping.SEPUPDATER +
-														 "RN[2.0,2.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0]" + 
-														 ModelGrouping.SEPGROUP +
-														 "D" + ModelGrouping.SEPVAR +
-														 "E");
-						
-			PriorityUpdater pc = new PriorityUpdater(mpc);
-			byte[] state = {0,0,0,0,0};
-			// A,B,C w/ prob 2.0, 0 and 1.0 respc.
-			// D,E are synchronous
-			byte[] firstCG = new byte[] {0,0,1,0,0};
-			byte[] firstAG = new byte[] {1,0,0,0,0};
-			
-			byte[] secondG =  new byte[] {0,0,0,1,1};
-			
-			for (int i = 0; i < 1000; i++) {
-				List<byte[]> lNext = pc.getSuccessors(state);
-				Assert.assertTrue(lNext.size() == 2);
-				Assert.assertTrue((Arrays.equals(lNext.get(0),firstAG)) ||
-						Arrays.equals(lNext.get(0),firstCG));
-				Assert.assertTrue(Arrays.equals(lNext.get(1), secondG));
-			}
-			
-		}
-		
-	//@Test
-	public void testPCGroupChooice() throws IOException {
-		ModelGrouping mpc = getMpcModel();
-		PriorityUpdater pc = new PriorityUpdater(mpc);		
+		modelGroup = modelGroup.substring(0, modelGroup.length() - PCRankGroupsVars.SEPGROUP.length());
 
-		byte[] state = new byte[] {1,1,1,0,0};
-		byte[] cChange = new byte[] {1,1,0,0,0};
-		byte[] eChange = new byte[] {1,1,1,0,1};
+		PCRankGroupsVars mpc = new PCRankGroupsVars(model, modelGroup);
+
+		PriorityUpdater pc = new PriorityUpdater(mpc);
+		byte[] state = { 0, 0, 0, 0, 0 };
 
 		List<byte[]> lNext = pc.getSuccessors(state);
-		Assert.assertTrue(Arrays.equals(lNext.get(0),cChange));
-		
-		mpc.switchClasses(0, 1);
-		List<byte[]> lNewNext = pc.getSuccessors(state);
-		Assert.assertTrue(Arrays.equals(lNewNext.get(0),eChange));
-		
-		lNewNext = pc.getSuccessors(state);
-		Assert.assertTrue(Arrays.equals(lNewNext.get(0),eChange));
-			
+		assertEquals(nodeCount, lNext.size());
+
+		int i = 0;
+		for (byte[] currState : lNext) {
+			assertEquals(1, getNumChanges(state, currState));
+			assertEquals(i, getIdxChange(state, currState));
+			i++;
+		}
 	}
 
-	
+	@Test
+	public void testPriorityUpdaterGroupSucc() throws IOException {
+		LogicalModel model = getThirdModel();
+		PCRankGroupsVars mpc = new PCRankGroupsVars(model,
+				"A" + PCRankGroupsVars.SEPVAR + "B" + PCRankGroupsVars.SEPVAR + "C" + PCRankGroupsVars.SEPUPDATER
+						+ "RN[2.0,2.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0]" + PCRankGroupsVars.SEPGROUP + "D"
+						+ PCRankGroupsVars.SEPVAR + "E");
+
+		PriorityUpdater pc = new PriorityUpdater(mpc);
+		byte[] state = { 0, 0, 0, 0, 0 };
+		// A,B,C w/ prob 2.0, 0 and 1.0 respc.
+		// D,E are synchronous
+		byte[] firstCG = new byte[] { 0, 0, 1, 0, 0 };
+		byte[] firstAG = new byte[] { 1, 0, 0, 0, 0 };
+
+		byte[] secondG = new byte[] { 0, 0, 0, 1, 1 };
+
+		for (int i = 0; i < 1000; i++) {
+			List<byte[]> lNext = pc.getSuccessors(state);
+			Assert.assertTrue(lNext.size() == 2);
+			Assert.assertTrue((Arrays.equals(lNext.get(0), firstAG)) || Arrays.equals(lNext.get(0), firstCG));
+			Assert.assertTrue(Arrays.equals(lNext.get(1), secondG));
+		}
+
+	}
+
+	// @Test
+	public void testPriorityUpdaterGroupChoice() throws IOException {
+		PCRankGroupsVars mpc = getPCRankGroupVarsModel();
+		PriorityUpdater pc = new PriorityUpdater(mpc);
+
+		byte[] state = new byte[] { 1, 1, 1, 0, 0 };
+		byte[] cChange = new byte[] { 1, 1, 0, 0, 0 };
+		byte[] eChange = new byte[] { 1, 1, 1, 0, 1 };
+
+		List<byte[]> lNext = pc.getSuccessors(state);
+		Assert.assertTrue(Arrays.equals(lNext.get(0), cChange));
+
+		mpc.switchClasses(0, 1);
+		List<byte[]> lNewNext = pc.getSuccessors(state);
+		Assert.assertTrue(Arrays.equals(lNewNext.get(0), eChange));
+
+		lNewNext = pc.getSuccessors(state);
+		Assert.assertTrue(Arrays.equals(lNewNext.get(0), eChange));
+
+	}
+
 	private int getIdxChange(byte[] state1, byte[] state2) {
 		int idx = 0;
 		boolean foundchange = false;
 		while (!foundchange && idx < state1.length) {
 			if (state2[idx] != state1[idx]) {
 				foundchange = true;
+			} else {
+				idx += 1;
 			}
-			else {
-				idx += 1; 
-			}			
 		}
 		return idx;
-	}	
-	
+	}
+
 	private int getChange(byte[] state1, byte[] state2) {
 		int idx = 0;
 		boolean foundchange = false;
 		while (!foundchange && idx < state1.length) {
 			if (state2[idx] != state1[idx]) {
 				return state2[idx] - state1[idx];
+			} else {
+				idx += 1;
 			}
-			else {
-				idx += 1; 
-			}			
 		}
 		return 0;
 	}
-	
+
 	private int getNumChanges(byte[] state1, byte[] state2) {
 		int idx = 0;
 		int change = 0;
 		while (idx < state1.length) {
 			if (state2[idx] != state1[idx]) {
-				change ++;
+				change++;
 			}
-			idx += 1; 
+			idx += 1;
 		}
 		return change;
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
