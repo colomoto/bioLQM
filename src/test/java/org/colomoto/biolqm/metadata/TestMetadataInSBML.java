@@ -51,8 +51,6 @@ public class TestMetadataInSBML {
 		doubleNestedMetadata.addTag("hasTag", "wordNested");
 		doubleNestedMetadata.addKeyValue("hasKey", "keyNested", "valueNested");
 		
-		modelMetadata.addDate("created", "2021-03-08");
-		
 		// we add some metadata to a node
 		for (NodeInfo node: model.getComponents()) {
 			String nodeId = node.getNodeID();
@@ -80,9 +78,6 @@ public class TestMetadataInSBML {
 
 		// and we compare the two of them to see if not problems were introduced
 		Metadata model2Metadata = model2.getMetadataOfModel();
-		
-		System.out.println(model2Metadata.getDescriptionAnnotation("created"));
-		System.out.println(modelMetadata.getDescriptionAnnotation("created"));
 		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
 		assertEquals(result, true);
