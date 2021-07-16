@@ -74,7 +74,7 @@ public class TestMetadataInSBML {
 			throw new RuntimeException("Could not find the reference format");
 		}
 		
-		LogicalModel model2 = format.load(new File(dir, "minimal_example_annotated.sbml"));
+		LogicalModel model2 = format.load(new File(dir, "minimal_example_saved.sbml"));
 
 		// and we compare the two of them to see if not problems were introduced
 		Metadata model2Metadata = model2.getMetadataOfModel();
