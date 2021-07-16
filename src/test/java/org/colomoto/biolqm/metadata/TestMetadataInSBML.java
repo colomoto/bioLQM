@@ -79,6 +79,9 @@ public class TestMetadataInSBML {
 		// and we compare the two of them to see if not problems were introduced
 		Metadata model2Metadata = model2.getMetadataOfModel();
 		
+		model2Metadata.addDate("created", "2021-03-08");
+		modelMetadata.addDate("created", "2021-03-08");
+		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
 		assertEquals(result, true);
 		
