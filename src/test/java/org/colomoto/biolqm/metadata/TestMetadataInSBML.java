@@ -81,6 +81,9 @@ public class TestMetadataInSBML {
 		// and we compare the two of them to see if not problems were introduced
 		Metadata model2Metadata = model2.getMetadataOfModel();
 		
+		System.out.println(model2Metadata.getDescriptionAnnotation("created"));
+		System.out.println(modelMetadata.getDescriptionAnnotation("created"));
+		
 		boolean result = model2Metadata.sameMetadata(modelMetadata);
 		assertEquals(result, true);
 		
