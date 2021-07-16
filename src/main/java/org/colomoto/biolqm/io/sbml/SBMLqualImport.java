@@ -987,9 +987,6 @@ public class SBMLqualImport extends BaseLoader {
 						
 			if (history.isSetCreatedDate()) {
 				try {
-					System.out.println(history.getCreatedDate());
-					System.out.println(simpleDateFormat.format(history.getCreatedDate()));
-						
 					metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
 				} catch (Exception e) {
 					e.printStackTrace();
