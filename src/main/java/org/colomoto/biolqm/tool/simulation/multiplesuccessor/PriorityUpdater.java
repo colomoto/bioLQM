@@ -7,9 +7,11 @@ import java.util.List;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars.RankedClass;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
@@ -26,7 +28,7 @@ import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	private PCRankGroupsVars pclist; 
-	private final boolean isComplete = false;
+//	private final boolean isComplete = false;
 	private static final String name = "Priorities";
 
 	public PriorityUpdater(LogicalModel model, String setup) {
@@ -54,9 +56,9 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 			for (int g = 0; g < pc.size(); g++) {
 				LogicalModelUpdater groupUpdater = this.pclist.getUpdater(p, g);
 				
-				if (this.isComplete) {
-					lTmpSucc.addAll(this.computeSuccStates(groupUpdater, lTmpSucc));
-				}
+//				if (this.isComplete) {
+//					lTmpSucc.addAll(this.computeSuccStates(groupUpdater, lTmpSucc));
+//				}
 				lTmpSucc.addAll(this.computeSuccStates(groupUpdater, currStates));
 			}
 
@@ -72,19 +74,20 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 	private List<byte[]> computeSuccStates(LogicalModelUpdater groupUpdater, List<byte[]> currStates) {
 		List<byte[]> lTmp = new ArrayList<>();
 		for (byte[] currState : currStates) {
-			byte[] succState = null;
-
-			if (groupUpdater instanceof RandomUpdaterWithRates) {
-				succState = ((RandomUpdaterWithRates) groupUpdater).pickSuccessor(currState);
-				
-			} else if (groupUpdater instanceof SynchronousUpdater){
-				succState = ((SynchronousUpdater) groupUpdater).getSuccessor(currState);
-
-			} else if (groupUpdater instanceof RandomUpdaterWrapper) {
-				succState = ((RandomUpdaterWrapper) groupUpdater).pickSuccessor(currState);
+			List<byte[]> succState = new ArrayList<byte[]>();
+			
+			if(groupUpdater instanceof AbstractMultipleSuccessorUpdater) {
+				succState = ((AbstractMultipleSuccessorUpdater) groupUpdater).getSuccessors(currState);
+			} else if (groupUpdater instanceof DeterministicUpdater) {
+				byte[] singleSucc = ((DeterministicUpdater) groupUpdater).getSuccessor(currState);
+				succState.add(singleSucc);
+			} else if (groupUpdater instanceof RandomUpdater) {
+				byte[] singleSucc = ((RandomUpdater) groupUpdater).pickSuccessor(currState);
+				succState.add(singleSucc);
 			}
 			
-			lTmp = this.addSuccessor(lTmp, succState);
+			for (byte[] state : succState)
+				lTmp = this.addSuccessor(lTmp, state);
 		}
 		return lTmp;
 	}

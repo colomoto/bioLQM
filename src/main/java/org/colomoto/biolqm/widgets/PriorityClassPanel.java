@@ -38,15 +38,13 @@ import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 
-
-
 public class PriorityClassPanel extends JPanel {
 	private static final long serialVersionUID = -6249588129185682333L;
 	public static final Color LIGHT_RED = new Color(255, 120, 120);
 
-	private final int GROUP_WIDTH = 83;
+	private final int GROUP_WIDTH = 80;
 	// HEIGHT = 19 because it needs to match the (rates) textbox height
-	private final int GROUP_HEIGHT = 19;
+	//private final int GROUP_HEIGHT = 19;
 	private final int CLASS_SPACING = 15;
 
 	private boolean guiMultipSuc;
@@ -385,7 +383,8 @@ public class PriorityClassPanel extends JPanel {
 				JPanel groupHeader = new JPanel();
 				
 				// get supported updaters
-				JComboBox<String> jcbUpdaters = new JComboBox<String>(UpdaterFactoryModelGrouping.getSupportedUpdaters(multiUpdater, singleUpdater));
+				JComboBox<String> jcbUpdaters =
+						new JComboBox<String>(UpdaterFactoryModelGrouping.getSupportedUpdaters(multiUpdater, singleUpdater));
 				if (this.guiMultipSuc) {
 					JButton moveUp = this.getNoMargins("↑");
 					moveUp.setActionCommand("" + idxPC + "," + idxGroup);
@@ -472,9 +471,14 @@ public class PriorityClassPanel extends JPanel {
 							
 				JList<String> jList = new JList<String>(lModel);
 				jList.setBorder(BorderFactory.createLoweredBevelBorder());
+				
+				// way so that jlist height is the same as the textfields.
+				// font size differs with OS
+				// cant get textfield size to use font size...
+				int sizeOSTxtField = jList.getFontMetrics(getFont()).getHeight() + 4;
+				jList.setFixedCellHeight(sizeOSTxtField);
+				
 				jList.setFixedCellWidth(this.GROUP_WIDTH);
-				jList.setFixedCellHeight(this.GROUP_HEIGHT);
-
 
 				jList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);				
 					
@@ -497,7 +501,7 @@ public class PriorityClassPanel extends JPanel {
 									boolean down = (e.getModifiersEx() == KeyEvent.SHIFT_DOWN_MASK ||
 											e.getModifiersEx() == 
 													Toolkit.getDefaultToolkit()
-													.getMenuShortcutKeyMaskEx()); 
+													.getMenuShortcutKeyMask()); 
 									
 									if (!lGroup.equals(selJList) && !down)
 										lGroup.clearSelection();
@@ -552,14 +556,19 @@ public class PriorityClassPanel extends JPanel {
 				// empty space
 				gbcG.gridy = g + 1;
 				gbcG.gridx = 0;
-				gbcG.gridwidth = 4;
-				jpGroups.add(Box.createHorizontalStrut(this.GROUP_WIDTH/2), gbcG);
+				gbcG.gridwidth = 1;
+				
+				
+				int widthEmpty = (int) ((jcbUpdaters.getPreferredSize().getWidth()- this.GROUP_WIDTH)/2);
+			//	System.out.println(widthEmpty + " " + jcbUpdaters.getPreferredSize());
+				jpGroups.add(Box.createHorizontalStrut(widthEmpty), gbcG);
 
 
 				// then add group
 				gbcG.gridy = g + 1;
-				gbcG.gridx = 4;
-				gbcG.gridwidth = 1;
+				gbcG.gridx = 1;
+				gbcG.gridwidth = 4;
+
 				gbcG.anchor = GridBagConstraints.LINE_END;
 				gbcG.fill = GridBagConstraints.NONE;
 				jpGroups.add(jList, gbcG);
@@ -567,7 +576,6 @@ public class PriorityClassPanel extends JPanel {
 				if (updaterName.equals("Random non uniform")) {
 					JPanel ratesPanel = this.ratesPanel(idxPC, idxGroup, vars);
 					 
-					//JPanel ratesPanel = ratesPanel(vars, rates, textfields, updaterName);
                 	gbcG.gridy = g + 1;
     				gbcG.gridx = 5;
     				gbcG.gridwidth = 1;

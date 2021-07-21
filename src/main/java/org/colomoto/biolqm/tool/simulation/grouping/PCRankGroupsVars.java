@@ -1309,7 +1309,7 @@ public class PCRankGroupsVars {
 
 		public void setUpdater(LogicalModelUpdater updater) {
 		    this.updater = updater;
-		    this.updater.setFilter(this.getFilter());
+		    setUpdaterFilter();
 		}
 		
 		public void setUpdaterFilter() {
