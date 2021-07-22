@@ -60,7 +60,6 @@ public class PriorityClassPanel extends JPanel {
 	private JButton jbDecClass;
 	private JButton jbIncGroup;
 	private JButton jbDecGroup;
-	// if guiMultipSuc  = true
 	private JButton jbSingle;
 	private JButton jbSplit;
 	private JButton jbUnsplit;
@@ -96,8 +95,6 @@ public class PriorityClassPanel extends JPanel {
 
 
 		// CENTER PANEL
-		
-//		this.jpCenter = new CenterPanelPriorityPanel();
 		this.jpCenter = new JPanel();
 		this.jpCenter.setLayout(new GridBagLayout());
 		this.jpCenter.addMouseListener(new MouseListener() {
@@ -130,7 +127,7 @@ public class PriorityClassPanel extends JPanel {
 		this.add(scrollPane , BorderLayout.CENTER);
 		
 
-		// SOUTH PANEL
+		// SOUTH PANEL - BUTTONS
 		JPanel jpSouthCenter = new JPanel(new BorderLayout());
 		
 		JPanel jpSouth= new JPanel(new GridBagLayout());
@@ -141,15 +138,10 @@ public class PriorityClassPanel extends JPanel {
 
 		jpSouth.setBorder(BorderFactory.createTitledBorder("Components"));
 		
-		
 		JPanel jpMove= new JPanel();
 		jpMove.setBorder(BorderFactory.createTitledBorder("Move"));
-//		GridBagConstraints gbcM = new GridBagConstraints();
-//        gbcM.insets = new Insets(4, 4, 4, 4);
-//        gbcM.gridx = 0;
-//        gbcM.gridy = 0;
-        
 
+		// Increase class of selected vars
 		this.jbIncClass.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -157,12 +149,10 @@ public class PriorityClassPanel extends JPanel {
 				updateGUI();
 			}
 		});
-		
 
 		jpMove.add(this.jbIncClass);
 		
-//		gbcM.gridy ++;
-
+		// Decrease class of selected vars
 		this.jbDecClass.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -175,16 +165,11 @@ public class PriorityClassPanel extends JPanel {
 
 		JPanel jpMerge= new JPanel();
 		jpMerge.setBorder(BorderFactory.createTitledBorder("Group"));
-//		GridBagConstraints gbcMm = new GridBagConstraints();
-//        gbcMm.insets = new Insets(4, 4, 4, 4);
-//        gbcMm.gridx = 0;
-//        gbcMm.gridy = 0;
         
+		// If multiple groups per rank are allowed
 		if (this.guiMultipSuc) {
 			
-//			gbcM.gridx ++;
-//			gbcM.gridy --;
-			
+			// Move selected vars one group up
 			this.jbIncGroup.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -194,8 +179,7 @@ public class PriorityClassPanel extends JPanel {
 			});
 			jpMove.add(this.jbIncGroup);
 			
-//			gbcM.gridy ++;
-
+			// Move selected vars one group down
 			this.jbDecGroup.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -205,7 +189,6 @@ public class PriorityClassPanel extends JPanel {
 			});
 			jpMove.add(this.jbDecGroup);
 			
-
 			// Collapse groups -- Sync class
 			this.jbCollapse = this.getNoMargins("Group");
 			jbCollapse.setToolTipText("Group selected components in a group)");
@@ -664,12 +647,14 @@ public class PriorityClassPanel extends JPanel {
 	}
 	
 	private JPanel ratesPanel(int idxPC, int idxGroup, List<String> vars) {
-		// if random uniform or random non uniform, save (node string, rate) and (textfield, node string)
 		
+		// if random non uniform, save (node string, rate)...
 		Map<String, Double> rates = new HashMap<String, Double>();
+		// ... and (textfield, node string)
 		Map<JTextField, String> textfields = new HashMap<JTextField, String>();
 		textfields.clear();
 
+		// get rates from this group, for each var...
 		Map<String, Double> upRates = mpc.getRates(idxPC, idxGroup, vars);
 
 		// put (node string, rate)
@@ -686,8 +671,10 @@ public class PriorityClassPanel extends JPanel {
 		 for (int d = 0; d < rates.keySet().size(); d++) { 
 			 String node = vars.get(d);
 			 
-			 // hack so 
-			 Double rate = null;
+			 // get rate from cache or if not there, from updater rates
+			 // Updater rates and Cache are not equal because user might have removed a var from a "random non uniform" group....
+			 // ... and then added it back. Cache will have the old rate, and the updater rate will be the default (1.0)
+			 Double rate;
 			 if (this.ratesCache.containsKey(node)) {
 				 rate = this.ratesCache.get(node);
 			 } else {
@@ -701,6 +688,8 @@ public class PriorityClassPanel extends JPanel {
 			 jtf.setToolTipText(node);
 			 // put(textfield, node string) 
 			 textfields.put(jtf, node);
+			 
+			 // width
 			 jtf.setColumns(3); 
 			 jtf.addKeyListener(new KeyListener() {
 				 @Override
@@ -709,13 +698,13 @@ public class PriorityClassPanel extends JPanel {
 				 
 				 @Override
 				 public void keyReleased(KeyEvent e) {
+					 //validate user input
 					 int[] idx = idxJtf.get(e.getSource());
 					 validateTextRates(idx[0], idx[1], textfields);
 				}
 				@Override
 				public void keyPressed(KeyEvent e) {
 				}
-	
 			});
 	     	 mpc.addUpdater(idxPC, idxGroup, this.ratesCache);
 			 ratesPanel.add(jtf, gbcR); 
@@ -723,6 +712,7 @@ public class PriorityClassPanel extends JPanel {
 		return ratesPanel;
 	}
 	
+	// called when "random non uniform" updater is selected
 	private void initTextRates(int idxPC, int idxGrp) {
 		Map<String, Double> nodeRates = new HashMap<String, Double>();
 
@@ -730,29 +720,36 @@ public class PriorityClassPanel extends JPanel {
 			Set<String> cacheVars = this.ratesCache.keySet();
 			
 			boolean allVars = true;
+			// see if all vars's rates are in cached
 			for (String var : vars) {
 				if (!cacheVars.contains(var)) {
 					allVars = false;
 					break;
 				}
 			}
+			// if so, use rates from ratesCache
 			if (allVars) {
 				for (String var : vars)
 					nodeRates.put(var, this.ratesCache.get(var));				
 			}
+			// if nodeRates is empty (not all rates in cache), the vars that do not have rates will have rate = 1.0
+			// managed by PCRankGroupsVars...
      		mpc.addUpdater(idxPC, idxGrp, nodeRates);
 	}
 	
+	// validate user input
 	private void validateTextRates(int idxPC, int idxGrp, Map<JTextField, String> textfields) {
 		
 		Map<String, Double> nodeRates = new HashMap<String, Double>();
 
 		for (JTextField jtf : textfields.keySet()) {
 			
+			// get rate as text and node
 			String text = jtf.getText();
 			String node = jtf.getToolTipText();
 				
 			try {
+				// if rate is parsable, user input is valid
 				Double rate = Double.parseDouble(text);
 				jtf.setBackground(Color.white);
 				nodeRates.put(node, rate);
@@ -894,7 +891,6 @@ public class PriorityClassPanel extends JPanel {
 		this.updatePriorityList();
 	}
 
-
 	private void enableButtons() {
 	
 		jbSingle.setEnabled(!(mpc.size() == 1));
@@ -1020,7 +1016,6 @@ public class PriorityClassPanel extends JPanel {
 			}
 		}
 
-	
 	private void collapseAll() {
 		this.mpc.collapseAll();
 		fireActionEvent();
@@ -1108,17 +1103,5 @@ public class PriorityClassPanel extends JPanel {
 			}
 		}
 	}
-	
-//	public class CenterPanelPriorityPanel extends JPanel {
-//
-//		private static final long serialVersionUID = 1L;
-//
-//		@Override
-//		public java.awt.Dimension getPreferredSize() {
-//			   return new java.awt.Dimension(super.getPreferredSize().width,
-//					   super.getSize().height);
-//		}
-//	}
-	
 	
 }
