@@ -35,7 +35,6 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 		return nextstate;
 	}
 	
-	@Override
 	public String getUpdaterName() {
 		return getUpdaterClassName();
 	}

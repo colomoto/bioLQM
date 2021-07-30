@@ -16,6 +16,7 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.AsynchronousUpdater
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
+import org.colomoto.biolqm.widgets.UpdaterFactoryModelGrouping;
 /**
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
@@ -215,7 +216,7 @@ public class PCRankGroupsVars {
 	public PCRankGroupsVars cloneWithModel(LogicalModel modifiedModel) throws Exception {
 		List<RankedClass> pcNew = new ArrayList<RankedClass>();
 		for (RankedClass pc : this.pcList) {
-			pcNew.add(pc.clone());
+			pcNew.add(pc.clone(modifiedModel));
 		} 
 		return new PCRankGroupsVars(modifiedModel, pcNew);
 	}
@@ -1068,6 +1069,14 @@ public class PCRankGroupsVars {
 			}
 			return pc;
 		}
+		
+		public RankedClass clone(LogicalModel modifiedModel) {
+			RankedClass pc = new RankedClass(this.groups.get(0).clone(modifiedModel));
+			for (int g = 1; g < this.groups.size(); g++) {
+				pc.addGrp(g, this.groups.get(g).clone(modifiedModel));
+			}
+			return pc;
+		}
 
 		/**
 		 * Considers both classes with same ordered groups
@@ -1564,6 +1573,24 @@ public class PCRankGroupsVars {
 			
 			return new RankedClassGroup(cloneVars, newUpdater);
 		}
+		
+		public RankedClassGroup clone(LogicalModel modifiedModel) {
+			
+			LogicalModelUpdater newUpdater = this.updater;
+			List<VarInfo> cloneVars = new ArrayList<VarInfo>();
+			for (VarInfo var : this.vars)
+				cloneVars.add(var.clone());
+			
+			if (this.updater instanceof RandomUpdaterWithRates) {
+				Double[] newRates = ((RandomUpdaterWithRates) this.updater).getRates().clone();
+				newUpdater = UpdaterFactoryModelGrouping.getUpdater(modifiedModel, getUpdaterName() ,newRates);		
+				return new RankedClassGroup(cloneVars, newUpdater);
+			} else {
+				newUpdater = UpdaterFactoryModelGrouping.getUpdater(modifiedModel, getUpdaterName());
+				return new RankedClassGroup(cloneVars, newUpdater);
+			}
+		}
+
 		
 		public boolean equals(Object o) {
 			RankedClassGroup outPC = (RankedClassGroup) o;
