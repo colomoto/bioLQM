@@ -1556,7 +1556,7 @@ public class PCRankGroupsVars {
 					upRates[rates+1] = null;
 				}
 			}
-			this.updater = new RandomUpdaterWithRates(model, upRates);
+			this.updater = new RandomUpdaterWithRates(this.updater.getModel(), upRates);
 		}
 
 		public RankedClassGroup clone() {
