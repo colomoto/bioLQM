@@ -84,12 +84,9 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
 
     @Override
 	public String getUpdaterName() {
-		return getUpdaterClassName();
+    	return name;
 	}
 
-	public static String getUpdaterClassName() {
-		return name;
-	}
 
 }
 

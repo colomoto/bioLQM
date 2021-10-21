@@ -4,6 +4,7 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -101,5 +102,18 @@ abstract public class BaseUpdater implements LogicalModelUpdater {
     public SplittingType[] getFilter() {
     	return this.filter;
     }    
+    
+	@Override
+    public boolean equals(Object o) {
+		if (!(o instanceof BaseUpdater))
+			return false;
+		
+		BaseUpdater other = (BaseUpdater) o;
+    	if (!this.model.equals(other.model)) 
+    		return false;
+    	if (!Arrays.equals(this.filter,other.filter))
+    		return false;
+    	return true;
+    }
         
 }

@@ -36,11 +36,7 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 	}
 	
 	public String getUpdaterName() {
-		return getUpdaterClassName();
-	}
-
-	public static String getUpdaterClassName() {
 		return name;
 	}
-	
+
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 
 /**
@@ -137,12 +138,25 @@ public class RandomUpdaterWithRates extends AbstractRandomUpdater {
 
     @Override
 	public String getUpdaterName() {
-		return getUpdaterClassName();
+    	return name;
 	}
 
-	public static String getUpdaterClassName() {
-		return name;
-	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof BaseUpdater))
+			return false;
+		
+		RandomUpdaterWithRates other = (RandomUpdaterWithRates) o;
+    	if (!this.model.equals(other.getModel())) 
+    		return false;
+    	if (!Arrays.equals(this.filter,other.filter)) 
+    		return false;
+    	if (!Arrays.equals(this.getRates(),other.getRates())) {
+    		return false;
+    	}
+    	return true;
+	}
+
     
 }

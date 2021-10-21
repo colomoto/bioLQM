@@ -23,5 +23,6 @@ public interface LogicalModelUpdater {
 	LogicalModel getModel();
     void setFilter(Map<NodeInfo, SplittingType> filter);
 	String getUpdaterName();
+	boolean equals(Object other);
 
 }

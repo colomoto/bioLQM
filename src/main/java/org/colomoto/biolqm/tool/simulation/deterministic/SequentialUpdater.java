@@ -95,10 +95,6 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
 	
 	@Override
 	public String getUpdaterName() {
-		return getUpdaterClassName();
-	}
-
-	public static String getUpdaterClassName() {
 		return name;
 	}
 
