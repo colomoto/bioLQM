@@ -46,7 +46,7 @@
             
             <item>
                 <title>Restrict the value of a multivalued component</title>
-                <p>A slightly less restrctive perturbation,
+                <p>A slightly less restrictive perturbation,
                 where the target value of a component is blocked inside a smaller range. When the target value
                 of the component is larger (resp. smaller) than the range, it is replaced by the max (resp. min)
                 bound of the range.
@@ -63,8 +63,8 @@
             
             <item>
                 <title>List of perturbations</title>
-                <p>Define multiple individual perturbations, with a comma-separated list of the above elements.
-                For example <cmd>A%0,B%1</cmd> defines the double knockout of <cmd>A</cmd> and <cmd>B</cmd>.</p>
+                <p>Define multiple individual perturbations, with a space-separated list of the above elements.
+                For example <cmd>A%0 B%1</cmd> defines the double knockout of <cmd>A</cmd> and <cmd>B</cmd>.</p>
             </item>
         </terms>
 
