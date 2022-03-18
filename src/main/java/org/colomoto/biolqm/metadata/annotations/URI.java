@@ -1,46 +1,50 @@
 package org.colomoto.biolqm.metadata.annotations;
 
+import org.colomoto.biolqm.metadata.constants.Collection;
+
 /**
- * This contains the informations relative to a URI (a collection and the entry one wants to point at in this collection)
+ * This contains the information relative to an URI (a collection and the entry one wants to point at in this collection)
  *
  * @author Martin Boutroux
  */
 public class URI {
 	
 	// variables
-	private String flag;
-	private String content;
+	private Collection collection;
+	private String value;
 	
 	// constructors
-	public URI(String newFlag, String newContent) {
-		this.flag = newFlag;
-		this.content = newContent;
+	public URI(Collection collection, String value) {
+		this.collection = collection;
+		this.value = value;
 	}
 	
-	// getters
-	public String getFlag() {
-		return this.flag;
+	public Collection getCollection() {
+		return this.collection;
 	}
-	public String getContent() {
-		return this.content;
+	public String getValue() {
+		return this.value;
+	}
+
+	public String getLink() {
+		if (collection == null) {
+			return this.value;
+		}
+		return this.collection.getLink(this.value);
 	}
 		
 	// functions
     @Override
 	public boolean equals(Object obj) {
-        boolean retVal = false;
-
-		URI uri = (URI) obj;
-        if (uri.getContent().equals(this.getContent())){
-            retVal = true;
-        }
-
-		return retVal;
+		if (obj instanceof URI) {
+			URI uri = (URI) obj;
+			return this.value.equals(uri.value);
+		}
+		return false;
 	}
 	
     @Override
 	public int hashCode() {
-
-		return (int) this.getContent().hashCode();
+		return this.value.hashCode();
 	}
 }

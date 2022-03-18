@@ -207,8 +207,9 @@ public class SBMLqualImport extends BaseLoader {
                 }
             }
         }
-		
-		this.importAllMetadata(model, variables);
+
+        // FIXME: import metadata
+//		this.importAllMetadata(model, variables);
 		
         return model;
     }
@@ -937,7 +938,8 @@ public class SBMLqualImport extends BaseLoader {
 
         throw new RuntimeException("Multi-valued is not handled here!");
     }
-	
+
+/*
 	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
 		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
 		
@@ -987,14 +989,14 @@ public class SBMLqualImport extends BaseLoader {
 						
 			if (history.isSetCreatedDate()) {
 				try {
-					metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+					metadata.addDateString("created", simpleDateFormat.format(history.getCreatedDate()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			if (history.isSetModifiedDate()) {
 				try {
-					metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
+					metadata.addDateString("modified", simpleDateFormat.format(history.getModifiedDate()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1115,4 +1117,5 @@ public class SBMLqualImport extends BaseLoader {
 			}
 		}
 	}
+ */
 }

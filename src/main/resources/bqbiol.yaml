@@ -1,46 +1,3 @@
-bqmodel:
-- term: is
-  description: identity
-  definition: "The modelling object represented by the model element is identical with the subject of the referenced resource (modelling object B). For instance, this qualifier might be used to link an encoded model to a database of models."
-  appears: 
-    model: 
-      probability: compulsory
-      collections: [uniprot, chebi]
-  
-- term: isDerivedFrom
-  description: origin
-  definition: "The modelling object represented by the model element is derived from the modelling object represented by the referenced resource (modelling object B). This relation may be used, for instance, to express a refinement or adaptation in usage for a previously described modelling component."
-  appears: 
-    model: 
-      probability: compulsory
-      collections: [uniprot, chebi]
-  
-- term: isDescribedBy
-  description: description
-  definition: "The modelling object represented by the model element is described by the subject of the referenced resource (modelling object B). This relation might be used to link a model or a kinetic law to the literature that describes it."
-  appears: 
-    model: 
-      probability: compulsory
-      collections: [uniprot, chebi]
-  
-- term: isInstanceOf
-  description: class
-  definition: "The modelling object represented by the model element is an instance of the subject of the referenced resource (modelling object B). For instance, this qualifier might be used to link a specific model with its generic form."
-  appears: 
-    model: 
-      probability: possible
-      collections: [uniprot, chebi]
-  
-- term: hasInstance
-  description: instance
-  definition: "The modelling object represented by the model element has for instance (is a class of) the subject of the referenced resource (modelling object B). For instance, this qualifier might be used to link a generic model with its specific forms."
-  appears: 
-    model: 
-      probability: possible
-      collections: [uniprot, chebi]
-
-
-bqbiol:
 - term: encodes
   description: encodement
   definition: "The biological entity represented by the model element encodes, directly or transitively, the subject of the referenced resource (biological entity B). This relation may be used to express, for example, that a specific DNA sequence encodes a particular protein."
@@ -168,7 +125,7 @@ dcterms:
 - term: creator
   description: creator
   definition: "An entity responsible for making the resource."
-  javaClass : AuthorsAnnotation
+  type : authors
   appears: 
     model: 
       probability: compulsory
@@ -183,7 +140,7 @@ dcterms:
 - term: created
   description: date created
   definition: "Date of creation of the resource."
-  javaClass : DateAnnotation
+  type : date
   appears: 
     model: 
       probability: compulsory
@@ -198,7 +155,7 @@ dcterms:
 - term: modified
   description: date modified
   definition: "Date on which the resource was changed."
-  javaClass : DateAnnotation
+  type : date
   appears: 
     model: 
       probability: compulsory
@@ -213,7 +170,7 @@ dcterms:
 - term: license
   description: license
   definition: "A legal document giving official permission to do something with the resource."
-  javaClass : DistributionAnnotation
+  type : distribution
   appears: 
     model: 
       probability: compulsory

@@ -218,7 +218,8 @@ public class SBMLqualExport extends BaseExporter {
 			
 			// add the annotations from the SBML model
 			try {
-				this.exportAllMetadata();
+                // FIXME: export metadata
+//				this.exportAllMetadata();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -379,7 +380,8 @@ public class SBMLqualExport extends BaseExporter {
             tr.addFunctionTerm(ft);
         }
     }
-	
+
+/*
 	private void exportElementMetadata(SBase element, Metadata metadata, String type) {
 		
 		if (metadata.isMetadataNotEmpty()) {
@@ -458,4 +460,5 @@ public class SBMLqualExport extends BaseExporter {
 			}
 		}
 	}
+ */
 }

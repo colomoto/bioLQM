@@ -34,7 +34,7 @@ public class TestMetadataInSBML {
 		// we add some metadata to the model
 		Metadata modelMetadata = model.getMetadataOfModel();
 		
-		modelMetadata.addDate("created", "2021-03-08");
+		modelMetadata.addDateString("created", "2021-03-08");
 		
 		modelMetadata.addTag("customQualifier", "word1");
 		modelMetadata.addTag("customQualifier", "word2");

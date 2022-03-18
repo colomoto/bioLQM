@@ -8,6 +8,7 @@ import org.colomoto.TestHelper;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 import org.colomoto.biolqm.metadata.annotations.Metadata;
+import org.colomoto.biolqm.metadata.constants.ModelConstants;
 import org.colomoto.biolqm.service.LQMServiceManager;
 import org.junit.jupiter.api.Test;
 
@@ -31,24 +32,25 @@ public class TestRedefinitionQualifierType {
 		
 		
 		// we add some metadata to the model
+		ModelConstants mc = model.getAnnotationModule().getModelConstants();
 		Metadata modelMetadata = model.getMetadataOfModel();
 		modelMetadata.addTag("is", "word1");
 		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("is");
 		
 		// customQualifier (in model components) does not have any instances yet so its type is null
-		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), null);
+		assertEquals(mc.getAnnotationType(AnnotationTarget.Model, "customQualifier"), null);
 		
 		// we initialize the type of customQualifier as a GenericAnnotation (in model components) 
 		nestedMetadata.addURI("customQualifier", "uniprot:P0DP23");
-		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), "GenericAnnotation");
+		assertEquals(mc.getAnnotationType(AnnotationTarget.Model, "customQualifier"), AnnotationType.Generic);
 		
 		nestedMetadata.removeURI("customQualifier", "uniprot:P0DP23");
 
 		// customQualifier (in model components) does not have any instances anymore so its type is null
-		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), null);
+		assertEquals(mc.getAnnotationType(AnnotationTarget.Model, "customQualifier"), null);
 		
 		// we reinitialize the type of customQualifier (in model components) as a DistributionAnnotation
 		modelMetadata.addDistribution("customQualifier", "coucou");
-		assertEquals(nestedMetadata.suitedJavaClass("customQualifier"), "DistributionAnnotation");
+		assertEquals(mc.getAnnotationType(AnnotationTarget.Model, "customQualifier"), AnnotationType.Distribution);
 	}
 }

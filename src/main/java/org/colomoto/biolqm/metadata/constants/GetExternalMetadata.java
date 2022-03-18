@@ -8,19 +8,19 @@ import java.io.IOException;
 
 
 /**
- * Class used to interrogate the Crossref API in a separate thread (cause it's a slow API)
+ * Class used to interrogate the Crossref API in a separate thread (slow API)
  *
  * @author Martin Boutroux
  */
 public class GetExternalMetadata extends Thread {
 	
 	// variables
-	private ModelConstants modelConstants;
-	private String collection;
-	private String identifier;
+	private final ModelConstants modelConstants;
+	private final Collection collection;
+	private final String identifier;
 	
 	// constructors
-	public GetExternalMetadata(ModelConstants newModelConstants, String newCollection, String newIdentifier) {
+	public GetExternalMetadata(ModelConstants newModelConstants, Collection newCollection, String newIdentifier) {
 		this.modelConstants = newModelConstants;
 		this.collection = newCollection;
 		this.identifier = newIdentifier;

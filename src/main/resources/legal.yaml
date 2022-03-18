@@ -1,0 +1,19 @@
+- term: creator
+  description: creator
+  definition: "An entity responsible for making the resource."
+  type : authors
+
+- term: created
+  description: date created
+  definition: "Date of creation of the resource."
+  type : date
+
+- term: modified
+  description: date modified
+  definition: "Date on which the resource was changed."
+  type : date
+
+- term: license
+  description: license
+  definition: "A legal document giving official permission to do something with the resource."
+  type : distribution

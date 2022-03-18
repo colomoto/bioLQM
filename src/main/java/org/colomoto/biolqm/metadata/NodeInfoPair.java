@@ -9,17 +9,14 @@ import org.colomoto.biolqm.NodeInfo;
  */
 public class NodeInfoPair {
 	
-	// variables
-	private NodeInfo node1;
-	private NodeInfo node2;
+	private final NodeInfo node1;
+	private final NodeInfo node2;
 	
-	// constructors
 	public NodeInfoPair(NodeInfo node1, NodeInfo node2) {
 		this.node1 = node1;
 		this.node2 = node2;
 	}
 	
-	// getters
 	public NodeInfo getNode1() {
 		return this.node1;
 	}
@@ -28,22 +25,17 @@ public class NodeInfoPair {
 		return this.node2;
 	}
 	
-	// functions
 	@Override
 	public boolean equals(Object obj) {
-		
-		NodeInfoPair nif = (NodeInfoPair) obj;
-		
-		if (this.node1.equals(nif.getNode1()) && this.node2.equals(nif.getNode2())) {
-			return true;
+		if (obj instanceof NodeInfoPair) {
+			NodeInfoPair nif = (NodeInfoPair) obj;
+			return this.node1.equals(nif.getNode1()) && this.node2.equals(nif.getNode2());
 		}
-		
 		return false;
 	}
 	
     @Override
 	public int hashCode() {
-    	
     	return this.node1.hashCode() + this.node2.hashCode();
 	}
 }
