@@ -7,7 +7,7 @@
   <groupId>org.colomoto</groupId>
   <artifactId>bioLQM</artifactId>
   <name>Logical Qualitative Models of biological network</name>
-  <version>0.7.1</version>
+  <version>0.8</version>
   <description>simple toolbox for the manipulation of logical models (not edition)</description>
   <inceptionYear>2012</inceptionYear>
   <packaging>jar</packaging>
@@ -65,7 +65,7 @@
     <dependency>
         <groupId>org.sbml.jsbml</groupId>
         <artifactId>jsbml</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </dependency>
 
     <dependency>
@@ -85,6 +85,30 @@
         <artifactId>org.ow2.sat4j.core</artifactId>
         <version>2.3.5</version>
     </dependency>
+	
+	<dependency>
+		<groupId>org.yaml</groupId>
+		<artifactId>snakeyaml</artifactId>
+		<version>1.27</version>            
+	</dependency>
+	
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20201115</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>net.sf.saxon</groupId>
+		<artifactId>Saxon-HE</artifactId>
+		<version>10.3</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>com.github.rjeschke</groupId>
+		<artifactId>txtmark</artifactId>
+		<version>0.13</version>
+	</dependency>
 
   </dependencies>
 
@@ -189,6 +213,20 @@
           </execution>
         </executions>
         </plugin>
+<!--       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin> -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
