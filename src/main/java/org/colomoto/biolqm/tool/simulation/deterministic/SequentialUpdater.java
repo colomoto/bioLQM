@@ -3,6 +3,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 
 import java.util.List;
 
@@ -15,7 +16,6 @@ import java.util.List;
 public class SequentialUpdater extends BaseUpdater implements DeterministicUpdater {
 
 	private final int[] order;
-	private static final String name = "Sequential";
 	
 	/**
 	 * Create a new sequential updater, using the default order
@@ -94,8 +94,7 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
 	}
 	
 	@Override
-	public String getUpdaterName() {
-		return name;
+	public UpdaterType getType() {
+		return UpdaterType.SEQUENTIAL;
 	}
-
 }

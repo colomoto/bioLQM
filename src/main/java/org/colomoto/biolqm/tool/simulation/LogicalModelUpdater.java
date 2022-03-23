@@ -9,8 +9,8 @@ import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 import java.util.Map;
 
 /**
- * Common interface for all updaters.
- * Note that this interface is useless by itself and should not be directly implemented.
+ * Common interface for all updaters. Note that this interface is useless by
+ * itself and should not be directly implemented.
  *
  * @see MultipleSuccessorsUpdater
  * @see DeterministicUpdater
@@ -21,8 +21,6 @@ import java.util.Map;
 public interface LogicalModelUpdater {
 
 	LogicalModel getModel();
-    void setFilter(Map<NodeInfo, SplittingType> filter);
-	String getUpdaterName();
-	boolean equals(Object other);
-
+	UpdaterType getType();
+	void setFilter(Map<NodeInfo, SplittingType> filter);
 }

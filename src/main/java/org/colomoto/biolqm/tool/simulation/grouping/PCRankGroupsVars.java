@@ -17,6 +17,7 @@ import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsU
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 import org.colomoto.biolqm.widgets.UpdaterFactoryModelGrouping;
+
 /**
  * @author Pedro T. Monteiro
  * @author Pedro L. Varela
@@ -256,12 +257,9 @@ public class PCRankGroupsVars {
 		if (!this.isValid(idxPC))
 			return;
 		
-		
 		List<RankedClassGroup> clone = this.pcList.get(idxPC).clone().groups;
-		int pcSize = this.pcList.size();
 		
 		if (multiGroups) {
-
 			int groupsDeleted = 0;
 			for (int group : groupsSel.keySet()) {
 			
@@ -467,7 +465,6 @@ public class PCRankGroupsVars {
 				
 				this.incPrioritiesGrp(idxPC, group - groupsDeleted, groupsSel.get(group));
 				// Whole group was removed
-				int clonedSize = cloned.get(group).size();
 				if (cloned.get(group).size() == groupsSel.get(group).size()) 
 					groupsDeleted ++;
 				// New rank needed
@@ -1194,7 +1191,7 @@ public class PCRankGroupsVars {
 		}
 		
 		
-		// compatability with Avatar algorithm 
+		// Compatibility with Avatar algorithm 
 		// Sync
 		public RankedClassGroup cloneRetroCompatible() {
 			if (this.updater instanceof SynchronousUpdater) {
@@ -1404,29 +1401,27 @@ public class PCRankGroupsVars {
 		}
 		
 		public Map<String, Double> getRates() {
-			
-			Double[] upRates = ((RandomUpdaterWithRates) this.updater).getRates();
-			SplittingType[] splt = ((RandomUpdaterWithRates) this.updater).getFilter();
+			RandomUpdaterWithRates randUpdater = (RandomUpdaterWithRates) this.updater;
+			Double[] upRates = randUpdater.getRates();
 			Map<String, Double> nodeRates = new HashMap<String, Double>();
 			
-			
-	    	for(int idx = 0, rate = 0; idx < splt.length
-	    			&& rate < upRates.length - 1; idx ++) {
+	    	for(int idx = 0, idxRate = 0; idx < model.getComponents().size()
+	    			&& idxRate < upRates.length - 1; idx ++) {
 	    		String var = model.getComponents().get(idx).getNodeID();
 
-	    		if (splt[idx] != null) {
-	    			if (splt[idx] == SplittingType.MERGED) {
+	    		if (randUpdater.getFilterAt(idx) != null) {
+	    			if (randUpdater.getFilterAt(idx) == SplittingType.MERGED) {
 	    				// not split, rate[-] == rate[+]
-	    				nodeRates.put(var, upRates[rate]);
+	    				nodeRates.put(var, upRates[idxRate]);
 		    			// split, rate[-] != rate[+]
-		    	 		nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
-		    	 		nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);	
-	    			} else if (splt[idx] == SplittingType.POSITIVE) {
-	    				nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[rate+1]);
-	    			} else if (splt[idx] == SplittingType.NEGATIVE) {
-	    				nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[rate]);
+		    	 		nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[idxRate]);
+		    	 		nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[idxRate+1]);	
+	    			} else if (randUpdater.getFilterAt(idx) == SplittingType.POSITIVE) {
+	    				nodeRates.put((var + SplittingType.POSITIVE.toString()), upRates[idxRate+1]);
+	    			} else if (randUpdater.getFilterAt(idx) == SplittingType.NEGATIVE) {
+	    				nodeRates.put((var + SplittingType.NEGATIVE.toString()), upRates[idxRate]);
 	    			}
-	    		 } 	rate += 2;
+	    		 } 	idxRate += 2;
 	    	}
 	    	return nodeRates;
 		}			
@@ -1439,8 +1434,6 @@ public class PCRankGroupsVars {
 		public String getUdaterString() {
 			if (this.updater instanceof RandomUpdaterWrapper){
 				return SEPUPDATER + "RU";
-			} else if (this.updater instanceof SynchronousUpdater) {
-				return "";
 			} else if (this.updater instanceof RandomUpdaterWithRates) {
 				String updater = SEPUPDATER + "RN";
 				Double[] ratesIdx = ((RandomUpdaterWithRates) this.updater).getRates();
@@ -1450,12 +1443,11 @@ public class PCRankGroupsVars {
 		}
 		
 		public String getUpdaterName() {
-			return this.updater.getUpdaterName();
+			return this.updater.getType().toString();
 		}
 		
 		private Map<NodeInfo, SplittingType> getFilter() {
 			Map<NodeInfo, SplittingType> filter = new HashMap<NodeInfo, SplittingType>();
-
 
 	    	for(int e = 0; e < this.vars.size(); e++) {
 	    		VarInfo var = this.vars.get(e);

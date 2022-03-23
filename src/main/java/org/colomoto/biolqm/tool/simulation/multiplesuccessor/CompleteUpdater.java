@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
 
     private final int[] changes;
     private final int[] changing;
-    private static final String name = "Complete";
+
 	/**
 	 * Create a new full random.
 	 * 
@@ -83,8 +84,8 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
     }
 
     @Override
-	public String getUpdaterName() {
-    	return name;
+	public UpdaterType getType() {
+    	return UpdaterType.COMPLETE;
 	}
 
 

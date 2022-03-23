@@ -1,19 +1,15 @@
 package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.BaseUpdater;
 import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
-import org.colomoto.biolqm.tool.simulation.deterministic.SynchronousUpdater;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars.RankedClass;
 import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWithRates;
-import org.colomoto.biolqm.tool.simulation.random.RandomUpdaterWrapper;
 
 /**
  * Draft for a priority updater: components are grouped in groups, which can be
@@ -29,7 +25,6 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 	private PCRankGroupsVars pclist; 
 //	private final boolean isComplete = false;
-	private static final String name = "Priorities";
 
 	public PriorityUpdater(LogicalModel model, String setup) {
 		this((setup == null) ? new PCRankGroupsVars(model) : new PCRankGroupsVars(model, setup));
@@ -97,9 +92,7 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 	}
 
 	@Override
-	public String getUpdaterName() {
-		return name;
+	public UpdaterType getType() {
+		return UpdaterType.PRIORITIES;
 	}
-
-
 }

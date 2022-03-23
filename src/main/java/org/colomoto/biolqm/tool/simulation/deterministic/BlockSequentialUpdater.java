@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 
 /**
@@ -30,7 +31,6 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 	
 	// cached state to save the current state after updating each block
 	private final byte[] tmp_state;
-	private static final String name = "Block Sequential";
 
 	public BlockSequentialUpdater(PCRankGroupsVars grouping) {
 		this(grouping.getModel(), grouping.getDeterministicBlocks());
@@ -85,9 +85,7 @@ public class BlockSequentialUpdater extends BaseUpdater implements Deterministic
 	}
 
 	@Override
-	public String getUpdaterName() {
-		return name;
+	public UpdaterType getType() {
+		return UpdaterType.BLOCK_SEQ;
 	}
-
-
 }

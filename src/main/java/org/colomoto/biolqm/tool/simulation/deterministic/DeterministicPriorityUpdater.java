@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 
 public class DeterministicPriorityUpdater extends BaseUpdater implements DeterministicUpdater {
@@ -46,9 +47,7 @@ public class DeterministicPriorityUpdater extends BaseUpdater implements Determi
     }
 
 	@Override
-	public String getUpdaterName() {
-		// TODO Auto-generated method stub
-		return null;
+	public UpdaterType getType() {
+		return UpdaterType.DETERM_PRI;
 	}
-
 }

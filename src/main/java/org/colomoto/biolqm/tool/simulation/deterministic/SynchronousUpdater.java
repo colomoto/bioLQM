@@ -3,15 +3,15 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 
 /**
- * Updater for the synchronous scheme: all possible changes are applied in a single successor
+ * Updater for the synchronous scheme: all possible changes are applied in a
+ * single successor
  * 
  * @author Aurelien Naldi
  */
 public class SynchronousUpdater extends BaseUpdater implements DeterministicUpdater {
-
-	public static String name = "Synchronous";
 
 	/**
 	 * Create a new synchronous updater
@@ -22,21 +22,19 @@ public class SynchronousUpdater extends BaseUpdater implements DeterministicUpda
 		super(model);
 	}
 
-	
 	@Override
 	public byte[] getSuccessor(byte[] state) {
 		byte[] nextstate = null;
-		for (int idx=0 ; idx < size ; idx++) {
+		for (int idx = 0; idx < size; idx++) {
 			int change = nodeChange(state, idx);
 			// change as -1/+1 ...
-            nextstate = update(state, idx, change, nextstate);
+			nextstate = update(state, idx, change, nextstate);
 		}
 
 		return nextstate;
 	}
-	
-	public String getUpdaterName() {
-		return name;
-	}
 
+	public UpdaterType getType() {
+		return UpdaterType.SYNC;
+	}
 }

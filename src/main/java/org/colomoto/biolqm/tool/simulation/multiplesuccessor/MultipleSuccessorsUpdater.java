@@ -19,6 +19,4 @@ public interface MultipleSuccessorsUpdater extends LogicalModelUpdater {
      */
     List<byte[]> getSuccessors(byte[] state);
     
-    String getUpdaterName();
-
 }
