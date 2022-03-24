@@ -43,6 +43,6 @@ public class GroupingDefinitionTestFrame {
         f.setSize(500,300);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setContentPane(panel);
-        f.show();
+        f.setVisible(true);
     }
 }

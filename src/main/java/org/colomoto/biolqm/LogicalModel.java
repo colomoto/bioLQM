@@ -1,23 +1,10 @@
 package org.colomoto.biolqm;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.colomoto.biolqm.metadata.Annotator;
 import org.colomoto.mddlib.MDDManager;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.colomoto.biolqm.metadata.AnnotationModule;
-import org.colomoto.biolqm.metadata.NodeInfoPair;
-import org.colomoto.biolqm.metadata.annotations.JsonReader;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
-import org.colomoto.biolqm.metadata.constants.Index;
 
 /**
  * A LogicalModel is a ready to use object containing all necessary information to perform simulations and analysis,
@@ -176,5 +163,6 @@ public interface LogicalModel {
 	 * 
 	 * @return the annotation module
 	 */
-	AnnotationModule getAnnotationModule();
+	Annotator<NodeInfo> getAnnotator();
+
 }

@@ -2,7 +2,6 @@ package org.colomoto.biolqm.metadata;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.service.LQMServiceManager;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.io.LogicalModelFormat;
@@ -32,30 +31,29 @@ public class TestMetadataInJson {
 		LogicalModel model = format.load(new File(dir, "minimal_example.sbml"));
 		
 		// we add some metadata to the model
-		AnnotationModule annot = model.getAnnotationModule();
-		annot.selectModel();
-		annot.selectQualifier("customQualifier");
+		Annotator annot = model.getAnnotator();
 
-		annot.addTag("word1");
-		annot.addTag("word2");
-		annot.addKeyValue("key1", "val11");
-		annot.addKeyValue("key1", "value12");
-		annot.addKeyValue("key2", "val21");
+		annot.onModel()
+			.qualify("customQualifier")
+			.tag("word1")
+			.tag("word2")
+			.put("key1", "val11")
+			.put("key1", "value12")
+			.put("key2", "val21");
 
-		annot.nested();
-		annot.selectQualifier("is");
+		annot.nested()
+			.qualify("is")
+			.identifier("uniprot", "P0DP23")
+			.qualify("is", 1)
+			.identifier("doi", "10.15252/msb.20199110");
 
-		annot.addCollectionEntry("uniprot", "P0DP23");
-		annot.selectQualifier("is", 1);
-		annot.addCollectionEntry("doi", "10.15252/msb.20199110");
+		annot.nested()
+			.qualify("hasTag")
+			.tag("wordNested")
+			.qualify("hasKey")
+			.put("keyNested", "valueNested");
 
-		annot.nested();
-		annot.selectQualifier("hasTag");
-		annot.addTag("wordNested");
-		annot.selectQualifier("hasKey");
-		annot.addKeyValue("keyNested", "valueNested");
-
-		annot.selectModel();
+		annot.onModel();
 
 		// FIXME: legal terms
 //		modelMetadata.addDateString("created", "2021-03-08");
@@ -66,7 +64,7 @@ public class TestMetadataInJson {
 			String nodeId = node.getNodeID();
 			
 			if (nodeId.equals("p53")) {
-				annot.selectNode(node);
+				annot.node(node);
 
 				// FIXME: legal terms
 //				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);

@@ -47,4 +47,11 @@ public class URI {
 	public int hashCode() {
 		return this.value.hashCode();
 	}
+
+    public String uri() {
+		if (collection == null) {
+			return value;
+		}
+		return collection.name+":"+value;
+    }
 }

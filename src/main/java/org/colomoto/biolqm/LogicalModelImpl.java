@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.colomoto.biolqm.metadata.Annotator;
 import org.colomoto.mddlib.MDDManager;
-import org.json.JSONObject;
 import org.colomoto.biolqm.metadata.AnnotationModule;
-import org.colomoto.biolqm.metadata.NodeInfoPair;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
  * Implementation of the LogicalModel interface.
@@ -278,7 +276,7 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 
 	@Override
-	public AnnotationModule getAnnotationModule() {
-		return this.annotationModule;
+	public Annotator<NodeInfo> getAnnotator() {
+		return new Annotator<>(this.annotationModule);
 	}
 }

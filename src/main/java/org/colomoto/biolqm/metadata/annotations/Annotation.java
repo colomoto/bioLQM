@@ -15,24 +15,18 @@ public class Annotation {
 
 	public final List<URI> uris = new ArrayList<>();
 	public final Set<String> tags = new HashSet<>();
-	public final Map<String, ArrayList<String>> keyValues = new HashMap<>();
+	public final Map<String, String> keyValues = new HashMap<>();
 
 	/**
 	 * if the key doesn't exist, we create it and populate it with the value
 	 * if it exists, we add the value if it is missing
 	 */
 	public boolean addKeyValue(String key, String value) {
-		List<String> values = this.keyValues.get(key);
-		if (values == null) {
-			this.keyValues.put(key, new ArrayList<>(Collections.singletonList(value)));
-			return true;
+		if (value == null) {
+			return this.keyValues.remove(key) != null;
 		}
-
-		if (values.contains(value)) {
-			return false;
-		}
-		values.add(value);
-		return true;
+		String old = this.keyValues.put(key, value);
+		return !value.equals(old);
 	}
 
 	protected JSONObject getJSONOfAnnotation() {
@@ -58,14 +52,9 @@ public class Annotation {
 		}
 
 		if (!this.keyValues.isEmpty()) {
-			JSONArray arrayKeysValues = new JSONArray();
-			for (String key : this.keyValues.keySet()) {
-				JSONObject jsonKey = new JSONObject();
-				jsonKey.put("key", key);
-				jsonKey.put("values", this.keyValues.get(key));
-				arrayKeysValues.put(jsonKey);
-			}
-			json.put("keysvalues", arrayKeysValues);
+			JSONObject keysValues = new JSONObject();
+			this.keyValues.forEach(keysValues::put);
+			json.put("keysvalues", keysValues);
 		}
 		return json;
 	}
@@ -124,12 +113,9 @@ public class Annotation {
 			return false;
 		}
 		for (String key: this.keyValues.keySet()) {
-			ArrayList<String> thisValues = this.keyValues.get(key);
-			ArrayList<String> geneValues = gene.keyValues.get(key);
-			if (thisValues.size() != geneValues.size()) {
-				return false;
-			}
-			if (!thisValues.containsAll(geneValues)) {
+			String thisValues = this.keyValues.get(key);
+			String geneValues = gene.keyValues.get(key);
+			if (!Objects.equals(thisValues, geneValues)) {
 				return false;
 			}
 		}

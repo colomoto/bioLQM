@@ -30,7 +30,11 @@ public class Metadata {
         return this.annotations.isEmpty() && this.notes.isEmpty();
     }
 
-    public void toJSON(JSONObject json) {
+    public JSONObject toJSON() {
+        if (this.isEmpty()) {
+            return null;
+        }
+        JSONObject json = new JSONObject();
         if (!annotations.isEmpty()) {
             JSONObject jsonAnnot = new JSONObject();
 
@@ -59,9 +63,30 @@ public class Metadata {
 
             json.put("annotation", jsonAnnot);
         }
-        if (!this.notes.isEmpty()) {
+        if (this.notes != null && !this.notes.isEmpty()) {
             json.put("notes", this.notes);
         }
+        return json;
+    }
+
+    public String getNotes() {
+        return this.notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Iterable<Qualifier> qualifiers() {
+        return this.annotations.keySet();
+    }
+
+    public Annotation getAnnotation(Qualifier qualifier, int alternative) {
+        List<Annotation> qualified = this.annotations.get(qualifier);
+        if (qualified == null) {
+            return null;
+        }
+        return qualified.get(alternative);
     }
 
     public Annotation ensureAnnotation(Qualifier qualifier, int alternative) {
