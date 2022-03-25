@@ -1,14 +1,18 @@
 package org.colomoto.biolqm.metadata;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.metadata.validations.PatternValidator;
 import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
 import org.colomoto.biolqm.io.LogicalModelFormat;
 
 import java.io.File;
+import java.util.regex.Matcher;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMetadataInSBML {
 	
@@ -81,5 +85,21 @@ public class TestMetadataInSBML {
 		LQMServiceManager.save(model2, dir.getAbsolutePath()+File.separator+"minimal_example_saved_again.sbml", "sbml");
 
 		// FIXME: compare annotations of the two models
+	}
+
+	@Test
+	public void testMatching() {
+		Matcher m = PatternValidator.matchTag("#pipo");
+		assertTrue(m.matches());
+		assertEquals("pipo", m.group(1));
+
+		m = PatternValidator.matchTag("tag:pipo");
+		assertTrue(m.matches());
+		assertEquals("pipo", m.group(1));
+
+		assertFalse(PatternValidator.matchTag("tg:pipo").matches());
+		assertFalse(PatternValidator.matchTag("col:pipo").matches());
+		assertFalse(PatternValidator.matchTag("pipo").matches());
+
 	}
 }

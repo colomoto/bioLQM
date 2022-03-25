@@ -158,15 +158,21 @@ public class Annotator<N> {
 		// FIXME: guess annotation type and add it in the right spot
 		Matcher m = PatternValidator.matchTag(s);
 		if (m.matches()) {
-			return this.tag(m.group(0));
+			return this.tag(m.group(1));
+		}
+
+		m = PatternValidator.matchKeyValue(s);
+		if (m.matches()) {
+			return this.put(m.group(1), m.group(2));
 		}
 
 		m = PatternValidator.matchCollection(s);
 		if (m.matches()) {
-			return this.identifier(m.group(0), m.group(1));
+			return this.identifier(m.group(1), m.group(2));
 		}
 
 		// TODO: error
+		System.err.println("Unrecognized annotation");
 		return this;
 	}
 

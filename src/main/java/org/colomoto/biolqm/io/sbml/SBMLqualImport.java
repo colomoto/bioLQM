@@ -915,12 +915,17 @@ public class SBMLqualImport extends BaseLoader {
 
 
 	private void importElementCVTerm(Annotator<NodeInfo> annot, CVTerm cvterm) {
-		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+		CVTerm.Qualifier q = cvterm.getQualifier();
+        String qualifier;
+        switch (q) {
+            case BQB_UNKNOWN:
+            case BQM_UNKNOWN:
+                qualifier = cvterm.getUnknownQualifierName();
+                break;
+            default:
+                qualifier = q.getElementNameEquivalent();
+        }
 		
-		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
-			qualifier = cvterm.getUnknownQualifierName();
-		}
-
         // Declare a new alternative for this qualifier
         annot.qualify(qualifier, -1);
 

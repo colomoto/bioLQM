@@ -370,7 +370,14 @@ public class SBMLqualExport extends BaseExporter {
             }
 
             CVTerm cvterm = new CVTerm();
-            cvterm.setQualifier(getSBMLQualifier(q, annot.isModel()));
+            CVTerm.Qualifier sbmlqualifier = getSBMLQualifier(q, annot.isModel());
+            cvterm.setQualifier(sbmlqualifier);
+            switch (sbmlqualifier) {
+                case BQB_UNKNOWN:
+                case BQM_UNKNOWN:
+                    cvterm.setUnknownQualifierName(q.term);
+                    break;
+            }
 
             // Add URI links
             for (URI uri: annot.uris()) {
