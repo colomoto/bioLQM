@@ -26,6 +26,14 @@ public class TestHelper {
 	public static File getTestResource(String name) {
 		return getTestResource(null, name);
 	}
+
+	public static String getTestFilename(String dirname, String f) {
+		File dir = TestHelper.getTestResource(dirname);
+		if (!dir.isDirectory()) {
+			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
+		}
+		return new File(dir, f).getAbsolutePath();
+	}
 	
 	public static File getTestResource(String group, String name) {
 		File dir = resourceFolder;

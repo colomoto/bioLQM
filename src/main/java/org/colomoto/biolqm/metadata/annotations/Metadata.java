@@ -27,7 +27,7 @@ public class Metadata {
     }
 
     public boolean isEmpty() {
-        return this.annotations.isEmpty() && this.notes.isEmpty();
+        return this.annotations.isEmpty() && (this.notes == null || this.notes.isEmpty());
     }
 
     public JSONObject toJSON() {
@@ -56,7 +56,7 @@ public class Metadata {
                 // FIXME: also export nested annotations
 
                 if (!arrayAlternatives.isEmpty()) {
-                    jsonAnnot.put(qualifier.term, arrayAlternatives);
+                    jsonAnnot.put(qualifier == null ? "" : qualifier.term, arrayAlternatives);
                     arrayQualifiers.put(jsonAnnot);
                 }
             }
@@ -95,9 +95,5 @@ public class Metadata {
             qualified.add(new Annotation());
         }
         return qualified.get(0);
-    }
-
-    public void fromJSON(JSONObject json) {
-        // FIXME: extract annotations from the JSON object
     }
 }

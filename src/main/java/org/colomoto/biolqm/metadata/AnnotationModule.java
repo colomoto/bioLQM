@@ -79,6 +79,9 @@ public class AnnotationModule {
 
 
 	public Qualifier ensureQualifier(AnnotationTarget target, String qualifier) {
+		if (qualifier == null || qualifier.trim().isEmpty()) {
+			return null;
+		}
 		return this.modelConstants.getInstanceOfQualifiersAvailable().ensureQualifier(target, qualifier);
 	}
 
@@ -91,5 +94,9 @@ public class AnnotationModule {
 
 	public Collection getCollection(String col) {
 		return this.modelConstants.getInstanceOfCollectionsAvailable().getCollection(col);
+	}
+
+	public Iterable<Object> annotated() {
+		return this.annotations.keySet();
 	}
 }

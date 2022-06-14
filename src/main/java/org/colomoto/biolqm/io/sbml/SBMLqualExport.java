@@ -160,8 +160,6 @@ public class SBMLqualExport extends BaseExporter {
                 layout.setDimensions(dims);
 
             }
-			// TODO: we don't always need this warning
-			System.out.println("Beware, the qualifiers containing authors will be merged into a \"creator\" qualifier. Moreover, their nested parts will not be saved. Also, the date qualifiers other than \"created\" and \"modified\", the nested parts of the \"created\" and \"modified\" qualifiers as well as the distribution qualifiers will not be saved.");
         }
     }
 
@@ -188,8 +186,6 @@ public class SBMLqualExport extends BaseExporter {
                 addTransition(ni, functions[i], matrix.getRegulators(i, isExtra));
             }
         }
-
-        // FIXME: save core IDs
     }
 
     /**
@@ -357,7 +353,7 @@ public class SBMLqualExport extends BaseExporter {
 
     private Annotation exportCurrentAnnotation(Annotator<NodeInfo> annot) {
 
-        if (!annot.hasData()) {
+        if (annot == null || !annot.hasData()) {
             return null;
         }
 
@@ -375,7 +371,9 @@ public class SBMLqualExport extends BaseExporter {
             switch (sbmlqualifier) {
                 case BQB_UNKNOWN:
                 case BQM_UNKNOWN:
-                    cvterm.setUnknownQualifierName(q.term);
+                    if (q != null) {
+                        cvterm.setUnknownQualifierName(q.term);
+                    }
                     break;
             }
 

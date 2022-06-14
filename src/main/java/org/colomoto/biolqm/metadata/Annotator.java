@@ -1,23 +1,25 @@
 package org.colomoto.biolqm.metadata;
 
+import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.metadata.annotations.*;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.colomoto.biolqm.metadata.validations.PatternValidator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
 
 /**
- * One instance per model containing all the elements relative to the annotation process
+ * Create, read and modify the annotations of a model.
+ *
+ * This object provides access to the annotations stored in the {@link AnnotationModule}.
+ * It exposes methods to select the annotated object (the model itself, a component or an interaction),
+ * and to access and edit the annotation content.
  *
  * @author Martin Boutroux
  * @author Aurelien Naldi
@@ -30,6 +32,7 @@ public class Annotator<N> {
 	private Object selected = null;
 	private Qualifier qualifier = null;
 	private int alternative = 0;
+	private Annotation cur_annotation = null;
 
 	public Annotator(AnnotationModule mod) {
 		this.mod = mod;
@@ -52,8 +55,8 @@ public class Annotator<N> {
 	}
 
 	/**
-	 * Retrieve the full metadata associated to the current selection.
-	 * @return the existing metadata or null if it is not defined.
+	 * Retrieve the annotation associated to the current selection and qualifier.
+	 * @return the existing annotation or null if it is not defined.
 	 */
 	private Annotation getAnnotation() {
 		Metadata mdt =  this.mod.getAnnotation(this.selected);
@@ -72,47 +75,29 @@ public class Annotator<N> {
 	}
 
 	private Annotation ensureAnnotation() {
-		Metadata meta = this.ensureMetadata();
-		return meta.ensureAnnotation(this.qualifier, this.alternative);
+		if (cur_annotation == null) {
+			Metadata meta = this.ensureMetadata();
+			cur_annotation = meta.ensureAnnotation(this.qualifier, this.alternative);
+		}
+		return cur_annotation;
 	}
 
-	private void setSelection(AnnotationTarget target, Object selected) {
+	private Annotator<N> setSelection(AnnotationTarget target, Object selected) {
 		this.target = target;
 		this.selected = selected;
-		this.qualifier = null;
-		this.alternative = 0;
+		this.qualify(null);
+		return this;
 	}
 
 	public Annotator<N> onModel() {
-		setSelection(AnnotationTarget.Model, null);
-		return this;
+		return setSelection(AnnotationTarget.Model, null);
 	}
-
-/*
-	private N findNode(String id) {
-		if (id == null) {
-			return null;
-		}
-		return Stream.concat(this.model.getComponents().stream(), this.model.getExtraComponents().stream())
-				.filter(ni -> id.equals(ni.getNodeID())).findFirst().orElse(null);
-	}
-
-	public Annotator selectNode(String id) {
-		return this.selectNode(this.findNode(id));
-	}
-
-	public Annotator selectEdge(String src, String tgt) {
-		return this.selectEdge(this.findNode(src), this.findNode(tgt));
-	}
-*/
 
 	public Annotator<N> node(N node) {
 		if (node == null) {
-			onModel();
-			return this;
+			return this.onModel();
 		}
-		this.setSelection(AnnotationTarget.Component, node);
-		return this;
+		return this.setSelection(AnnotationTarget.Component, node);
 	}
 
 	public Annotator<N> edge(N src, N tgt) {
@@ -125,8 +110,7 @@ public class Annotator<N> {
 			onModel();
 			return this;
 		}
-		this.setSelection(AnnotationTarget.Interaction, edge);
-		return this;
+		return this.setSelection(AnnotationTarget.Interaction, edge);
 	}
 
 	public Annotator<N> qualify(String qualifier) {
@@ -136,17 +120,14 @@ public class Annotator<N> {
 
 	public Annotator<N> qualify(String qualifier, int alternative) {
 		this.alternative = alternative;
-		if (qualifier == null) {
-			this.qualifier = null;
-			return this;
-		}
+		this.cur_annotation = null;
 		this.qualifier = this.mod.ensureQualifier(this.target, qualifier);
 		return this;
 	}
 
-	public Annotator<N> nested() {
+	private Annotator<N> nested() {
 		// FIXME: implement nested annotations
-		return this;
+		throw new RuntimeException("Nested annotations are not yet fully supported");
 	}
 
 	/**
@@ -260,7 +241,7 @@ public class Annotator<N> {
 	/**
 	 * Write the JSON of all the annotations in the model
 	 */
-	public JSONObject writeAnnotationsInJSON(Iterable<N> nodes, Iterable<Pair<N>> edges) {
+	public JSONObject writeAnnotationsInJSON() {
 		JSONObject json = new JSONObject();
 
 		Metadata mdt = this.mod.getAnnotation(null);
@@ -273,20 +254,59 @@ public class Annotator<N> {
 			}
 		}
 
-		// Store all annotations on nodes
+		// Create separate storage for node and edge annotations
 		JSONObject jsonNodes = new JSONObject();
-		for (N ni: nodes) {
-			this.fillJSONForNode(ni, jsonNodes);
-		}
-		json.put("nodes", jsonNodes);
-
-
-		// Store all annotations on edges
 		JSONObject jsonEdges = new JSONObject();
-		for (Pair<N> edge: edges) {
-			fillJSONForEdge(edge, jsonEdges);
+
+		// Dispatch all annotations
+		for (Object o: this.mod.annotated()) {
+			// TODO: check that the node/edge exists!
+			if (o instanceof Pair) {
+				fillJSONForEdge((Pair<N>)o, jsonEdges);
+			} else {
+				fillJSONForNode((N)o, jsonNodes);
+			}
 		}
+
+		// Save the collected annotations
+		json.put("nodes", jsonNodes);
 		json.put("edges", jsonEdges);
+
+		// Add the current date to the modified qualifier
+		boolean modifiedAdded = false;
+		if (json.has("annotation") && !json.isNull("annotation")) {
+			JSONArray arrayQualifiers = json.getJSONArray("annotation");
+
+			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++) {
+				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
+				String qualifierName = jsonQualifier.getString("qualifier");
+
+				// if modified field already exists
+				if (qualifierName.equals("modified")) {
+					JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
+					arrayAlternatives.remove(0);
+
+					JSONObject jsonDate = new JSONObject();
+					jsonDate.put("date", LocalDate.now().toString());
+					arrayAlternatives.put(jsonDate);
+					modifiedAdded = true;
+				}
+			}
+			// if modified field doesn't exist yet
+			if (!modifiedAdded) {
+				JSONObject jsonGlobalDate = new JSONObject();
+				JSONArray arrayAlternatives = new JSONArray();
+				JSONObject jsonDate = new JSONObject();
+				jsonDate.put("date", LocalDate.now().toString());
+				arrayAlternatives.put(jsonDate);
+
+				jsonGlobalDate.put("qualifier", "modified");
+				jsonGlobalDate.put("alternatives", arrayAlternatives);
+				jsonGlobalDate.put("type", "DateAnnotation");
+
+				arrayQualifiers.put(jsonGlobalDate);
+			}
+		}
 
 		return json;
 	}
@@ -315,60 +335,6 @@ public class Annotator<N> {
 	}
 	
 	/**
-	 * Export all the metadata of the model in a structured json file
-	 * 
-	 * @param filename the name of the json file
-	 */
-	public void exportMetadata(String filename, Iterable<N> nodes, Iterable<Pair<N>> edges) {
-
-		JSONObject json = writeAnnotationsInJSON(nodes, edges);
-		
-		// we add the date of the day to the modified qualifier before saving
-		boolean modifiedAdded = false;
-		if (json.has("annotation") && !json.isNull("annotation")) {
-			JSONArray arrayQualifiers = json.getJSONArray("annotation");
-			
-			for(int idQualifier = 0; idQualifier < arrayQualifiers.length(); idQualifier++) {
-				JSONObject jsonQualifier = arrayQualifiers.getJSONObject(idQualifier);
-				String qualifierName = jsonQualifier.getString("qualifier");
-				
-				// if modified field already exists
-				if (qualifierName.equals("modified")) {
-					JSONArray arrayAlternatives = jsonQualifier.getJSONArray("alternatives");
-					arrayAlternatives.remove(0);
-					
-					JSONObject jsonDate = new JSONObject();
-					jsonDate.put("date", LocalDate.now().toString());
-					arrayAlternatives.put(jsonDate);
-					modifiedAdded = true;
-				}
-			}
-			// if modified field doesn't exist yet
-			if (!modifiedAdded) {
-				JSONObject jsonGlobalDate = new JSONObject();
-				JSONArray arrayAlternatives = new JSONArray();
-				JSONObject jsonDate = new JSONObject();
-				jsonDate.put("date", LocalDate.now().toString());
-				arrayAlternatives.put(jsonDate);
-				
-				jsonGlobalDate.put("qualifier", "modified");
-				jsonGlobalDate.put("alternatives", arrayAlternatives);
-				jsonGlobalDate.put("type", "DateAnnotation");
-				
-				arrayQualifiers.put(jsonGlobalDate);
-			}
-		}
-		
-        // Write JSON file
-        try (Writer file = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8)) {
-            file.write(json.toString());
-            file.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
-
-	/**
 	 * Put all the annotations of the json in the model
 	 * 
 	 * @param json the content of the json file
@@ -380,64 +346,127 @@ public class Annotator<N> {
 //			metadataModel.importCollectionsMetadata(json.getJSONArray("collections"));
 //		}
 
-		this.onModel();
-		this.addJSON(json);
+		JSONObject jmodel = json.optJSONObject("model");
+		this.onModel().addJSON(jmodel);
+
+		readNodesJSON(json.optJSONObject("nodes"), nodeMap);
+		readEdgesJSON(json.optJSONObject("edges"), nodeMap);
+	}
+
+	private void readNodesJSON(JSONObject jnodes, Map<String, N> nodeMap) {
+		if (jnodes == null || jnodes.isEmpty()) {
+			return;
+		}
 
 		// Import the metadata for each node
-		if (json.has("nodes") && !json.isNull("nodes")) {
-			JSONArray arrayNodes = json.getJSONArray("nodes");
-			for(int idNode = 0; idNode < arrayNodes.length(); idNode++) {
-				JSONObject jsonNode = arrayNodes.getJSONObject(idNode);
-				String nodeId = jsonNode.getString("id");
-				N ni = nodeMap.get(nodeId);
-				if (ni == null) {
-					System.err.println("The node "+nodeId+" has no equivalent in the model so its annotations couldn't be imported.");
-					continue;
-				}
-
-				this.node(ni);
-				this.addJSON(jsonNode);
+		for (String key : jnodes.keySet()) {
+			JSONObject cur = jnodes.getJSONObject(key);
+			if (cur == null || cur.isEmpty()) {
+				continue;
 			}
+
+			N node = nodeMap.get(key);
+			if (node == null) {
+				System.err.println("The node " + key + " has no equivalent in the model so its annotations couldn't be imported.");
+				continue;
+			}
+			this.node(node);
+			this.addJSON(cur);
 		}
-		
+	}
+
+	private void readEdgesJSON(JSONObject jedges, Map<String, N> nodeMap) {
+		if (jedges == null || jedges.isEmpty()) {
+			return;
+		}
+
 		// we import the metadata concerning each edge
-		if (json.has("edges") && !json.isNull("edges")) {
-			JSONArray arrayEdges = json.getJSONArray("edges");
-			for(int idEdge = 0; idEdge < arrayEdges.length(); idEdge++) {
-				JSONObject jsonEdge = arrayEdges.getJSONObject(idEdge);
-				N ni1 = nodeMap.get(jsonEdge.getString("id1"));
-				N ni2 = nodeMap.get(jsonEdge.getString("id2"));
-
-				if (ni1 == null || ni2 == null) {
-					System.err.println("The edge ("+jsonEdge.getString("id1")+", "+jsonEdge.getString("id2")+") has no equivalent in the model so its annotations couldn't be imported.");
-					continue;
-				}
-
-				this.edge(new Pair(ni1, ni2));
-				this.addJSON(jsonEdge);
+		for (String key : jedges.keySet()) {
+			JSONObject cur = jedges.getJSONObject(key);
+			if (cur == null || cur.isEmpty()) {
+				continue;
 			}
+
+			String[] split_key = key.split(":");
+			if (split_key.length != 2) {
+				System.err.println("The key " + key + " does not look like an edge identifier.");
+				continue;
+			}
+			N node1 = nodeMap.get(split_key[0]);
+			N node2 = nodeMap.get(split_key[1]);
+			if (node1 == null || node2 == null) {
+				System.err.println("The node " + key + " has no equivalent in the model so its annotations couldn't be imported.");
+				continue;
+			}
+			this.edge(node1, node2);
+			this.addJSON(cur);
 		}
 	}
 
 	private void addJSON(JSONObject json) {
-		if (json.has("notes") || json.has("annotation")) {
-			this.ensureMetadata().fromJSON(json);
+		addJSONNotes(json.optJSONObject("notes"));
+		addJSONAnnotations(json.optJSONObject("annotation"));
+	}
+
+	private void addJSONNotes(JSONObject jnotes) {
+		if (jnotes == null || jnotes.isEmpty()) {
+			return;
+		}
+		// FIXME: extract JSON notes
+		System.out.println("##### TODO: ADD JSON NOTES");
+	}
+
+	private void addJSONAnnotations(JSONObject jannot) {
+		if (jannot == null || jannot.isEmpty()) {
+			return;
+		}
+
+		for (String qualifier : jannot.keySet()) {
+			JSONArray blocks = jannot.getJSONArray(qualifier);
+			if (blocks == null || blocks.isEmpty()) {
+				continue;
+			}
+			int len = blocks.length();
+			for (int i=0 ; i<len ; i++) {
+				qualify(qualifier, -1);
+				JSONObject alt = blocks.getJSONObject(i);
+
+				JSONArray tags = alt.optJSONArray("tags");
+				if (tags != null) {
+					for (Object t: tags) {
+						tag(t.toString());
+					}
+				}
+
+				JSONObject kv = alt.optJSONObject("keysvalues");
+				if (kv != null) {
+					for (String k: kv.keySet()) {
+						String v = kv.getString(k);
+						this.put(k, v);
+					}
+				}
+			}
 		}
 	}
-	
+
+
 	/**
 	 * Import a structured json file to populate the metadata of the model
 	 * 
 	 * @param filename the name of the json file
-	 * @param nodeMap
+	 * @param nodes
 	 */
+	public void importMetadata(String filename, Iterable<N> nodes) {
+		Map<String, N> nodemap = new HashMap<>();
+		nodes.forEach(ni -> nodemap.put(ni.toString(), ni));
+		importMetadata(filename, nodemap);
+	}
+
 	public void importMetadata(String filename, Map<String, N> nodeMap) {
 		try {
 			// we load the json file
 			JSONObject json = JsonReader.readJsonFromFile(filename);
-			
 			this.readAnnotationsFromJSON(json, nodeMap);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}// TODO Auto-generated catch block

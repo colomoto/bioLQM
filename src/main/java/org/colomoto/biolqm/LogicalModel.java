@@ -1,5 +1,11 @@
 package org.colomoto.biolqm;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +83,11 @@ public interface LogicalModel {
 	 * @return true is there is at least one extra component
 	 */
 	boolean hasExtraComponents();
+
+	default boolean hasComponent(NodeInfo ni) {
+		return this.getComponents().contains(ni) || this.getExtraComponents().contains(ni);
+	}
+
 
 	/**
 	 * Compute the value of an extra component for a given state.
@@ -165,4 +176,14 @@ public interface LogicalModel {
 	 */
 	Annotator<NodeInfo> getAnnotator();
 
+	default void saveAnnotation(String filename) throws IOException {
+		Writer out = new OutputStreamWriter(Files.newOutputStream(Paths.get(filename)), StandardCharsets.UTF_8);
+		this.saveAnnotation(out);
+		out.close();
+	}
+
+	default void saveAnnotation(Writer out) throws IOException {
+		out.write(getAnnotator().writeAnnotationsInJSON().toString());
+		out.flush();
+	}
 }

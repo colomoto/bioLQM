@@ -4,11 +4,9 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.io.LogicalModelFormat;
-
-import java.io.File;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -18,20 +16,15 @@ public class TestMetadataInJson {
 	public void testMetadataManagement() throws Exception {
 		
 		// we retrieve the minimal_example sbml file
-		File dir = TestHelper.getTestResource("sbml_models");
-		LogicalModelFormat format = LQMServiceManager.getFormat("sbml");
-		
-		if (!dir.isDirectory()) {
-			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
-		}
-		if (format == null || !format.canLoad()) {
-			throw new RuntimeException("Could not find the reference format");
-		}
-		
-		LogicalModel model = format.load(new File(dir, "minimal_example.sbml"));
+		String inputname = TestHelper.getTestFilename("sbml_models", "minimal_example.sbml");
+		String outputname = TestHelper.getTestFilename("sbml_models", "minimal_example_annotation.json");
+		String outputname2 = TestHelper.getTestFilename("sbml_models", "minimal_example_annotation2.json");
+		String jsonname = TestHelper.getTestFilename("sbml_models", "minimal_example_annotated.json");
+
+		LogicalModel model = LQMServiceManager.load(inputname);
 		
 		// we add some metadata to the model
-		Annotator annot = model.getAnnotator();
+		Annotator<NodeInfo> annot = model.getAnnotator();
 
 		annot.onModel()
 			.qualify("customQualifier")
@@ -41,17 +34,17 @@ public class TestMetadataInJson {
 			.put("key1", "value12")
 			.put("key2", "val21");
 
-		annot.nested()
-			.qualify("is")
-			.identifier("uniprot", "P0DP23")
-			.qualify("is", 1)
-			.identifier("doi", "10.15252/msb.20199110");
+//		annot.nested()
+//			.qualify("is")
+//			.identifier("uniprot", "P0DP23")
+//			.qualify("is", 1)
+//			.identifier("doi", "10.15252/msb.20199110");
 
-		annot.nested()
-			.qualify("hasTag")
-			.tag("wordNested")
-			.qualify("hasKey")
-			.put("keyNested", "valueNested");
+//		annot.nested()
+//			.qualify("hasTag")
+//			.tag("wordNested")
+//			.qualify("hasKey")
+//			.put("keyNested", "valueNested");
 
 		annot.onModel();
 
@@ -60,57 +53,25 @@ public class TestMetadataInJson {
 //		modelMetadata.addDistribution("distributionTerms", "This document is under a free license.");
 		
 		// we add some metadata to a node
-		for (NodeInfo node: model.getComponents()) {
-			String nodeId = node.getNodeID();
-			
-			if (nodeId.equals("p53")) {
-				annot.node(node);
+		NodeInfo ni = model.getComponent("p53");
+		if (ni != null) {
+			annot.node(ni).tag("output");
+		}
 
-				// FIXME: legal terms
-//				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);
-//				nodeMetadata.addAuthor("creator", "Dupond", "Dupont", "moulinsart@tintin.org", "Hergé", "0000-1111-2222-3333");
-			}
+		NodeInfo ni_mdm2 = model.getComponent("Mdm2cyt");
+		if (ni != null && ni_mdm2 != null) {
+			annot.edge(ni, ni_mdm2).tag("test");
 		}
 		
 		// we load the same model and update its annotations with a json containing exactly the same annotations that we previously add
-		if (!dir.isDirectory()) {
-			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
-		}
-		if (format == null || !format.canLoad()) {
-			throw new RuntimeException("Could not find the reference format");
-		}
+		model.saveAnnotation(outputname);
 
-/*
-		LogicalModel model2 = format.load(new File(dir, "minimal_example.sbml"));
-		model2.importMetadata(dir.getAbsolutePath()+File.separator+"minimal_example_annotated.json");
-		
-		// and we compare the two of them to see if not problems were introduced
-		Metadata model2Metadata = model2.getMetadataOfModel();
-		
-		boolean result = model2Metadata.sameMetadata(modelMetadata);
-		
-		assertEquals(result, true);
-		
-		for (NodeInfo node: model.getComponents()) {
-			
-			NodeInfo node2 = null;
-        	for (NodeInfo element: model2.getComponents()) {
-        		if(node.equals(element)) {
-        			node2 = element;
-        		}
-        	}
-			
-			if (node2 != null) {
-				Metadata nodeMeta = model.getMetadataOfNode(node);
-				Metadata node2Meta = model2.getMetadataOfNode(node2);
-				
-				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
-				
-				assertEquals(resultNode, true);
-			} else {
-				fail("The two models does not contain the same nodes.");
-			}
-		}
- */
+		LogicalModel model2 = LQMServiceManager.load(inputname);
+		Annotator<NodeInfo> annot2 = model2.getAnnotator();
+		annot2.importMetadata(outputname, model2.getComponents());
+
+		model2.saveAnnotation(outputname2);
+
+		// TODO: compare old and parsed metadata
 	}
 }

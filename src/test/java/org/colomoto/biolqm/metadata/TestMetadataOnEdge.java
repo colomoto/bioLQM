@@ -28,8 +28,7 @@ public class TestMetadataOnEdge {
 		}
 		
 		LogicalModel model = format.load(new File(dir, "minimal_example.sbml"));
-		LogicalModel model2 = format.load(new File(dir, "minimal_example.sbml"));
-		
+
 		// we get the nodes of the first model
 		NodeInfo nodep53 = null;
 		NodeInfo nodeMdm2cyt = null;
@@ -70,10 +69,11 @@ public class TestMetadataOnEdge {
 			.identifier("doi", "10.15252/msb.20199110");
 
 
-		// FIXME: save, load, and compare model annotations
 		String output = dir.getAbsolutePath()+File.separator+"minimal_example_edges_annotated.json";
-		System.out.println("Output file: "+ output);
-//		annot.exportMetadata(output);
+		model.saveAnnotation(output);
+
+		// FIXME: compare saved and loaded annotations
+		LogicalModel model2 = format.load(new File(dir, "minimal_example.sbml"));
 //		model2.importMetadata(dir.getAbsolutePath()+File.separator+"minimal_example_edges_annotated.json");
 	}
 }
