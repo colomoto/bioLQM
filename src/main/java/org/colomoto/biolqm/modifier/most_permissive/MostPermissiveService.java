@@ -9,11 +9,10 @@ import org.colomoto.biolqm.service.MultivaluedSupport;
 import org.kohsuke.MetaInfServices;
 
 @MetaInfServices(ModelModifierService.class)
-
-public abstract class MostPermissiveService extends BaseService implements ModelModifierService {
+public class MostPermissiveService extends BaseService implements ModelModifierService {
     /** The identifier used to retrieve this service by name */
     public static final String ID = "most_permissive";
-    private static final String NAME = "transform a model in it's most permissive equivalent";
+    private static final String NAME = "transform a model in its most permissive equivalent";
     private static final String DESCR = " ";
 
     /**
@@ -24,4 +23,8 @@ public abstract class MostPermissiveService extends BaseService implements Model
     }
 
 
+    @Override
+    public ModelModifier getModifier(LogicalModel model) {
+        return new MostPermissiveModifier(model);
+   }
 }
