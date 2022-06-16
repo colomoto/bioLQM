@@ -12,9 +12,9 @@ import org.kohsuke.MetaInfServices;
 
 public abstract class MostPermissiveService extends BaseService implements ModelModifierService {
     /** The identifier used to retrieve this service by name */
-    public static final String ID = "buffer";
-    private static final String NAME = "add buffer components to a model";
-    private static final String DESCR = ":buffer | :delay | source:target1,target2";
+    public static final String ID = "most_permissive";
+    private static final String NAME = "transform a model in it's most permissive equivalent";
+    private static final String DESCR = " ";
 
     /**
      * Public constructor which should only be used for service discovery.
