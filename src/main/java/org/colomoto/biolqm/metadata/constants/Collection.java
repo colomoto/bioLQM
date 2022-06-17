@@ -1,7 +1,5 @@
 package org.colomoto.biolqm.metadata.constants;
 
-import org.colomoto.biolqm.metadata.annotations.URI;
-
 /**
  * Generic class for the patterns of the collections used for the uris of the model
  *
@@ -35,6 +33,6 @@ public class Collection {
 	}
 
 	public String getLink(String value) {
-		return "https://identifiers.org/" + this.name + value;
+		return "https://identifiers.org/" + this.name + "/" + value;
 	}
 }

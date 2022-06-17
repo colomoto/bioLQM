@@ -358,37 +358,31 @@ public class SBMLqualExport extends BaseExporter {
         }
 
         Annotation result = new Annotation();
-        for (Qualifier q: annot.qualifiers()) {
-            if (q == null) {
-                annot.qualify(null);
-            } else {
-                annot.qualify(q.term);
-            }
-
+        for (org.colomoto.biolqm.metadata.annotations.Annotation a: annot.annotations()) {
             CVTerm cvterm = new CVTerm();
-            CVTerm.Qualifier sbmlqualifier = getSBMLQualifier(q, annot.isModel());
+            CVTerm.Qualifier sbmlqualifier = getSBMLQualifier(a.qualifier, annot.isModel());
             cvterm.setQualifier(sbmlqualifier);
             switch (sbmlqualifier) {
                 case BQB_UNKNOWN:
                 case BQM_UNKNOWN:
-                    if (q != null) {
-                        cvterm.setUnknownQualifierName(q.term);
+                    if (a.qualifier != null) {
+                        cvterm.setUnknownQualifierName(a.qualifier.term);
                     }
                     break;
             }
 
             // Add URI links
-            for (URI uri: annot.uris()) {
+            for (URI uri: a.uris) {
                 cvterm.addResource(uri.uri());
             }
 
             // Add tags as custom resources
-            for (String tag: annot.tags()) {
+            for (String tag: a.tags) {
                 cvterm.addResource("tag:"+tag);
             }
 
             // Add key/value pairs as custom resources
-            for (Map.Entry<String, String> e: annot.entries()) {
+            for (Map.Entry<String, String> e: a.keyValues.entrySet()) {
                 cvterm.addResource("keyvalue:"+e.getKey()+"="+e.getValue());
             }
 

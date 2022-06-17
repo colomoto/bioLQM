@@ -1,7 +1,7 @@
 package org.colomoto.biolqm.metadata;
 
-import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.metadata.annotations.*;
+import org.colomoto.biolqm.metadata.constants.Collection;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.colomoto.biolqm.metadata.validations.PatternValidator;
 import org.json.JSONArray;
@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -136,7 +137,6 @@ public class Annotator<N> {
 	 * @param s a string representing the annotation
 	 */
 	public Annotator<N> annotate(String s) {
-		// FIXME: guess annotation type and add it in the right spot
 		Matcher m = PatternValidator.matchTag(s);
 		if (m.matches()) {
 			return this.tag(m.group(1));
@@ -173,7 +173,12 @@ public class Annotator<N> {
 	}
 
 	public Annotator<N> identifier(String col, String entry) {
-		this.ensureAnnotation().uris.add( new URI(this.mod.getCollection(col), entry) );
+		Collection collec = this.mod.getCollection(col);
+		if (collec == null) {
+			this.put(col, entry);
+		} else {
+			this.ensureAnnotation().uris.add(new URI(collec, entry));
+		}
 		return this;
 	}
 
@@ -202,12 +207,12 @@ public class Annotator<N> {
 		return annot.tags;
 	}
 
-	public Iterable<Qualifier> qualifiers() {
+	public List<Annotation> annotations() {
 		Metadata mdt = getMetadata();
 		if (mdt == null) {
 			return null;
 		}
-		return mdt.qualifiers();
+		return mdt.annotations();
 	}
 
 	public Iterable<Map.Entry<String, String>> entries() {
@@ -405,7 +410,7 @@ public class Annotator<N> {
 
 	private void addJSON(JSONObject json) {
 		addJSONNotes(json.optJSONObject("notes"));
-		addJSONAnnotations(json.optJSONObject("annotation"));
+		addJSONAnnotations(json.optJSONArray("annotation"));
 	}
 
 	private void addJSONNotes(JSONObject jnotes) {
@@ -416,35 +421,26 @@ public class Annotator<N> {
 		System.out.println("##### TODO: ADD JSON NOTES");
 	}
 
-	private void addJSONAnnotations(JSONObject jannot) {
+	private void addJSONAnnotations(JSONArray jannot) {
 		if (jannot == null || jannot.isEmpty()) {
 			return;
 		}
 
-		for (String qualifier : jannot.keySet()) {
-			JSONArray blocks = jannot.getJSONArray(qualifier);
-			if (blocks == null || blocks.isEmpty()) {
-				continue;
+		int len = jannot.length();
+		for (int i=0 ; i<len ; i++) {
+			JSONObject alt = jannot.getJSONObject(i);
+
+			String qualif = alt.optString("qualifier");
+			this.qualify(qualif, -1);
+
+			JSONArray tags = alt.optJSONArray("tags");
+			if (tags != null) {
+				tags.forEach(t -> tag(t.toString()));
 			}
-			int len = blocks.length();
-			for (int i=0 ; i<len ; i++) {
-				qualify(qualifier, -1);
-				JSONObject alt = blocks.getJSONObject(i);
 
-				JSONArray tags = alt.optJSONArray("tags");
-				if (tags != null) {
-					for (Object t: tags) {
-						tag(t.toString());
-					}
-				}
-
-				JSONObject kv = alt.optJSONObject("keysvalues");
-				if (kv != null) {
-					for (String k: kv.keySet()) {
-						String v = kv.getString(k);
-						this.put(k, v);
-					}
-				}
+			JSONObject kv = alt.optJSONObject("keysvalues");
+			if (kv != null) {
+				kv.keySet().forEach(k -> put(k, kv.getString(k)));
 			}
 		}
 	}

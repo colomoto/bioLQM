@@ -1,6 +1,6 @@
 package org.colomoto.biolqm.metadata.annotations;
 
-import org.colomoto.biolqm.metadata.AnnotationModule;
+import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,9 +13,14 @@ import java.util.*;
  */
 public class Annotation {
 
+	public final Qualifier qualifier;
 	public final List<URI> uris = new ArrayList<>();
 	public final Set<String> tags = new HashSet<>();
 	public final Map<String, String> keyValues = new HashMap<>();
+
+	public Annotation(Qualifier qualifier) {
+		this.qualifier = qualifier;
+	}
 
 	/**
 	 * if the key doesn't exist, we create it and populate it with the value
@@ -29,8 +34,11 @@ public class Annotation {
 		return !value.equals(old);
 	}
 
-	protected JSONObject getJSONOfAnnotation() {
+	protected JSONObject toJSON() {
 		JSONObject json = new JSONObject();
+		if (this.qualifier != null) {
+			json.put("qualifier", qualifier.term);
+		}
 
 		if (!this.uris.isEmpty()) {
 			JSONArray arrayURIs = new JSONArray();
@@ -60,7 +68,7 @@ public class Annotation {
 	}
 
 
-	protected String getShortDescription() {
+	public String getShortDescription() {
 		String description = "";
 		switch (this.uris.size()) {
 			case 0:

@@ -4,15 +4,12 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.io.InputStream;
 
 /**
  * One instance per model opened to store the patterns of the collections used in uris
- * Permits to check the uris of these collections locally rathen than going on the internet
+ * Permits to check the uris of these collections locally rather than going on the internet
  *
  * @author Martin Boutroux
  */
@@ -39,6 +36,9 @@ public class CollectionsAvailable {
 	}
 
 	public Collection getCollection(String name) {
+		if (!COLLECTIONS.containsKey(name)) {
+			COLLECTIONS.put(name, new Collection(name, null, false, false));
+		}
 		return COLLECTIONS.get(name);
 	}
 

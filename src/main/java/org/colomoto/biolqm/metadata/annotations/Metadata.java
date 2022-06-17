@@ -5,9 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * One instance per component (model, node, transition...)
@@ -18,12 +16,12 @@ import java.util.Map;
  */
 public class Metadata {
 
-    private final Map<Qualifier, List<Annotation>> annotations;
+    private final List<Annotation> annotations;
     private String notes;
 
 
     public Metadata() {
-        this.annotations = new HashMap<>();
+        this.annotations = new ArrayList<>();
     }
 
     public boolean isEmpty() {
@@ -36,33 +34,18 @@ public class Metadata {
         }
         JSONObject json = new JSONObject();
         if (!annotations.isEmpty()) {
-            JSONObject jsonAnnot = new JSONObject();
+            JSONArray jsonAnnot = new JSONArray();
 
-            JSONArray arrayQualifiers = new JSONArray();
-
-            for (Map.Entry<Qualifier, List<Annotation>> e: this.annotations.entrySet()) {
-                Qualifier qualifier = e.getKey();
-                List<Annotation> annotations = e.getValue();
-                if (annotations.isEmpty()) {
+            for (Annotation annot: this.annotations) {
+                // FIXME: also export nested annotations
+                if (annot.isEmpty()) {
                     continue;
                 }
-
-                JSONArray arrayAlternatives = new JSONArray();
-                for (Annotation annot: annotations) {
-                    JSONObject jsonAlternative = annot.getJSONOfAnnotation();
-                    arrayAlternatives.put(jsonAlternative);
-                }
-
-                // FIXME: also export nested annotations
-
-                if (!arrayAlternatives.isEmpty()) {
-                    jsonAnnot.put(qualifier == null ? "" : qualifier.term, arrayAlternatives);
-                    arrayQualifiers.put(jsonAnnot);
-                }
+                jsonAnnot.put(annot.toJSON());
             }
-
             json.put("annotation", jsonAnnot);
         }
+
         if (this.notes != null && !this.notes.isEmpty()) {
             json.put("notes", this.notes);
         }
@@ -77,23 +60,27 @@ public class Metadata {
         this.notes = notes;
     }
 
-    public Iterable<Qualifier> qualifiers() {
-        return this.annotations.keySet();
+    public List<Annotation> annotations() {
+        return this.annotations;
     }
 
     public Annotation getAnnotation(Qualifier qualifier, int alternative) {
-        List<Annotation> qualified = this.annotations.get(qualifier);
-        if (qualified == null) {
-            return null;
+        // FIXME: handle alternative
+        for (Annotation annot: this.annotations) {
+            if (annot.qualifier == qualifier) {
+                return annot;
+            }
         }
-        return qualified.get(alternative);
+        return null;
     }
 
     public Annotation ensureAnnotation(Qualifier qualifier, int alternative) {
-        List<Annotation> qualified = this.annotations.computeIfAbsent(qualifier, k -> new ArrayList<>());
-        if (qualified.isEmpty()) {
-            qualified.add(new Annotation());
+        Annotation result = this.getAnnotation(qualifier, alternative);
+        if (result == null) {
+            // FIXME: handle alternative
+            result = new Annotation(qualifier);
+            this.annotations.add(result);
         }
-        return qualified.get(0);
+        return result;
     }
 }
