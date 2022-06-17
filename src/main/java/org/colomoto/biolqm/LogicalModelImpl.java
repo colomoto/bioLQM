@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.colomoto.biolqm.metadata.Annotator;
 import org.colomoto.mddlib.MDDManager;
-import org.json.JSONObject;
 import org.colomoto.biolqm.metadata.AnnotationModule;
-import org.colomoto.biolqm.metadata.NodeInfoPair;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
 
 /**
  * Implementation of the LogicalModel interface.
@@ -278,63 +276,7 @@ public class LogicalModelImpl implements LogicalModel {
 	}
 
 	@Override
-	public Metadata createMetadataOfNode(NodeInfo node) throws Exception {
-		return this.annotationModule.createMetadataOfNode(node);
-	}
-
-	@Override
-	public Metadata createMetadataOfEdge(NodeInfoPair edge) throws Exception {
-		return this.annotationModule.createMetadataOfEdge(edge);
-	}
-
-	@Override
-	public Metadata getMetadataOfModel() {
-		return this.annotationModule.getMetadataOfModel();
-	}
-
-	@Override
-	public boolean isSetMetadataOfNode(NodeInfo node) {
-		return this.annotationModule.isSetMetadataOfNode(node);
-	}
-
-	@Override
-	public boolean isSetMetadataOfEdge(NodeInfoPair edge) {
-		return this.annotationModule.isSetMetadataOfEdge(edge);
-	}
-
-	@Override
-	public Metadata getMetadataOfNode(NodeInfo node) throws Exception {
-		return this.annotationModule.getMetadataOfNode(node);
-	}
-
-	@Override
-	public Metadata getMetadataOfEdge(NodeInfoPair edge) throws Exception {
-		return this.annotationModule.getMetadataOfEdge(edge);
-	}
-
-	@Override
-	public Metadata getMetadataOfEdge(NodeInfo node1, NodeInfo node2) throws Exception {
-		return this.annotationModule.getMetadataOfEdge(node1, node2);
-	}
-
-	@Override
-	public void exportMetadata(String filename) {
-		ConnectivityMatrix matrix = new ConnectivityMatrix(this);
-		this.annotationModule.exportMetadata(filename, coreNodes, extraNodes, matrix);
-	}
-
-	@Override
-	public void importMetadata(String filename) {
-		this.annotationModule.importMetadata(filename, coreNodes, extraNodes);
-	}
-	
-	@Override
-	public void setAnnotationModule(AnnotationModule newAnnotationModule) {
-		this.annotationModule = newAnnotationModule;
-	}
-
-	@Override
-	public AnnotationModule getAnnotationModule() {
-		return this.annotationModule;
+	public Annotator<NodeInfo> getAnnotator() {
+		return new Annotator<>(this.annotationModule);
 	}
 }

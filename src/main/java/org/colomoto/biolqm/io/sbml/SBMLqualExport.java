@@ -5,33 +5,25 @@ import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseExporter;
+import org.colomoto.biolqm.metadata.annotations.URI;
+import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
-import org.colomoto.biolqm.metadata.NodeInfoPair;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
-import com.github.rjeschke.txtmark.Processor;
+import org.colomoto.biolqm.metadata.Pair;
+import org.colomoto.biolqm.metadata.Annotator;
 
-import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.*;
 import org.sbml.jsbml.ASTNode.Type;
-import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.History;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.ext.layout.*;
 import org.sbml.jsbml.ext.qual.*;
-import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.xml.XMLNode;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * SBML export using JSBML and the "qual" extension.
@@ -42,21 +34,19 @@ public class SBMLqualExport extends BaseExporter {
 
     private final ConnectivityMatrix matrix;
     private final MDDManager ddmanager;
+    private final Annotator<NodeInfo> annot;
 
     private final SBMLQualBundle qualBundle;
 
     private final List<NodeInfo> coreNodes;
     private final PathSearcher searcher;
 
-    private Map<NodeInfo, QualitativeSpecies> node2species = new HashMap<NodeInfo, QualitativeSpecies>();
-    private String[] coreIDS;
+    private final Map<NodeInfo, QualitativeSpecies> node2species = new HashMap<>();
+    private final String[] coreIDS;
     private boolean needFilled = true;
 
     private String tr_prefix = "tr_";
     
-    // to keep a track of the transitions objects
-    private Map<NodeInfoPair, Input> edge2input = new HashMap<NodeInfoPair, Input>();
-
     public SBMLqualExport(LogicalModel model) {
         this(model, model.hasLayout());
     }
@@ -68,6 +58,8 @@ public class SBMLqualExport extends BaseExporter {
         this.searcher = new PathSearcher(ddmanager, true);
         this.matrix = new ConnectivityMatrix(model);
         this.coreNodes = model.getComponents();
+        this.annot = model.getAnnotator();
+        this.coreIDS = model.getComponents().stream().map(NodeInfo::getNodeID).toArray(String[]::new);
 
         this.qualBundle = SBMLqualHelper.newBundle(addLayout);
     }
@@ -118,60 +110,13 @@ public class SBMLqualExport extends BaseExporter {
             Compartment comp1 = qualBundle.model.createCompartment("comp1");
             comp1.setConstant(true);
 
-            // add qualitative species
-            List<NodeInfo> nodes = coreNodes;
-            coreIDS = new String[coreNodes.size()];
-            int[] functions = model.getLogicalFunctions();
-            for (int i=0 ; i<functions.length ; i++) {
-                NodeInfo ni = nodes.get(i);
-                String curID = ni.getNodeID();
-                coreIDS[i] = curID;
+            // Model-level annotations
+            annot.onModel();
+            exportElementMetadata(annot, qualBundle.document.getModel());
 
-                QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
-                sp.setMaxLevel( ni.getMax());
-                node2species.put(ni, sp);
-
-                String name = ni.getName();
-                if (name != null && name.length() > 0) {
-                    sp.setName(name);
-                }
-
-                if (ni.isInput()) {
-                    sp.setConstant(true);
-                    // TODO: check consistency between function and input role?
-                } else {
-                    sp.setConstant(false);
-                }
-
-            }
-
-            // add transitions
-            for (int i=0 ; i<functions.length ; i++) {
-                NodeInfo ni = nodes.get(i);
-                if (!ni.isInput()) {
-                    addTransition(nodes.get(i), functions[i], matrix.getRegulators(i, false));
-                }
-            }
-
-            // add species and transitions for extra nodes as well
-            nodes = model.getExtraComponents();
-            functions = model.getExtraLogicalFunctions();
-            for (int i=0 ; i<functions.length ; i++) {
-                NodeInfo ni = nodes.get(i);
-                int function = functions[i];
-
-                String curID = ni.getNodeID();
-                QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(curID, comp1);
-                sp.setConstant(false);
-                node2species.put(ni, sp);
-                if (ni.isInput()) {
-                    sp.setConstant(true);
-                }
-
-                // add its transition
-                addTransition(ni, function, matrix.getRegulators(i, true));
-                i++;
-            }
+            // add species and transitions for core and extra nodes
+            exportNodes(comp1, model.getComponents(), model.getLogicalFunctions(), false);
+            exportNodes(comp1, model.getExtraComponents(), model.getExtraLogicalFunctions(), true);
 
             // Add layout information if available
             if (model.hasLayout()) {
@@ -215,15 +160,31 @@ public class SBMLqualExport extends BaseExporter {
                 layout.setDimensions(dims);
 
             }
-			
-			// add the annotations from the SBML model
-			try {
-				this.exportAllMetadata();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("Beware, the qualifiers containing authors will be merged into a \"creator\" qualifier. Moreover, their nested parts will not be saved. Also, the date qualifiers other than \"created\" and \"modified\", the nested parts of the \"created\" and \"modified\" qualifiers as well as the distribution qualifiers will not be saved.");
+        }
+    }
+
+    private void exportNodes(Compartment comp1, List<NodeInfo> nodes, int[] functions, boolean isExtra) {
+        for (NodeInfo ni: nodes) {
+            QualitativeSpecies sp = qualBundle.qmodel.createQualitativeSpecies(ni.getNodeID(), comp1);
+            sp.setMaxLevel( ni.getMax());
+            sp.setConstant(ni.isInput());
+            String name = ni.getName();
+            if (name != null && name.length() > 0) {
+                sp.setName(name);
+            }
+            node2species.put(ni, sp);
+
+            // add annotation
+            annot.node(ni);
+            exportElementMetadata(annot, sp);
+        }
+
+        // Add transitions
+        for (int i=0 ; i<functions.length ; i++) {
+            NodeInfo ni = nodes.get(i);
+            if (!ni.isInput()) {
+                addTransition(ni, functions[i], matrix.getRegulators(i, isExtra));
+            }
         }
     }
 
@@ -272,8 +233,7 @@ public class SBMLqualExport extends BaseExporter {
             NodeInfo ni_reg = coreNodes.get(idx);
             Input in = tr.createInput(trID+"_in_"+idx, node2species.get(ni_reg), InputTransitionEffect.none);
             
-            NodeInfoPair edge = new NodeInfoPair(ni_reg, ni);
-            edge2input.put(edge, in);
+            Pair<NodeInfo> edge = new Pair<>(ni_reg, ni);
 
             // determine the sign of the regulation
             Sign sign = Sign.unknown;
@@ -290,6 +250,10 @@ public class SBMLqualExport extends BaseExporter {
                     break;
             }
             in.setSign(sign);
+
+            // Add annotation
+            annot.edge(edge);
+            exportElementMetadata(annot, in);
         }
 
 
@@ -379,33 +343,78 @@ public class SBMLqualExport extends BaseExporter {
             tr.addFunctionTerm(ft);
         }
     }
-	
-	private void exportElementMetadata(SBase element, Metadata metadata, String type) {
-		
-		if (metadata.isMetadataNotEmpty()) {
-			Annotation annotation = metadata.getSBMLOfMetadata();
-			
+
+    private CVTerm.Qualifier getSBMLQualifier(Qualifier q, boolean isModel) {
+        if (q == null) {
+            return isModel ? CVTerm.Qualifier.BQM_UNKNOWN : CVTerm.Qualifier.BQB_UNKNOWN;
+        }
+        return isModel ? CVTerm.Qualifier.getModelQualifierFor(q.term) : CVTerm.Qualifier.getBiologicalQualifierFor(q.term);
+    }
+
+    private Annotation exportCurrentAnnotation(Annotator<NodeInfo> annot) {
+
+        if (annot == null || !annot.hasData()) {
+            return null;
+        }
+
+        Annotation result = new Annotation();
+        for (org.colomoto.biolqm.metadata.annotations.Annotation a: annot.annotations()) {
+            CVTerm cvterm = new CVTerm();
+            CVTerm.Qualifier sbmlqualifier = getSBMLQualifier(a.qualifier, annot.isModel());
+            cvterm.setQualifier(sbmlqualifier);
+            switch (sbmlqualifier) {
+                case BQB_UNKNOWN:
+                case BQM_UNKNOWN:
+                    if (a.qualifier != null) {
+                        cvterm.setUnknownQualifierName(a.qualifier.term);
+                    }
+                    break;
+            }
+
+            // Add URI links
+            for (URI uri: a.uris) {
+                cvterm.addResource(uri.uri());
+            }
+
+            // Add tags as custom resources
+            for (String tag: a.tags) {
+                cvterm.addResource("tag:"+tag);
+            }
+
+            // Add key/value pairs as custom resources
+            for (Map.Entry<String, String> e: a.keyValues.entrySet()) {
+                cvterm.addResource("keyvalue:"+e.getKey()+"="+e.getValue());
+            }
+
+            result.addCVTerm(cvterm);
+        }
+        // FIXME: extract SBML from annotation
+
+        return result;
+    }
+
+	private void exportElementMetadata(Annotator<NodeInfo> annot, SBase element) {
+
+        Annotation annotation = exportCurrentAnnotation(annot);
+		if (annotation != null) {
 			// we add the date of the day to the modified qualifier before saving
 			History history = annotation.getHistory();
 			ZoneId defaultZoneId = ZoneId.systemDefault();
 			LocalDate localDate = LocalDate.now();
 			Date date = Date.from(localDate.atStartOfDay(defaultZoneId).toInstant());
 			history.setModifiedDate(date);
-			
-			if (!annotation.isEmpty()) {
-				if (!type.equals("model")) {
-					element.setMetaId("meta_"+element.getId());
-				}
-				
-				element.setAnnotation(annotation);
-			}
+
+            // FIXME: handle meta ID
+            element.setMetaId("meta_"+element.getId());
+            element.setAnnotation(annotation);
 		}
-		if (metadata.getNotes() != "") {
+
+        // FIXME: retrieve HTML notes
+        String notes = annot.getNotes();
+		if (notes != null) {
 			try {
-				String result = Processor.process(metadata.getNotes());
-				String resultWithBody = "<notes><body xmlns=\"http://www.w3.org/1999/xhtml\">" + result + "</body></notes>";
-				
-				XMLNode xmlNode = XMLNode.convertStringToXMLNode(resultWithBody);			
+				String resultWithBody = "<notes><body xmlns=\"http://www.w3.org/1999/xhtml\">" + notes + "</body></notes>";
+				XMLNode xmlNode = XMLNode.convertStringToXMLNode(resultWithBody);
 				element.setNotes(xmlNode);
 			} catch (XMLStreamException e) {
 				System.err.println("Error exporting one of the notes in sbml." + "\n");
@@ -413,49 +422,4 @@ public class SBMLqualExport extends BaseExporter {
 		}
 	}
 	
-	private void exportAllMetadata() {
-		
-		Metadata metadataModel = this.model.getMetadataOfModel();
-		
-		if (metadataModel.isMetadataNotEmpty() || metadataModel.getNotes() != "") {
-			SBase elementModel = (SBase) qualBundle.document.getModel();
-			exportElementMetadata(elementModel, metadataModel, "model");
-		}
-		
-		for (Map.Entry<NodeInfo, QualitativeSpecies> entry : this.node2species.entrySet()) {
-			NodeInfo node = entry.getKey();
-			
-			if (this.model.isSetMetadataOfNode(node)) {
-				Metadata metadataSpecies;
-				try {
-					metadataSpecies = this.model.getMetadataOfNode(node);
-					
-					if (metadataSpecies.isMetadataNotEmpty() || metadataSpecies.getNotes() != "") {
-						SBase elementSpecies = (SBase) entry.getValue();
-						exportElementMetadata(elementSpecies, metadataSpecies, "species");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		for (Map.Entry<NodeInfoPair, Input> entry : this.edge2input.entrySet()) {
-			NodeInfoPair edge = entry.getKey();
-			
-			if (this.model.isSetMetadataOfEdge(edge)) {
-				Metadata metadataEdge;
-				try {
-					metadataEdge = this.model.getMetadataOfEdge(edge);
-					
-					if (metadataEdge.isMetadataNotEmpty() || metadataEdge.getNotes() != "") {
-						SBase elementInput = (SBase) entry.getValue();
-						exportElementMetadata(elementInput, metadataEdge, "transition");
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 }

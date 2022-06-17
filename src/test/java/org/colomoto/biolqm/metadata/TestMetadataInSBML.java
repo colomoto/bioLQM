@@ -1,107 +1,84 @@
 package org.colomoto.biolqm.metadata;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.metadata.validations.PatternValidator;
 import org.colomoto.biolqm.service.LQMServiceManager;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
-import org.colomoto.biolqm.io.LogicalModelFormat;
 
-import java.io.File;
+import java.util.regex.Matcher;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMetadataInSBML {
 	
 	@Test
-	public void testMetadataManagement() throws Exception {
-		
+	public void testMetadataManagement() {
+
 		// we retrieve the minimal_example sbml file
-		File dir = TestHelper.getTestResource("sbml_models");
-		LogicalModelFormat format = LQMServiceManager.getFormat("sbml");
-		
-		if (!dir.isDirectory()) {
-			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
-		}
-		if (format == null || !format.canLoad()) {
-			throw new RuntimeException("Could not find the reference format");
-		}
-		
-		LogicalModel model = format.load(new File(dir, "minimal_example.sbml"));
+		String loadname  = TestHelper.getTestFilename("sbml_models", "minimal_example.sbml");
+		String savename  = TestHelper.getTestFilename("sbml_models", "minimal_example_saved.sbml");
+		String savename2 = TestHelper.getTestFilename("sbml_models", "minimal_example_saved_again.sbml");
+		LogicalModel model = LQMServiceManager.load(loadname);
+		Annotator<NodeInfo> annot = model.getAnnotator();
 		
 		// we add some metadata to the model
-		Metadata modelMetadata = model.getMetadataOfModel();
-		
-		modelMetadata.addDate("created", "2021-03-08");
-		
-		modelMetadata.addTag("customQualifier", "word1");
-		modelMetadata.addTag("customQualifier", "word2");
-		modelMetadata.addKeyValue("customQualifier", "key1", "val11");
-		modelMetadata.addKeyValue("customQualifier", "key1", "value12");
-		modelMetadata.addKeyValue("customQualifier", "key2", "val21");
-		
-		Metadata nestedMetadata = modelMetadata.getMetadataOfQualifier("customQualifier");
-		
-		nestedMetadata.addURI("is", "uniprot:P0DP23");
-		nestedMetadata.createAlternative("is");
-		nestedMetadata.addURI("is", 1, "doi:10.15252/msb.20199110");
-		
-		Metadata doubleNestedMetadata = nestedMetadata.getMetadataOfQualifier("is");
-		
-		doubleNestedMetadata.addTag("hasTag", "wordNested");
-		doubleNestedMetadata.addKeyValue("hasKey", "keyNested", "valueNested");
+//		LegalAnnotation legal = annot.getLegal();
+//		legal.setCreated("2021-03-08");
+
+		annot.onModel()
+			.qualify("customQualifier")
+			.tag("word1")
+			.tag("word2")
+			.put("key1", "val11")
+			.put("key1", "value12")
+			.put("key2", "val21");
+//		annot.nested()
+//			.qualify("is")
+//			.identifier("uniprot", "P0DP23");
+
+		annot.onModel()
+			.qualify("is", 1)
+			.identifier("doi", "10.15252/msb.20199110");
+
+//		annot.nested()
+//			.qualify("hasTag")
+//			.tag("wordNested")
+//			.qualify("hasKey")
+//			.put("keyNested", "valueNested");
 		
 		// we add some metadata to a node
-		for (NodeInfo node: model.getComponents()) {
-			String nodeId = node.getNodeID();
-			
-			if (nodeId.equals("p53")) {
-				Metadata nodeMetadata = model.getMetadataOfNode(node);
-				
-				nodeMetadata.addAuthor("creator", "Martin", "Boutroux", null, null, null);
-				nodeMetadata.addAuthor("creator", "Dupond", "Dupont", "moulinsart@tintin.org", "Hergé", null);
-			}
+		NodeInfo ni = model.getComponent("p53");
+		if (ni != null) {
+			annot.node(ni).tag("output");
 		}
-		
+
 		// we save the model
-		LQMServiceManager.save(model, dir.getAbsolutePath()+File.separator+"minimal_example_saved.sbml", "sbml");
+		LQMServiceManager.save(model, savename, "sbml");
 		
 		// we load a sbml model with exactly the same annotations
-		if (!dir.isDirectory()) {
-			throw new RuntimeException("Could not find the reference model folder: "+dir.getAbsolutePath());
-		}
-		if (format == null || !format.canLoad()) {
-			throw new RuntimeException("Could not find the reference format");
-		}
-		
-		LogicalModel model2 = format.load(new File(dir, "minimal_example_saved.sbml"));
+		LogicalModel model2 = LQMServiceManager.load(savename);
+		Annotator<NodeInfo> annot2 = model2.getAnnotator();
+		LQMServiceManager.save(model, savename2, "sbml");
 
-		// and we compare the two of them to see if not problems were introduced
-		Metadata model2Metadata = model2.getMetadataOfModel();
-		
-		boolean result = model2Metadata.sameMetadata(modelMetadata);
-		assertEquals(result, true);
-		
-		for (NodeInfo node: model.getComponents()) {
-			
-			NodeInfo node2 = null;
-        	for (NodeInfo element: model2.getComponents()) {
-        		if(node.equals(element)) {
-        			node2 = element;
-        		}
-        	}
-        	
-        	if (node2 != null) {
-				Metadata nodeMeta = model.getMetadataOfNode(node);
-				Metadata node2Meta = model2.getMetadataOfNode(node2);
-				
-				boolean resultNode = nodeMeta.sameMetadata(node2Meta);
-				assertEquals(resultNode, true);
-			} else {
-				fail("The two models does not contain the same nodes.");
-			}
-		}
+		// FIXME: compare annotations of the two models
+	}
+
+	@Test
+	public void testMatching() {
+		Matcher m = PatternValidator.matchTag("#pipo");
+		assertTrue(m.matches());
+		assertEquals("pipo", m.group(1));
+
+		m = PatternValidator.matchTag("tag:pipo");
+		assertTrue(m.matches());
+		assertEquals("pipo", m.group(1));
+
+		assertFalse(PatternValidator.matchTag("tg:pipo").matches());
+		assertFalse(PatternValidator.matchTag("col:pipo").matches());
+		assertFalse(PatternValidator.matchTag("pipo").matches());
+
 	}
 }

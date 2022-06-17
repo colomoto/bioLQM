@@ -1,23 +1,16 @@
 package org.colomoto.biolqm;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+import org.colomoto.biolqm.metadata.Annotator;
 import org.colomoto.mddlib.MDDManager;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.colomoto.biolqm.metadata.AnnotationModule;
-import org.colomoto.biolqm.metadata.NodeInfoPair;
-import org.colomoto.biolqm.metadata.annotations.JsonReader;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
-import org.colomoto.biolqm.metadata.constants.Index;
 
 /**
  * A LogicalModel is a ready to use object containing all necessary information to perform simulations and analysis,
@@ -90,6 +83,11 @@ public interface LogicalModel {
 	 * @return true is there is at least one extra component
 	 */
 	boolean hasExtraComponents();
+
+	default boolean hasComponent(NodeInfo ni) {
+		return this.getComponents().contains(ni) || this.getExtraComponents().contains(ni);
+	}
+
 
 	/**
 	 * Compute the value of an extra component for a given state.
@@ -170,98 +168,22 @@ public interface LogicalModel {
 	 * @return the existing layout information. Create it if it does not exist.
 	 */
 	ModelLayout getLayout();
-	
-	/**
-	 * Create a Metadata object for a node of the model
-	 *
-	 * @param node the node you want to annotate
-	 * @return the Metadata object you created for the node
-	 * @throws Exception 
-	 */
-	Metadata createMetadataOfNode(NodeInfo node) throws Exception;
-	/**
-	 * Create a Metadata object for an edge of the model
-	 *
-	 * @param edge the edge you want to annotate
-	 * @return the Metadata object you created for the edge
-	 * @throws Exception 
-	 */
-	Metadata createMetadataOfEdge(NodeInfoPair edge) throws Exception;
-	
-	/**
-	 * Retrieve the Metadata object of the model
-	 * @return the existing Metadata of the model
-	 */
-	Metadata getMetadataOfModel();
-	
-	/**
-	 * Check if a metadata object exists for a node
-	 *
-	 * @param node the node you want to check
-	 * @return true if it exists, false otherwise
-	 */	
-	boolean isSetMetadataOfNode(NodeInfo node);
-	
-	/**
-	 * Check if a metadata object exists for an edge
-	 *
-	 * @param edge the edge you want to check
-	 * @return true if it exists, false otherwise
-	 */	
-	boolean isSetMetadataOfEdge(NodeInfoPair edge);
-	
-	/**
-	 * Retrieve the Metadata object of the node
-	 * 
-	 * @param node the node you want to annotate
-	 * @return the existing Metadata of the node. Create it if it does not exist.
-	 * @throws Exception 
-	 */
-	Metadata getMetadataOfNode(NodeInfo node) throws Exception;
-	
-	/**
-	 * Retrieve the Metadata object of an edge
-	 * 
-	 * @param edge the edge you want to annotate
-	 * @return the existing Metadata of the node. Create it if it does not exist.
-	 * @throws Exception 
-	 */
-	Metadata getMetadataOfEdge(NodeInfoPair edge) throws Exception;
-	
-	/**
-	 * Retrieve the Metadata object of an edge
-	 * 
-	 * @param node1 the source node of the edge
-	 * @param node2 the target node of the edge
-	 * @return the existing Metadata of the node. Create it if it does not exist.
-	 * @throws Exception 
-	 */
-	Metadata getMetadataOfEdge(NodeInfo node1, NodeInfo node2) throws Exception;
-	
-	/**
-	 * Export all the metadata of the model in a structured json file
-	 * 
-	 * @param filename the name of the json file
-	 * @throws JSONException 
-	 */
-	void exportMetadata(String filename);
-	
-	/**
-	 * Import a structured json file to populate the metadata of the model
-	 * 
-	 * @param filename the name of the json file
-	 */
-	void importMetadata(String filename);
-	
-	/**
-	 * Modify the annotation module of the model
-	 */
-	void setAnnotationModule(AnnotationModule newAnnotationModule);
-	
+
 	/**
 	 * Retrieve the annotation module of the model
 	 * 
 	 * @return the annotation module
 	 */
-	AnnotationModule getAnnotationModule();
+	Annotator<NodeInfo> getAnnotator();
+
+	default void saveAnnotation(String filename) throws IOException {
+		Writer out = new OutputStreamWriter(Files.newOutputStream(Paths.get(filename)), StandardCharsets.UTF_8);
+		this.saveAnnotation(out);
+		out.close();
+	}
+
+	default void saveAnnotation(Writer out) throws IOException {
+		out.write(getAnnotator().writeAnnotationsInJSON().toString());
+		out.flush();
+	}
 }

@@ -1,15 +1,10 @@
 package org.colomoto.biolqm.io.sbml;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -18,7 +13,7 @@ import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.ModelLayout;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.io.BaseLoader;
-import org.colomoto.biolqm.metadata.annotations.Metadata;
+import org.colomoto.biolqm.metadata.Annotator;
 import org.colomoto.biolqm.metadata.constants.XSLTransform;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -26,14 +21,8 @@ import org.colomoto.mddlib.MDDOperator;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
-import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.*;
 import org.sbml.jsbml.ASTNode.Type;
-import org.sbml.jsbml.Annotation;
-import org.sbml.jsbml.CVTerm;
-import org.sbml.jsbml.Creator;
-import org.sbml.jsbml.History;
-import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.Dimensions;
 import org.sbml.jsbml.ext.layout.GeneralGlyph;
@@ -60,7 +49,7 @@ public class SBMLqualImport extends BaseLoader {
     private Map<String, Integer> identifier2index;
     private MDDVariable[] ddvariables;
 
-    private Map<String, Input> m_curInputs = new HashMap<String, Input>();
+    private final Map<String, Input> m_curInputs = new HashMap<>();
 
 
     public SBMLQualBundle getQualBundle() {
@@ -207,14 +196,15 @@ public class SBMLqualImport extends BaseLoader {
                 }
             }
         }
-		
+
+        // FIXME: import metadata
 		this.importAllMetadata(model, variables);
 		
         return model;
     }
 
     private List<NodeInfo> getVariables() {
-        List<NodeInfo> variables = new ArrayList<NodeInfo>();
+        List<NodeInfo> variables = new ArrayList<>();
         int curIndex = 0;
         for (QualitativeSpecies sp: qualBundle.qmodel.getListOfQualitativeSpecies()) {
             String spid = sp.getId();
@@ -243,11 +233,11 @@ public class SBMLqualImport extends BaseLoader {
     /**
      * If needed, guess the max level for species which did not specify it.
      *
-     * @param variables
+     * @param variables  the list of variables
      */
     private void guessMaxs(List<NodeInfo> variables) {
 
-        boolean needMax[] = new boolean[variables.size()];
+        boolean[] needMax = new boolean[variables.size()];
         byte[] maxs = new byte[needMax.length];
         boolean allDefined = true;
         int i=0;
@@ -322,11 +312,6 @@ public class SBMLqualImport extends BaseLoader {
 
     /**
      * Get a MDD representing a parsed MathML function.
-     *
-     * @param ddmanager
-     * @param math
-     * @param value
-     * @return
      */
     private int getMDDForMathML(MDDManager ddmanager, ASTNode math, int value) {
 
@@ -388,17 +373,14 @@ public class SBMLqualImport extends BaseLoader {
 
 
         // now we should have a logical operation or some unrecognised MathML...
-        MDDOperator op = null;
+        MDDOperator op;
         switch (type) {
-
             case LOGICAL_AND:
                 op = MDDBaseOperators.AND;
                 break;
-
             case LOGICAL_OR:
                 op = MDDBaseOperators.OR;
                 break;
-
             default:
                 throw new RuntimeException("TODO: support MathML node for: "+math);
         }
@@ -479,9 +461,7 @@ public class SBMLqualImport extends BaseLoader {
                 input = m_curInputs.get(varName);
                 if (input != null) {
                     reversed = true;
-                    String stmp = varName;
                     varName = valueName;
-                    valueName = stmp;
                 }
             }
 
@@ -674,7 +654,7 @@ public class SBMLqualImport extends BaseLoader {
 
                 sb.append(var);
                 if (threshold > 1) {
-                    sb.append(var+":"+threshold);
+                    sb.append(var).append(":").append(threshold);
                 }
                 return;
 
@@ -725,11 +705,9 @@ public class SBMLqualImport extends BaseLoader {
                 return;
         }
 
-
         // now we should have a logical operation or some unrecognised MathML...
-        String op = null;
+        String op;
         switch (type) {
-
             case LOGICAL_AND:
                 op = " & ";
                 break;
@@ -748,8 +726,9 @@ public class SBMLqualImport extends BaseLoader {
         boolean first = true;
         for (ASTNode child: children) {
             mathml2string(child, sb);
-            if (!first) {
+            if (first) {
                 first = false;
+            } else {
                 sb.append(op);
             }
         }
@@ -798,9 +777,7 @@ public class SBMLqualImport extends BaseLoader {
                 input = m_curInputs.get(varName);
                 if (input != null) {
                     reversed = true;
-                    String stmp = varName;
                     varName = valueName;
-                    valueName = stmp;
                 }
             }
 
@@ -896,8 +873,6 @@ public class SBMLqualImport extends BaseLoader {
                 throw new RuntimeException("unknown relation type: "+relation);
         }
 
-
-
         // now we should have a valid relValue and only EQ, NEQ, GEQ or LT relations
         if (0 > relValue || var.nbval <= relValue) {
             throw new RuntimeException("Relation value out of [0.."+var.nbval+"[ range: "+valueNode);
@@ -908,7 +883,7 @@ public class SBMLqualImport extends BaseLoader {
             switch (type) {
 
                 case RELATIONAL_LT:
-                    sb.append("!"+var);
+                    sb.append("!").append(var);
                     return;
 
                 case RELATIONAL_GEQ:
@@ -917,7 +892,7 @@ public class SBMLqualImport extends BaseLoader {
 
                 case RELATIONAL_EQ:
                     if (relValue == 0) {
-                        sb.append("!"+var);
+                        sb.append("!").append(var);
                         return;
                     }
                     sb.append(var);
@@ -928,7 +903,7 @@ public class SBMLqualImport extends BaseLoader {
                         sb.append(var);
                         return;
                     }
-                    sb.append("!"+var);
+                    sb.append("!").append(var);
                     return;
             }
 
@@ -937,46 +912,41 @@ public class SBMLqualImport extends BaseLoader {
 
         throw new RuntimeException("Multi-valued is not handled here!");
     }
-	
-	private void importElementCVTerm(CVTerm cvterm, Metadata metadata) {
-		String qualifier = cvterm.getQualifier().getElementNameEquivalent();
+
+
+	private void importElementCVTerm(Annotator<NodeInfo> annot, CVTerm cvterm) {
+		CVTerm.Qualifier q = cvterm.getQualifier();
+        String qualifier;
+        switch (q) {
+            case BQB_UNKNOWN:
+            case BQM_UNKNOWN:
+                qualifier = cvterm.getUnknownQualifierName();
+                break;
+            default:
+                qualifier = q.getElementNameEquivalent();
+        }
 		
-		if (qualifier.equals("unknownQualifier") || qualifier.equals("isRelatedTo")) {
-			qualifier = cvterm.getUnknownQualifierName();
-		}
-		
-		int alternative = metadata.getNumberOfAlternatives(qualifier);
-		if (alternative != 0) {
-			try {
-				alternative = metadata.createAlternative(qualifier);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
+        // Declare a new alternative for this qualifier
+        annot.qualify(qualifier, -1);
+
 		// we add all the uris for this qualifier
 		for (String resource: cvterm.getResources()) {
-			try {
-				metadata.addElement(qualifier, alternative, resource);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            annot.annotate(resource);
 		}
-		
+
+/*
+        // FIXME: handle nested annotations
 		// and then we add the nested annotation recursively
 		if (cvterm.isSetListOfNestedCVTerms()) {
-			Metadata metadataNested;
-			try {
-				metadataNested = metadata.getMetadataOfQualifier(qualifier, alternative);
-				for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
-					this.importElementCVTerm(cvtermNested, metadataNested);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            for (CVTerm cvtermNested: cvterm.getListOfNestedCVTerms()) {
+                annot.nested();
+                this.importElementCVTerm(annot, cvtermNested);
+            }
 		}
+*/
 	}
-		
+
+/*
     private void importElementHistory(Annotation annotation, Metadata metadata) {
 		
 		if (annotation.isSetHistory()) {
@@ -987,14 +957,14 @@ public class SBMLqualImport extends BaseLoader {
 						
 			if (history.isSetCreatedDate()) {
 				try {
-					metadata.addDate("created", simpleDateFormat.format(history.getCreatedDate()));
+					metadata.addDateString("created", simpleDateFormat.format(history.getCreatedDate()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			if (history.isSetModifiedDate()) {
 				try {
-					metadata.addDate("modified", simpleDateFormat.format(history.getModifiedDate()));
+					metadata.addDateString("modified", simpleDateFormat.format(history.getModifiedDate()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1017,62 +987,54 @@ public class SBMLqualImport extends BaseLoader {
 			}
 		}
 	}
-	
-	private void importElementMetadata(SBase element, Metadata metadata) {
-		if (element.isSetAnnotation()) {					
-			Annotation annotation = element.getAnnotation();
-				
-			// to deal with terms of bqbiol and bqmodel
-			for (CVTerm cvterm: annotation.getListOfCVTerms()) {
-				this.importElementCVTerm(cvterm, metadata);
-			}
-			
-			// to deal with terms of dcterms
-			this.importElementHistory(annotation, metadata);
-		}
-		if (element.isSetNotes()) {
-			XMLNode notes = element.getNotes();
-			notes.clearNamespaces();
-		
-			// to suppress the xmlns of the html language
-			for (XMLNode content: notes.getChildElements("", "")) {
-				content.clearNamespaces();
-			}
-			
-			String html;
-			try {
-				html = notes.toXMLString();
-				String markdown = XSLTransform.simpleTransform(html);
-				metadata.setNotes(markdown);
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
+*/
+
+    private void importElementAnnotation(Annotator<NodeInfo> annot, SBase elt) {
+        // FIXME: import annotations
+        if (elt.isSetAnnotation()) {
+            Annotation annotation = elt.getAnnotation();
+
+            // to deal with terms of bqbiol and bqmodel
+            for (CVTerm cvterm: annotation.getListOfCVTerms()) {
+                this.importElementCVTerm(annot, cvterm);
+            }
+
+            // FIXME: import dcterms
+            // to deal with terms of dcterms
+//            this.importElementHistory(annotation, metadata);
+        }
+
+        if (elt.isSetNotes()) {
+            XMLNode notes = elt.getNotes();
+            notes.clearNamespaces();
+
+            // to suppress the xmlns of the html language
+            for (XMLNode content: notes.getChildElements("", "")) {
+                content.clearNamespaces();
+            }
+
+            try {
+                String mdnotes = XSLTransform.simpleTransform(notes.toXMLString());
+                annot.setNotes(mdnotes);
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 	private void importAllMetadata(LogicalModel model, List<NodeInfo> variables) {
-		
-		SBase elementModel = (SBase) this.qualBundle.document.getModel();
-		
-		if (elementModel.isSetAnnotation() || elementModel.isSetNotes()) {
-			Metadata metadataModel = model.getMetadataOfModel();
-			
-			this.importElementMetadata(elementModel, metadataModel);
-		}
-		
+
+        Annotator<NodeInfo> annot = model.getAnnotator();
+
+		SBase elementModel = this.qualBundle.document.getModel();
+
+        annot.onModel();
+        importElementAnnotation(annot, elementModel);
+
 		for (QualitativeSpecies elementSpecies: this.qualBundle.qmodel.getListOfQualitativeSpecies()) {
-			
-			if (elementSpecies.isSetAnnotation() || elementSpecies.isSetNotes()) {
-				NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
-				Metadata metadataSpecies;
-				try {
-					metadataSpecies = model.getMetadataOfNode(node);
-					
-					this.importElementMetadata(elementSpecies, metadataSpecies);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+            NodeInfo node = variables.get(this.getIndexForName(elementSpecies.getId()));
+            annot.node(node);
+            importElementAnnotation(annot, elementSpecies);
 		}
 
 		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
@@ -1080,38 +1042,9 @@ public class SBMLqualImport extends BaseLoader {
 			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
 
 			for (Input elementInput: elementTransition.getListOfInputs()) {
-				
-				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
-					NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
-					
-					Metadata metadataInput;
-					try {
-						metadataInput = model.getMetadataOfEdge(node1, node2);
-						this.importElementMetadata(elementInput, metadataInput);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		
-		for (Transition elementTransition: this.qualBundle.qmodel.getListOfTransitions()) {
-			Output elementOutput = elementTransition.getListOfOutputs().get(0);
-			NodeInfo node2 = variables.get(this.getIndexForName(elementOutput.getQualitativeSpecies()));
-
-			for (Input elementInput: elementTransition.getListOfInputs()) {
-				
-				if (elementInput.isSetAnnotation() || elementInput.isSetNotes()) {
-					NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
-					
-					Metadata metadataInput;
-					try {
-						metadataInput = model.getMetadataOfEdge(node1, node2);
-						this.importElementMetadata(elementInput, metadataInput);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+                NodeInfo node1 = variables.get(this.getIndexForName(elementInput.getQualitativeSpecies()));
+                annot.edge(node1, node2);
+                importElementAnnotation(annot, elementInput);
 			}
 		}
 	}

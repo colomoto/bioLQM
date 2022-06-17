@@ -45,5 +45,7 @@ Gautier Stoll
 Julien Dorier  
 Loïc Pauleve  
 Pedro Monteiro  
+Celine Hernandez  
 Rui Henriques  
+Martin Boutroux  
 

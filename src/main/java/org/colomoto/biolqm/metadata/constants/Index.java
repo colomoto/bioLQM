@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.metadata.constants;
 
+import org.colomoto.biolqm.metadata.annotations.Metadata;
+
 import java.util.ArrayList;
 
 /**
@@ -9,23 +11,18 @@ import java.util.ArrayList;
  * @author Martin Boutroux
  */
 public class Index {
-	
+
 	// variables
-	private int index;
-	private Index indexParent;
-	private ArrayList<Index> indexChildren;
+	private final int index;
+	private final Index indexParent;
+	private final ArrayList<Index> indexChildren;
 	
 	// constructors	
-	public Index(int increment) {
-		this.index = increment;
-		this.indexParent = null;
-		this.indexChildren = new ArrayList<Index>();
-	}
-	
+
 	public Index(Index parent, int increment) {
 		this.index = increment;
 		this.indexParent = parent;
-		this.indexChildren = new ArrayList<Index>();
+		this.indexChildren = new ArrayList<>();
 	}
 	
 	// getters
@@ -49,22 +46,17 @@ public class Index {
 		}
 	}
 
-	// functions
     @Override
 	public boolean equals(Object obj) {
-        boolean retVal = false;
-
-		Index index = (Index) obj;
-        if (index.getIndex() == this.getIndex()) {
-            retVal = true;
-        }
-
-		return retVal;
+		if (obj instanceof Index) {
+			Index index = (Index) obj;
+			return index.getIndex() == this.getIndex();
+		}
+		return false;
 	}
 	
     @Override
 	public int hashCode() {
-
 		return this.getIndex();
 	}
 }

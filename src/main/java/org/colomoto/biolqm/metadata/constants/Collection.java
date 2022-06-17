@@ -8,12 +8,14 @@ package org.colomoto.biolqm.metadata.constants;
 public class Collection {
 	
 	// variables
-	private String pattern;
-	private boolean namespaceEmbedded;
-	private boolean original;
+	public final String pattern;
+	public final String name;
+	public final boolean namespaceEmbedded;
+	public final boolean original;
 	
 	// constructors
-	public Collection(String newPattern, boolean newNamespaceEmbedded, boolean newOriginal) {
+	public Collection(String name, String newPattern, boolean newNamespaceEmbedded, boolean newOriginal) {
+		this.name = name;
 		this.pattern = newPattern;
 		this.namespaceEmbedded = newNamespaceEmbedded;
 		this.original = newOriginal;
@@ -28,5 +30,9 @@ public class Collection {
 	}
 	public boolean getOriginal() {
 		return this.original;
+	}
+
+	public String getLink(String value) {
+		return "https://identifiers.org/" + this.name + "/" + value;
 	}
 }
