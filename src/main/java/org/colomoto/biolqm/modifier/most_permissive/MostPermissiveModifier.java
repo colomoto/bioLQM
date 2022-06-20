@@ -7,6 +7,7 @@ import org.colomoto.biolqm.modifier.BaseModifier;
 import org.colomoto.mddlib.IndexMapper;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDMapper;
+import org.colomoto.mddlib.internal.MDDStoreImpl;
 
 import java.util.*;
 
@@ -31,11 +32,24 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
 
     @Override
     public LogicalModel performTask() {
+
         this.ddm = model.getMDDManager();
         this.core = model.getComponents();
         this.extra = model.getExtraComponents();
         this.coreFunctions = model.getLogicalFunctions();
         this.extraFunctions = model.getExtraLogicalFunctions();
+
+
+        List<NodeInfo> extended_components = new ArrayList<>();
+        for (NodeInfo ni: core) {
+            extended_components.add(new NodeInfo(ni.getNodeID()+"_a"));
+            extended_components.add(new NodeInfo(ni.getNodeID()+"_b"));
+            extended_components.add(new NodeInfo(ni.getNodeID()+"_c"));
+        }
+
+        // new MDD manager with the extended variables
+        byte[] new_state = new byte[3*coreFunctions.length];
+        MDDManager new_ddmanager = new MDDStoreImpl(extended_components, 2);
 
         return null;
     }
