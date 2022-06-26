@@ -31,8 +31,8 @@ public class Annotator<N> {
 
 	private AnnotationTarget target = AnnotationTarget.Model;
 	private Object selected = null;
-	private Qualifier qualifier = null;
-	private int alternative = 0;
+	private Metadata cur_mdt = null;
+	private String cur_qualifier = null;
 	private Annotation cur_annotation = null;
 
 	public Annotator(AnnotationModule mod) {
@@ -56,37 +56,31 @@ public class Annotator<N> {
 	}
 
 	/**
-	 * Retrieve the annotation associated to the current selection and qualifier.
-	 * @return the existing annotation or null if it is not defined.
-	 */
-	private Annotation getAnnotation() {
-		Metadata mdt =  this.mod.getAnnotation(this.selected);
-		if (mdt == null) {
-			return null;
-		}
-		return mdt.getAnnotation(this.qualifier, this.alternative);
-	}
-
-	/**
 	 * Retrieve or create the annotations associated to the current selection.
 	 * @return the existing annotation or a new one if it was not defined.
 	 */
 	private Metadata ensureMetadata() {
-		return this.mod.ensureMetadata(this.selected);
+		if (cur_mdt == null) {
+			cur_mdt = mod.ensureMetadata(selected);
+		}
+		return cur_mdt;
 	}
 
 	private Annotation ensureAnnotation() {
-		if (cur_annotation == null) {
-			Metadata meta = this.ensureMetadata();
-			cur_annotation = meta.ensureAnnotation(this.qualifier, this.alternative);
-		}
-		return cur_annotation;
+		return this.ensureAnnotation(this.cur_qualifier);
+	}
+
+	private Annotation ensureAnnotation(String qualifier) {
+		Qualifier qualified = mod.ensureQualifier(this.target, qualifier);
+		return this.ensureMetadata().ensureAnnotation(qualified);
 	}
 
 	private Annotator<N> setSelection(AnnotationTarget target, Object selected) {
 		this.target = target;
 		this.selected = selected;
-		this.qualify(null);
+		this.cur_mdt = mod.getAnnotation(selected);
+		this.cur_annotation = null;
+		this.cur_qualifier = null;
 		return this;
 	}
 
@@ -114,15 +108,20 @@ public class Annotator<N> {
 		return this.setSelection(AnnotationTarget.Interaction, edge);
 	}
 
-	public Annotator<N> qualify(String qualifier) {
-		this.qualify(qualifier, 0);
-		return this;
+	public boolean selectBlock(int index) {
+		List<Annotation> annotations = this.ensureMetadata().annotations();
+		if (index < 0 || index >= annotations.size()) {
+			cur_annotation = null;
+			return false;
+		}
+		cur_annotation = annotations.get(index);
+		return true;
 	}
 
-	public Annotator<N> qualify(String qualifier, int alternative) {
-		this.alternative = alternative;
-		this.cur_annotation = null;
-		this.qualifier = this.mod.ensureQualifier(this.target, qualifier);
+	public Annotator<N> openBlock(String qualifier) {
+		Qualifier qualified = this.mod.ensureQualifier(this.target, qualifier);
+		this.cur_annotation = new Annotation(qualified);
+		this.ensureMetadata().annotations().add(this.cur_annotation);
 		return this;
 	}
 
@@ -182,53 +181,12 @@ public class Annotator<N> {
 		return this;
 	}
 
-	public boolean hasTags() {
-		Annotation annot = getAnnotation();
-		return annot != null && !annot.tags.isEmpty();
-	}
-	public boolean hasTag(String tag) {
-		Annotation annot = getAnnotation();
-		return annot != null && annot.tags.contains(tag);
-	}
-	public boolean hasEntries() {
-		Annotation annot = getAnnotation();
-		return annot != null && !annot.keyValues.isEmpty();
-	}
-	public boolean hasURIs() {
-		Annotation annot = getAnnotation();
-		return annot != null && !annot.uris.isEmpty();
-	}
-
-	public Iterable<String> tags() {
-		Annotation annot = getAnnotation();
-		if (annot == null) {
-			return null;
-		}
-		return annot.tags;
-	}
-
 	public List<Annotation> annotations() {
 		Metadata mdt = getMetadata();
 		if (mdt == null) {
 			return null;
 		}
 		return mdt.annotations();
-	}
-
-	public Iterable<Map.Entry<String, String>> entries() {
-		Annotation annot = getAnnotation();
-		if (annot == null) {
-			return null;
-		}
-		return annot.keyValues.entrySet();
-	}
-
-	public Iterable<URI> uris() {
-		Annotation annot = getAnnotation();
-		if (annot == null) {
-			return null;
-		}
-		return annot.uris;
 	}
 
 	public String getNotes() {
@@ -431,7 +389,7 @@ public class Annotator<N> {
 			JSONObject alt = jannot.getJSONObject(i);
 
 			String qualif = alt.optString("qualifier");
-			this.qualify(qualif, -1);
+			this.openBlock(qualif);
 
 			JSONArray tags = alt.optJSONArray("tags");
 			if (tags != null) {

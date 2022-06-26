@@ -27,7 +27,7 @@ public class TestMetadataInJson {
 		Annotator<NodeInfo> annot = model.getAnnotator();
 
 		annot.onModel()
-			.qualify("customQualifier")
+			.openBlock("customQualifier")
 			.tag("word1")
 			.tag("word2")
 			.put("key1", "val11")

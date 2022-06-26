@@ -41,34 +41,5 @@ public class CollectionsAvailable {
 		}
 		return COLLECTIONS.get(name);
 	}
-
-/*
-	private Set<String> namesInPatterns = new HashSet<>();
-	
-	// update functions
-	public void updateCollections(String prefix, String pattern, boolean namespaceEmbedded) {
-		if (!this.collections.containsKey(prefix)) {
-			this.collections.put(prefix, new Collection(prefix, pattern, namespaceEmbedded, true));
-			this.updateNamesInPatterns(prefix, pattern, namespaceEmbedded);
-		}
-	}
-	
-	private void updateNamesInPatterns(String prefix, String pattern, boolean namespaceEmbedded) {
-		String nameInPattern;
-		
-		if (namespaceEmbedded) {
-			String split = pattern.split(":")[0];
-			if (split.charAt(0) == '^') {
-				nameInPattern = split.substring(1);
-			} else {
-				nameInPattern = split;
-			}
-		} else {
-			nameInPattern = prefix;
-		}
-		
-		namesInPatterns.add(nameInPattern);
-	}
- */
 }
 	

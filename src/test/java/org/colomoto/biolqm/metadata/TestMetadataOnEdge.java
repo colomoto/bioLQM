@@ -55,7 +55,7 @@ public class TestMetadataOnEdge {
 		Annotator<NodeInfo> annot = model.getAnnotator();
 
 		annot.edge(nodep53, nodeMdm2cyt)
-			.qualify("customQualifier")
+			.openBlock("customQualifier")
 			.tag("word1")
 			.tag("word2")
 			.put("key1", "val11")
@@ -63,9 +63,9 @@ public class TestMetadataOnEdge {
 			.put("key2", "val21");
 
 		annot.edge(nodeDNAdam, nodeMdm2cyt)
-			.qualify("is")
+			.openBlock("is")
 			.identifier("uniprot", "P0DP23")
-			.qualify("is", 1)
+			.openBlock("is")
 			.identifier("doi", "10.15252/msb.20199110");
 
 

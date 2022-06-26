@@ -29,7 +29,7 @@ public class TestMetadataInSBML {
 //		legal.setCreated("2021-03-08");
 
 		annot.onModel()
-			.qualify("customQualifier")
+			.openBlock("customQualifier")
 			.tag("word1")
 			.tag("word2")
 			.put("key1", "val11")
@@ -40,7 +40,7 @@ public class TestMetadataInSBML {
 //			.identifier("uniprot", "P0DP23");
 
 		annot.onModel()
-			.qualify("is", 1)
+			.openBlock("is")
 			.identifier("doi", "10.15252/msb.20199110");
 
 //		annot.nested()

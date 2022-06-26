@@ -927,7 +927,7 @@ public class SBMLqualImport extends BaseLoader {
         }
 		
         // Declare a new alternative for this qualifier
-        annot.qualify(qualifier, -1);
+        annot.openBlock(qualifier);
 
 		// we add all the uris for this qualifier
 		for (String resource: cvterm.getResources()) {

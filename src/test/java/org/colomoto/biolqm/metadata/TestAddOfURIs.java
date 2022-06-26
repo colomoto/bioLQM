@@ -31,7 +31,7 @@ public class TestAddOfURIs {
 		// we add some metadata to the model
 		Annotator annot = model.getAnnotator();
 
-		annot.onModel().qualify("is")
+		annot.onModel().openBlock("is")
 			.annotate("uniprot:P0DP23")
 			.annotate("urn:miriam:pubmed:31226023")
 			.annotate("urn:casq:function:Orf9b")

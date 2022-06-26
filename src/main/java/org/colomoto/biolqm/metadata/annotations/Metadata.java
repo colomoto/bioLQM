@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * One instance per component (model, node, transition...)
@@ -64,23 +65,20 @@ public class Metadata {
         return this.annotations;
     }
 
-    public Annotation getAnnotation(Qualifier qualifier, int alternative) {
-        // FIXME: handle alternative
-        for (Annotation annot: this.annotations) {
-            if (annot.qualifier == qualifier) {
-                return annot;
-            }
-        }
-        return null;
+    public Optional<Annotation> getAnnotation(Qualifier qualifier) {
+        return annotations
+                .stream()
+                .filter(annot -> annot.qualifier == qualifier)
+                .findFirst();
     }
 
-    public Annotation ensureAnnotation(Qualifier qualifier, int alternative) {
-        Annotation result = this.getAnnotation(qualifier, alternative);
-        if (result == null) {
-            // FIXME: handle alternative
-            result = new Annotation(qualifier);
-            this.annotations.add(result);
+    public Annotation ensureAnnotation(Qualifier qualifier) {
+        Optional<Annotation> result = this.getAnnotation(qualifier);
+        if (result.isPresent()) {
+            return result.get();
         }
-        return result;
+        Annotation created = new Annotation(qualifier);
+        this.annotations.add(created);
+        return created;
     }
 }

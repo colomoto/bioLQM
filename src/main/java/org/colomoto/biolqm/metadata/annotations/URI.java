@@ -18,6 +18,15 @@ public class URI {
 		this.collection = collection;
 		this.value = value;
 	}
+
+	public String toHTML() {
+		String link = this.getLink();
+		if (link != null && !link.isEmpty()) {
+			return "<a href='" + link + "'>" + this + "</a>";
+		} else {
+			return this.toString();
+		}
+	}
 	
 	public Collection getCollection() {
 		return this.collection;

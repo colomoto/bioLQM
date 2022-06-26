@@ -3,6 +3,7 @@ package org.colomoto.biolqm.metadata.annotations;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import scala.util.parsing.combinator.testing.Str;
 
 import java.util.*;
 
@@ -67,6 +68,41 @@ public class Annotation {
 		return json;
 	}
 
+	public String toHTML() {
+		if (this.isEmpty()) {
+			return "";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("<div class='annotations'>");
+		if (!this.uris.isEmpty()) {
+			sb.append("<ul class='uris'>");
+			for (URI uri: this.uris) {
+				sb.append("<li>").append(uri.toHTML()).append("</li>");
+			}
+			sb.append("</ul>");
+		}
+
+		if (!this.keyValues.isEmpty()) {
+			sb.append("<ul class='keys'>");
+			for (Map.Entry<String,String> e: this.keyValues.entrySet()) {
+				sb.append("<li>").append(e.getKey()).append(" = ").append(e.getValue()).append("</li>");
+			}
+			sb.append("</ul>");
+		}
+
+		if (!this.tags.isEmpty()) {
+			sb.append("<ul class='tags'>");
+			for (String tag: this.tags) {
+				sb.append("<li>#").append(tag).append("</li>");
+			}
+			sb.append("</ul>");
+		}
+
+		sb.append("</div>");
+
+		return sb.toString();
+	}
 
 	public String getShortDescription() {
 		String description = "";
@@ -129,131 +165,4 @@ public class Annotation {
 		}
 		return true;
 	}
-
-/*
-	protected String getValue(String tab) {
-
-		StringBuilder chaine = new StringBuilder(":\n");
-
-		chaine.append(tab).append("\tURIs :\n");
-		for (URI uri : this.listOfURIs) {
-			chaine.append(tab).append("\t\t").append(uri.getContent()).append("\n");
-		}
-
-		chaine.append(tab).append("\tTags :\n");
-		for (String tag : this.listOfTags) {
-			chaine.append(tab).append("\t\t").append(tag).append("\n");
-		}
-
-		chaine.append(tab).append("\tKeysValues :\n");
-		for (String key : this.listOfKeysValues.keySet()) {
-
-			String joint = "";
-			for (String value: this.listOfKeysValues.get(key)) {
-				if (joint != "") {
-					joint += ", ";
-				}
-				joint += value;
-			}
-
-			chaine.append(tab).append("\t\t").append(key).append(":[").append(joint).append("]\n");
-		}
-
-		return chaine.toString();
-	}
-
-	protected ArrayList<ArrayList<String>> getResources() {
-		ArrayList<ArrayList<String>> resources = new ArrayList<>();
-
-		for (URI uri : this.listOfURIs) {
-			ArrayList<String> resource = new ArrayList<>();
-			resource.add(uri.getFlag());
-			resource.add(uri.getContent());
-
-			resources.add(resource);
-		}
-
-		return resources;
-	}
-
-	protected boolean doesAlternativeExist(JSONObject jsonAlternative) {
-
-		int numUriAnnotation = this.listOfURIs.size();
-		if (jsonAlternative.has("uris") && !jsonAlternative.isNull("uris")) {
-			JSONArray arrayURIs = jsonAlternative.getJSONArray("uris");
-
-			int numUriJson = arrayURIs.length();
-			if (numUriAnnotation == numUriJson) {
-
-				for(int idUri = 0; idUri < arrayURIs.length(); idUri++) {
-					JSONObject jsonURI = arrayURIs.getJSONObject(idUri);
-					URI uri = new URI(jsonURI.getString("type"), jsonURI.getString("content"));
-					if (!this.listOfURIs.contains(uri)) {
-						return false;
-					}
-				}
-			} else {
-				return false;
-			}
-		} else if (numUriAnnotation != 0) {
-			return false;
-		}
-
-		int numTagAnnotation = this.listOfTags.size();
-		if (jsonAlternative.has("tags") && !jsonAlternative.isNull("tags")) {
-			JSONArray arrayTags = jsonAlternative.getJSONArray("tags");
-
-			int numTagJson = arrayTags.length();
-			if (numTagAnnotation == numTagJson) {
-
-				for(int idTag = 0; idTag < arrayTags.length(); idTag++) {
-					String tag = arrayTags.getString(idTag);
-					if (!this.listOfTags.contains(tag)) {
-						return false;
-					}
-				}
-			} else {
-				return false;
-			}
-		} else if (numTagAnnotation != 0) {
-			return false;
-		}
-
-		int numKeyAnnotation = this.listOfKeysValues.size();
-		if (!(jsonAlternative.has("keysvalues") && !jsonAlternative.isNull("keysvalues"))) {
-			return numKeyAnnotation == 0;
-		}
-		JSONArray arrayKeys = jsonAlternative.getJSONArray("keysvalues");
-
-		int numKeyJson = arrayKeys.length();
-		if (numKeyAnnotation != numKeyJson) {
-			return false;
-		}
-		for(int idKey = 0; idKey < arrayKeys.length(); idKey++) {
-			JSONObject key = arrayKeys.getJSONObject(idKey);
-			JSONArray arrayValues = key.getJSONArray("values");
-
-			String keyString = key.getString("key");
-			if (!this.listOfKeysValues.containsKey(keyString)) {
-				return false;
-			}
-
-			ArrayList<String> valuesList = this.listOfKeysValues.get(keyString);
-
-			int numValuesAnnotation = valuesList.size();
-			int numValuesJson = arrayValues.length();
-			if (numValuesAnnotation != numValuesJson) {
-				return false;
-			}
-
-			for (int idValue = 0; idValue < arrayValues.length(); idValue++) {
-				String valueString =  arrayValues.getString(idValue);
-				if (!valuesList.contains(valueString)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-*/
 }
