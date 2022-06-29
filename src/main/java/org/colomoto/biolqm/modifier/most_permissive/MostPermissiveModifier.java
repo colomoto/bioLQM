@@ -104,7 +104,18 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
             newDDM.free(tmp2);
 
             // Rules v3
-            
+            tmp1 = MDDBaseOperators.AND.combine(newDDM, true_1, true_2);
+            tmp2 = MDDBaseOperators.AND.combine(newDDM,false_1,true_3);
+            tmp1 = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp2);
+            tmp2 = MDDBaseOperators.AND.combine(newDDM, false_1, false_2);
+            tmp = MDDBaseOperators.AND.combine(newDDM, false_3, new_rule);
+            tmp = MDDBaseOperators.AND.combine(newDDM, tmp, tmp2);
+            new_rules[3*i + 2] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp);
+            newDDM.free(tmp);
+            newDDM.free(tmp1);
+            newDDM.free(tmp2);
+
+
 
 
 
