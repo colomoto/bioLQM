@@ -17,14 +17,13 @@ import java.util.*;
  *
  * @author
  */
-public class MostPermissiveModifier extends BaseModifier implements IndexMapper {
+public class MostPermissiveModifier extends BaseModifier {
     private final LogicalModel model;
     private MDDManager ddm, newDDM;
     private PathSearcher searcher;
     private List<NodeInfo> core, extra, newCore, newExtra;
     private int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
 
-    private MDDMapper mapper = null;
     private int curTarget = 0;
     private int nbBuffers = 0;
 
@@ -59,20 +58,34 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
         int[] path = searcher.getPath();
 
 
-
-
         // Rewrite all rules in the new MDD manager
         for (int i=0 ; i<coreFunctions.length ; i++) {
+
+            System.out.println("var " + i);
             // get the current rule and assign it to the searcher
             int cur_rule = coreFunctions[i];
             int new_rule = mapRule(cur_rule, path, new_state);
             int new_neg = mapRule(ddm.not(cur_rule), path, new_state);
 
-            int true_1 = newDDM.getNodeVariable(3*i).getNode(0,1);
+            if (i == 2) {
+                int dbg = newDDM.not(new_neg);
+                PathSearcher ns = new PathSearcher(newDDM, 1);
+                int[] dbg_state = ns.setNode(dbg);
+                System.out.println("LAST VAR not new neg:");
+                for (int l: ns) {
+                    for (int c: dbg_state) {
+                        System.out.print(c + " ");
+                    }
+                    System.out.println();
+                    System.out.println();
+                }
+            }
+
+            int true_1 = newDDM.getVariableForKey(extended_components.get(3*i)).getNode(0,1);
             int false_1 = newDDM.not(true_1);
-            int true_2 = newDDM.getNodeVariable(3*i + 1).getNode(0,1);
+            int true_2 = newDDM.getVariableForKey(extended_components.get(3*i + 1)).getNode(0,1);
             int false_2 = newDDM.not(true_2);
-            int true_3 = newDDM.getNodeVariable(3*i + 2).getNode(0,1);
+            int true_3 = newDDM.getVariableForKey(extended_components.get(3*i + 2)).getNode(0,1);
             int false_3 = newDDM.not(true_3);
 
             // Rules v1
@@ -115,11 +128,6 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
             newDDM.free(tmp1);
             newDDM.free(tmp2);
 
-
-
-
-
-
             newDDM.free(true_1);
             newDDM.free(true_2);
             newDDM.free(true_3);
@@ -127,19 +135,9 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
             newDDM.free(false_2);
             newDDM.free(false_3);
 
-
-
-
         }
 
-        // FIXME
-
         return new LogicalModelImpl(extended_components, newDDM, new_rules);
-    }
-
-    @Override
-    public int get(int i) {
-        return i;
     }
 
 
@@ -150,6 +148,9 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
         int new_rule = 0;
 
         for (int v : searcher) {
+            if (v < 1) {
+                continue;
+            }
             int new_idx = 0;
             for (int value : path) {
                 if (value < 0) {
@@ -165,6 +166,16 @@ public class MostPermissiveModifier extends BaseModifier implements IndexMapper 
                     new_state[new_idx++] = -1;
                     new_state[new_idx++] = 1;
                 }
+            }
+
+            // TODO: remove debug
+            System.out.print(v+": ");
+            for (int c: path) {
+                System.out.print(c + " ");
+            }
+            System.out.print(" => ");
+            for (int c: new_state) {
+                System.out.print(c + " ");
             }
             System.out.println();
 
