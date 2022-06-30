@@ -5,9 +5,7 @@ name: Maven deploy
 
 on:
   push:
-    branches: [ snapshot ]
-  pull_request:
-    branches: [ snapshot ]
+    branches: [ publish ]
 
 jobs:
   build:
@@ -26,9 +24,18 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     - name: Build and deploy with Maven
-      run: mvn -B deploy
+      run: mvn -B -P mvn-pkg deploy
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+        cache: 'maven'
+    - name: Build and deploy to github
+      run: mvn -B -P gh-pkg deploy
+      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
