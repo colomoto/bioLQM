@@ -12,14 +12,16 @@ import org.kohsuke.MetaInfServices;
 public class MostPermissiveService extends BaseService implements ModelModifierService {
     /** The identifier used to retrieve this service by name */
     public static final String ID = "most_permissive";
-    private static final String NAME = "transform a model in its most permissive equivalent";
-    private static final String DESCR = " ";
+
+    public static final String[] ALIASES = { "mp" };
+    private static final String NAME = "extension reproducing the most permissive semantics";
+    private static final String DESCR = "(no parameters)";
 
     /**
      * Public constructor which should only be used for service discovery.
      */
     public MostPermissiveService() {
-        super(ID, NAME, DESCR, MultivaluedSupport.MULTIVALUED);
+        super(ID, ALIASES, NAME, DESCR, MultivaluedSupport.MULTIVALUED);
     }
 
 

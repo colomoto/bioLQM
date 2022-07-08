@@ -1,6 +1,5 @@
 package org.colomoto.biolqm.modifier.most_permissive;
 
-import org.colomoto.biolqm.ConnectivityMatrix;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.LogicalModelImpl;
 import org.colomoto.biolqm.NodeInfo;
@@ -9,13 +8,12 @@ import org.colomoto.mddlib.*;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 
-
-
 import java.util.*;
 
 /**
  *
- * @author
+ * @author Laure de Chancel
+ * @author Aurelien Naldi
  */
 public class MostPermissiveModifier extends BaseModifier {
     private final LogicalModel model;
@@ -54,32 +52,19 @@ public class MostPermissiveModifier extends BaseModifier {
         // new MDD manager with the extended variables
         byte[] new_state = new byte[3*coreFunctions.length];
         this.newDDM = new MDDStoreImpl(extended_components, 2);
-//        PathSearcher new_searcher = new PathSearcher(new_ddmanager, 1, Integer.MAX_VALUE);
         int[] path = searcher.getPath();
-
 
         // Rewrite all rules in the new MDD manager
         for (int i=0 ; i<coreFunctions.length ; i++) {
 
-            System.out.println("var " + i);
             // get the current rule and assign it to the searcher
             int cur_rule = coreFunctions[i];
+            int tmp = ddm.not(cur_rule);
             int new_rule = mapRule(cur_rule, path, new_state);
-            int new_neg = mapRule(ddm.not(cur_rule), path, new_state);
-
-            if (i == 2) {
-                int dbg = newDDM.not(new_neg);
-                PathSearcher ns = new PathSearcher(newDDM, 1);
-                int[] dbg_state = ns.setNode(dbg);
-                System.out.println("LAST VAR not new neg:");
-                for (int l: ns) {
-                    for (int c: dbg_state) {
-                        System.out.print(c + " ");
-                    }
-                    System.out.println();
-                    System.out.println();
-                }
-            }
+            int new_neg = mapRule(tmp, path, new_state);
+            int not_new_rule = newDDM.not(new_rule);
+            int not_new_neg = newDDM.not(new_neg);
+            ddm.free(tmp);
 
             int true_1 = newDDM.getVariableForKey(extended_components.get(3*i)).getNode(0,1);
             int false_1 = newDDM.not(true_1);
@@ -94,36 +79,44 @@ public class MostPermissiveModifier extends BaseModifier {
             int r = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp2);
             newDDM.free(tmp1);
             newDDM.free(tmp2);
-            int tmp = MDDBaseOperators.AND.combine(newDDM, false_2, true_3);
-            tmp1 = MDDBaseOperators.AND.combine(newDDM, tmp, false_1);
-            tmp1 = MDDBaseOperators.AND.combine(newDDM, tmp1, new_neg);  // FIXME leak tmp1
-            r = MDDBaseOperators.OR.combine(newDDM, r, tmp1); // FIXME leak r
-            tmp2 = MDDBaseOperators.AND.combine(newDDM, tmp, true_1);
-            tmp2 = MDDBaseOperators.AND.combine(newDDM, tmp2, newDDM.not(new_rule)); // FIXME leak tmp2 and not rule
-            new_rules[3*i] = MDDBaseOperators.OR.combine(newDDM, r, tmp2); // FIXME leak r
-            newDDM.free(tmp);
+            tmp = MDDBaseOperators.AND.combine(newDDM, false_2, true_3);
+            tmp2 = MDDBaseOperators.AND.combine(newDDM, tmp, false_1);
+            tmp1 = MDDBaseOperators.AND.combine(newDDM, tmp2, new_neg);
+            newDDM.free(tmp2);
+            tmp2 = r;
+            r = MDDBaseOperators.OR.combine(newDDM, tmp2, tmp1);
             newDDM.free(tmp1);
+            newDDM.free(tmp2);
+            tmp1 = MDDBaseOperators.AND.combine(newDDM, tmp, true_1);
+            tmp2 = MDDBaseOperators.AND.combine(newDDM, tmp1, not_new_rule);
+            newDDM.free(tmp1);
+            new_rules[3*i] = MDDBaseOperators.OR.combine(newDDM, r, tmp2);
+            newDDM.free(tmp);
             newDDM.free(tmp2);
             newDDM.free(r);
 
             // Rules v2
             tmp = MDDBaseOperators.AND.combine(newDDM, true_1, true_2);
-            tmp1= MDDBaseOperators.OR.combine(newDDM, false_3, newDDM.not(new_neg)); // FIXME leak not neg
-            tmp1= MDDBaseOperators.AND.combine(newDDM, tmp, tmp1);
+            tmp2= MDDBaseOperators.OR.combine(newDDM, false_3, not_new_neg);
+            tmp1= MDDBaseOperators.AND.combine(newDDM, tmp, tmp2);
+            newDDM.free(tmp);
+            newDDM.free(tmp2);
             tmp2 = MDDBaseOperators.AND.combine(newDDM,false_1,true_3);
             new_rules[3*i + 1] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp2);
-            newDDM.free(tmp);
             newDDM.free(tmp1);
             newDDM.free(tmp2);
 
             // Rules v3
-            tmp1 = MDDBaseOperators.AND.combine(newDDM, true_1, true_2);
+            tmp = MDDBaseOperators.AND.combine(newDDM, true_1, true_2);
             tmp2 = MDDBaseOperators.AND.combine(newDDM,false_1,true_3);
-            tmp1 = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp2);
+            tmp1 = MDDBaseOperators.OR.combine(newDDM, tmp, tmp2);
+            newDDM.free(tmp);
+            newDDM.free(tmp2);
             tmp2 = MDDBaseOperators.AND.combine(newDDM, false_1, false_2);
-            tmp = MDDBaseOperators.AND.combine(newDDM, false_3, new_rule);
-            tmp = MDDBaseOperators.AND.combine(newDDM, tmp, tmp2);
+            r = MDDBaseOperators.AND.combine(newDDM, false_3, new_rule);
+            tmp = MDDBaseOperators.AND.combine(newDDM, r, tmp2);
             new_rules[3*i + 2] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp);
+            newDDM.free(r);
             newDDM.free(tmp);
             newDDM.free(tmp1);
             newDDM.free(tmp2);
@@ -135,6 +128,10 @@ public class MostPermissiveModifier extends BaseModifier {
             newDDM.free(false_2);
             newDDM.free(false_3);
 
+            newDDM.free(new_rule);
+            newDDM.free(new_neg);
+            newDDM.free(not_new_rule);
+            newDDM.free(not_new_neg);
         }
 
         return new LogicalModelImpl(extended_components, newDDM, new_rules);
@@ -168,22 +165,10 @@ public class MostPermissiveModifier extends BaseModifier {
                 }
             }
 
-            // TODO: remove debug
-            System.out.print(v+": ");
-            for (int c: path) {
-                System.out.print(c + " ");
-            }
-            System.out.print(" => ");
-            for (int c: new_state) {
-                System.out.print(c + " ");
-            }
-            System.out.println();
-
             // Build a MDD for this condition and add it to the new rule
             // do not forget to free the old MDDs
             int mdd_extended_condition = newDDM.nodeFromState(new_state, 1);
             int tmp = MDDBaseOperators.OR.combine(newDDM, new_rule, mdd_extended_condition);
-
             newDDM.free(mdd_extended_condition);
             newDDM.free(new_rule);
             new_rule = tmp;
