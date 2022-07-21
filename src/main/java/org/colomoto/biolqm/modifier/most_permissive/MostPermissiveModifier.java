@@ -8,8 +8,8 @@ import org.colomoto.mddlib.*;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 
+import java.util.Arrays;
 import java.util.*;
-
 /**
  *
  * @author Laure de Chancel
@@ -21,7 +21,7 @@ public class MostPermissiveModifier extends BaseModifier {
     private PathSearcher searcher;
     private List<NodeInfo> core, extra, newCore, newExtra;
     private int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
-
+    private boolean[] extended = new boolean[coreFunctions.length];
     private MappedIndex[] mapping;
 
 
@@ -30,7 +30,26 @@ public class MostPermissiveModifier extends BaseModifier {
 
     public MostPermissiveModifier(LogicalModel model) {
         this.model = model;
+        this.extended = extended;
+        Arrays.fill(extended, true);
     }
+
+    public void SelectComponents (List<String> extend_names) {
+        this.extended = extended;
+        Arrays.fill(extended, false);
+        List<String> composant_names = new ArrayList();
+        for (NodeInfo ni: core){
+            composant_names.add(ni.getNodeID());
+        }
+
+        for (String n: extend_names){
+            if (composant_names.contains(n)) {
+                int index = composant_names.indexOf(n);
+                Arrays.fill(extended, index, index +1, true);
+        }
+        }
+    }
+
 
     @Override
     public LogicalModel performTask() {
@@ -41,12 +60,10 @@ public class MostPermissiveModifier extends BaseModifier {
         this.coreFunctions = model.getLogicalFunctions();
         this.extraFunctions = model.getExtraLogicalFunctions();
         this.searcher = new PathSearcher(this.ddm);
-
-        // TODO: select the subset of extended components
-        boolean[] extended = new boolean[coreFunctions.length];
-        Arrays.fill(extended, true);
-        
         this.mapping = new MappedIndex[coreFunctions.length];
+
+        //TODO : add a 'if' that calls SelectComponents on a list if a list is given in commandline
+
         List<NodeInfo> extended_components = new ArrayList<>();
         int index = 0;
         for (NodeInfo ni: core) {
@@ -202,6 +219,10 @@ public class MostPermissiveModifier extends BaseModifier {
         return new_rule;
     }
 
+
+    public void setParameters(String[] options) {
+
+    }
 }
 
 class MappedIndex {
@@ -213,3 +234,4 @@ class MappedIndex {
         this.extended = extended;
     }
 }
+
