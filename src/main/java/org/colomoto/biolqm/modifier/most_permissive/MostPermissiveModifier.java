@@ -8,8 +8,8 @@ import org.colomoto.mddlib.*;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 
+import java.util.Arrays;
 import java.util.*;
-
 /**
  *
  * @author Laure de Chancel
@@ -21,13 +21,35 @@ public class MostPermissiveModifier extends BaseModifier {
     private PathSearcher searcher;
     private List<NodeInfo> core, extra, newCore, newExtra;
     private int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
+    private boolean[] extended = new boolean[coreFunctions.length];
+    private MappedIndex[] mapping;
+
 
     private int curTarget = 0;
     private int nbBuffers = 0;
 
     public MostPermissiveModifier(LogicalModel model) {
         this.model = model;
+        this.extended = extended;
+        Arrays.fill(extended, true);
     }
+
+    public void SelectComponents (List<String> extend_names) {
+        this.extended = extended;
+        Arrays.fill(extended, false);
+        List<String> composant_names = new ArrayList();
+        for (NodeInfo ni: core){
+            composant_names.add(ni.getNodeID());
+        }
+
+        for (String n: extend_names){
+            if (composant_names.contains(n)) {
+                int index = composant_names.indexOf(n);
+                Arrays.fill(extended, index, index +1, true);
+        }
+        }
+    }
+
 
     @Override
     public LogicalModel performTask() {
@@ -38,39 +60,56 @@ public class MostPermissiveModifier extends BaseModifier {
         this.coreFunctions = model.getLogicalFunctions();
         this.extraFunctions = model.getExtraLogicalFunctions();
         this.searcher = new PathSearcher(this.ddm);
+        this.mapping = new MappedIndex[coreFunctions.length];
 
+        //TODO : add a 'if' that calls SelectComponents on a list if a list is given in commandline
 
         List<NodeInfo> extended_components = new ArrayList<>();
+        int index = 0;
         for (NodeInfo ni: core) {
-            extended_components.add(new NodeInfo(ni.getNodeID()+"_a"));
-            extended_components.add(new NodeInfo(ni.getNodeID()+"_b"));
-            extended_components.add(new NodeInfo(ni.getNodeID()+"_c"));
+            boolean is_extended = extended[index];
+            mapping[index] = new MappedIndex(extended_components.size(), is_extended);
+            if (is_extended) {
+                extended_components.add(new NodeInfo(ni.getNodeID()+"_a"));
+                extended_components.add(new NodeInfo(ni.getNodeID()+"_b"));
+                extended_components.add(new NodeInfo(ni.getNodeID()+"_c"));
+            } else {
+                extended_components.add(new NodeInfo(ni.getNodeID()));
+            }
+            index++;
         }
 
         int[] new_rules = new int[extended_components.size()];
 
         // new MDD manager with the extended variables
-        byte[] new_state = new byte[3*coreFunctions.length];
+        byte[] new_state = new byte[new_rules.length];
         this.newDDM = new MDDStoreImpl(extended_components, 2);
         int[] path = searcher.getPath();
 
         // Rewrite all rules in the new MDD manager
-        for (int i=0 ; i<coreFunctions.length ; i++) {
+        for (int idx=0 ; idx<coreFunctions.length ; idx++) {
+            int cur_rule = coreFunctions[idx];
+            int new_rule = mapRule(cur_rule, path, new_state);
+
+            // Check if the component is extended and its mapping position
+            MappedIndex mi = this.mapping[idx];
+            if (!mi.extended) {
+                new_rules[mi.index] = new_rule;
+                continue;
+            }
 
             // get the current rule and assign it to the searcher
-            int cur_rule = coreFunctions[i];
             int tmp = ddm.not(cur_rule);
-            int new_rule = mapRule(cur_rule, path, new_state);
             int new_neg = mapRule(tmp, path, new_state);
             int not_new_rule = newDDM.not(new_rule);
             int not_new_neg = newDDM.not(new_neg);
             ddm.free(tmp);
 
-            int true_1 = newDDM.getVariableForKey(extended_components.get(3*i)).getNode(0,1);
+            int true_1 = newDDM.getVariableForKey(extended_components.get(mi.index)).getNode(0,1);
             int false_1 = newDDM.not(true_1);
-            int true_2 = newDDM.getVariableForKey(extended_components.get(3*i + 1)).getNode(0,1);
+            int true_2 = newDDM.getVariableForKey(extended_components.get(mi.index + 1)).getNode(0,1);
             int false_2 = newDDM.not(true_2);
-            int true_3 = newDDM.getVariableForKey(extended_components.get(3*i + 2)).getNode(0,1);
+            int true_3 = newDDM.getVariableForKey(extended_components.get(mi.index + 2)).getNode(0,1);
             int false_3 = newDDM.not(true_3);
 
             // Rules v1
@@ -90,7 +129,7 @@ public class MostPermissiveModifier extends BaseModifier {
             tmp1 = MDDBaseOperators.AND.combine(newDDM, tmp, true_1);
             tmp2 = MDDBaseOperators.AND.combine(newDDM, tmp1, not_new_rule);
             newDDM.free(tmp1);
-            new_rules[3*i] = MDDBaseOperators.OR.combine(newDDM, r, tmp2);
+            new_rules[mi.index] = MDDBaseOperators.OR.combine(newDDM, r, tmp2);
             newDDM.free(tmp);
             newDDM.free(tmp2);
             newDDM.free(r);
@@ -102,7 +141,7 @@ public class MostPermissiveModifier extends BaseModifier {
             newDDM.free(tmp);
             newDDM.free(tmp2);
             tmp2 = MDDBaseOperators.AND.combine(newDDM,false_1,true_3);
-            new_rules[3*i + 1] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp2);
+            new_rules[mi.index + 1] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp2);
             newDDM.free(tmp1);
             newDDM.free(tmp2);
 
@@ -115,7 +154,7 @@ public class MostPermissiveModifier extends BaseModifier {
             tmp2 = MDDBaseOperators.AND.combine(newDDM, false_1, false_2);
             r = MDDBaseOperators.AND.combine(newDDM, false_3, new_rule);
             tmp = MDDBaseOperators.AND.combine(newDDM, r, tmp2);
-            new_rules[3*i + 2] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp);
+            new_rules[mi.index + 2] = MDDBaseOperators.OR.combine(newDDM, tmp1, tmp);
             newDDM.free(r);
             newDDM.free(tmp);
             newDDM.free(tmp1);
@@ -148,20 +187,24 @@ public class MostPermissiveModifier extends BaseModifier {
             if (v < 1) {
                 continue;
             }
-            int new_idx = 0;
+            int idx = 0;
             for (int value : path) {
+                MappedIndex mi = mapping[idx];
+                idx++;
+                if (!mi.extended) {
+                    new_state[mi.index] = (byte)value;
+                    continue;
+                }
+                new_state[mi.index] = -1;
                 if (value < 0) {
-                    new_state[new_idx++] = -1;
-                    new_state[new_idx++] = -1;
-                    new_state[new_idx++] = -1;
+                    new_state[mi.index + 1] = -1;
+                    new_state[mi.index + 2] = -1;
                 } else if (value == 0) {
-                    new_state[new_idx++] = -1;
-                    new_state[new_idx++] = 0;
-                    new_state[new_idx++] = -1;
+                    new_state[mi.index + 1] = 0;
+                    new_state[mi.index + 2] = -1;
                 } else {
-                    new_state[new_idx++] = -1;
-                    new_state[new_idx++] = -1;
-                    new_state[new_idx++] = 1;
+                    new_state[mi.index + 1] = -1;
+                    new_state[mi.index + 2] = 1;
                 }
             }
 
@@ -176,5 +219,19 @@ public class MostPermissiveModifier extends BaseModifier {
         return new_rule;
     }
 
+
+    public void setParameters(String[] options) {
+
+    }
+}
+
+class MappedIndex {
+    int index;
+    boolean extended;
+
+    public MappedIndex(int index, boolean extended) {
+        this.index = index;
+        this.extended = extended;
+    }
 }
 
