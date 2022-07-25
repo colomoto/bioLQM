@@ -21,7 +21,7 @@ public class MostPermissiveModifier extends BaseModifier {
     private PathSearcher searcher;
     private List<NodeInfo> core, extra, newCore, newExtra;
     private int[] coreFunctions, extraFunctions, newCoreFunctions, newExtraFunctions;
-    private boolean[] extended = new boolean[coreFunctions.length];
+    private boolean[] extended;
     private MappedIndex[] mapping;
 
 
@@ -30,12 +30,13 @@ public class MostPermissiveModifier extends BaseModifier {
 
     public MostPermissiveModifier(LogicalModel model) {
         this.model = model;
-        this.extended = extended;
+        this.core = model.getComponents();
+        this.coreFunctions = model.getLogicalFunctions();
+        this.extended = new boolean[coreFunctions.length];
         Arrays.fill(extended, true);
     }
 
-    public void SelectComponents (List<String> extend_names) {
-        this.extended = extended;
+    public void selectComponents (List<String> extend_names) {
         Arrays.fill(extended, false);
         List<String> composant_names = new ArrayList();
         for (NodeInfo ni: core){
@@ -62,7 +63,7 @@ public class MostPermissiveModifier extends BaseModifier {
         this.searcher = new PathSearcher(this.ddm);
         this.mapping = new MappedIndex[coreFunctions.length];
 
-        //TODO : add a 'if' that calls SelectComponents on a list if a list is given in commandline
+        //TODO : add a 'if' that calls selectComponents on a list if a list is given in commandline
 
         List<NodeInfo> extended_components = new ArrayList<>();
         int index = 0;
@@ -221,7 +222,7 @@ public class MostPermissiveModifier extends BaseModifier {
 
 
     public void setParameters(String[] options) {
-
+        this.selectComponents(Arrays.asList(options));
     }
 }
 
