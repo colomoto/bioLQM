@@ -27,6 +27,13 @@ public class URI {
 			return this.toString();
 		}
 	}
+
+	public boolean matches(String col, String value) {
+		if ((this.collection == null && col != null) || (this.collection != null && !this.collection.name.equals(col))) {
+			return false;
+		}
+		return ((value == null && this.value == null) || (value != null && value.equals(this.value)));
+	}
 	
 	public Collection getCollection() {
 		return this.collection;

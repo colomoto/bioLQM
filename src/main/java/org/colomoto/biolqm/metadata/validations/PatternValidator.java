@@ -1,5 +1,7 @@
 package org.colomoto.biolqm.metadata.validations;
 
+import java.util.AbstractMap;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +10,7 @@ public class PatternValidator {
     private static final Pattern EMAIL = Pattern.compile("^(.+)@(.+)$");
     private static final Pattern ORCID = Pattern.compile("\\d{4}-\\d{4}-\\d{4}-\\d{4}");
 
+    private static final Pattern QUALIFIER = Pattern.compile("^(?:@)([a-zA-Z][a-zA-Z0-9_]*)$");
     private static final Pattern TAG = Pattern.compile("^(?:#|tag:)([a-zA-Z][a-zA-Z0-9]*)$");
     private static final Pattern KEYVAL = Pattern.compile("^(?:keyvalue:)?([a-zA-Z][a-zA-Z0-9]*)=([a-zA-Z0-9]+)$");
     private static final Pattern COLLECTION = Pattern.compile("^([a-zA-Z][a-zA-Z0-9]*):(.+)$");
@@ -20,35 +23,73 @@ public class PatternValidator {
         return s ==  null || ORCID.matcher(s).matches();
     }
 
-    public static Matcher matchTag(String s) {
-        if (s == null) {
-            return TAG.matcher("");
+    public static Optional<String> asTag(String s) {
+        if (s == null || s.isBlank()) {
+            return Optional.empty();
         }
-        return TAG.matcher(s);
+        Matcher m = TAG.matcher(s);
+        if (m.matches()) {
+            return Optional.of(m.group(1));
+        }
+        return Optional.empty();
+    }
+    public static Optional<AbstractMap.SimpleImmutableEntry<String,String>> asKeyValue(String s) {
+        if (s == null || s.isBlank()) {
+            return Optional.empty();
+        }
+        Matcher m = KEYVAL.matcher(s);
+        if (m.matches()) {
+            return Optional.of(new AbstractMap.SimpleImmutableEntry<>(m.group(1), m.group(2)));
+        }
+        return Optional.empty();
     }
 
-    public static Matcher matchKeyValue(String s) {
-        if (s == null) {
-            return KEYVAL.matcher("");
+    public static Optional<AbstractMap.SimpleImmutableEntry<String,String>> asCollectionEntry(String s) {
+        if (s == null || s.isBlank()) {
+            return Optional.empty();
         }
-        return KEYVAL.matcher(s);
+        Matcher m = COLLECTION.matcher(s);
+        if (m.matches()) {
+            return Optional.of(new AbstractMap.SimpleImmutableEntry<>(m.group(1), m.group(2)));
+        }
+        return Optional.empty();
     }
 
-    public static Matcher matchCollection(String s) {
-        if (s == null) {
-            return COLLECTION.matcher("");
+    public static Optional<String> asQualifier(String s) {
+        if (s == null || s.isBlank()) {
+            return Optional.empty();
         }
-        return COLLECTION.matcher(s);
+        Matcher m = QUALIFIER.matcher(s);
+        if (m.matches()) {
+            return Optional.of(m.group(1));
+        }
+        return Optional.empty();
     }
 
-
-    public void guessAnnotationType(String s) {
-        if (s == null || s.isEmpty()) {
-            return;
+    public static Type validate(String s) {
+        if (s == null || s.isBlank()) {
+            return Type.EMPTY;
         }
 
         if (TAG.matcher(s).matches()) {
-
+            return Type.TAG;
         }
+
+        if (QUALIFIER.matcher(s).matches()) {
+            return Type.QUALIFIER;
+        }
+
+        if (KEYVAL.matcher(s).matches()) {
+            return Type.KEY_VALUE;
+        }
+        if (COLLECTION.matcher(s).matches()) {
+            return Type.COLLECTION;
+        }
+
+        return Type.INVALID;
+    }
+
+    public enum Type {
+        QUALIFIER, TAG, KEY_VALUE, COLLECTION, INVALID, EMPTY
     }
 }

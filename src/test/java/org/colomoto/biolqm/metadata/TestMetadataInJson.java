@@ -26,13 +26,12 @@ public class TestMetadataInJson {
 		// we add some metadata to the model
 		Annotator<NodeInfo> annot = model.getAnnotator();
 
-		annot.onModel()
-			.openBlock("customQualifier")
-			.tag("word1")
-			.tag("word2")
-			.put("key1", "val11")
-			.put("key1", "value12")
-			.put("key2", "val21");
+		annot.onModel().openBlock("customQualifier");
+		annot.annotate("#word1");
+		annot.annotate("#word2");
+		annot.annotate("key1 = val11");
+		annot.annotate("key1=value12");
+		annot.annotate("key2=val21");
 
 //		annot.nested()
 //			.qualify("is")
@@ -55,12 +54,12 @@ public class TestMetadataInJson {
 		// we add some metadata to a node
 		NodeInfo ni = model.getComponent("p53");
 		if (ni != null) {
-			annot.node(ni).tag("output");
+			annot.node(ni).annotate("#output");
 		}
 
 		NodeInfo ni_mdm2 = model.getComponent("Mdm2cyt");
 		if (ni != null && ni_mdm2 != null) {
-			annot.edge(ni, ni_mdm2).tag("test");
+			annot.edge(ni, ni_mdm2).annotate("#test");
 		}
 		
 		// we load the same model and update its annotations with a json containing exactly the same annotations that we previously add

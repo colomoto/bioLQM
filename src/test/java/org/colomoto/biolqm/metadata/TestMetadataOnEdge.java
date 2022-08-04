@@ -54,19 +54,17 @@ public class TestMetadataOnEdge {
 
 		Annotator<NodeInfo> annot = model.getAnnotator();
 
-		annot.edge(nodep53, nodeMdm2cyt)
-			.openBlock("customQualifier")
-			.tag("word1")
-			.tag("word2")
-			.put("key1", "val11")
-			.put("key1", "value12")
-			.put("key2", "val21");
+		annot.edge(nodep53, nodeMdm2cyt).openBlock("customQualifier");
+		annot.annotate("#word1");
+		annot.annotate("#word2");
+		annot.annotate("key1 = val11");
+		annot.annotate("key1=value12");
+		annot.annotate("key2=val21");
 
-		annot.edge(nodeDNAdam, nodeMdm2cyt)
-			.openBlock("is")
-			.identifier("uniprot", "P0DP23")
-			.openBlock("is")
-			.identifier("doi", "10.15252/msb.20199110");
+		annot.edge(nodeDNAdam, nodeMdm2cyt).openBlock("is");
+		annot.annotate("uniprot:P0DP23");
+		annot.openBlock("is");
+		annot.annotate("doi:10.15252/msb.20199110");
 
 
 		String output = dir.getAbsolutePath()+File.separator+"minimal_example_edges_annotated.json";

@@ -6,7 +6,7 @@ import org.colomoto.biolqm.service.LQMServiceManager;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.TestHelper;
 
-import java.util.regex.Matcher;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,20 +28,19 @@ public class TestMetadataInSBML {
 //		LegalAnnotation legal = annot.getLegal();
 //		legal.setCreated("2021-03-08");
 
-		annot.onModel()
-			.openBlock("customQualifier")
-			.tag("word1")
-			.tag("word2")
-			.put("key1", "val11")
-			.put("key1", "value12")
-			.put("key2", "val21");
+		annot.onModel().openBlock("customQualifier");
+		annot.annotate("#word1");
+		annot.annotate("#word2");
+		annot.annotate("key1 = val11");
+		annot.annotate("key1=value12");
+		annot.annotate("key2=val21");
 //		annot.nested()
 //			.qualify("is")
 //			.identifier("uniprot", "P0DP23");
 
 		annot.onModel()
 			.openBlock("is")
-			.identifier("doi", "10.15252/msb.20199110");
+			.annotate("doi:10.15252/msb.20199110");
 
 //		annot.nested()
 //			.qualify("hasTag")
@@ -52,7 +51,7 @@ public class TestMetadataInSBML {
 		// we add some metadata to a node
 		NodeInfo ni = model.getComponent("p53");
 		if (ni != null) {
-			annot.node(ni).tag("output");
+			annot.node(ni).annotate("#output");
 		}
 
 		// we save the model
@@ -68,17 +67,17 @@ public class TestMetadataInSBML {
 
 	@Test
 	public void testMatching() {
-		Matcher m = PatternValidator.matchTag("#pipo");
-		assertTrue(m.matches());
-		assertEquals("pipo", m.group(1));
+		Optional<String> tag = PatternValidator.asTag("#pipo");
+		assertTrue(tag.isPresent());
+		assertEquals("pipo", tag.get());
 
-		m = PatternValidator.matchTag("tag:pipo");
-		assertTrue(m.matches());
-		assertEquals("pipo", m.group(1));
+		tag = PatternValidator.asTag("tag:pipo");
+		assertTrue(tag.isPresent());
+		assertEquals("pipo", tag.get());
 
-		assertFalse(PatternValidator.matchTag("tg:pipo").matches());
-		assertFalse(PatternValidator.matchTag("col:pipo").matches());
-		assertFalse(PatternValidator.matchTag("pipo").matches());
+		assertFalse(PatternValidator.asTag("tg:pipo").isPresent());
+		assertFalse(PatternValidator.asTag("col:pipo").isPresent());
+		assertFalse(PatternValidator.asTag("pipo").isPresent());
 
 	}
 }

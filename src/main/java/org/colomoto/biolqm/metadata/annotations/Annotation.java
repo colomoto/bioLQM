@@ -1,9 +1,9 @@
 package org.colomoto.biolqm.metadata.annotations;
 
 import org.colomoto.biolqm.metadata.constants.Qualifier;
+import org.colomoto.biolqm.metadata.validations.PatternValidator;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import scala.util.parsing.combinator.testing.Str;
 
 import java.util.*;
 
@@ -66,6 +66,35 @@ public class Annotation {
 			json.put("keysvalues", keysValues);
 		}
 		return json;
+	}
+
+	public boolean remove(String annotation) {
+		if (annotation == null || annotation.isBlank()) {
+			return false;
+		}
+
+		Optional<String> tag = PatternValidator.asTag(annotation);
+		if (tag.isPresent()) {
+			return this.tags.remove(tag.get());
+		}
+
+		Optional<AbstractMap.SimpleImmutableEntry<String,String>> m = PatternValidator.asKeyValue(annotation);
+		if (m.isPresent()) {
+			return this.keyValues.remove(m.get().getKey(), m.get().getValue());
+		}
+
+		m = PatternValidator.asCollectionEntry(annotation);
+		if (m.isPresent()) {
+			String col = m.get().getKey();
+			String value = m.get().getValue();
+			for (URI cur: this.uris) {
+				if (cur.matches(col, value)) {
+					return this.uris.remove(cur);
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public String toHTML() {

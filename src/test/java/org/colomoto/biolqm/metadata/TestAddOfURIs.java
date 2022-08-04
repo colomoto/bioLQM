@@ -31,12 +31,12 @@ public class TestAddOfURIs {
 		// we add some metadata to the model
 		Annotator annot = model.getAnnotator();
 
-		annot.onModel().openBlock("is")
-			.annotate("uniprot:P0DP23")
-			.annotate("urn:miriam:pubmed:31226023")
-			.annotate("urn:casq:function:Orf9b")
-			.annotate("https://www.uniprot.org/uniprot/P0DP23")
-			.annotate("https://identifiers.org/doi:10.1093/ajae/aaq063");
+		annot.onModel().openBlock("is");
+		annot.annotate("uniprot:P0DP23");
+		annot.annotate("urn:miriam:pubmed:31226023");
+		annot.annotate("urn:casq:function:Orf9b");
+		annot.annotate("https://www.uniprot.org/uniprot/P0DP23");
+		annot.annotate("https://identifiers.org/doi:10.1093/ajae/aaq063");
 
 
 		// FIXME: load and compare metadata content

@@ -9,10 +9,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
+import java.util.*;
 
 
 /**
@@ -33,7 +30,7 @@ public class Annotator<N> {
 	private Object selected = null;
 	private Metadata cur_mdt = null;
 	private String cur_qualifier = null;
-	private Annotation cur_annotation = null;
+	private int idx_annotation = 0;
 
 	public Annotator(AnnotationModule mod) {
 		this.mod = mod;
@@ -67,6 +64,19 @@ public class Annotator<N> {
 	}
 
 	private Annotation ensureAnnotation() {
+		Annotation annot = this.getSelectedAnnotation();
+		if (annot != null) {
+			if (this.cur_qualifier == null) {
+				return annot;
+			}
+			Qualifier squal = annot.qualifier;
+			if (squal == null && this.cur_qualifier.isBlank()) {
+				return annot;
+			}
+			if (squal != null && squal.term.equals(this.cur_qualifier)) {
+				return annot;
+			}
+		}
 		return this.ensureAnnotation(this.cur_qualifier);
 	}
 
@@ -79,7 +89,7 @@ public class Annotator<N> {
 		this.target = target;
 		this.selected = selected;
 		this.cur_mdt = mod.getAnnotation(selected);
-		this.cur_annotation = null;
+		this.idx_annotation = 0;
 		this.cur_qualifier = null;
 		return this;
 	}
@@ -111,17 +121,51 @@ public class Annotator<N> {
 	public boolean selectBlock(int index) {
 		List<Annotation> annotations = this.ensureMetadata().annotations();
 		if (index < 0 || index >= annotations.size()) {
-			cur_annotation = null;
+			idx_annotation = -1;
 			return false;
 		}
-		cur_annotation = annotations.get(index);
+		idx_annotation = index;
 		return true;
+	}
+
+	public Annotation getSelectedAnnotation() {
+		List<Annotation> annots = this.annotations();
+		if (annots == null) {
+			this.idx_annotation = 0;
+			return null;
+		}
+
+		if (this.idx_annotation < 0) {
+			this.idx_annotation = 0;
+		}
+		if (this.idx_annotation >= annots.size()) {
+			return null;
+		}
+		return annots.get(this.idx_annotation);
+	}
+
+	public boolean selectPrevious() {
+		if (this.idx_annotation > 0) {
+			this.idx_annotation--;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean selectNext() {
+		List<Annotation> annots = this.annotations();
+		if (annots != null && this.idx_annotation < annots.size() - 1) {
+			this.idx_annotation++;
+			return true;
+		}
+		return false;
 	}
 
 	public Annotator<N> openBlock(String qualifier) {
 		Qualifier qualified = this.mod.ensureQualifier(this.target, qualifier);
-		this.cur_annotation = new Annotation(qualified);
-		this.ensureMetadata().annotations().add(this.cur_annotation);
+		List<Annotation> annots = this.ensureMetadata().annotations();
+		annots.add(new Annotation(qualified));
+		this.idx_annotation = annots.size() - 1;
 		return this;
 	}
 
@@ -135,51 +179,42 @@ public class Annotator<N> {
 	 *
 	 * @param s a string representing the annotation
 	 */
-	public Annotator<N> annotate(String s) {
-		Matcher m = PatternValidator.matchTag(s);
-		if (m.matches()) {
-			return this.tag(m.group(1));
+	public boolean annotate(String s) {
+		Optional<String> tag = PatternValidator.asTag(s);
+		if (tag.isPresent()) {
+			if (this.ensureAnnotation().tags.add(tag.get())) {
+				this.mod.useTag(tag.get());
+			}
+			return true;
 		}
 
-		m = PatternValidator.matchKeyValue(s);
-		if (m.matches()) {
-			return this.put(m.group(1), m.group(2));
+		Optional<AbstractMap.SimpleImmutableEntry<String,String>> m = PatternValidator.asKeyValue(s);
+		if (m.isPresent()) {
+			if (this.ensureAnnotation().addKeyValue(m.get().getKey(), m.get().getValue())) {
+				this.mod.useKey(m.get().getKey());
+			}
+			return true;
 		}
 
-		m = PatternValidator.matchCollection(s);
-		if (m.matches()) {
-			return this.identifier(m.group(1), m.group(2));
+		m = PatternValidator.asCollectionEntry(s);
+		if (m.isPresent()) {
+			Collection collec = this.mod.getCollection(m.get().getKey());
+			if (collec == null) {
+				if (this.ensureAnnotation().addKeyValue(m.get().getKey(), m.get().getValue())) {
+					this.mod.useKey(m.get().getKey());
+				}
+			} else {
+				this.ensureAnnotation().uris.add(new URI(collec, m.get().getValue()));
+			}
+			return true;
 		}
 
 		// TODO: error
 		System.err.println("Unrecognized annotation");
-		return this;
+		return false;
 	}
 
 	// Fill annotations
-	public Annotator<N> tag(String tag) {
-		if (this.ensureAnnotation().tags.add(tag)) {
-			this.mod.useTag(tag);
-		}
-		return this;
-	}
-
-	public Annotator<N> put(String key, String value) {
-		if (this.ensureAnnotation().addKeyValue(key, value)) {
-			this.mod.useKey(key);
-		}
-		return this;
-	}
-
-	public Annotator<N> identifier(String col, String entry) {
-		Collection collec = this.mod.getCollection(col);
-		if (collec == null) {
-			this.put(col, entry);
-		} else {
-			this.ensureAnnotation().uris.add(new URI(collec, entry));
-		}
-		return this;
-	}
 
 	public List<Annotation> annotations() {
 		Metadata mdt = getMetadata();
@@ -393,12 +428,12 @@ public class Annotator<N> {
 
 			JSONArray tags = alt.optJSONArray("tags");
 			if (tags != null) {
-				tags.forEach(t -> tag(t.toString()));
+				tags.forEach(t -> annotate("#" + t.toString()));
 			}
 
 			JSONObject kv = alt.optJSONObject("keysvalues");
 			if (kv != null) {
-				kv.keySet().forEach(k -> put(k, kv.getString(k)));
+				kv.keySet().forEach(k -> annotate(k + ":" + kv.getString(k)));
 			}
 		}
 	}
