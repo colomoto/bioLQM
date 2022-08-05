@@ -453,6 +453,20 @@ public class Annotator<N> {
 				tags.forEach(t -> annotate("#" + t.toString()));
 			}
 
+			JSONArray uris = alt.optJSONArray("uris");
+			if (uris != null) {
+				uris.forEach(t -> {
+					JSONObject j = (JSONObject)t;
+					String type = j.getString("type");
+					String content = j.getString("content");
+					if (type != null) {
+						annotate(type + ":" + content);
+					} else {
+						annotate(content);
+					}
+				});
+			}
+
 			JSONObject kv = alt.optJSONObject("keysvalues");
 			if (kv != null) {
 				kv.keySet().forEach(k -> annotate(k + ":" + kv.getString(k)));
