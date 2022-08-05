@@ -2,7 +2,9 @@ package org.colomoto.biolqm.metadata;
 
 import org.colomoto.biolqm.metadata.annotations.*;
 import org.colomoto.biolqm.metadata.constants.Collection;
+import org.colomoto.biolqm.metadata.constants.CollectionsAvailable;
 import org.colomoto.biolqm.metadata.constants.Qualifier;
+import org.colomoto.biolqm.metadata.constants.QualifiersAvailable;
 import org.colomoto.biolqm.metadata.validations.PatternValidator;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -118,14 +120,34 @@ public class Annotator<N> {
 		return this.setSelection(AnnotationTarget.Interaction, edge);
 	}
 
-	public boolean selectBlock(int index) {
-		List<Annotation> annotations = this.ensureMetadata().annotations();
-		if (index < 0 || index >= annotations.size()) {
-			idx_annotation = -1;
+	public QualifiersAvailable availableQualifiers() {
+		return this.mod.availableQualifiers();
+	}
+
+	public CollectionsAvailable availableCollections() {
+		return this.mod.availableCollections();
+	}
+	public Set<String> availableTags() {
+		return this.mod.availableTags();
+	}
+	public Set<String> availableKeys() {
+		return this.mod.availableKeys();
+	}
+
+	public boolean selectBlock(Annotation annot) {
+		List<Annotation> annotations = this.annotations();
+		if (annotations == null) {
 			return false;
 		}
-		idx_annotation = index;
-		return true;
+		int idx = 0;
+		for (Annotation cur: annotations) {
+			if (cur.equals(annot)) {
+				this.idx_annotation = idx;
+				return true;
+			}
+			idx++;
+		}
+		return false;
 	}
 
 	public Annotation getSelectedAnnotation() {

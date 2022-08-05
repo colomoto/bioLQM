@@ -2,12 +2,11 @@ package org.colomoto.biolqm.metadata;
 
 import org.colomoto.biolqm.metadata.annotations.*;
 
-import org.colomoto.biolqm.metadata.constants.Collection;
-import org.colomoto.biolqm.metadata.constants.ModelConstants;
-import org.colomoto.biolqm.metadata.constants.Qualifier;
+import org.colomoto.biolqm.metadata.constants.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * One instance per model containing all the elements relative to the annotation process
@@ -98,5 +97,18 @@ public class AnnotationModule {
 
 	public Iterable<Object> annotated() {
 		return this.annotations.keySet();
+	}
+
+	public QualifiersAvailable availableQualifiers() {
+		return this.modelConstants.getInstanceOfQualifiersAvailable();
+	}
+	public CollectionsAvailable availableCollections() {
+		return this.modelConstants.getInstanceOfCollectionsAvailable();
+	}
+	public Set<String> availableTags() {
+		return this.modelConstants.availableTags();
+	}
+	public Set<String> availableKeys() {
+		return this.modelConstants.availableKeys();
 	}
 }

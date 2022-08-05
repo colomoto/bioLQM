@@ -10,7 +10,7 @@ public class PatternValidator {
     private static final Pattern EMAIL = Pattern.compile("^(.+)@(.+)$");
     private static final Pattern ORCID = Pattern.compile("\\d{4}-\\d{4}-\\d{4}-\\d{4}");
 
-    private static final Pattern QUALIFIER = Pattern.compile("^(?:@)([a-zA-Z][a-zA-Z0-9_]*)$");
+    private static final Pattern QUALIFIER = Pattern.compile("^(?:@)([a-zA-Z][a-zA-Z0-9_]*)?$");
     private static final Pattern TAG = Pattern.compile("^(?:#|tag:)([a-zA-Z][a-zA-Z0-9]*)$");
     private static final Pattern KEYVAL = Pattern.compile("^(?:keyvalue:)?([a-zA-Z][a-zA-Z0-9]*)=([a-zA-Z0-9]+)$");
     private static final Pattern COLLECTION = Pattern.compile("^([a-zA-Z][a-zA-Z0-9]*):(.+)$");
@@ -61,7 +61,11 @@ public class PatternValidator {
         }
         Matcher m = QUALIFIER.matcher(s);
         if (m.matches()) {
-            return Optional.of(m.group(1));
+            String q = m.group(1);
+            if (q == null) {
+                q = "";
+            }
+            return Optional.of(q);
         }
         return Optional.empty();
     }

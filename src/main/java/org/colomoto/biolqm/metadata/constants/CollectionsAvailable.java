@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.InputStream;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * One instance per model opened to store the patterns of the collections used in uris
@@ -41,5 +43,12 @@ public class CollectionsAvailable {
 		}
 		return COLLECTIONS.get(name);
 	}
+
+	public Stream<Collection> available(String filter) {
+		Stream<Collection> stream = COLLECTIONS.values().stream();
+		if (filter == null || filter.isEmpty()) {
+			return stream;
+		}
+		return stream.filter(q -> q.name.matches(filter));
+	}
 }
-	
