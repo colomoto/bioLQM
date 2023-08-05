@@ -2,6 +2,7 @@ package org.colomoto.biolqm.tool.simulation.random;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 import org.colomoto.biolqm.tool.simulation.grouping.SplittingType;
 import org.colomoto.biolqm.tool.simulation.multiplesuccessor.MultipleSuccessorsUpdater;
 
@@ -18,7 +19,7 @@ public class RandomUpdaterWrapper implements RandomUpdater {
 
     private final MultipleSuccessorsUpdater updater;
     private final Random random = new Random();
-
+    
     public RandomUpdaterWrapper(MultipleSuccessorsUpdater updater) {
         this.updater = updater;
     }
@@ -28,7 +29,7 @@ public class RandomUpdaterWrapper implements RandomUpdater {
         List<byte[]> successors = updater.getSuccessors(state);
 
         if (successors == null || successors.size() == 0) {
-            return null;
+            return null; 
         }
 
         int l = successors.size();
@@ -53,4 +54,10 @@ public class RandomUpdaterWrapper implements RandomUpdater {
     public void setFilter(Map<NodeInfo, SplittingType> filter) {
         updater.setFilter(filter);
     }
+
+    @Override
+	public UpdaterType getType() {
+    	//TODO: wrap inside a random
+    	return this.updater.getType();
+	}
 }

@@ -3,6 +3,7 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 
 import java.util.List;
 
@@ -91,5 +92,9 @@ public class SequentialUpdater extends BaseUpdater implements DeterministicUpdat
 		
         return nextstate;
 	}
-
+	
+	@Override
+	public UpdaterType getType() {
+		return UpdaterType.SEQUENTIAL;
+	}
 }

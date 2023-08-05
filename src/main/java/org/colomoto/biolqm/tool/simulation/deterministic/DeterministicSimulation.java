@@ -31,7 +31,7 @@ public class DeterministicSimulation implements Iterable<byte[]> {
     }
 
     public DeterministicSimulation(DeterministicUpdater updater, byte[] init, int length, int max_steps) {
-        this.updater = updater;
+        this.updater = updater; 
         this.init = init;
         this.length = length;
         this.max_steps = max_steps;
@@ -81,6 +81,7 @@ class StateIterator implements Iterator<byte[]> {
             if (prev == null) {
                 break;
             }
+            // no next
             if ( Arrays.equals(state,prev) ) {
                 byte[] ret = state;
                 state = null;
@@ -98,6 +99,7 @@ class StateIterator implements Iterator<byte[]> {
         if (steps < 1) {
             state = null;
         } else {
+        	// next next
             state = updater.getSuccessor(state);
         }
         steps--;

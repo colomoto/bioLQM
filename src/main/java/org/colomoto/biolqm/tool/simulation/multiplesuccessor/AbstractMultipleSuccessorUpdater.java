@@ -27,7 +27,7 @@ abstract public class AbstractMultipleSuccessorUpdater extends BaseUpdater imple
 
     public List<byte[]> addSuccessor(List<byte[]> successors, byte[] state) {
         if (state == null) {
-            return successors;
+            return successors; 
         }
 
         if (successors == null) {

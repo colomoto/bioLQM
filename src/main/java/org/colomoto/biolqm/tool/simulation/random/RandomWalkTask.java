@@ -10,7 +10,7 @@ public class RandomWalkTask extends AbstractToolTask<RandomWalkSimulation> {
     String updater_config = null;
     byte[] state = null;
     int max_steps = 1000;
-    int seed = -1;
+    int seed = -1; 
 
     public RandomWalkTask(LogicalModel model) {
         super(model);

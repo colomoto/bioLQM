@@ -6,7 +6,7 @@ import org.colomoto.biolqm.NodeInfo;
 import org.colomoto.biolqm.tool.simulation.deterministic.BlockSequentialUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicPriorityUpdater;
 import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
@@ -42,13 +42,12 @@ public class TestOrdering {
         return new LogicalModelImpl(vars, manager, functions);
     }
 
-
     @Test
     public void testOrdering() {
 
         LogicalModel model = getModel();
         String s_grouping = "C[+]:C[-],A:B[+],B[-]";
-        ModelGrouping grouping = new ModelGrouping(model, s_grouping);
+        PCRankGroupsVars grouping = new PCRankGroupsVars(model, s_grouping);
 
         DeterministicUpdater updater = new BlockSequentialUpdater(grouping);
         byte[] state = {0,0,1};
@@ -65,7 +64,6 @@ public class TestOrdering {
 
         next = updater.getSuccessor(next);
         assertNull(next);
-
 
 
         updater = new DeterministicPriorityUpdater(grouping);
