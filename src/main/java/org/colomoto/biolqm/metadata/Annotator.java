@@ -366,9 +366,7 @@ public class Annotator<N> {
 //			metadataModel.importCollectionsMetadata(json.getJSONArray("collections"));
 //		}
 
-		JSONObject jmodel = json.optJSONObject("model");
-		this.onModel().addJSON(jmodel);
-
+		this.onModel().addJSON(json.optJSONObject("model"));
 		readNodesJSON(json.optJSONObject("nodes"), nodeMap);
 		readEdgesJSON(json.optJSONObject("edges"), nodeMap);
 	}
@@ -424,6 +422,9 @@ public class Annotator<N> {
 	}
 
 	private void addJSON(JSONObject json) {
+		if (json ==null) {
+			return;
+		}
 		addJSONNotes(json.optJSONObject("notes"));
 		addJSONAnnotations(json.optJSONArray("annotation"));
 	}
