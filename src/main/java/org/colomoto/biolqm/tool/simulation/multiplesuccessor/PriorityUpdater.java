@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.colomoto.biolqm.LogicalModel;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
+import org.colomoto.biolqm.tool.simulation.LogicalModelUpdater;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
+import org.colomoto.biolqm.tool.simulation.deterministic.DeterministicUpdater;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars.RankedClass;
+import org.colomoto.biolqm.tool.simulation.random.RandomUpdater;
 
 /**
  * Draft for a priority updater: components are grouped in groups, which can be
@@ -19,14 +23,14 @@ import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping.RankedClass;
 // April 2015 - Pedro added support for split transitions.
 public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
-	private final ModelGrouping pclist;
-	private final boolean isComplete = false;
+	private PCRankGroupsVars pclist; 
+//	private final boolean isComplete = false;
 
 	public PriorityUpdater(LogicalModel model, String setup) {
-		this((setup == null) ? new ModelGrouping(model) : new ModelGrouping(model, setup));
+		this((setup == null) ? new PCRankGroupsVars(model) : new PCRankGroupsVars(model, setup));
 	}
 
-	public PriorityUpdater(ModelGrouping pcs) {
+	public PriorityUpdater(PCRankGroupsVars pcs) {
 		super(pcs.getModel());
 		this.pclist = pcs;
 	}
@@ -45,40 +49,50 @@ public class PriorityUpdater extends AbstractMultipleSuccessorUpdater {
 
 			List<byte[]> lTmpSucc = new ArrayList<>();
 			for (int g = 0; g < pc.size(); g++) {
-				int[] pcVars = pc.getGroupValues(g);
-
-				if (this.isComplete) {
-					lTmpSucc.addAll(this.computeSuccStates(pcVars, lTmpSucc));
-				}
-				lTmpSucc.addAll(this.computeSuccStates(pcVars, currStates));
+				LogicalModelUpdater groupUpdater = this.pclist.getUpdater(p, g);
+				
+//				if (this.isComplete) {
+//					lTmpSucc.addAll(this.computeSuccStates(groupUpdater, lTmpSucc));
+//				}
+				lTmpSucc.addAll(this.computeSuccStates(groupUpdater, currStates));
 			}
 
 			// stop if previous block already generated successors
-			if (currStates != null) {
+			if (!lTmpSucc.isEmpty()) {
 				currStates = lTmpSucc;
 				break;
 			}
 		}
-
 		return currStates;
 	}
 
-	private List<byte[]> computeSuccStates(int[] pcVars, List<byte[]> currStates) {
+	private List<byte[]> computeSuccStates(LogicalModelUpdater groupUpdater, List<byte[]> currStates) {
 		List<byte[]> lTmp = new ArrayList<>();
 		for (byte[] currState : currStates) {
-			byte[] succState = null;
-
-			// Update the nodes in the current priority class
-			for (int i = 0; i < pcVars.length; i += 2) {
-				int idx = pcVars[i];
-				int change = nodeChange(currState, idx);
-				if (change != 0 && (change == pcVars[i + 1] || pcVars[i + 1] == 0)) {
-					succState = update(currState, idx, change, succState);
-				}
+			List<byte[]> succState = new ArrayList<byte[]>();
+			
+			if(groupUpdater instanceof AbstractMultipleSuccessorUpdater) {
+				succState = ((AbstractMultipleSuccessorUpdater) groupUpdater).getSuccessors(currState);
+			} else if (groupUpdater instanceof DeterministicUpdater) {
+				byte[] singleSucc = ((DeterministicUpdater) groupUpdater).getSuccessor(currState);
+				succState.add(singleSucc);
+			} else if (groupUpdater instanceof RandomUpdater) {
+				byte[] singleSucc = ((RandomUpdater) groupUpdater).pickSuccessor(currState);
+				succState.add(singleSucc);
 			}
-			lTmp = addSuccessor(lTmp, succState);
+			
+			for (byte[] state : succState)
+				lTmp = this.addSuccessor(lTmp, state);
 		}
 		return lTmp;
 	}
+	
+	public void makeRetroCompatible() {
+		this.pclist = this.pclist.cloneRetroCompatible();
+	}
 
+	@Override
+	public UpdaterType getType() {
+		return UpdaterType.PRIORITIES;
+	}
 }
