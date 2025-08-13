@@ -161,6 +161,12 @@ public class ModelReducer {
 			return;
 		}
 		
+		for (Integer targetIdx : varTargets) {
+			if (targetIdx == varIdx) {
+				throw new RuntimeException("Cannot reduce an auto-regulated node!");
+			}
+		}
+		
 		int regulator = allFunctions[varIdx];
 		for (int nodeIdx: varTargets) {
 			int f = allFunctions[nodeIdx];
