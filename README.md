@@ -6,7 +6,7 @@ or multi-valued activity levels and to dynamical rules driving changes in their 
 levels.
 
 BioLQM provides a collection of *import/export formats*, enabling the exchange of models
-between complementary tools (motivated by the [CoLoMoTo](www.colomoto.org) discussion
+between complementary tools (motivated by the [CoLoMoTo](https://colomoto.github.io) discussion
 group) and the design of complex analysis workflows.
 It also allows to define *model modifications*, to represent biological modifications 
 (mutations) or to facilitate further analysis (model reduction, Boolean mapping of
@@ -22,16 +22,16 @@ It can be used either as a standalone command-line tool, or as a programming int
 the Java API can be integrated in other software or used through scripts.
 Documentation and further information are available on http://colomoto.org/biolqm/.
 
-* Install instructions: http://colomoto.org/biolqm/doc/install.html.
+* Install instructions: https://colomoto.github.io/bioLQM/doc/starting.html.
 
 
 ## Licence and authors
 
 This code is available under LGPL v3+/CeCILL-C.
 
-The code started as a refactoring of [GINsim](http://www.ginsim.org) to cleanup its core and enable more code sharing.
-Discussions among [CoLoMoTo](http://www.colomoto.org) participants showed a growing interest for improved interoperability.
-This motivated the [qualitative extension](http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models)
+The code started as a refactoring of [GINsim](https://ginsim.github.io) to cleanup its core and enable more code sharing.
+Discussions among [CoLoMoTo](https://colomoto.github.io) participants showed a growing interest for improved interoperability.
+This motivated the [qualitative extension]([http://sbml.org/Community/Wiki/SBML_Level_3_Proposals/Qualitative_Models](https://sbml.org/documents/specifications/level-3/version-1/qual/))
 for SBML and this toolkit.
 
 
