@@ -20,7 +20,7 @@ and on building-blocks for model simulation.
 
 It can be used either as a standalone command-line tool, or as a programming interface:
 the Java API can be integrated in other software or used through scripts.
-Documentation and further information are available on http://colomoto.org/biolqm/.
+Documentation and further information are available on https://colomoto.github.io/bioLQM.
 
 * Install instructions: https://colomoto.github.io/bioLQM/doc/starting.html.
 
