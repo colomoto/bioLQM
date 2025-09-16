@@ -21,7 +21,7 @@
        <link href="http://colomoto.org/">CoLoMoTo consortium</link> to facilitate model exchange.
     </p>
     <p>It can be used on the <link xref="cli">command line</link>, through <link xref="scripting">scripts</link>, or embded in other
-       tools such as <link href="http://www.ginsim.org">GINsim</link> or <link href="http://epilog-tool.org">Epilog</link> using the
+       tools such as <link href="https://ginsim.github.io">GINsim</link> or <link href="https://epilog.github.io">Epilog</link> using the
        <link xref="api">Java API</link> directly.
     </p>
 

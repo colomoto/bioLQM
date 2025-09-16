@@ -10,7 +10,7 @@
 
     <title>The GINML format</title>
 
-    <p>The <em>GINML</em> format is used by <link href="http://ginsim.org">GINsim</link>. It extends the
+    <p>The <em>GINML</em> format is used by <link href="https://ginsim.github.io">GINsim</link>. It extends the
        <link href="http://www.gupro.de/GXL">GXL (Graph eXchange Language)</link> format to integrate an encoding of
        the logical functions as <em>logical parameters</em> in the <code>node</code> elements.
        GINML supports documentation, as well as layout information and styles.
@@ -24,7 +24,7 @@
 
 <code><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE gxl SYSTEM "http://ginsim.org/GINML_2_2.dtd">
+<!DOCTYPE gxl SYSTEM "https://ginsim.github.io/GINML_2_2.dtd">
 <gxl xmlns:xlink="http://www.w3.org/1999/xlink">
   <graph class="regulatory" id="toy_3" nodeorder="G0 G1 G2">
 
@@ -49,7 +49,7 @@
 
     <annotation>
       <linklist>
-        <link xlink:href="www.ginsim.org"/>
+        <link xlink:href="ginsim.github.io"/>
       </linklist>
       <comment>Documentation can be added to the model itself, nodes, or edges</comment>
     </annotation>

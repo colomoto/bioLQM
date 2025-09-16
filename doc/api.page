@@ -12,7 +12,7 @@
 
     <p>
     bioLQM is written in Java and can be used as a Java library. This is currently the case for the
-    <link href="http://www.ginsim.org">GINsim</link> and <link href="http://epilog-tool.org">Epilog</link> tools.
+    <link href="https://ginsim.github.io">GINsim</link> and <link href="https://epilog.github.io">Epilog</link> tools.
     </p>
     
     <p>To use the Java API, we provide maven packages, as described in the <link xref="install">Installation documentation</link>.</p>
