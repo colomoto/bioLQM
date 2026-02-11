@@ -50,6 +50,7 @@ public class UpdaterFactory {
         }
 
         String[] setup = s.trim().split(" ", 2);
+        
         if (setup[0].equalsIgnoreCase("asynchronous")) {
             return new AsynchronousUpdater(model);
         } else if (setup[0].equalsIgnoreCase("complete")) {

@@ -18,5 +18,5 @@ public interface MultipleSuccessorsUpdater extends LogicalModelUpdater {
      * @return the list of all successors (an empty list denotes that the provided state is stable).
      */
     List<byte[]> getSuccessors(byte[] state);
-
+    
 }
