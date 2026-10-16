@@ -156,6 +156,14 @@
         <configuration>
            <source>11</source>
            <target>11</target>
+           <!-- JDK 23+ no longer runs classpath annotation processors by default -->
+           <annotationProcessorPaths>
+             <path>
+               <groupId>org.kohsuke.metainf-services</groupId>
+               <artifactId>metainf-services</artifactId>
+               <version>1.11</version>
+             </path>
+           </annotationProcessorPaths>
         </configuration>
       </plugin>
 
