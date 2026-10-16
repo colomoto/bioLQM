@@ -183,12 +183,85 @@ public class Annotator<N> {
 		return false;
 	}
 
+	/**
+	 * Open a block for a qualifier on the current selection, reusing the existing block if there is one.
+	 */
 	public Annotator<N> openBlock(String qualifier) {
-		Qualifier qualified = this.mod.ensureQualifier(this.target, qualifier);
+		Qualifier qualified = this.mod.ensureQualifier(this.target, blankToNull(qualifier));
 		List<Annotation> annots = this.ensureMetadata().annotations();
+		for (int i = 0; i < annots.size(); i++) {
+			if (annots.get(i).qualifier == qualified) {
+				this.idx_annotation = i;
+				return this;
+			}
+		}
 		annots.add(new Annotation(qualified));
 		this.idx_annotation = annots.size() - 1;
 		return this;
+	}
+
+	private static String blankToNull(String s) {
+		return (s == null || s.isBlank()) ? null : s.trim();
+	}
+
+	/**
+	 * Change the qualifier of a block, keeping its content.
+	 *
+	 * @param name the new qualifier name, blank for an unspecified qualifier
+	 * @return false if the block is unknown, the name is invalid or another block already uses this qualifier
+	 */
+	public boolean renameBlock(Annotation annot, String name) {
+		List<Annotation> annots = this.annotations();
+		if (annots == null) {
+			return false;
+		}
+		int idx = annots.indexOf(annot);
+		if (idx < 0) {
+			return false;
+		}
+
+		String clean = blankToNull(name);
+		if (clean != null && !PatternValidator.asQualifier("@" + clean).isPresent()) {
+			return false;
+		}
+
+		Qualifier qualified = this.mod.ensureQualifier(this.target, clean);
+		if (annot.qualifier == qualified) {
+			return true;
+		}
+		for (Annotation other: annots) {
+			if (other.qualifier == qualified) {
+				return false;
+			}
+		}
+
+		Annotation renamed = new Annotation(qualified);
+		renamed.uris.addAll(annot.uris);
+		renamed.tags.addAll(annot.tags);
+		renamed.keyValues.putAll(annot.keyValues);
+		annots.set(idx, renamed);
+		return true;
+	}
+
+	/**
+	 * Delete a whole annotation block (and all its content) from the current selection.
+	 *
+	 * @return true if the block was found and removed
+	 */
+	public boolean removeBlock(Annotation annot) {
+		List<Annotation> annots = this.annotations();
+		if (annots == null) {
+			return false;
+		}
+		int idx = annots.indexOf(annot);
+		if (idx < 0) {
+			return false;
+		}
+		annots.remove(idx);
+		if (this.idx_annotation > idx || this.idx_annotation >= annots.size()) {
+			this.idx_annotation = Math.max(0, this.idx_annotation - 1);
+		}
+		return true;
 	}
 
 	private Annotator<N> nested() {
