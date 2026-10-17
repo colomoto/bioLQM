@@ -293,6 +293,11 @@ public class Annotator<N> {
 
 		m = PatternValidator.asCollectionEntry(s);
 		if (m.isPresent()) {
+			// a full URL (scheme://...) is not a collection entry
+			if (m.get().getValue().startsWith("//")) {
+				this.ensureAnnotation().uris.add(new URI(null, s.trim()));
+				return true;
+			}
 			Collection collec = this.mod.getCollection(m.get().getKey());
 			if (collec == null) {
 				if (this.ensureAnnotation().addKeyValue(m.get().getKey(), m.get().getValue())) {
@@ -531,7 +536,7 @@ public class Annotator<N> {
 			if (uris != null) {
 				uris.forEach(t -> {
 					JSONObject j = (JSONObject)t;
-					String type = j.getString("type");
+					String type = j.optString("type", null);
 					String content = j.getString("content");
 					if (type != null) {
 						annotate(type + ":" + content);

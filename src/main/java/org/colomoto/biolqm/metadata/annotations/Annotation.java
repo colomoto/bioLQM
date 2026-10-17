@@ -45,7 +45,9 @@ public class Annotation {
 			JSONArray arrayURIs = new JSONArray();
 			for (URI uri : this.uris) {
 				JSONObject jsonURI = new JSONObject();
-				jsonURI.put("type", uri.getCollection().name);
+				if (uri.getCollection() != null) {
+					jsonURI.put("type", uri.getCollection().name);
+				}
 				jsonURI.put("content", uri.getValue());
 				arrayURIs.put(jsonURI);
 			}
@@ -88,7 +90,7 @@ public class Annotation {
 			String col = m.get().getKey();
 			String value = m.get().getValue();
 			for (URI cur: this.uris) {
-				if (cur.matches(col, value)) {
+				if (cur.getCollection() == null ? cur.getValue().equals(annotation.trim()) : cur.matches(col, value)) {
 					return this.uris.remove(cur);
 				}
 			}
