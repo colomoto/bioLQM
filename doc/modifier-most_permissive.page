@@ -1,0 +1,232 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="modifier-most_permissive">
+    <info>
+      <link type="guide" xref="index#modifiers"/>
+      <link type="guide" xref="modifiers#list"/>
+      <revision status="review" date="2026-10-09"/>
+      <desc>Boolean unfolding of the Most Permissive semantics for Boolean networks.</desc>
+    </info>
+
+    <title>Boolean unfolding of the Most Permissive semantics</title>
+
+    <section>
+        <title>Description</title>
+        <p>
+        This modifier transforms an *n*-component Boolean model into a **3*n*-component Boolean
+	model whose **asynchronous** dynamics reproduces exactly the reachability properties of
+	the original model under the **Most Permissive** (MP) semantics of Paulevé *et al.*
+
+	The MP semantics extends Boolean dynamics with two intermediate levels, `i` (increasing)
+	and `d` (decreasing), which downstream components may read as either active or inactive.
+	It subsumes all classical updating semantics: any trajectory reachable under synchronous,
+	asynchronous or generalised asynchronous semantics is also reachable under MP.
+
+	Because MP operates over an extended state space `{0, i, d, 1}ⁿ`, it is not directly
+	supported by tools built around classical Boolean dynamics. This modifier closes that
+	gap: the unfolded model is an ordinary Boolean model, and is therefore usable with
+	**GINsim**, MaBoSS and the rest of the CoLoMoTo toolchain without further adaptation.
+        </p>
+    </section>
+
+
+    <section>
+        <title>Encoding</title>
+
+        <p>Each component <code>x_j</code> is replaced by a triplet of Boolean variables
+		<code>(x_j_a, x_j_b, x_j_c)</code>.</p>
+		<table>
+		<thead>
+		<tr>
+		<th>MP level</th>
+		<th>Triplet</th>
+		<th>Meaning</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+		<td><code>0</code></td>
+		<td><code>000</code></td>
+		<td>inactive</td>
+		</tr>
+		<tr>
+		<td><code>i</code></td>
+		<td><code>001</code></td>
+		<td>increasing</td>
+		</tr>
+		<tr>
+		<td><code>d</code></td>
+		<td><code>101</code></td>
+		<td>decreasing</td>
+		</tr>
+		<tr>
+		<td><code>1</code></td>
+		<td><code>111</code></td>
+		<td>active</td>
+		</tr>
+		</tbody>
+		</table>
+		
+	<p>Two <strong>transient</strong> triplets are inserted to preserve asynchronicity:</p>
+		<ul>
+		<li><code>011</code>, between <code>001</code> and <code>111</code></li>
+		<li><code>100</code>, between <code>101</code> and <code>000</code></li>
+		</ul>
+		<p>Two <strong>artifact</strong> triplets are absorbed, and take no part in MP trajectories:</p>
+		<ul>
+		<li><code>010 → 000</code></li>
+		<li><code>110 → 111</code></li>
+		</ul>
+		<blockquote>
+		<p>A two-variable encoding cannot satisfy the asynchronous constraints; three variables
+		are the minimum.</p>
+		</blockquote>
+	<term>
+		<item>	
+		<title>Reading a triplet</title>
+		<p>The extended logical function interprets regulators as follows:</p>
+		<table>
+		<thead>
+		<tr>
+		<th>Condition</th>
+		<th>Pattern</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+		<td>component <strong>active</strong></td>
+		<td><code>* * 1</code></td>
+		</tr>
+		<tr>
+		<td>component <strong>non active</strong></td>
+		<td><code>* * 0</code></td>
+		</tr>
+		<tr>
+		<td>component <strong>inactive</strong></td>
+		<td><code>* 0 *</code></td>
+		</tr>
+		<tr>
+		<td>component <strong>non inactive</strong></td>
+		<td><code>* 1 *</code></td>
+		</tr>
+		</tbody>
+		</table>
+		<p>Note that <code>⊕_j</code> (activation effective) and <code>⊖_j</code> (inhibition effective) are <strong>not</strong>
+		complementary — hence the four distinct conditions <code>⊕_j</code>, <code>¬⊕_j</code>, <code>⊖_j</code>, <code>¬⊖_j</code> used in
+		the internal rules. The first variable of each triplet plays no role in these
+		characterisations.</p>
+		</item>
+		
+		<item>	
+		<title>Correctness</title>
+		<p>There is a trajectory from <code>x</code> to <code>y</code> in the MP dynamics of <code>f</code> <strong>iff</strong> there is a
+		trajectory from the encoded <code>x̃</code> to <code>ỹ</code> in the asynchronous dynamics of <code>f_ext</code>.
+		The correspondence is on <em>reachability</em>, not on trajectories: a single MP trajectory may
+		be realised by several trajectories of the unfolded model, depending on where the
+		transient triplets <code>011</code> and <code>100</code> are traversed.</p>
+		</item>
+	</term>
+
+    </section>
+    
+        
+    <section>
+    	<title>Partial unfolding</title>
+    	<p>
+		    Full unfolding triples the number of variables, and the state space quickly becomes
+		intractable: a 15-component model yields 45 components, for which GINsim can no longer
+		assess reachability explicitly.
+
+		Partial unfolding extends only a user-selected subset of components. The chosen
+		components become triplets with their internal rules; the remaining components keep their
+		original definition and are connected to the extended ones through the internal control
+		functions. Reachability computation from a given initial configuration becomes feasible
+		again.
+
+		This is equivalent to the partial MP dynamics of Ben Boina *et al.* (2025).
+
+		Choosing the subset requires knowing which components are decisive for the discrepancy
+		between asynchronous and MP reachability — an open question.
+	</p>
+    </section>   
+    
+    <section>
+      <title>Limitation</title>
+	<p>
+	<ul>
+		<li><strong>Scaling.</strong> Full unfolding multiplies the number of variables by three. Beyond roughly
+		10–15 components, prefer partial unfolding.</li>
+		<li><strong>Trajectory artifacts.</strong> Transitions <code>i → 1</code> and <code>d → 0</code> are encoded in two steps
+		rather than one. Reachability is preserved, but trajectory-level or path-length
+		analyses may be affected.</li>
+		<li><strong>Regulatory graph.</strong> The extended regulatory graph contains edges whose sign is
+		reversed with respect to the original model (e.g. <code>x3_b</code> activating <code>x1_a</code> where <code>x3</code>
+		inhibits <code>x1</code>). These are artifacts of the encoding and carry no biological
+		interpretation on the MP side. Self-inhibitions of the <code>x_j_a</code> variables do, however,
+		reflect genuine MP self-inhibitions arising from the <code>i ↔ d</code> flip-flop.</li>
+	</ul>
+	</p>
+    </section>
+    
+    
+    <section>
+      <title>Usage</title>
+        
+       <term>
+		<item>	
+		<title>Command line</title>
+		<pre><code class="lang-bash"><span class="hljs-comment"># full unfolding</span>
+		<span class="hljs-keyword">biolqm </span>model.<span class="hljs-keyword">bnet </span>-m most_permissive out.<span class="hljs-keyword">bnet
+		</span>
+		<span class="hljs-comment"># partial unfolding: only the listed components are unfolded</span>
+		<span class="hljs-keyword">biolqm </span>model.<span class="hljs-keyword">bnet </span>-m most_permissive:Fli1,Gata1 out.<span class="hljs-keyword">bnet</span>
+		</code></pre>
+		</item>
+		
+		<item>
+		<title>Java API</title>
+		<pre><code class="lang-java"><span class="hljs-attribute">LogicalModel model</span> = LQMServiceManager.load(<span class="hljs-string">"model.bnet"</span>);
+		<span class="hljs-attribute">LogicalModel unfolded</span> = LQMServiceManager
+			.modifier(<span class="hljs-string">"most_permissive"</span>)
+			.getModifier(model)
+			.call();
+		</code></pre>
+		<p>Input and output use any bioLQM-compatible format (<code>.bnet</code>, SBML-qual, …). The result
+		opens directly in GINsim.</p>
+		<p><em>(Adjust the two snippets above to the signature actually exposed by the implementation —
+		in particular the syntax used to pass the component subset.)</em></p>
+		</item>
+	</term>
+    </section>
+    
+        
+    <section>
+      <title>Implementation note</title>
+      <p>
+	The modifier extends the bioLQM `Modifier` interface. Logical relationships are built and
+	stored as MDDs (here used as binary decision diagrams) via the internal `MDDlib` library.
+	Memory allocation deserves attention: MDD nodes should be freed as soon as they are no
+	longer referenced.
+      </p>
+   </section>
+    
+    
+    <section>
+        <title>Going further</title>
+        <p>
+		<ol>
+			<li>L. Paulevé <em>et al.</em>, <em>Reconciling Qualitative, Abstract, and Scalable Modeling of
+			Biological Networks</em>, 2020. doi:10.1101/2020.03.22.998377</li>
+			<li>N. Ben Boina <em>et al.</em>, <em>Refining Boolean models with the partial most permissive
+			scheme</em>, Bioinformatics 41(4), 2025. doi:10.1093/bioinformatics/btaf123</li>
+			<li>T. Roncalli, L. Paulevé, <em>Variable-Depth Simulation of Most Permissive Boolean
+			Networks</em>, 2022. arXiv:2206.12729</li>
+			<li>C. Chaouiya <em>et al.</em>, <em>SBML qualitative models</em>, BMC Systems Biology, 2013.</li>
+			<li>L. de Chancel, B. Mossé, A. Naldi, E. Remy, <em>A Boolean encoding of the Most Permissive
+			semantics for Boolean networks</em>, 2026.</li>
+		</ol>
+	</p>
+    </section>
+
+</page>
+
