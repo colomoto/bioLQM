@@ -2,16 +2,16 @@ package org.colomoto.biolqm.tool.simulation.grouping;
 
 public enum SplittingType {
 
-    MERGED, POSITIVE, NEGATIVE;
+	MERGED(""), POSITIVE("[+]"), NEGATIVE("[-]");
 
-    public String toString() {
-        switch (this) {
-            case POSITIVE:
-                return "[+]";
-            case NEGATIVE:
-                return "[-]";
-        }
-        return "";
-    }
+	private String description;
+
+	private SplittingType(String description) {
+		this.description = description;
+	}
+
+	public String toString() {
+		return this.description;
+	}
 
 }

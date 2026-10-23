@@ -2,7 +2,8 @@ package org.colomoto.biolqm.tool.simulation.deterministic;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.tool.simulation.BaseUpdater;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 
 public class DeterministicPriorityUpdater extends BaseUpdater implements DeterministicUpdater {
 
@@ -14,10 +15,10 @@ public class DeterministicPriorityUpdater extends BaseUpdater implements Determi
     }
 
     public DeterministicPriorityUpdater(LogicalModel model, String config) {
-        this(new ModelGrouping(model,config));
+        this(new PCRankGroupsVars(model,config));
     }
 
-    public DeterministicPriorityUpdater(ModelGrouping mpc) {
+    public DeterministicPriorityUpdater(PCRankGroupsVars mpc) {
         super(mpc.getModel());
         this.blocks = mpc.getDeterministicBlocks();
     }
@@ -44,4 +45,9 @@ public class DeterministicPriorityUpdater extends BaseUpdater implements Determi
 
         return nextstate;
     }
+
+	@Override
+	public UpdaterType getType() {
+		return UpdaterType.DETERM_PRI;
+	}
 }

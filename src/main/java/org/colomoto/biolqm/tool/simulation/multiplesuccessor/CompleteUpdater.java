@@ -1,6 +1,7 @@
 package org.colomoto.biolqm.tool.simulation.multiplesuccessor;
 
 import org.colomoto.biolqm.LogicalModel;
+import org.colomoto.biolqm.tool.simulation.UpdaterType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,12 @@ public class CompleteUpdater extends AbstractMultipleSuccessorUpdater {
             fillSuccessors(seed, c, count, successors);
         }
     }
+
+    @Override
+	public UpdaterType getType() {
+    	return UpdaterType.COMPLETE;
+	}
+
 
 }
 

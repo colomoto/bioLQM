@@ -22,7 +22,7 @@ public class RandomWalkSimulation implements Iterable<byte[]> {
 
     public RandomWalkSimulation(RandomUpdater updater, byte[] init, int max_steps) {
         this.updater = updater;
-        this.init = init;
+        this.init = init; 
         this.max_steps = max_steps;
     }
 

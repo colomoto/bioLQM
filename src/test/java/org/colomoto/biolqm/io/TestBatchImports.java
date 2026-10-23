@@ -46,6 +46,7 @@ public class TestBatchImports {
 					fail("Could not guess format for "+extension +" ("+f+")");
 				}
 				LogicalModel model;
+				
 				try {
 					model = format.load(f);
 					if (refModel == null) {

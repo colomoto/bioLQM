@@ -2,7 +2,7 @@ package org.colomoto.biolqm.widgets;
 
 import org.colomoto.biolqm.LogicalModel;
 import org.colomoto.biolqm.ReferenceModels;
-import org.colomoto.biolqm.tool.simulation.grouping.ModelGrouping;
+import org.colomoto.biolqm.tool.simulation.grouping.PCRankGroupsVars;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +14,7 @@ public class GroupingDefinitionTestFrame {
     public static void main(String[] args) throws Exception {
 
         LogicalModel model = ReferenceModels.getModel(ReferenceModels.getNames()[0]);
-        ModelGrouping mpc = new ModelGrouping(model);
+        PCRankGroupsVars mpc = new PCRankGroupsVars(model);
 
         PriorityClassPanel pcp = new PriorityClassPanel(mpc, true);
         pcp.updatePriorityList();
